@@ -3,600 +3,177 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sosyal Politika - 5. Ünite Tarama Testi</title>
+    <title>Sosyal Politika - 5. Ünite Detaylı Çalışma Testi</title>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f4f9; color: #333; line-height: 1.6; padding: 20px; }
-        .container { max-width: 800px; margin: 0 auto; background: #fff; padding: 30px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
-        h1 { text-align: center; color: #2c3e50; }
-        .question-block { margin-bottom: 20px; padding: 15px; border-bottom: 1px solid #eee; display: none; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #eef2f3; color: #333; margin: 0; padding: 20px; }
+        .container { max-width: 900px; margin: 0 auto; background: #fff; padding: 40px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        h1 { text-align: center; color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 10px; margin-bottom: 30px; }
+        
+        /* İlerleme Çubuğu */
+        .progress-container { background-color: #f1f1f1; border-radius: 10px; margin-bottom: 20px; height: 10px; overflow: hidden; }
+        .progress-bar { height: 100%; background-color: #3498db; width: 0%; transition: width 0.3s; }
+        .progress-text { text-align: right; font-size: 0.9em; color: #7f8c8d; margin-bottom: 15px; }
+
+        /* Soru Alanı */
+        .question-block { display: none; animation: fadeIn 0.5s; }
         .question-block.active { display: block; }
-        .question-text { font-weight: bold; font-size: 1.1em; margin-bottom: 10px; }
-        .options label { display: block; margin-bottom: 8px; cursor: pointer; padding: 8px; border-radius: 4px; transition: background 0.2s; }
-        .options label:hover { background-color: #f0f8ff; }
-        .options input { margin-right: 10px; }
-        .controls { margin-top: 20px; display: flex; justify-content: space-between; }
-        button { background-color: #3498db; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 16px; }
-        button:hover { background-color: #2980b9; }
-        button:disabled { background-color: #bdc3c7; cursor: not-allowed; }
-        #result { text-align: center; font-size: 1.2em; font-weight: bold; margin-top: 20px; display: none; }
-        .progress { text-align: right; font-size: 0.9em; color: #7f8c8d; margin-bottom: 10px; }
-        .review-section { margin-top: 30px; display: none; }
-        .review-item { background: #f9f9f9; padding: 10px; margin-bottom: 10px; border-left: 4px solid #3498db; }
-        .correct { color: green; font-weight: bold; }
-        .wrong { color: red; font-weight: bold; }
+        .question-text { font-weight: 600; font-size: 1.25em; margin-bottom: 20px; color: #2c3e50; }
+        
+        /* Seçenekler */
+        .options { display: flex; flex-direction: column; gap: 10px; }
+        .option-label { 
+            display: flex; align-items: center; padding: 12px 15px; border: 2px solid #e0e0e0; 
+            border-radius: 8px; cursor: pointer; transition: all 0.2s; background: #fff;
+        }
+        .option-label:hover { background-color: #f9fbfd; border-color: #bdc3c7; }
+        .option-label.selected { border-color: #3498db; background-color: #ebf5fb; }
+        .option-label input { margin-right: 15px; transform: scale(1.2); }
+        
+        /* Cevap Göster Stilleri */
+        .option-label.correct-highlight { border-color: #27ae60; background-color: #d5f5e3; color: #1e8449; font-weight: bold; }
+        .option-label.wrong-highlight { border-color: #e74c3c; background-color: #fadbd8; }
+
+        /* Butonlar */
+        .controls { margin-top: 30px; display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
+        button { border: none; padding: 12px 24px; border-radius: 6px; cursor: pointer; font-size: 16px; font-weight: 600; transition: background 0.2s; }
+        .nav-btn { background-color: #3498db; color: white; }
+        .nav-btn:hover { background-color: #2980b9; }
+        .nav-btn:disabled { background-color: #bdc3c7; cursor: not-allowed; }
+        
+        .show-answer-btn { background-color: #f39c12; color: white; }
+        .show-answer-btn:hover { background-color: #d35400; }
+        
+        .finish-btn { background-color: #27ae60; color: white; display: none; }
+        .finish-btn:hover { background-color: #219150; }
+
+        /* Sonuç Ekranı */
+        #result-screen { display: none; }
+        .score-card { text-align: center; background: #f8f9fa; padding: 20px; border-radius: 10px; margin-bottom: 30px; }
+        .score-circle { 
+            width: 120px; height: 120px; border-radius: 50%; background: #3498db; color: white; 
+            display: flex; align-items: center; justify-content: center; font-size: 2em; font-weight: bold; 
+            margin: 0 auto 15px; 
+        }
+        
+        .review-table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 0.95em; }
+        .review-table th, .review-table td { padding: 12px; border: 1px solid #ddd; text-align: left; }
+        .review-table th { background-color: #34495e; color: white; }
+        .review-table tr:nth-child(even) { background-color: #f2f2f2; }
+        .status-correct { color: #27ae60; font-weight: bold; }
+        .status-wrong { color: #c0392b; font-weight: bold; }
+        .status-empty { color: #f39c12; font-weight: bold; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>Sosyal Güvenlik ve Sosyal Sigortalar Testi</h1>
-    <div class="progress" id="progress">Soru 1 / 50</div>
-    
-    <div id="quiz-container">
+    <div id="quiz-screen">
+        <h1>Sosyal Güvenlik ve Sosyal Sigortalar</h1>
+        
+        <div class="progress-text" id="progress-text">Soru 1 / 50</div>
+        <div class="progress-container">
+            <div class="progress-bar" id="progress-bar"></div>
         </div>
+        
+        <div id="quiz-container">
+            </div>
 
-    <div class="controls">
-        <button id="prevBtn" onclick="prevQuestion()" disabled>Önceki</button>
-        <button id="nextBtn" onclick="nextQuestion()">Sonraki</button>
-        <button id="finishBtn" onclick="finishQuiz()" style="display:none; background-color: #27ae60;">Testi Bitir</button>
+        <div class="controls">
+            <div>
+                <button class="nav-btn" id="prevBtn" onclick="prevQuestion()" disabled>&#8592; Önceki</button>
+            </div>
+            <div>
+                <button class="show-answer-btn" onclick="showCurrentAnswer()">👁️ Cevabı Göster</button>
+            </div>
+            <div>
+                <button class="nav-btn" id="nextBtn" onclick="nextQuestion()">Sonraki &#8594;</button>
+                <button class="finish-btn" id="finishBtn" onclick="finishQuiz()">Testi Bitir &#10004;</button>
+            </div>
+        </div>
     </div>
 
-    <div id="result"></div>
-    <div id="review" class="review-section"></div>
+    <div id="result-screen">
+        <h1>Değerlendirme Sonucu</h1>
+        <div class="score-card">
+            <div class="score-circle" id="score-circle">0</div>
+            <h3>Toplam Puan</h3>
+            <p id="score-details"></p>
+        </div>
+        
+        <h3>Detaylı Soru Analizi</h3>
+        <table class="review-table">
+            <thead>
+                <tr>
+                    <th style="width: 5%">No</th>
+                    <th style="width: 45%">Soru</th>
+                    <th style="width: 20%">Senin Cevabın</th>
+                    <th style="width: 20%">Doğru Cevap</th>
+                    <th style="width: 10%">Durum</th>
+                </tr>
+            </thead>
+            <tbody id="review-body">
+                </tbody>
+        </table>
+        <div style="text-align: center; margin-top: 30px;">
+            <button class="nav-btn" onclick="location.reload()">Testi Tekrar Çöz</button>
+        </div>
+    </div>
 </div>
 
 <script>
     const questions = [
-        {
-            q: "Sosyal güvenliğin en genel ve kapsamlı tanımı aşağıdakilerden hangisidir?",
-            o: [
-                "Sadece işçilerin iş kazalarına karşı korunmasıdır.",
-                "Devletin vergi toplamak için oluşturduğu sistemdir.",
-                "Geliri ne olursa olsun, kişilerin karşılaşacakları mesleki, fizyolojik ve sosyo-ekonomik risklerin zararlarına karşı güvence altına alınmasıdır.",
-                "Özel sigorta şirketlerinin sunduğu bir hizmettir.",
-                "Sadece yoksullara yapılan ayni yardımlardır."
-            ],
-            a: 2
-        },
-        {
-            q: "Aşağıdakilerden hangisi 'Dar Anlamda Sosyal Güvenlik' kavramının odaklandığı temel unsurdur?",
-            o: [
-                "Tüm toplumsal refah hizmetleri",
-                "Gelir kesilmesinin telafisi ve gider artışlarının karşılanması",
-                "Eğitim ve konut politikaları",
-                "Çevre sorunlarıyla mücadele",
-                "Adalet sisteminin iyileştirilmesi"
-            ],
-            a: 1
-        },
-        {
-            q: "Aşağıdakilerden hangisi sosyal güvenliğin kapsadığı 'Fizyolojik Tehlikeler'den biridir?",
-            o: [
-                "İşsizlik",
-                "İş kazası",
-                "Yaşlılık",
-                "Enflasyon",
-                "Savaş"
-            ],
-            a: 2
-        },
-        {
-            q: "Modern sosyal güvenlik sistemlerinin tarihsel kökeni hangi ülkedeki uygulamalara dayanır?",
-            o: [
-                "İngiltere",
-                "Fransa",
-                "Almanya",
-                "ABD",
-                "Sovyetler Birliği"
-            ],
-            a: 2
-        },
-        {
-            q: "İlk sosyal sigorta uygulamaları kim tarafından kurulmuştur?",
-            o: [
-                "Winston Churchill",
-                "Otto Von Bismarck",
-                "Franklin D. Roosevelt",
-                "William Beveridge",
-                "Karl Marx"
-            ],
-            a: 1
-        },
-        {
-            q: "Almanya'da kurulan ilk sosyal sigorta kolu hangisidir?",
-            o: [
-                "Yaşlılık Sigortası",
-                "İş Kazaları Sigortası",
-                "Hastalık Sigortası",
-                "İşsizlik Sigortası",
-                "Analık Sigortası"
-            ],
-            a: 2
-        },
-        {
-            q: "Hastalık Sigortası Almanya'da hangi tarihte yasalaşmıştır?",
-            o: [
-                "1881",
-                "1883",
-                "1884",
-                "1889",
-                "1901"
-            ],
-            a: 1
-        },
-        {
-            q: "Beveridge Modeli'nin en temel özelliği aşağıdakilerden hangisidir?",
-            o: [
-                "Sadece işçileri kapsaması",
-                "Prim esasına dayanması",
-                "Vergilerle finanse edilmesi ve vatandaşlık esasına dayanması",
-                "Özel sektör tarafından yönetilmesi",
-                "Sadece yaşlıları koruması"
-            ],
-            a: 2
-        },
-        {
-            q: "Sosyal sigortalar ile özel sigortalar arasındaki en temel farklardan biri olan 'Garantörlük' ilkesi neyi ifade eder?",
-            o: [
-                "Özel sigortaların devlet tarafından desteklenmesini",
-                "Sosyal sigortalarda açık oluşması durumunda devletin bu açıkları kapatmasını",
-                "İşverenin işçiye borç vermesini",
-                "Sendikaların grev hakkını",
-                "Bankaların kredi garantisi vermesini"
-            ],
-            a: 1
-        },
-        {
-            q: "Aşağıdakilerden hangisi ILO'nun 102 sayılı sözleşmesinde belirtilen 9 sosyal güvenlik riskinden biri DEĞİLDİR?",
-            o: [
-                "Hastalık",
-                "İşsizlik",
-                "Boşanma",
-                "Analık",
-                "Malullük"
-            ],
-            a: 2
-        },
-        {
-            q: "Sosyal sigortaların finansmanında kullanılan temel yöntem nedir?",
-            o: [
-                "Sadece devlet vergileri",
-                "Sadece bağışlar",
-                "Çalışan ve işverenden alınan primler",
-                "Vakıf gelirleri",
-                "Para basımı"
-            ],
-            a: 2
-        },
-        {
-            q: "Türkiye'de sosyal sigortaların fiilen kurulması hangi yılda gerçekleşmiştir?",
-            o: [
-                "1923",
-                "1936",
-                "1945",
-                "1961",
-                "2006"
-            ],
-            a: 2
-        },
-        {
-            q: "Türkiye'de 1945 yılında kurulan İşçi Sigortaları Kurumu bünyesinde ilk oluşturulan sigorta kolu hangisidir?",
-            o: [
-                "Yaşlılık",
-                "Hastalık",
-                "İş Kazaları ve Meslek Hastalıkları ile Analık",
-                "İşsizlik",
-                "Ölüm"
-            ],
-            a: 2
-        },
-        {
-            q: "1964 yılında kabul edilen ve farklı sigorta kollarını tek çatı altında toplayan kanun hangisidir?",
-            o: [
-                "3008 sayılı İş Kanunu",
-                "1475 sayılı İş Kanunu",
-                "506 sayılı Sosyal Sigortalar Kanunu",
-                "5510 sayılı Kanun",
-                "6331 sayılı İSG Kanunu"
-            ],
-            a: 2
-        },
-        {
-            q: "Aşağıdakilerden hangisi 'Geleneksel Sosyal Güvenlik Yöntemleri'nden biri değildir?",
-            o: [
-                "Bireysel Tasarruf",
-                "Aile İçi Yardımlaşma",
-                "Sosyal Sigortalar",
-                "Hayır Kurumları",
-                "İşveren Mesuliyeti"
-            ],
-            a: 2
-        },
-        {
-            q: "Modern sosyal güvenlik yöntemleri kaça ayrılır?",
-            o: [
-                "2 (Sosyal Sigorta, Sosyal Yardım)",
-                "3 (Sosyal Sigorta, Sosyal Yardım, Kamu Hizmeti)",
-                "1 (Sadece Sigorta)",
-                "4 (Sigorta, Yardım, Hizmet, Vakıf)",
-                "5 (Primsiz, Primli, Özel, Yarı Özel, Karma)"
-            ],
-            a: 1
-        },
-        {
-            q: "Sosyal yardımların temel özelliği nedir?",
-            o: [
-                "Prim ödeme şartına bağlıdır.",
-                "Sadece memurlara verilir.",
-                "Karşılıksızdır ve muhtaçlık şartına bağlıdır.",
-                "Herkes yararlanabilir.",
-                "Özel şirketlerce verilir."
-            ],
-            a: 2
-        },
-        {
-            q: "Sosyal sigortaların 'Zorunluluk İlkesi' ne anlama gelir?",
-            o: [
-                "İsteyen herkesin sigortalı olabilmesi",
-                "Kanun kapsamına girenlerin sisteme katılmak zorunda olması",
-                "İşverenin zor durumda kalması",
-                "Devletin zor kullanması",
-                "Sadece zor işlerde çalışanların sigortalı olması"
-            ],
-            a: 1
-        },
-        {
-            q: "Sosyal sigortalarda 'Gelirin Yeniden Dağılımı' fonksiyonu nasıl işler?",
-            o: [
-                "Zenginden fakire doğru dikey, sağlıklıdan hastaya doğru yatay transfer ile.",
-                "Sadece devletten vatandaşa para vererek.",
-                "Sadece işverenden işçiye para vererek.",
-                "Herkesin kendi biriktirdiğini almasıyla.",
-                "Yurtdışından kredi alarak."
-            ],
-            a: 0
-        },
-        {
-            q: "Sosyal sigortaların yönetim yapısında geçerli olan ilke hangisidir?",
-            o: [
-                "Tamamen özel sektör yönetimi",
-                "Tamamen bürokratik yönetim",
-                "Özerk yönetim (Sosyal tarafların katılımı)",
-                "Uluslararası yönetim",
-                "Yerel yönetim"
-            ],
-            a: 2
-        },
-        {
-            q: "Aşağıdakilerden hangisi sosyal sigortalar ile özel sigortalar arasındaki 'Koruma Birimi' farkıdır?",
-            o: [
-                "Sosyal sigorta bireyi, özel sigorta aileyi korur.",
-                "Her ikisi de sadece bireyi korur.",
-                "Sosyal sigorta aileyi, özel sigorta bireyi (poliçe sahibini) korur.",
-                "Özel sigorta toplumu korur.",
-                "Sosyal sigorta sadece işvereni korur."
-            ],
-            a: 2
-        },
-        {
-            q: "Dünyada 'İşsizlik Sigortası' ilk kez hangi ülkede ve ne zaman kurulmuştur?",
-            o: [
-                "Almanya - 1883",
-                "İngiltere - 1911",
-                "Danimarka - 1907",
-                "ABD - 1935",
-                "Fransa - 1945"
-            ],
-            a: 2
-        },
-        {
-            q: "Aşağıdakilerden hangisi 'Kısa Vadeli Sigorta Kolları'ndan biridir?",
-            o: [
-                "Yaşlılık",
-                "Malullük",
-                "Ölüm",
-                "Hastalık",
-                "Emeklilik"
-            ],
-            a: 3
-        },
-        {
-            q: "Uzun vadeli sigorta kolları hangileridir?",
-            o: [
-                "Hastalık, Analık, İş Kazası",
-                "Malullük, Yaşlılık, Ölüm",
-                "İşsizlik, Aile Yardımı",
-                "Trafik, Kasko, DASK",
-                "Sağlık, Eğitim, Güvenlik"
-            ],
-            a: 1
-        },
-        {
-            q: "İş kazası sigortasının temel amacı nedir?",
-            o: [
-                "İşçiyi işten atmak",
-                "İşyerinde meydana gelen kaza sonucu uğranılan zararları (gelir kaybı/sağlık) karşılamak",
-                "İşvereni cezalandırmak",
-                "Üretimi artırmak",
-                "İşçiye tatil vermek"
-            ],
-            a: 1
-        },
-        {
-            q: "Meslek hastalığı ne demektir?",
-            o: [
-                "İşçinin evde hastalanması",
-                "İşçinin tatilde hastalanması",
-                "İşin niteliğinden veya çalışma koşullarından dolayı tekrarlanan bir sebeple uğranılan hastalık",
-                "Genetik hastalıklar",
-                "Salgın hastalıklar"
-            ],
-            a: 2
-        },
-        {
-            q: "Analık sigortası kimleri kapsar?",
-            o: [
-                "Sadece erkek çalışanları",
-                "Sadece emeklileri",
-                "Sigortalı kadını veya sigortalı erkeğin sigortalı olmayan eşini",
-                "Sadece çocukları",
-                "Herkesi"
-            ],
-            a: 2
-        },
-        {
-            q: "Sosyal sigortalarda 'Malullük' genellikle çalışma gücünün en az ne kadarının kaybı olarak tanımlanır?",
-            o: [
-                "%10",
-                "%25",
-                "%40",
-                "%60 (veya 2/3)",
-                "%90"
-            ],
-            a: 3
-        },
-        {
-            q: "Yaşlılık sigortasından yararlanmak için genellikle hangi şartlar aranır?",
-            o: [
-                "Sadece yaş",
-                "Sadece prim ödeme",
-                "Belirli bir yaşın doldurulması ve belirli bir süre prim ödenmiş olması",
-                "Hiçbir şart aranmaz",
-                "Sadece işverenin onayı"
-            ],
-            a: 2
-        },
-        {
-            q: "Ölüm sigortası kime yöneliktir?",
-            o: [
-                "Ölen sigortalının kendisine",
-                "Ölen sigortalının geride kalan hak sahiplerine (dul ve yetimlere)",
-                "İşverene",
-                "Devlete",
-                "Mezarlık görevlilerine"
-            ],
-            a: 1
-        },
-        {
-            q: "Kamu Hizmeti yöntemi ile finanse edilen sosyal güvenlik harcamalarının kaynağı nedir?",
-            o: [
-                "Primler",
-                "Vergiler (Devlet Bütçesi)",
-                "Bağışlar",
-                "Kişisel tasarruflar",
-                "Dış borçlar"
-            ],
-            a: 1
-        },
-        {
-            q: "Türkiye'de Bireysel Emeklilik Sistemi (BES) sosyal güvenliğin hangi türüne örnektir?",
-            o: [
-                "Zorunlu Sosyal Sigorta",
-                "Sosyal Yardım",
-                "Kamu Hizmeti",
-                "Tamamlayıcı Sosyal Güvenlik",
-                "Vakıf Hizmeti"
-            ],
-            a: 3
-        },
-        {
-            q: "Sosyal sigortaların finansmanında kullanılan 'Dağıtım Yöntemi' (Pay-as-you-go) neyi ifade eder?",
-            o: [
-                "Herkesin kendi hesabına para biriktirmesi",
-                "Toplanan primlerin yatırıma yönlendirilmesi",
-                "Aktif çalışanların ödediği primlerin o dönemdeki emeklilere maaş olarak ödenmesi",
-                "Devletin para basması",
-                "Banka kredisi kullanılması"
-            ],
-            a: 2
-        },
-        {
-            q: "İşsizlik sigortası dünyada neden en geç gelişen sigorta koludur?",
-            o: [
-                "İşsizlik riskinin tanımının ve finansmanının zor olması",
-                "İşsizliğin az olması",
-                "İşçilerin istememesi",
-                "İşverenlerin çok istekli olması",
-                "Teknolojinin yetersizliği"
-            ],
-            a: 0
-        },
-        {
-            q: "ILO'nun sosyal güvenlik tanımında yer alan 'Aile gelirinin yetersizliği' riski hangi ödenekle karşılanır?",
-            o: [
-                "İşsizlik ödeneği",
-                "Hastalık ödeneği",
-                "Aile ödenekleri (Çocuk yardımı vb.)",
-                "Emekli maaşı",
-                "Kıdem tazminatı"
-            ],
-            a: 2
-        },
-        {
-            q: "Sosyal güvenliğin finansman yöntemlerinden 'Fon Biriktirme' (Kapitalizasyon) yöntemi daha çok hangi sigorta kollarında kullanılır?",
-            o: [
-                "Kısa vadeli (Hastalık)",
-                "Uzun vadeli (Yaşlılık/Emeklilik)",
-                "İşsizlik",
-                "Analık",
-                "Sağlık"
-            ],
-            a: 1
-        },
-        {
-            q: "Özel sigortaların 'Seçicilik' özelliği ne anlama gelir?",
-            o: [
-                "Herkesi sigorta yapması",
-                "Yüksek riskli kişileri sigortalamaması veya yüksek prim istemesi",
-                "Rastgele seçim yapması",
-                "Seçimlerde oy kullanması",
-                "Devlet tarafından seçilmesi"
-            ],
-            a: 1
-        },
-        {
-            q: "Sosyal sigortalarda prim miktarı genellikle neye göre belirlenir?",
-            o: [
-                "Riskin büyüklüğüne göre",
-                "Kişinin yaşına göre",
-                "Kişinin cinsiyetine göre",
-                "Kişinin gelirine (kazancına) göre",
-                "Kişinin eğitim durumuna göre"
-            ],
-            a: 3
-        },
-        {
-            q: "Türkiye'de 1949 yılında kurulan Emekli Sandığı hangi kesime hizmet vermek için kurulmuştu?",
-            o: [
-                "İşçiler",
-                "Esnaf",
-                "Çiftçiler",
-                "Kamu Görevlileri (Memurlar)",
-                "Tüccarlar"
-            ],
-            a: 3
-        },
-        {
-            q: "Türkiye'de 1971 yılında kurulan Bağ-Kur hangi kesime hizmet veriyordu?",
-            o: [
-                "Bağımsız çalışanlar (Esnaf ve Sanatkarlar)",
-                "İşçiler",
-                "Memurlar",
-                "Öğrenciler",
-                "Ev hanımları"
-            ],
-            a: 0
-        },
-        {
-            q: "Sosyal politikanın en kapsamlı aracı hangisidir?",
-            o: [
-                "Ücret politikası",
-                "Vergi politikası",
-                "Sosyal güvenlik",
-                "Eğitim politikası",
-                "Tarım politikası"
-            ],
-            a: 2
-        },
-        {
-            q: "Hastalık sigortası kapsamında sağlanan 'Geçici İş Göremezlik Ödeneği' neyi amaçlar?",
-            o: [
-                "Tedavi masraflarını karşılamak",
-                "Hastalık nedeniyle çalışılamayan günlerdeki gelir kaybını telafi etmek",
-                "İlaç parası vermek",
-                "Doktor maaşını ödemek",
-                "Hastane yapmak"
-            ],
-            a: 1
-        },
-        {
-            q: "Aşağıdakilerden hangisi Sosyal Güvenliğin psikolojik işlevidir?",
-            o: [
-                "Yatırımları artırmak",
-                "Gelir dağılımını düzeltmek",
-                "Bireye yarına güven duygusu vermek",
-                "Tasarrufları artırmak",
-                "Tüketimi kısmak"
-            ],
-            a: 2
-        },
-        {
-            q: "İş kazaları ve meslek hastalıkları sigortasının primlerini kim öder?",
-            o: [
-                "Sadece işçi",
-                "İşçi ve işveren ortak",
-                "Sadece işveren",
-                "Sadece devlet",
-                "Belediyeler"
-            ],
-            a: 2
-        },
-        {
-            q: "Sosyal güvenlik harcamalarının Gayrisafi Yurtiçi Hasıla (GSYİH) içindeki payı neyin göstergesidir?",
-            o: [
-                "Askeri gücün",
-                "Nüfus yoğunluğunun",
-                "Sosyal devlet ilkesinin ve refah seviyesinin",
-                "Enflasyon oranının",
-                "Döviz kurunun"
-            ],
-            a: 2
-        },
-        {
-            q: "Türkiye'de sosyal güvenlik sisteminde reform yapılarak tüm kurumların (SSK, Bağ-Kur, Emekli Sandığı) tek çatı altında toplandığı kurumun adı nedir?",
-            o: [
-                "İş ve İşçi Bulma Kurumu",
-                "Sosyal Hizmetler Kurumu",
-                "Sosyal Güvenlik Kurumu (SGK)",
-                "Kızılay",
-                "Yeşilay"
-            ],
-            a: 2
-        },
-        {
-            q: "Aşağıdakilerden hangisi 'Sosyal Risk' kavramının özelliklerinden biridir?",
-            o: [
-                "Bireyin kendi iradesiyle ortaya çıkması",
-                "Sonuçlarının sadece bireyi ilgilendirmesi",
-                "Toplumsal nitelikli olması ve gelir kaybına/gider artışına yol açması",
-                "Önlenebilir olmaması",
-                "Sadece doğal afetlerden oluşması"
-            ],
-            a: 2
-        },
-        {
-            q: "Sosyal sigortalarda 'Teklik İlkesi' neyi ifade eder?",
-            o: [
-                "Herkesin tek bir sigortası olması gerektiğini (mükerrer sigortalılığın önlenmesi)",
-                "Sadece bir riskin karşılanmasını",
-                "Tek bir prim ödenmesini",
-                "Sadece tek kişinin yararlanmasını",
-                "Tek bir hastaneye gidilmesini"
-            ],
-            a: 0
-        },
-        {
-            q: "Türkiye'de İşsizlik Sigortası hangi tarihte yasalaşmıştır (uygulamaya girmese de)?",
-            o: [
-                "1936",
-                "1945",
-                "1971",
-                "1999",
-                "2010"
-            ],
-            a: 3
-        },
-        {
-            q: "Sosyal güvenlik hakkı Anayasa'mızın hangi maddesinde düzenlenmiştir?",
-            o: [
-                "Madde 10",
-                "Madde 40",
-                "Madde 60 (Herkes sosyal güvenlik hakkına sahiptir)",
-                "Madde 80",
-                "Madde 100"
-            ],
-            a: 2
-        }
+        { q: "Sosyal güvenliğin en genel ve kapsamlı tanımı aşağıdakilerden hangisidir?", o: ["Sadece işçilerin iş kazalarına karşı korunmasıdır.", "Devletin vergi toplamak için oluşturduğu sistemdir.", "Geliri ne olursa olsun, kişilerin karşılaşacakları mesleki, fizyolojik ve sosyo-ekonomik risklerin zararlarına karşı güvence altına alınmasıdır.", "Özel sigorta şirketlerinin sunduğu bir hizmettir.", "Sadece yoksullara yapılan ayni yardımlardır."], a: 2 },
+        { q: "Aşağıdakilerden hangisi 'Dar Anlamda Sosyal Güvenlik' kavramının odaklandığı temel unsurdur?", o: ["Tüm toplumsal refah hizmetleri", "Gelir kesilmesinin telafisi ve gider artışlarının karşılanması", "Eğitim ve konut politikaları", "Çevre sorunlarıyla mücadele", "Adalet sisteminin iyileştirilmesi"], a: 1 },
+        { q: "Aşağıdakilerden hangisi sosyal güvenliğin kapsadığı 'Fizyolojik Tehlikeler'den biridir?", o: ["İşsizlik", "İş kazası", "Yaşlılık", "Enflasyon", "Savaş"], a: 2 },
+        { q: "Modern sosyal güvenlik sistemlerinin tarihsel kökeni hangi ülkedeki uygulamalara dayanır?", o: ["İngiltere", "Fransa", "Almanya", "ABD", "Sovyetler Birliği"], a: 2 },
+        { q: "İlk sosyal sigorta uygulamaları kim tarafından kurulmuştur?", o: ["Winston Churchill", "Otto Von Bismarck", "Franklin D. Roosevelt", "William Beveridge", "Karl Marx"], a: 1 },
+        { q: "Almanya'da kurulan ilk sosyal sigorta kolu hangisidir?", o: ["Yaşlılık Sigortası", "İş Kazaları Sigortası", "Hastalık Sigortası", "İşsizlik Sigortası", "Analık Sigortası"], a: 2 },
+        { q: "Hastalık Sigortası Almanya'da hangi tarihte yasalaşmıştır?", o: ["1881", "1883", "1884", "1889", "1901"], a: 1 },
+        { q: "Beveridge Modeli'nin en temel özelliği aşağıdakilerden hangisidir?", o: ["Sadece işçileri kapsaması", "Prim esasına dayanması", "Vergilerle finanse edilmesi ve vatandaşlık esasına dayanması", "Özel sektör tarafından yönetilmesi", "Sadece yaşlıları koruması"], a: 2 },
+        { q: "Sosyal sigortalar ile özel sigortalar arasındaki en temel farklardan biri olan 'Garantörlük' ilkesi neyi ifade eder?", o: ["Özel sigortaların devlet tarafından desteklenmesini", "Sosyal sigortalarda açık oluşması durumunda devletin bu açıkları kapatmasını", "İşverenin işçiye borç vermesini", "Sendikaların grev hakkını", "Bankaların kredi garantisi vermesini"], a: 1 },
+        { q: "Aşağıdakilerden hangisi ILO'nun 102 sayılı sözleşmesinde belirtilen 9 sosyal güvenlik riskinden biri DEĞİLDİR?", o: ["Hastalık", "İşsizlik", "Boşanma", "Analık", "Malullük"], a: 2 },
+        { q: "Sosyal sigortaların finansmanında kullanılan temel yöntem nedir?", o: ["Sadece devlet vergileri", "Sadece bağışlar", "Çalışan ve işverenden alınan primler", "Vakıf gelirleri", "Para basımı"], a: 2 },
+        { q: "Türkiye'de sosyal sigortaların fiilen kurulması hangi yılda gerçekleşmiştir?", o: ["1923", "1936", "1945", "1961", "2006"], a: 2 },
+        { q: "Türkiye'de 1945 yılında kurulan İşçi Sigortaları Kurumu bünyesinde ilk oluşturulan sigorta kolu hangisidir?", o: ["Yaşlılık", "Hastalık", "İş Kazaları ve Meslek Hastalıkları ile Analık", "İşsizlik", "Ölüm"], a: 2 },
+        { q: "1964 yılında kabul edilen ve farklı sigorta kollarını tek çatı altında toplayan kanun hangisidir?", o: ["3008 sayılı İş Kanunu", "1475 sayılı İş Kanunu", "506 sayılı Sosyal Sigortalar Kanunu", "5510 sayılı Kanun", "6331 sayılı İSG Kanunu"], a: 2 },
+        { q: "Aşağıdakilerden hangisi 'Geleneksel Sosyal Güvenlik Yöntemleri'nden biri değildir?", o: ["Bireysel Tasarruf", "Aile İçi Yardımlaşma", "Sosyal Sigortalar", "Hayır Kurumları", "İşveren Mesuliyeti"], a: 2 },
+        { q: "Modern sosyal güvenlik yöntemleri kaça ayrılır?", o: ["2 (Sosyal Sigorta, Sosyal Yardım)", "3 (Sosyal Sigorta, Sosyal Yardım, Kamu Hizmeti)", "1 (Sadece Sigorta)", "4 (Sigorta, Yardım, Hizmet, Vakıf)", "5 (Primsiz, Primli, Özel, Yarı Özel, Karma)"], a: 1 },
+        { q: "Sosyal yardımların temel özelliği nedir?", o: ["Prim ödeme şartına bağlıdır.", "Sadece memurlara verilir.", "Karşılıksızdır ve muhtaçlık şartına bağlıdır.", "Herkes yararlanabilir.", "Özel şirketlerce verilir."], a: 2 },
+        { q: "Sosyal sigortaların 'Zorunluluk İlkesi' ne anlama gelir?", o: ["İsteyen herkesin sigortalı olabilmesi", "Kanun kapsamına girenlerin sisteme katılmak zorunda olması", "İşverenin zor durumda kalması", "Devletin zor kullanması", "Sadece zor işlerde çalışanların sigortalı olması"], a: 1 },
+        { q: "Sosyal sigortalarda 'Gelirin Yeniden Dağılımı' fonksiyonu nasıl işler?", o: ["Zenginden fakire doğru dikey, sağlıklıdan hastaya doğru yatay transfer ile.", "Sadece devletten vatandaşa para vererek.", "Sadece işverenden işçiye para vererek.", "Herkesin kendi biriktirdiğini almasıyla.", "Yurtdışından kredi alarak."], a: 0 },
+        { q: "Sosyal sigortaların yönetim yapısında geçerli olan ilke hangisidir?", o: ["Tamamen özel sektör yönetimi", "Tamamen bürokratik yönetim", "Özerk yönetim (Sosyal tarafların katılımı)", "Uluslararası yönetim", "Yerel yönetim"], a: 2 },
+        { q: "Aşağıdakilerden hangisi sosyal sigortalar ile özel sigortalar arasındaki 'Koruma Birimi' farkıdır?", o: ["Sosyal sigorta bireyi, özel sigorta aileyi korur.", "Her ikisi de sadece bireyi korur.", "Sosyal sigorta aileyi, özel sigorta bireyi (poliçe sahibini) korur.", "Özel sigorta toplumu korur.", "Sosyal sigorta sadece işvereni korur."], a: 2 },
+        { q: "Dünyada 'İşsizlik Sigortası' ilk kez hangi ülkede ve ne zaman kurulmuştur?", o: ["Almanya - 1883", "İngiltere - 1911", "Danimarka - 1907", "ABD - 1935", "Fransa - 1945"], a: 2 },
+        { q: "Aşağıdakilerden hangisi 'Kısa Vadeli Sigorta Kolları'ndan biridir?", o: ["Yaşlılık", "Malullük", "Ölüm", "Hastalık", "Emeklilik"], a: 3 },
+        { q: "Uzun vadeli sigorta kolları hangileridir?", o: ["Hastalık, Analık, İş Kazası", "Malullük, Yaşlılık, Ölüm", "İşsizlik, Aile Yardımı", "Trafik, Kasko, DASK", "Sağlık, Eğitim, Güvenlik"], a: 1 },
+        { q: "İş kazası sigortasının temel amacı nedir?", o: ["İşçiyi işten atmak", "İşyerinde meydana gelen kaza sonucu uğranılan zararları (gelir kaybı/sağlık) karşılamak", "İşvereni cezalandırmak", "Üretimi artırmak", "İşçiye tatil vermek"], a: 1 },
+        { q: "Meslek hastalığı ne demektir?", o: ["İşçinin evde hastalanması", "İşçinin tatilde hastalanması", "İşin niteliğinden veya çalışma koşullarından dolayı tekrarlanan bir sebeple uğranılan hastalık", "Genetik hastalıklar", "Salgın hastalıklar"], a: 2 },
+        { q: "Analık sigortası kimleri kapsar?", o: ["Sadece erkek çalışanları", "Sadece emeklileri", "Sigortalı kadını veya sigortalı erkeğin sigortalı olmayan eşini", "Sadece çocukları", "Herkesi"], a: 2 },
+        { q: "Sosyal sigortalarda 'Malullük' genellikle çalışma gücünün en az ne kadarının kaybı olarak tanımlanır?", o: ["%10", "%25", "%40", "%60 (veya 2/3)", "%90"], a: 3 },
+        { q: "Yaşlılık sigortasından yararlanmak için genellikle hangi şartlar aranır?", o: ["Sadece yaş", "Sadece prim ödeme", "Belirli bir yaşın doldurulması ve belirli bir süre prim ödenmiş olması", "Hiçbir şart aranmaz", "Sadece işverenin onayı"], a: 2 },
+        { q: "Ölüm sigortası kime yöneliktir?", o: ["Ölen sigortalının kendisine", "Ölen sigortalının geride kalan hak sahiplerine (dul ve yetimlere)", "İşverene", "Devlete", "Mezarlık görevlilerine"], a: 1 },
+        { q: "Kamu Hizmeti yöntemi ile finanse edilen sosyal güvenlik harcamalarının kaynağı nedir?", o: ["Primler", "Vergiler (Devlet Bütçesi)", "Bağışlar", "Kişisel tasarruflar", "Dış borçlar"], a: 1 },
+        { q: "Türkiye'de Bireysel Emeklilik Sistemi (BES) sosyal güvenliğin hangi türüne örnektir?", o: ["Zorunlu Sosyal Sigorta", "Sosyal Yardım", "Kamu Hizmeti", "Tamamlayıcı Sosyal Güvenlik", "Vakıf Hizmeti"], a: 3 },
+        { q: "Sosyal sigortaların finansmanında kullanılan 'Dağıtım Yöntemi' (Pay-as-you-go) neyi ifade eder?", o: ["Herkesin kendi hesabına para biriktirmesi", "Toplanan primlerin yatırıma yönlendirilmesi", "Aktif çalışanların ödediği primlerin o dönemdeki emeklilere maaş olarak ödenmesi", "Devletin para basması", "Banka kredisi kullanılması"], a: 2 },
+        { q: "İşsizlik sigortası dünyada neden en geç gelişen sigorta koludur?", o: ["İşsizlik riskinin tanımının ve finansmanının zor olması", "İşsizliğin az olması", "İşçilerin istememesi", "İşverenlerin çok istekli olması", "Teknolojinin yetersizliği"], a: 0 },
+        { q: "ILO'nun sosyal güvenlik tanımında yer alan 'Aile gelirinin yetersizliği' riski hangi ödenekle karşılanır?", o: ["İşsizlik ödeneği", "Hastalık ödeneği", "Aile ödenekleri (Çocuk yardımı vb.)", "Emekli maaşı", "Kıdem tazminatı"], a: 2 },
+        { q: "Sosyal güvenliğin finansman yöntemlerinden 'Fon Biriktirme' (Kapitalizasyon) yöntemi daha çok hangi sigorta kollarında kullanılır?", o: ["Kısa vadeli (Hastalık)", "Uzun vadeli (Yaşlılık/Emeklilik)", "İşsizlik", "Analık", "Sağlık"], a: 1 },
+        { q: "Özel sigortaların 'Seçicilik' özelliği ne anlama gelir?", o: ["Herkesi sigorta yapması", "Yüksek riskli kişileri sigortalamaması veya yüksek prim istemesi", "Rastgele seçim yapması", "Seçimlerde oy kullanması", "Devlet tarafından seçilmesi"], a: 1 },
+        { q: "Sosyal sigortalarda prim miktarı genellikle neye göre belirlenir?", o: ["Riskin büyüklüğüne göre", "Kişinin yaşına göre", "Kişinin cinsiyetine göre", "Kişinin gelirine (kazancına) göre", "Kişinin eğitim durumuna göre"], a: 3 },
+        { q: "Türkiye'de 1949 yılında kurulan Emekli Sandığı hangi kesime hizmet vermek için kurulmuştu?", o: ["İşçiler", "Esnaf", "Çiftçiler", "Kamu Görevlileri (Memurlar)", "Tüccarlar"], a: 3 },
+        { q: "Türkiye'de 1971 yılında kurulan Bağ-Kur hangi kesime hizmet veriyordu?", o: ["Bağımsız çalışanlar (Esnaf ve Sanatkarlar)", "İşçiler", "Memurlar", "Öğrenciler", "Ev hanımları"], a: 0 },
+        { q: "Sosyal politikanın en kapsamlı aracı hangisidir?", o: ["Ücret politikası", "Vergi politikası", "Sosyal güvenlik", "Eğitim politikası", "Tarım politikası"], a: 2 },
+        { q: "Hastalık sigortası kapsamında sağlanan 'Geçici İş Göremezlik Ödeneği' neyi amaçlar?", o: ["Tedavi masraflarını karşılamak", "Hastalık nedeniyle çalışılamayan günlerdeki gelir kaybını telafi etmek", "İlaç parası vermek", "Doktor maaşını ödemek", "Hastane yapmak"], a: 1 },
+        { q: "Aşağıdakilerden hangisi Sosyal Güvenliğin psikolojik işlevidir?", o: ["Yatırımları artırmak", "Gelir dağılımını düzeltmek", "Bireye yarına güven duygusu vermek", "Tasarrufları artırmak", "Tüketimi kısmak"], a: 2 },
+        { q: "İş kazaları ve meslek hastalıkları sigortasının primlerini kim öder?", o: ["Sadece işçi", "İşçi ve işveren ortak", "Sadece işveren", "Sadece devlet", "Belediyeler"], a: 2 },
+        { q: "Sosyal güvenlik harcamalarının Gayrisafi Yurtiçi Hasıla (GSYİH) içindeki payı neyin göstergesidir?", o: ["Askeri gücün", "Nüfus yoğunluğunun", "Sosyal devlet ilkesinin ve refah seviyesinin", "Enflasyon oranının", "Döviz kurunun"], a: 2 },
+        { q: "Türkiye'de sosyal güvenlik sisteminde reform yapılarak tüm kurumların (SSK, Bağ-Kur, Emekli Sandığı) tek çatı altında toplandığı kurumun adı nedir?", o: ["İş ve İşçi Bulma Kurumu", "Sosyal Hizmetler Kurumu", "Sosyal Güvenlik Kurumu (SGK)", "Kızılay", "Yeşilay"], a: 2 },
+        { q: "Aşağıdakilerden hangisi 'Sosyal Risk' kavramının özelliklerinden biridir?", o: ["Bireyin kendi iradesiyle ortaya çıkması", "Sonuçlarının sadece bireyi ilgilendirmesi", "Toplumsal nitelikli olması ve gelir kaybına/gider artışına yol açması", "Önlenebilir olmaması", "Sadece doğal afetlerden oluşması"], a: 2 },
+        { q: "Sosyal sigortalarda 'Teklik İlkesi' neyi ifade eder?", o: ["Herkesin tek bir sigortası olması gerektiğini (mükerrer sigortalılığın önlenmesi)", "Sadece bir riskin karşılanmasını", "Tek bir prim ödenmesini", "Sadece tek kişinin yararlanmasını", "Tek bir hastaneye gidilmesini"], a: 0 },
+        { q: "Türkiye'de İşsizlik Sigortası hangi tarihte yasalaşmıştır (uygulamaya girmese de)?", o: ["1936", "1945", "1971", "1999", "2010"], a: 3 },
+        { q: "Sosyal güvenlik hakkı Anayasa'mızın hangi maddesinde düzenlenmiştir?", o: ["Madde 10", "Madde 40", "Madde 60 (Herkes sosyal güvenlik hakkına sahiptir)", "Madde 80", "Madde 100"], a: 2 }
     ];
 
     let currentQuestion = 0;
@@ -615,10 +192,11 @@
         `;
 
         q.o.forEach((opt, index) => {
-            const checked = userAnswers[currentQuestion] === index ? 'checked' : '';
+            const isSelected = userAnswers[currentQuestion] === index ? 'selected' : '';
+            const isChecked = userAnswers[currentQuestion] === index ? 'checked' : '';
             html += `
-                <label>
-                    <input type="radio" name="q${currentQuestion}" value="${index}" onclick="selectAnswer(${index})" ${checked}>
+                <label class="option-label ${isSelected}" id="opt-${index}">
+                    <input type="radio" name="q${currentQuestion}" value="${index}" onclick="selectAnswer(${index})" ${isChecked}>
                     ${String.fromCharCode(65 + index)}) ${opt}
                 </label>
             `;
@@ -627,8 +205,12 @@
         html += `</div></div>`;
         container.innerHTML = html;
 
-        document.getElementById('progress').innerText = `Soru ${currentQuestion + 1} / ${questions.length}`;
+        // Progress Bar
+        const progressPercent = ((currentQuestion + 1) / questions.length) * 100;
+        document.getElementById('progress-bar').style.width = progressPercent + '%';
+        document.getElementById('progress-text').innerText = `Soru ${currentQuestion + 1} / ${questions.length}`;
         
+        // Buton Yönetimi
         document.getElementById('prevBtn').disabled = currentQuestion === 0;
         
         if (currentQuestion === questions.length - 1) {
@@ -642,6 +224,23 @@
 
     function selectAnswer(index) {
         userAnswers[currentQuestion] = index;
+        // Görsel güncelleme
+        const labels = document.querySelectorAll('.option-label');
+        labels.forEach(label => label.classList.remove('selected'));
+        document.getElementById(`opt-${index}`).classList.add('selected');
+    }
+
+    function showCurrentAnswer() {
+        const correctIndex = questions[currentQuestion].a;
+        const correctLabel = document.getElementById(`opt-${correctIndex}`);
+        
+        // Doğru cevabı yeşil yap
+        correctLabel.classList.add('correct-highlight');
+        
+        // Eğer kullanıcı yanlış cevap verdiyse onu kırmızı yap
+        if (userAnswers[currentQuestion] !== null && userAnswers[currentQuestion] !== correctIndex) {
+            document.getElementById(`opt-${userAnswers[currentQuestion]}`).classList.add('wrong-highlight');
+        }
     }
 
     function nextQuestion() {
@@ -659,43 +258,61 @@
     }
 
     function finishQuiz() {
-        let score = 0;
-        let reviewHtml = '<h3>Cevap Anahtarı ve Değerlendirme</h3>';
+        let correctCount = 0;
+        let wrongCount = 0;
+        let emptyCount = 0;
+        let reviewHtml = '';
 
         questions.forEach((q, index) => {
             const userAnswer = userAnswers[index];
             const isCorrect = userAnswer === q.a;
-            if (isCorrect) score++;
+            
+            let statusText = '';
+            let statusClass = '';
+
+            if (userAnswer === null) {
+                emptyCount++;
+                statusText = 'Boş';
+                statusClass = 'status-empty';
+            } else if (isCorrect) {
+                correctCount++;
+                statusText = 'Doğru';
+                statusClass = 'status-correct';
+            } else {
+                wrongCount++;
+                statusText = 'Yanlış';
+                statusClass = 'status-wrong';
+            }
 
             reviewHtml += `
-                <div class="review-item" style="border-left-color: ${isCorrect ? 'green' : 'red'}">
-                    <div><strong>${index + 1}. ${q.q}</strong></div>
-                    <div class="${isCorrect ? 'correct' : 'wrong'}">
-                        Senin Cevabın: ${userAnswer !== null ? String.fromCharCode(65 + userAnswer) + ') ' + q.o[userAnswer] : 'Boş'}
-                    </div>
-                    <div class="correct">
-                        Doğru Cevap: ${String.fromCharCode(65 + q.a)}) ${q.o[q.a]}
-                    </div>
-                </div>
+                <tr>
+                    <td>${index + 1}</td>
+                    <td>${q.q}</td>
+                    <td>${userAnswer !== null ? String.fromCharCode(65 + userAnswer) + ') ' + q.o[userAnswer] : '-'}</td>
+                    <td>${String.fromCharCode(65 + q.a)}) ${q.o[q.a]}</td>
+                    <td class="${statusClass}">${statusText}</td>
+                </tr>
             `;
         });
 
-        const container = document.getElementById('quiz-container');
-        const controls = document.querySelector('.controls');
-        const resultDiv = document.getElementById('result');
-        const reviewDiv = document.getElementById('review');
+        // Ekranları değiştir
+        document.getElementById('quiz-screen').style.display = 'none';
+        document.getElementById('result-screen').style.display = 'block';
 
-        container.style.display = 'none';
-        controls.style.display = 'none';
+        // Puan Hesapla
+        const score = (correctCount * 2); // 50 soru * 2 puan = 100
         
-        resultDiv.style.display = 'block';
-        resultDiv.innerHTML = `Test Bitti!<br>Doğru Sayısı: ${score} / 50<br>Başarı Oranı: %${(score/50*100).toFixed(0)}`;
+        document.getElementById('score-circle').innerText = score;
+        document.getElementById('score-details').innerHTML = `
+            <strong>Doğru:</strong> ${correctCount} | 
+            <strong>Yanlış:</strong> ${wrongCount} | 
+            <strong>Boş:</strong> ${emptyCount}
+        `;
         
-        reviewDiv.style.display = 'block';
-        reviewDiv.innerHTML = reviewHtml;
+        document.getElementById('review-body').innerHTML = reviewHtml;
     }
 
-    // Başlangıçta ilk soruyu yükle
+    // Başlangıç
     loadQuestion();
 
 </script>
