@@ -3,246 +3,345 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sosyal Güvenlik Kavramı - Deneme Sınavı</title>
+    <title>Sosyal Sigortalar Testi</title>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: #f0f2f5;
-            padding: 20px;
             color: #333;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
         }
         .container {
             max-width: 800px;
             margin: 0 auto;
+            background: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
         }
         h1 {
             text-align: center;
             color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
         }
-        .question-card {
-            background-color: #fff;
-            border-radius: 10px;
+        .question-box {
+            margin-bottom: 25px;
             padding: 20px;
-            margin-bottom: 20px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            border: 1px solid #e1e1e1;
+            border-radius: 8px;
+            background-color: #fafafa;
         }
         .question-text {
+            font-weight: 600;
             font-size: 1.1em;
-            font-weight: bold;
             margin-bottom: 15px;
             color: #2c3e50;
         }
+        /* Düzeltme: Şıkların görünürlüğünü garanti altına almak için */
         .options {
             list-style-type: none;
             padding: 0;
+            margin: 0;
+            display: block; /* Görünür yap */
         }
         .options li {
-            padding: 8px 10px;
-            border-bottom: 1px solid #eee;
+            margin-bottom: 10px;
+            display: block; /* Görünür yap */
         }
-        .options li:last-child {
-            border-bottom: none;
+        .option-btn {
+            width: 100%;
+            padding: 12px;
+            text-align: left;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.95em;
+            color: #333; /* Metin rengi */
+            display: block; /* Butonu görünür yap */
         }
-        .btn-show {
+        .option-btn:hover {
+            background-color: #e8f4fc;
+            border-color: #3498db;
+        }
+        .correct {
+            background-color: #d4edda !important;
+            border-color: #28a745 !important;
+            color: #155724 !important;
+        }
+        .wrong {
+            background-color: #f8d7da !important;
+            border-color: #dc3545 !important;
+            color: #721c24 !important;
+        }
+        .feedback {
+            margin-top: 10px;
+            font-size: 0.9em;
+            font-weight: bold;
+            display: none;
+        }
+        .result-box {
+            text-align: center;
+            margin-top: 30px;
+            padding: 20px;
+            background-color: #2c3e50;
+            color: white;
+            border-radius: 8px;
+            display: none;
+        }
+        button#finish-btn {
+            display: block;
+            width: 100%;
+            padding: 15px;
             background-color: #3498db;
             color: white;
             border: none;
-            padding: 10px 20px;
             border-radius: 5px;
+            font-size: 1.1em;
             cursor: pointer;
-            margin-top: 10px;
-            font-size: 0.9em;
-            transition: background 0.3s;
+            margin-top: 20px;
         }
-        .btn-show:hover {
+        button#finish-btn:hover {
             background-color: #2980b9;
         }
-        .answer-box {
-            display: none; /* Başlangıçta gizli */
-            margin-top: 15px;
-            padding: 15px;
-            background-color: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-            border-radius: 5px;
-        }
-        .correct-opt {
-            font-weight: bold;
-        }
     </style>
-    <script>
-        function toggleAnswer(id) {
-            var answerDiv = document.getElementById('ans-' + id);
-            var btn = document.getElementById('btn-' + id);
-            
-            if (answerDiv.style.display === 'block') {
-                answerDiv.style.display = 'none';
-                btn.textContent = 'Cevabı Göster';
-            } else {
-                answerDiv.style.display = 'block';
-                btn.textContent = 'Cevabı Gizle';
-            }
-        }
-    </script>
 </head>
 <body>
 
 <div class="container">
-    <h1>Sosyal Güvenlik Kavramı Testi</h1>
-    <p style="text-align: center;">Toplam 10 Soru - Başarılar!</p>
+    <h1>Sosyal Sigortalar Değerlendirme Testi</h1>
+    <p style="text-align:center; color:#666;">Aşağıdaki soruları metne göre cevaplayınız.</p>
 
-    <div class="question-card">
-        <div class="question-text">1. "Sosyal Güvenlik" terimi resmi olarak ilk kez hangi belge veya kanunda kullanılmıştır?</div>
-        <ul class="options">
-            <li>A) 1948 İnsan Hakları Evrensel Bildirgesi</li>
-            <li>B) 1941 Atlantik Şartı</li>
-            <li>C) 1935 Amerikan Sosyal Güvenlik Kanunu</li>
-            <li>D) 1919 ILO Anayasası</li>
-            <li>E) 1789 Fransız İnsan ve Yurttaş Hakları Bildirgesi</li>
-        </ul>
-        <button id="btn-1" class="btn-show" onclick="toggleAnswer(1)">Cevabı Göster</button>
-        <div id="ans-1" class="answer-box">
-            Doğru Cevap: <span class="correct-opt">C) 1935 Amerikan Sosyal Güvenlik Kanunu (The Social Security Act)</span>
+    <div id="quiz-area">
         </div>
-    </div>
 
-    <div class="question-card">
-        <div class="question-text">2. Sosyal güvenliğin finansmanında temel olan ve gençlerden yaşlılara, sağlıklılardan hastalara kaynak aktarımını ifade eden mekanizma nedir?</div>
-        <ul class="options">
-            <li>A) Bireysel Tasarruf</li>
-            <li>B) Özel Sigorta</li>
-            <li>C) Gelir Transferi</li>
-            <li>D) Hayırseverlik</li>
-            <li>E) Zorunlu Bağış</li>
-        </ul>
-        <button id="btn-2" class="btn-show" onclick="toggleAnswer(2)">Cevabı Göster</button>
-        <div id="ans-2" class="answer-box">
-            Doğru Cevap: <span class="correct-opt">C) Gelir Transferi</span>
-        </div>
-    </div>
+    <button id="finish-btn" onclick="showResult()">Testi Bitir ve Sonucu Gör</button>
 
-    <div class="question-card">
-        <div class="question-text">3. Aşağıdakilerden hangisi "Dar Anlamda Sosyal Güvenlik" kapsamında ILO tarafından belirlenen 9 temel riskten biri değildir?</div>
-        <ul class="options">
-            <li>A) Hastalık</li>
-            <li>B) İşsizlik</li>
-            <li>C) Konut İhtiyacı</li>
-            <li>D) Analık</li>
-            <li>E) Yaşlılık</li>
-        </ul>
-        <button id="btn-3" class="btn-show" onclick="toggleAnswer(3)">Cevabı Göster</button>
-        <div id="ans-3" class="answer-box">
-            Doğru Cevap: <span class="correct-opt">C) Konut İhtiyacı</span><br>
-            <small>(Konut ihtiyacı geniş anlamda sosyal güvenliğin konusudur.)</small>
-        </div>
+    <div id="result-box" class="result-box">
+        <h2>Test Sonucu</h2>
+        <p id="score-text"></p>
+        <button onclick="location.reload()" style="padding:10px 20px; cursor:pointer; color:#333; background: #fff; border:none; border-radius:5px;">Testi Tekrar Çöz</button>
     </div>
-
-    <div class="question-card">
-        <div class="question-text">4. Metne göre "Tehlike (Sosyal Risk)" kavramının tanımı aşağıdakilerden hangisidir?</div>
-        <ul class="options">
-            <li>A) Kişinin kendi isteğiyle işten ayrılması durumudur.</li>
-            <li>B) Sadece doğal afetler sonucu oluşan zararlardır.</li>
-            <li>C) İnsanların iradeleri dışında meydana gelen, onlara zarar vererek muhtaç duruma düşüren olaylardır.</li>
-            <li>D) Devletin ekonomik politikalarındaki başarısızlıklardır.</li>
-            <li>E) İşverenin işçiye ödemediği ücretlerden doğan zararlardır.</li>
-        </ul>
-        <button id="btn-4" class="btn-show" onclick="toggleAnswer(4)">Cevabı Göster</button>
-        <div id="ans-4" class="answer-box">
-            Doğru Cevap: <span class="correct-opt">C) İnsanların iradeleri dışında meydana gelen olaylar.</span>
-        </div>
-    </div>
-
-    <div class="question-card">
-        <div class="question-text">5. "Önlemek, ödemekten ucuzdur" ilkesi, sosyal güvenliğin hangi boyutunu yansıtmaktadır?</div>
-        <ul class="options">
-            <li>A) Dar anlamda sosyal güvenlik</li>
-            <li>B) Geniş anlamda sosyal güvenlik</li>
-            <li>C) Bireysel emeklilik</li>
-            <li>D) Özel sağlık sigortası</li>
-            <li>E) Geleneksel yardımlaşma</li>
-        </ul>
-        <button id="btn-5" class="btn-show" onclick="toggleAnswer(5)">Cevabı Göster</button>
-        <div id="ans-5" class="answer-box">
-            Doğru Cevap: <span class="correct-opt">B) Geniş anlamda sosyal güvenlik</span>
-        </div>
-    </div>
-
-    <div class="question-card">
-        <div class="question-text">6. Aşağıdakilerden hangisi sosyal güvenlik teriminin uluslararası alanda yaygınlaşmasını sağlayan belgelerden biri değildir?</div>
-        <ul class="options">
-            <li>A) 1941 Atlantik Şartı</li>
-            <li>B) 1948 BM İnsan Hakları Evrensel Bildirgesi</li>
-            <li>C) ILO Belgeleri</li>
-            <li>D) 1935 Amerikan Sosyal Güvenlik Kanunu</li>
-            <li>E) 1839 Tanzimat Fermanı</li>
-        </ul>
-        <button id="btn-6" class="btn-show" onclick="toggleAnswer(6)">Cevabı Göster</button>
-        <div id="ans-6" class="answer-box">
-            Doğru Cevap: <span class="correct-opt">E) 1839 Tanzimat Fermanı</span>
-        </div>
-    </div>
-
-    <div class="question-card">
-        <div class="question-text">7. Geniş anlamda sosyal güvenliği, dar anlamda sosyal güvenlikten ayıran temel fark nedir?</div>
-        <ul class="options">
-            <li>A) Sadece yaşlıları kapsaması</li>
-            <li>B) Sadece çalışanları kapsaması</li>
-            <li>C) Sebebi ne olursa olsun muhtaçlık yaratan her türlü duruma karşı koruma sağlaması</li>
-            <li>D) Sadece iş kazalarını tazmin etmesi</li>
-            <li>E) Gelir transferi mekanizmasını kullanmaması</li>
-        </ul>
-        <button id="btn-7" class="btn-show" onclick="toggleAnswer(7)">Cevabı Göster</button>
-        <div id="ans-7" class="answer-box">
-            Doğru Cevap: <span class="correct-opt">C) Sebebi ne olursa olsun muhtaçlık yaratan her türlü durum</span>
-        </div>
-    </div>
-
-    <div class="question-card">
-        <div class="question-text">8. İnsanların çalışma hayatına yönelik hak ettikleri ücret ve çalışma süresi gibi olumlu beklentilerinin gerçekleştiği durumu ifade eden kavram nedir?</div>
-        <ul class="options">
-            <li>A) Sosyal Diyalog</li>
-            <li>B) İş Güvencesi</li>
-            <li>C) İnsana Yakışır İş (Düzgün İş)</li>
-            <li>D) Tam İstihdam</li>
-            <li>E) Esnek Çalışma</li>
-        </ul>
-        <button id="btn-8" class="btn-show" onclick="toggleAnswer(8)">Cevabı Göster</button>
-        <div id="ans-8" class="answer-box">
-            Doğru Cevap: <span class="correct-opt">C) İnsana Yakışır İş (Düzgün İş)</span>
-        </div>
-    </div>
-
-    <div class="question-card">
-        <div class="question-text">9. Metne göre sosyal güvenlik ihtiyacı ile sosyal güvenlik teriminin ortaya çıkışı arasındaki ilişki nasıldır?</div>
-        <ul class="options">
-            <li>A) İhtiyaç yenidir, terim eskidir.</li>
-            <li>B) İhtiyaç insanlıkla yaşıttır, ancak terim kullanımı oldukça yenidir.</li>
-            <li>C) Terim ve ihtiyaç aynı anda Sanayi Devrimi ile ortaya çıkmıştır.</li>
-            <li>D) Sosyal güvenlik terimi, ihtiyaçtan önce ortaya çıkmıştır.</li>
-            <li>E) Sosyal güvenlik ihtiyacı 20. yüzyılda başlamıştır.</li>
-        </ul>
-        <button id="btn-9" class="btn-show" onclick="toggleAnswer(9)">Cevabı Göster</button>
-        <div id="ans-9" class="answer-box">
-            Doğru Cevap: <span class="correct-opt">B) İhtiyaç insanlıkla yaşıttır, ancak terim kullanımı oldukça yenidir.</span>
-        </div>
-    </div>
-
-    <div class="question-card">
-        <div class="question-text">10. Aşağıdakilerden hangisi "Geniş Anlamda Sosyal Güvenlik"in ilgi alanına giren konulardan biridir?</div>
-        <ul class="options">
-            <li>A) Sadece meslek hastalıklarının tedavisi</li>
-            <li>B) Sadece emekli maaşı bağlanması</li>
-            <li>C) Şehirleşme, çevre kirliliği ve konut sorunu</li>
-            <li>D) Sadece iş kazası sonucu tazminat ödenmesi</li>
-            <li>E) Sadece analık sigortası yardımları</li>
-        </ul>
-        <button id="btn-10" class="btn-show" onclick="toggleAnswer(10)">Cevabı Göster</button>
-        <div id="ans-10" class="answer-box">
-            Doğru Cevap: <span class="correct-opt">C) Şehirleşme, çevre kirliliği ve konut sorunu</span>
-        </div>
-    </div>
-
 </div>
+
+<script>
+    // Sorular Veritabanı
+    const questions = [
+        {
+            text: "1. Sosyal sigortalar hangi toplum yapısının değişen güvenlik ihtiyaçlarına cevap vermek üzere geliştirilmiştir?",
+            options: [
+                "A) Tarım toplumu",
+                "B) Göçebe toplum",
+                "C) Sanayi toplumu",
+                "D) Feodal toplum",
+                "E) Bilgi toplumu"
+            ],
+            correct: 2 // C şıkkı (Index 2)
+        },
+        {
+            text: "2. İlk sosyal sigortalar sistemi hangi ülkede ve kim tarafından kurulmuştur?",
+            options: [
+                "A) İngiltere - William Beveridge",
+                "B) Almanya - Otto Von Bismarck",
+                "C) Fransa - Napoleon",
+                "D) ABD - Roosevelt",
+                "E) İtalya - Mussolini"
+            ],
+            correct: 1 // B şıkkı
+        },
+        {
+            text: "3. İngiliz William Henry Beveridge tarafından geliştirilen 'Beveridge Modeli'nin temel özelliği aşağıdakilerden hangisidir?",
+            options: [
+                "A) Sadece işçileri kapsaması",
+                "B) Tamamen özel sigorta şirketlerince yönetilmesi",
+                "C) İşveren sorumluluğunu esas alması",
+                "D) Vergilerle finanse edilmesi ve primsiz asgari koruma sağlaması",
+                "E) Sadece iş kazalarını kapsaması"
+            ],
+            correct: 3 // D şıkkı
+        },
+        {
+            text: "4. Türkiye'de ilk sosyal sigorta kurumu (İşçi Sigortaları İdaresi) hangi yıl oluşturulmuştur?",
+            options: [
+                "A) 1923",
+                "B) 1938",
+                "C) 1945",
+                "D) 1950",
+                "E) 1964"
+            ],
+            correct: 2 // C şıkkı
+        },
+        {
+            text: "5. Sosyal sigortaların özel sigortalardan farkı olan 'Koruma Birimi' açısından durum nedir?",
+            options: [
+                "A) Sosyal sigorta aileyi esas alır, özel sigorta ferdi esas alır.",
+                "B) Özel sigorta aileyi esas alır, sosyal sigorta ferdi esas alır.",
+                "C) Her ikisi de sadece ferdi esas alır.",
+                "D) Sosyal sigortalar sadece işvereni korur.",
+                "E) Özel sigortalar aileyi ücretsiz kapsama alır."
+            ],
+            correct: 0 // A şıkkı
+        },
+        {
+            text: "6. Sosyal sigortalar finansman problemleri yaşadığında ne olur?",
+            options: [
+                "A) Kurum iflas eder ve kapanır.",
+                "B) Sigortalıların hakları tamamen silinir.",
+                "C) Devlet garantör olduğu için açıklar devletçe kapatılır, iflas etmez.",
+                "D) Özel şirketlere devredilir.",
+                "E) Sadece dış borç alınarak çözülür."
+            ],
+            correct: 2 // C şıkkı
+        },
+        {
+            text: "7. Risk farklılaştırması (risk analizi) açısından sosyal sigortaların yaklaşımı nasıldır?",
+            options: [
+                "A) Yüksek riskli kişilerden daha yüksek prim alır.",
+                "B) Yaşlı ve hastaları sigorta kapsamına almaz.",
+                "C) Gelir-gider dengesi için riskli grupları dışlar.",
+                "D) Risk durumu ne olursa olsun herkesi kapsar ve gelirine göre prim alır.",
+                "E) Sadece genç ve sağlıklı bireyleri sigortalar."
+            ],
+            correct: 3 // D şıkkı
+        },
+        {
+            text: "8. Sosyal sigortaların finansmanında 'Finansmana Katılım İlkesi' neyi ifade eder?",
+            options: [
+                "A) Sadece devletin vergi ödemesini",
+                "B) Sadece işverenin tüm masrafları karşılamasını",
+                "C) Sigortalı, işveren ve devletin (bazı durumlarda) finansmana katılımını",
+                "D) Finansmanın tamamen bağışlarla sağlanmasını",
+                "E) Banka kredilerinin kullanılmasını"
+            ],
+            correct: 2 // C şıkkı
+        },
+        {
+            text: "9. Almanya'da kurulan ilk sigorta kolları hangi sırayla yasalaşmıştır?",
+            options: [
+                "A) İşsizlik - Hastalık - İş Kazası",
+                "B) Hastalık (1883) - İş Kazaları (1884) - Malullük/Yaşlılık (1889)",
+                "C) Yaşlılık - İşsizlik - Hastalık",
+                "D) İş Kazası - Analık - Ölüm",
+                "E) Analık - Hastalık - İşsizlik"
+            ],
+            correct: 1 // B şıkkı
+        },
+        {
+            text: "10. Sosyal sigortaların yönetimi ile ilgili 'Özerk Yönetim İlkesi' ne demektir?",
+            options: [
+                "A) Yönetimin tamamen özel sektöre ait olması",
+                "B) Devlet tarafından kurulmasına rağmen yönetime sosyal tarafların (işçi-işveren) da katılması",
+                "C) Kurumun devletten tamamen bağımsız hareket etmesi",
+                "D) Yöneticilerin sadece işçiler tarafından seçilmesi",
+                "E) Kurumun uluslararası kuruluşlarca yönetilmesi"
+            ],
+            correct: 1 // B şıkkı
+        }
+    ];
+
+    let score = 0;
+    let answersGiven = 0;
+
+    function loadQuiz() {
+        const quizArea = document.getElementById("quiz-area");
+        
+        questions.forEach((q, index) => {
+            // 1. Soru kutusunu oluştur
+            const questionBox = document.createElement("div");
+            questionBox.className = "question-box";
+            
+            // 2. Soru başlığını ekle
+            const questionTitle = document.createElement("div");
+            questionTitle.className = "question-text";
+            questionTitle.innerText = q.text;
+            questionBox.appendChild(questionTitle);
+
+            // 3. Şıklar listesini (UL) oluştur
+            const optionsList = document.createElement("ul");
+            optionsList.className = "options";
+
+            // 4. Şıkları (LI ve Button) döngü ile oluştur ve listeye ekle
+            q.options.forEach((opt, optIndex) => {
+                const li = document.createElement("li");
+                const btn = document.createElement("button");
+                btn.className = "option-btn";
+                btn.innerText = opt;
+                btn.onclick = function() { checkAnswer(this, optIndex, q.correct, index); };
+                li.appendChild(btn);
+                optionsList.appendChild(li);
+            });
+
+            // --- DÜZELTME BURADA YAPILDI ---
+            // Oluşturulan şıklar listesini soru kutusuna ekle.
+            questionBox.appendChild(optionsList);
+            // -------------------------------
+
+            // 5. Geri bildirim alanını ekle
+            const feedback = document.createElement("div");
+            feedback.className = "feedback";
+            feedback.id = "feedback-" + index;
+            questionBox.appendChild(feedback);
+
+            // 6. Hazırlanan soru kutusunu ana alana ekle
+            quizArea.appendChild(questionBox);
+        });
+    }
+
+    function checkAnswer(btn, selectedIndex, correctIndex, questionIndex) {
+        // Bu soru için butonları kilitle
+        const parentLi = btn.parentElement;
+        const parentUl = parentLi.parentElement;
+        const buttons = parentUl.getElementsByClassName("option-btn");
+        
+        // Eğer zaten cevaplandıysa işlem yapma
+        if (parentUl.getAttribute("data-answered") === "true") return;
+
+        parentUl.setAttribute("data-answered", "true");
+        answersGiven++;
+
+        const feedbackDiv = document.getElementById("feedback-" + questionIndex);
+        feedbackDiv.style.display = "block";
+
+        if (selectedIndex === correctIndex) {
+            btn.classList.add("correct");
+            score++;
+            feedbackDiv.style.color = "#155724";
+            feedbackDiv.innerText = "Doğru Cevap! ✔️";
+        } else {
+            btn.classList.add("wrong");
+            // Doğru olanı göster
+            buttons[correctIndex].classList.add("correct");
+            feedbackDiv.style.color = "#721c24";
+            feedbackDiv.innerText = "Yanlış Cevap. Doğru seçenek: " + questions[questionIndex].options[correctIndex];
+        }
+    }
+
+    function showResult() {
+        if (answersGiven < questions.length) {
+            if(!confirm("Hepsini cevaplamadınız. Yine de bitirmek istiyor musunuz?")) return;
+        }
+        
+        document.getElementById("finish-btn").style.display = "none";
+        document.getElementById("result-box").style.display = "block";
+        document.getElementById("quiz-area").style.opacity = "0.5";
+        document.getElementById("quiz-area").style.pointerEvents = "none"; // Test bittikten sonra tıklamayı engelle
+        
+        const scoreText = document.getElementById("score-text");
+        scoreText.innerHTML = "Toplam Soru: " + questions.length + "<br>" +
+                              "Doğru Sayısı: " + score + "<br>" +
+                              "Başarı Oranı: %" + (score / questions.length * 100).toFixed(0);
+        
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+    // Sayfa yüklendiğinde testi başlat
+    window.onload = loadQuiz;
+
+</script>
 
 </body>
 </html>
