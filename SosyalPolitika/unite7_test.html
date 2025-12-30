@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sosyal Politika - 7. Ünite: Özel Olarak Korunması Gereken Gruplar</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #eef2f3; color: #333; margin: 0; padding: 20px; }
+        .container { max-width: 900px; margin: 0 auto; background: #fff; padding: 40px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        h1 { text-align: center; color: #e67e22; border-bottom: 2px solid #d35400; padding-bottom: 10px; margin-bottom: 30px; }
+        
+        /* İlerleme Çubuğu */
+        .progress-container { background-color: #f1f1f1; border-radius: 10px; margin-bottom: 20px; height: 10px; overflow: hidden; }
+        .progress-bar { height: 100%; background-color: #e67e22; width: 0%; transition: width 0.3s; }
+        .progress-text { text-align: right; font-size: 0.9em; color: #7f8c8d; margin-bottom: 15px; }
+
+        /* Soru Alanı */
+        .question-block { display: none; animation: fadeIn 0.5s; }
+        .question-block.active { display: block; }
+        .question-text { font-weight: 600; font-size: 1.25em; margin-bottom: 20px; color: #2c3e50; }
+        
+        /* Seçenekler */
+        .options { display: flex; flex-direction: column; gap: 10px; }
+        .option-label { 
+            display: flex; align-items: center; padding: 12px 15px; border: 2px solid #e0e0e0; 
+            border-radius: 8px; cursor: pointer; transition: all 0.2s; background: #fff;
+        }
+        .option-label:hover { background-color: #f9fbfd; border-color: #bdc3c7; }
+        .option-label.selected { border-color: #e67e22; background-color: #fcf3cf; }
+        .option-label input { margin-right: 15px; transform: scale(1.2); }
+        
+        /* Cevap Göster Stilleri */
+        .option-label.correct-highlight { border-color: #27ae60; background-color: #d5f5e3; color: #1e8449; font-weight: bold; }
+        .option-label.wrong-highlight { border-color: #e74c3c; background-color: #fadbd8; }
+
+        /* Butonlar */
+        .controls { margin-top: 30px; display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
+        button { border: none; padding: 12px 24px; border-radius: 6px; cursor: pointer; font-size: 16px; font-weight: 600; transition: background 0.2s; }
+        .nav-btn { background-color: #e67e22; color: white; }
+        .nav-btn:hover { background-color: #d35400; }
+        .nav-btn:disabled { background-color: #bdc3c7; cursor: not-allowed; }
+        
+        .show-answer-btn { background-color: #34495e; color: white; }
+        .show-answer-btn:hover { background-color: #2c3e50; }
+        
+        .finish-btn { background-color: #27ae60; color: white; display: none; }
+        .finish-btn:hover { background-color: #219150; }
+
+        /* Sonuç Ekranı */
+        #result-screen { display: none; }
+        .score-card { text-align: center; background: #f8f9fa; padding: 20px; border-radius: 10px; margin-bottom: 30px; }
+        .score-circle { 
+            width: 120px; height: 120px; border-radius: 50%; background: #e67e22; color: white; 
+            display: flex; align-items: center; justify-content: center; font-size: 2em; font-weight: bold; 
+            margin: 0 auto 15px; 
+        }
+        
+        .review-table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 0.95em; }
+        .review-table th, .review-table td { padding: 12px; border: 1px solid #ddd; text-align: left; }
+        .review-table th { background-color: #34495e; color: white; }
+        .review-table tr:nth-child(even) { background-color: #f2f2f2; }
+        .status-correct { color: #27ae60; font-weight: bold; }
+        .status-wrong { color: #c0392b; font-weight: bold; }
+        .status-empty { color: #f39c12; font-weight: bold; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div id="quiz-screen">
+        <h1>7. Ünite: Özel Olarak Korunması Gereken Gruplar</h1>
+        
+        <div class="progress-text" id="progress-text">Soru 1 / 50</div>
+        <div class="progress-container">
+            <div class="progress-bar" id="progress-bar"></div>
+        </div>
+        
+        <div id="quiz-container">
+            </div>
+
+        <div class="controls">
+            <div>
+                <button class="nav-btn" id="prevBtn" onclick="prevQuestion()" disabled>&#8592; Önceki</button>
+            </div>
+            <div>
+                <button class="show-answer-btn" onclick="showCurrentAnswer()">👁️ Cevabı Göster</button>
+            </div>
+            <div>
+                <button class="nav-btn" id="nextBtn" onclick="nextQuestion()">Sonraki &#8594;</button>
+                <button class="finish-btn" id="finishBtn" onclick="finishQuiz()">Testi Bitir &#10004;</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="result-screen">
+        <h1>Değerlendirme Sonucu</h1>
+        <div class="score-card">
+            <div class="score-circle" id="score-circle">0</div>
+            <h3>Toplam Puan</h3>
+            <p id="score-details"></p>
+        </div>
+        
+        <h3>Detaylı Soru Analizi</h3>
+        <table class="review-table">
+            <thead>
+                <tr>
+                    <th style="width: 5%">No</th>
+                    <th style="width: 45%">Soru</th>
+                    <th style="width: 20%">Senin Cevabın</th>
+                    <th style="width: 20%">Doğru Cevap</th>
+                    <th style="width: 10%">Durum</th>
+                </tr>
+            </thead>
+            <tbody id="review-body">
+                </tbody>
+        </table>
+        <div style="text-align: center; margin-top: 30px;">
+            <button class="nav-btn" onclick="location.reload()">Testi Tekrar Çöz</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const questions = [
+        { q: "Aşağıdakilerden hangisi 'dezavantajlı grup' kavramı içinde değerlendirilen ve sosyal politikaların özel ilgi alanına giren gruplardan biri değildir?", o: ["Kadınlar", "Engelliler", "Yüksek gelirli profesyoneller", "Eski hükümlüler", "Göçmenler"], a: 2 },
+        { q: "Kadınların çalışma yaşamına kitlesel olarak girişi hangi tarihsel olayla başlamıştır?", o: ["Fransız İhtilali", "Sanayi Devrimi", "I. Dünya Savaşı", "Coğrafi Keşifler", "II. Dünya Savaşı"], a: 1 },
+        { q: "Türkiye'de kadınların işgücüne katılım oranının düşük olmasının nedenlerinden biri aşağıdakilerden hangisi değildir?", o: ["Eğitim düzeyinin düşüklüğü", "Toplumsal cinsiyete dayalı iş bölümü", "Kadınların çalışma isteğinin olmaması", "Geleneksel aile yapısı", "Çocuk ve yaşlı bakımı sorumluluğu"], a: 2 },
+        { q: "4857 sayılı İş Kanunu'na göre, kadın işçilerin hangi işlerde çalıştırılması yasaktır?", o: ["Gece postalarında", "Ağır ve tehlikeli işlerde (bazı kısıtlamalar hariç)", "Yer altı ve su altında yapılan işlerde", "Hizmet sektöründe", "Tekstil sektöründe"], a: 2 },
+        { q: "Anayasa'nın 10. maddesine 2004 ve 2010 yıllarında yapılan eklemelerle kadın-erkek eşitliği konusunda devletin yükümlülüğü nasıl belirlenmiştir?", o: ["Devlet tamamen tarafsız kalmalıdır.", "Kadınlar erkeklerden üstün sayılmalıdır.", "Kadın ve erkek eşit haklara sahiptir, devlet bu eşitliği yaşama geçirmekle yükümlüdür.", "Sadece kamuda eşitlik sağlanmalıdır.", "Pozitif ayrımcılık yasaklanmıştır."], a: 2 },
+        { q: "Kadın işçilere doğumdan önce ve sonra toplam kaç hafta analık izni verilmektedir?", o: ["8 hafta", "12 hafta", "16 hafta (8 önce + 8 sonra)", "20 hafta", "24 hafta"], a: 2 },
+        { q: "Emziren kadın işçilere çocukları 1 yaşına gelene kadar günde ne kadar süt izni verilir?", o: ["30 dakika", "1 saat", "1.5 saat", "2 saat", "3 saat"], a: 2 },
+        { q: "Sanayiye ait işlerde 18 yaşını doldurmuş kadın işçilerin gece çalıştırılabilmesi için temel şart nedir?", o: ["Kocalarından izin almaları", "Belediyeden izin almaları", "Çalışma koşullarının uygun olması ve yönetmelikteki kurallara uyulması", "Sadece bekarların çalışması", "Gece çalışması tamamen yasaktır"], a: 2 },
+        { q: "ILO'nun çocuk işçiliğinin en kötü biçimlerinin yasaklanmasına ilişkin sözleşmesi hangisidir?", o: ["87 sayılı Sözleşme", "102 sayılı Sözleşme", "138 sayılı Sözleşme", "182 sayılı Sözleşme", "158 sayılı Sözleşme"], a: 3 },
+        { q: "Türkiye'de İş Kanunu'na göre kural olarak asgari çalışma yaşı kaçtır?", o: ["12", "13", "14", "15", "16"], a: 3 },
+        { q: "14 yaşını doldurmuş ve zorunlu ilköğretim çağını tamamlamış çocuklar hangi tür işlerde çalıştırılabilir?", o: ["Maden ocaklarında", "Ağır sanayi işlerinde", "Bedensel, zihinsel ve ahlaki gelişmelerine engel olmayacak hafif işlerde", "Gece işlerinde", "İnşaat işlerinde"], a: 2 },
+        { q: "Çocuk ve genç işçilerin günlük çalışma süresi, okula devam edenler için (eğitim saatleri dışında) en fazla kaç saat olabilir?", o: ["2 saat", "4 saat", "5 saat", "7.5 saat", "8 saat"], a: 0 },
+        { q: "Aşağıdakilerden hangisi çocuk işçiliğinin nedenlerinden biri değildir?", o: ["Yoksulluk", "Eğitim imkanlarının yetersizliği", "İşverenlerin ucuz işgücü talebi", "Çocukların oyun oynama isteği", "Göç ve çarpık kentleşme"], a: 3 },
+        { q: "Türkiye'de 'Yaşlılık' genellikle hangi yaştan itibaren başlatılmaktadır (emeklilik sistemleri de dikkate alındığında)?", o: ["50", "55", "60-65", "70", "75"], a: 2 },
+        { q: "Yaşlı nüfusun toplam nüfus içindeki oranının artmasına ne ad verilir?", o: ["Nüfus patlaması", "Demografik fırsat", "Nüfusun yaşlanması", "Gençleşme", "Göç"], a: 2 },
+        { q: "Aşağıdakilerden hangisi yaşlılara yönelik sosyal politika uygulamalarından biri değildir?", o: ["Evde bakım hizmetleri", "Huzurevleri ve bakım merkezleri", "Zorunlu askerlik hizmeti", "Yaşlılık aylığı ve emeklilik", "İndirimli ulaşım hizmetleri"], a: 2 },
+        { q: "DSÖ (Dünya Sağlık Örgütü) tarafından yaşlıların yaşam kalitesini artırmak için önerilen yaklaşım hangisidir?", o: ["Pasif yaşlanma", "Aktif yaşlanma", "Eve kapanma", "Erken emeklilik", "Hastanede bakım"], a: 1 },
+        { q: "Türkiye'de engellilerin istihdamı için uygulanan temel yöntem hangisidir?", o: ["Kota yöntemi", "Tahsis yöntemi", "Tamamen serbest piyasa", "Gönüllülük", "Sadece korumalı işyerleri"], a: 0 },
+        { q: "4857 sayılı İş Kanunu'na göre, 50 ve daha fazla işçi çalıştıran özel sektör işyerleri yüzde kaç oranında engelli çalıştırmak zorundadır?", o: ["%2", "%3", "%4", "%5", "%6"], a: 1 },
+        { q: "657 sayılı Devlet Memurları Kanunu'na göre kamu kurumlarında engelli çalıştırma zorunluluğu (kota) oranı yüzde kaçtır?", o: ["%2", "%3", "%4", "%5", "%6"], a: 1 },
+        { q: "Ağır engelli bireylerin istihdamı için özel olarak düzenlenmiş, devlet desteği gören işyerlerine ne ad verilir?", o: ["Fabrika", "Atölye", "Korumalı İşyeri", "Rehabilitasyon Merkezi", "Eğitim Okulu"], a: 2 },
+        { q: "Aşağıdakilerden hangisi engellilerin istihdamında karşılaşılan sorunlardan biri değildir?", o: ["Eğitim ve mesleki nitelik eksikliği", "İşyerlerinin fiziksel koşullarının uygunsuzluğu", "İşverenlerin önyargıları", "Engellilerin aşırı yüksek ücret talep etmesi", "Ulaşım sorunları"], a: 3 },
+        { q: "Türkiye'de eski hükümlülerin istihdamı ile ilgili yasal zorunluluk (kota) hangi kesim için devam etmektedir?", o: ["Sadece özel sektör", "Sadece kamu sektörü", "Hem özel hem kamu sektörü", "Sadece tarım sektörü", "Zorunluluk tamamen kaldırılmıştır"], a: 1 },
+        { q: "Kamu işyerlerinde eski hükümlü çalıştırma kotası oranı (İş Kanunu Md. 30'a göre) kaçtır?", o: ["%1", "%2", "%3", "%4", "%5"], a: 1 },
+        { q: "Eski hükümlülerin topluma kazandırılması sürecine ne ad verilir?", o: ["Tecrit", "Rehabilitasyon (Sosyal bütünleşme)", "Cezalandırma", "Sürgün", "Damgalama"], a: 1 },
+        { q: "Özel sektör işverenlerinin eski hükümlü çalıştırma zorunluluğu yerine getirilen düzenleme nedir?", o: ["Zorunluluk devam etmektedir.", "Zorunluluk kaldırılmış, yerine teşvik sistemi getirilmiştir.", "Eski hükümlü çalıştırmak yasaklanmıştır.", "Sadece kadın eski hükümlüler çalıştırılabilir.", "Özel sektörde kota %10'a çıkarılmıştır."], a: 1 },
+        { q: "Kendi ülkesi dışında bir ülkede en az bir yıl süreyle kalan kişilere BM tanımına göre ne denir?", o: ["Turist", "Göçmen", "Ziyaretçi", "Diplomat", "Öğrenci"], a: 1 },
+        { q: "Mültecilerin Hukuki Statüsüne Dair 1951 Cenevre Sözleşmesi'ne Türkiye hangi sınırlama ile taraf olmuştur?", o: ["Zaman kısıtlaması", "Coğrafi kısıtlama (Sadece Avrupa'dan gelenleri mülteci kabul etme)", "Sayı kısıtlaması", "Din kısıtlaması", "Hiçbir kısıtlama yoktur"], a: 1 },
+        { q: "Türkiye'de yabancıların ve uluslararası koruma arayanların iş ve işlemlerini düzenleyen temel kanun hangisidir?", o: ["Pasaport Kanunu", "İskan Kanunu", "6458 sayılı Yabancılar ve Uluslararası Koruma Kanunu", "Medeni Kanun", "Ceza Kanunu"], a: 2 },
+        { q: "Suriye'den kitlesel akınla Türkiye'ye gelen kişilere sağlanan statü hangisidir?", o: ["Mülteci", "Şartlı Mülteci", "Geçici Koruma", "Vatandaşlık", "Turist"], a: 2 },
+        { q: "Nitelikli işgücünün daha iyi yaşam koşulları için başka ülkelere göç etmesine ne ad verilir?", o: ["İşçi göçü", "Beyin göçü", "Zorunlu göç", "Mevsimlik göç", "İltica"], a: 1 },
+        { q: "Göçmen işçilerin en çok karşılaştığı çalışma yaşamı sorunu nedir?", o: ["Yüksek ücret almaları", "Kayıt dışı, güvencesiz ve düşük ücretle çalışma", "Sendika başkanlığı yapmaları", "Çok fazla tatil yapmaları", "Yönetici olmaları"], a: 1 },
+        { q: "BM'nin 'Tüm Göçmen İşçilerin ve Aile Fertlerinin Haklarının Korunmasına Dair Sözleşmesi'nin temel amacı nedir?", o: ["Göçü tamamen yasaklamak", "Göçmen işçilerin ve ailelerinin insan haklarını korumak", "Sadece yasal göçmenleri korumak", "İşverenleri korumak", "Sınırları kapatmak"], a: 1 },
+        { q: "Aşağıdakilerden hangisi engellilere yönelik 'tıbbi model'in yaklaşımıdır?", o: ["Sorunu toplumsal engellerde görür.", "Bireyi düzeltmeye, tedavi etmeye odaklanır.", "Hak temellidir.", "Çevresel düzenlemeleri savunur.", "Engelliyi aktif bir birey olarak görür."], a: 1 },
+        { q: "Engelliliğe yaklaşımda 'sosyal model' neyi savunur?", o: ["Engellilik bireysel bir trajedidir.", "Sorun bireyin vücudundadır.", "Engellilik, toplumun düzenlemelerinin yetersizliğinden ve engellerden kaynaklanır.", "Sadece tıbbi tedavi gereklidir.", "Engelliler evde oturmalıdır."], a: 2 },
+        { q: "Türkiye'de engelli memur alımı için yapılan merkezi sınavın adı nedir?", o: ["KPSS", "ALES", "EKPSS (Engelli Kamu Personeli Seçme Sınavı)", "YDS", "TUS"], a: 2 },
+        { q: "Yaşlılara yönelik 'kurumsal bakım' hizmeti nerede verilir?", o: ["Kendi evlerinde", "Huzurevleri ve yaşlı bakım merkezlerinde", "Hastanelerde", "Okullarda", "Parklarda"], a: 1 },
+        { q: "Aşağıdakilerden hangisi 'evde bakım' hizmetinin avantajlarından biridir?", o: ["Yaşlının kendi sosyal çevresinden kopmadan bakım alması", "Daha pahalı olması", "Yaşlının izole edilmesi", "Bakımın kalitesiz olması", "Devletin sorumluluğunun bitmesi"], a: 0 },
+        { q: "Kadınların işgücü piyasasında karşılaştıkları 'Cam Tavan' engeli neyi ifade eder?", o: ["İşyerinin camla kaplı olmasını", "Kadınların üst yönetim kademelerine yükselmelerini engelleyen görünmez bariyerleri", "Kadınların cam sektöründe çalışmasını", "Maaşların şeffaf olmasını", "Fiziksel engelleri"], a: 1 },
+        { q: "Kadın işçinin evlendiği tarihten itibaren 1 yıl içinde işten ayrılması durumunda hak ettiği tazminat nedir?", o: ["İhbar tazminatı", "Kıdem tazminatı", "İşsizlik maaşı", "Evlilik yardımı", "Doğum parası"], a: 1 },
+        { q: "Türkiye'de 2012 yılında yürürlüğe giren ve işyerlerinde iş sağlığı ve güvenliğini düzenleyen, kadın ve gençlerin korunmasına da değinen kanun hangisidir?", o: ["1475 sayılı İş Kanunu", "6331 sayılı İş Sağlığı ve Güvenliği Kanunu", "Borçlar Kanunu", "Sendikalar Kanunu", "Sosyal Sigortalar Kanunu"], a: 1 },
+        { q: "Çocuk ve genç işçilerin hafta tatili izni kesintisiz en az kaç saat olmalıdır?", o: ["24 saat", "30 saat", "36 saat", "40 saat", "48 saat"], a: 3 },
+        { q: "Aşağıdakilerden hangisi göçmenlerin sosyal dışlanma nedenlerinden biri olabilir?", o: ["Dil sorunu", "Kültürel farklılıklar", "Yasal statü belirsizliği", "Ayrımcılık", "Hepsi"], a: 4 },
+        { q: "Türkiye'de çalışma izni olmayan yabancıların çalıştırılması durumunda işverene ne uygulanır?", o: ["Uyarı cezası", "İdari para cezası", "Hapis cezası", "Ödül", "Vergi indirimi"], a: 1 },
+        { q: "Engelli kontenjanından (kota) yararlanabilmek için sağlık kurulu raporunda engel oranının en az yüzde kaç olması gerekir?", o: ["%20", "%30", "%40", "%50", "%60"], a: 2 },
+        { q: "İşverenin engelli veya eski hükümlü çalıştırmaması durumunda ödediği idari para cezaları nerede toplanır?", o: ["Hazine'de", "İŞKUR bünyesindeki bir fonda (kendi işini kurma projeleri vb. için kullanılır)", "Belediyelerde", "Vakıflarda", "Vergi dairesinde"], a: 1 },
+        { q: "Aşağıdakilerden hangisi eski hükümlülerin iş bulmasını zorlaştıran en önemli faktördür?", o: ["Fiziksel güçleri", "Yaşları", "Damgalanma (sabıka kaydı) ve toplumsal önyargılar", "Eğitim düzeyleri", "Medeni durumları"], a: 2 },
+        { q: "Türkiye'de göç politikalarını yönetmek üzere kurulan kurum hangisidir?", o: ["Göç İdaresi Başkanlığı", "Nüfus Müdürlüğü", "Tapu Müdürlüğü", "Gümrük Müdürlüğü", "Turizm Bakanlığı"], a: 0 },
+        { q: "Dünya nüfusunun yaklaşık yüzde kaçını engelliler oluşturmaktadır (DSÖ/Dünya Bankası verilerine göre)?", o: ["%1", "%5", "%10", "%15", "%25"], a: 3 },
+        { q: "Aşağıdakilerden hangisi sosyal politikanın özel olarak koruduğu grupların ortak özelliğidir?", o: ["Hepsinin zengin olması", "Piyasa koşullarında tek başlarına var olmakta zorlanmaları ve dezavantajlı konumda olmaları", "Hepsinin devlet memuru olması", "Sadece kırsalda yaşamaları", "Sadece genç olmaları"], a: 1 }
+    ];
+
+    let currentQuestion = 0;
+    let userAnswers = new Array(questions.length).fill(null);
+
+    function loadQuestion() {
+        const container = document.getElementById('quiz-container');
+        container.innerHTML = '';
+
+        const q = questions[currentQuestion];
+        
+        let html = `
+            <div class="question-block active">
+                <div class="question-text">${currentQuestion + 1}. ${q.q}</div>
+                <div class="options">
+        `;
+
+        q.o.forEach((opt, index) => {
+            const isSelected = userAnswers[currentQuestion] === index ? 'selected' : '';
+            const isChecked = userAnswers[currentQuestion] === index ? 'checked' : '';
+            html += `
+                <label class="option-label ${isSelected}" id="opt-${index}">
+                    <input type="radio" name="q${currentQuestion}" value="${index}" onclick="selectAnswer(${index})" ${isChecked}>
+                    ${String.fromCharCode(65 + index)}) ${opt}
+                </label>
+            `;
+        });
+
+        html += `</div></div>`;
+        container.innerHTML = html;
+
+        // Progress Bar
+        const progressPercent = ((currentQuestion + 1) / questions.length) * 100;
+        document.getElementById('progress-bar').style.width = progressPercent + '%';
+        document.getElementById('progress-text').innerText = `Soru ${currentQuestion + 1} / ${questions.length}`;
+        
+        // Buton Yönetimi
+        document.getElementById('prevBtn').disabled = currentQuestion === 0;
+        
+        if (currentQuestion === questions.length - 1) {
+            document.getElementById('nextBtn').style.display = 'none';
+            document.getElementById('finishBtn').style.display = 'inline-block';
+        } else {
+            document.getElementById('nextBtn').style.display = 'inline-block';
+            document.getElementById('finishBtn').style.display = 'none';
+        }
+    }
+
+    function selectAnswer(index) {
+        userAnswers[currentQuestion] = index;
+        // Görsel güncelleme
+        const labels = document.querySelectorAll('.option-label');
+        labels.forEach(label => label.classList.remove('selected'));
+        document.getElementById(`opt-${index}`).classList.add('selected');
+    }
+
+    function showCurrentAnswer() {
+        const correctIndex = questions[currentQuestion].a;
+        const correctLabel = document.getElementById(`opt-${correctIndex}`);
+        
+        // Doğru cevabı yeşil yap
+        correctLabel.classList.add('correct-highlight');
+        
+        // Eğer kullanıcı yanlış cevap verdiyse onu kırmızı yap
+        if (userAnswers[currentQuestion] !== null && userAnswers[currentQuestion] !== correctIndex) {
+            document.getElementById(`opt-${userAnswers[currentQuestion]}`).classList.add('wrong-highlight');
+        }
+    }
+
+    function nextQuestion() {
+        if (currentQuestion < questions.length - 1) {
+            currentQuestion++;
+            loadQuestion();
+        }
+    }
+
+    function prevQuestion() {
+        if (currentQuestion > 0) {
+            currentQuestion--;
+            loadQuestion();
+        }
+    }
+
+    function finishQuiz() {
+        let correctCount = 0;
+        let wrongCount = 0;
+        let emptyCount = 0;
+        let reviewHtml = '';
+
+        questions.forEach((q, index) => {
+            const userAnswer = userAnswers[index];
+            const isCorrect = userAnswer === q.a;
+            
+            let statusText = '';
+            let statusClass = '';
+
+            if (userAnswer === null) {
+                emptyCount++;
+                statusText = 'Boş';
+                statusClass = 'status-empty';
+            } else if (isCorrect) {
+                correctCount++;
+                statusText = 'Doğru';
+                statusClass = 'status-correct';
+            } else {
+                wrongCount++;
+                statusText = 'Yanlış';
+                statusClass = 'status-wrong';
+            }
+
+            reviewHtml += `
+                <tr>
+                    <td>${index + 1}</td>
+                    <td>${q.q}</td>
+                    <td>${userAnswer !== null ? String.fromCharCode(65 + userAnswer) + ') ' + q.o[userAnswer] : '-'}</td>
+                    <td>${String.fromCharCode(65 + q.a)}) ${q.o[q.a]}</td>
+                    <td class="${statusClass}">${statusText}</td>
+                </tr>
+            `;
+        });
+
+        // Ekranları değiştir
+        document.getElementById('quiz-screen').style.display = 'none';
+        document.getElementById('result-screen').style.display = 'block';
+
+        // Puan Hesapla
+        const score = (correctCount * 2); // 50 soru * 2 puan = 100
+        
+        document.getElementById('score-circle').innerText = score;
+        document.getElementById('score-details').innerHTML = `
+            <strong>Doğru:</strong> ${correctCount} | 
+            <strong>Yanlış:</strong> ${wrongCount} | 
+            <strong>Boş:</strong> ${emptyCount}
+        `;
+        
+        document.getElementById('review-body').innerHTML = reviewHtml;
+    }
+
+    // Başlangıç
+    loadQuestion();
+
+</script>
+
+</body>
+</html>
