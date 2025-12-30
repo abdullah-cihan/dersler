@@ -3,326 +3,455 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sosyal Sigortalar Testi</title>
+    <title>Sosyal Sigortalar Kapsamlı Test (20 Soru)</title>
     <style>
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --success: #27ae60;
+            --danger: #c0392b;
+            --light: #ecf0f1;
+            --white: #ffffff;
+        }
+
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f0f2f5;
+            background-color: #f4f6f7;
             color: #333;
             line-height: 1.6;
             margin: 0;
             padding: 20px;
         }
+
         .container {
-            max-width: 800px;
+            max-width: 900px;
             margin: 0 auto;
-            background: #fff;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            background: var(--white);
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
         }
-        h1 {
+
+        header {
             text-align: center;
-            color: #2c3e50;
-            border-bottom: 2px solid #3498db;
-            padding-bottom: 10px;
+            margin-bottom: 40px;
+            border-bottom: 3px solid var(--secondary);
+            padding-bottom: 20px;
         }
-        .question-box {
-            margin-bottom: 25px;
-            padding: 20px;
-            border: 1px solid #e1e1e1;
+
+        h1 {
+            color: var(--primary);
+            margin: 0;
+            font-size: 2rem;
+        }
+
+        .subtitle {
+            color: #7f8c8d;
+            margin-top: 10px;
+        }
+
+        .question-card {
+            background-color: #fff;
+            border: 1px solid #e0e0e0;
             border-radius: 8px;
-            background-color: #fafafa;
+            padding: 25px;
+            margin-bottom: 25px;
+            transition: transform 0.2s;
         }
-        .question-text {
-            font-weight: 600;
-            font-size: 1.1em;
-            margin-bottom: 15px;
-            color: #2c3e50;
+
+        .question-card:hover {
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
         }
-        .options {
-            list-style-type: none;
-            padding: 0;
-        }
-        .options li {
+
+        .question-number {
+            font-weight: bold;
+            color: var(--secondary);
             margin-bottom: 10px;
+            display: block;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            letter-spacing: 1px;
         }
+
+        .question-text {
+            font-size: 1.15rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: var(--primary);
+        }
+
+        .options-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .options-list li {
+            margin-bottom: 12px;
+        }
+
         .option-btn {
             width: 100%;
-            padding: 12px;
             text-align: left;
-            background-color: #fff;
-            border: 1px solid #ddd;
-            border-radius: 5px;
+            padding: 15px 20px;
+            background-color: var(--white);
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
             cursor: pointer;
-            transition: all 0.3s ease;
-            font-size: 0.95em;
+            font-size: 1rem;
+            transition: all 0.2s ease;
+            color: #555;
+            position: relative;
         }
+
         .option-btn:hover {
-            background-color: #e8f4fc;
-            border-color: #3498db;
+            border-color: var(--secondary);
+            background-color: #f0f8ff;
+            color: var(--secondary);
         }
-        .correct {
-            background-color: #d4edda !important;
-            border-color: #28a745 !important;
+
+        /* Doğru/Yanlış Durumları */
+        .option-btn.correct {
+            background-color: #d4edda;
+            border-color: var(--success);
             color: #155724;
+            pointer-events: none;
         }
-        .wrong {
-            background-color: #f8d7da !important;
-            border-color: #dc3545 !important;
+
+        .option-btn.wrong {
+            background-color: #f8d7da;
+            border-color: var(--danger);
             color: #721c24;
+            pointer-events: none;
         }
+
+        /* Geri Bildirim Metni */
         .feedback {
-            margin-top: 10px;
-            font-size: 0.9em;
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 6px;
             font-weight: bold;
             display: none;
         }
-        .result-box {
-            text-align: center;
-            margin-top: 30px;
-            padding: 20px;
-            background-color: #2c3e50;
-            color: white;
-            border-radius: 8px;
-            display: none;
+
+        .feedback.success {
+            background-color: #e8f5e9;
+            color: var(--success);
+            border-left: 5px solid var(--success);
         }
-        button#finish-btn {
-            display: block;
-            width: 100%;
-            padding: 15px;
-            background-color: #3498db;
+
+        .feedback.error {
+            background-color: #fce4ec;
+            color: var(--danger);
+            border-left: 5px solid var(--danger);
+        }
+
+        /* Sonuç Kutusu */
+        .result-modal {
+            display: none;
+            text-align: center;
+            padding: 40px;
+            background-color: var(--primary);
+            color: white;
+            border-radius: 12px;
+            margin-top: 30px;
+        }
+
+        .score-circle {
+            width: 150px;
+            height: 150px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            border: 4px solid var(--secondary);
+            font-size: 2.5rem;
+            font-weight: bold;
+        }
+
+        .btn-primary {
+            background-color: var(--secondary);
             color: white;
             border: none;
-            border-radius: 5px;
-            font-size: 1.1em;
+            padding: 15px 30px;
+            font-size: 1.1rem;
+            border-radius: 6px;
             cursor: pointer;
+            transition: background 0.3s;
             margin-top: 20px;
+            display: inline-block;
+            width: 100%;
         }
-        button#finish-btn:hover {
+
+        .btn-primary:hover {
             background-color: #2980b9;
         }
+
+        .btn-restart {
+            background-color: transparent;
+            border: 2px solid white;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-top: 20px;
+            font-size: 1rem;
+        }
+
+        .btn-restart:hover {
+            background-color: white;
+            color: var(--primary);
+        }
+
     </style>
 </head>
 <body>
 
-<div class="container">
-    <h1>Sosyal Sigortalar Değerlendirme Testi</h1>
-    <p style="text-align:center; color:#666;">Aşağıdaki soruları metne göre cevaplayınız.</p>
+    <div class="container">
+        <header>
+            <h1>Sosyal Sigortalar</h1>
+            <p class="subtitle">Ders Notları Tarama Testi - 20 Soru</p>
+        </header>
 
-    <div id="quiz-area">
+        <div id="quiz-container">
+            <!-- Sorular buraya yüklenecek -->
         </div>
 
-    <button id="finish-btn" onclick="showResult()">Testi Bitir ve Sonucu Gör</button>
+        <button id="finish-btn" class="btn-primary" onclick="finishTest()">Testi Bitir ve Sonuçları Gör</button>
 
-    <div id="result-box" class="result-box">
-        <h2>Test Sonucu</h2>
-        <p id="score-text"></p>
-        <button onclick="location.reload()" style="padding:10px 20px; cursor:pointer; color:#333;">Testi Tekrar Çöz</button>
+        <div id="result-modal" class="result-modal">
+            <h2>Test Tamamlandı!</h2>
+            <div class="score-circle" id="score-display">0/20</div>
+            <p id="result-message"></p>
+            <button class="btn-restart" onclick="location.reload()">Testi Tekrar Çöz</button>
+        </div>
     </div>
-</div>
 
-<script>
-    // Sorular Veritabanı
-    const questions = [
-        {
-            text: "1. Sosyal sigortalar hangi toplum yapısının değişen güvenlik ihtiyaçlarına cevap vermek üzere geliştirilmiştir?",
-            options: [
-                "A) Tarım toplumu",
-                "B) Göçebe toplum",
-                "C) Sanayi toplumu",
-                "D) Feodal toplum",
-                "E) Bilgi toplumu"
-            ],
-            correct: 2 // C şıkkı (Index 2)
-        },
-        {
-            text: "2. İlk sosyal sigortalar sistemi hangi ülkede ve kim tarafından kurulmuştur?",
-            options: [
-                "A) İngiltere - William Beveridge",
-                "B) Almanya - Otto Von Bismarck",
-                "C) Fransa - Napoleon",
-                "D) ABD - Roosevelt",
-                "E) İtalya - Mussolini"
-            ],
-            correct: 1 // B şıkkı
-        },
-        {
-            text: "3. İngiliz William Henry Beveridge tarafından geliştirilen 'Beveridge Modeli'nin temel özelliği aşağıdakilerden hangisidir?",
-            options: [
-                "A) Sadece işçileri kapsaması",
-                "B) Tamamen özel sigorta şirketlerince yönetilmesi",
-                "C) İşveren sorumluluğunu esas alması",
-                "D) Vergilerle finanse edilmesi ve primsiz asgari koruma sağlaması",
-                "E) Sadece iş kazalarını kapsaması"
-            ],
-            correct: 3 // D şıkkı
-        },
-        {
-            text: "4. Türkiye'de ilk sosyal sigorta kurumu (İşçi Sigortaları İdaresi) hangi yıl oluşturulmuştur?",
-            options: [
-                "A) 1923",
-                "B) 1938",
-                "C) 1945",
-                "D) 1950",
-                "E) 1964"
-            ],
-            correct: 2 // C şıkkı
-        },
-        {
-            text: "5. Sosyal sigortaların özel sigortalardan farkı olan 'Koruma Birimi' açısından durum nedir?",
-            options: [
-                "A) Sosyal sigorta aileyi esas alır, özel sigorta ferdi esas alır.",
-                "B) Özel sigorta aileyi esas alır, sosyal sigorta ferdi esas alır.",
-                "C) Her ikisi de sadece ferdi esas alır.",
-                "D) Sosyal sigortalar sadece işvereni korur.",
-                "E) Özel sigortalar aileyi ücretsiz kapsama alır."
-            ],
-            correct: 0 // A şıkkı
-        },
-        {
-            text: "6. Sosyal sigortalar finansman problemleri yaşadığında ne olur?",
-            options: [
-                "A) Kurum iflas eder ve kapanır.",
-                "B) Sigortalıların hakları tamamen silinir.",
-                "C) Devlet garantör olduğu için açıklar devletçe kapatılır, iflas etmez.",
-                "D) Özel şirketlere devredilir.",
-                "E) Sadece dış borç alınarak çözülür."
-            ],
-            correct: 2 // C şıkkı
-        },
-        {
-            text: "7. Risk farklılaştırması (risk analizi) açısından sosyal sigortaların yaklaşımı nasıldır?",
-            options: [
-                "A) Yüksek riskli kişilerden daha yüksek prim alır.",
-                "B) Yaşlı ve hastaları sigorta kapsamına almaz.",
-                "C) Gelir-gider dengesi için riskli grupları dışlar.",
-                "D) Risk durumu ne olursa olsun herkesi kapsar ve gelirine göre prim alır.",
-                "E) Sadece genç ve sağlıklı bireyleri sigortalar."
-            ],
-            correct: 3 // D şıkkı
-        },
-        {
-            text: "8. Sosyal sigortaların finansmanında 'Finansmana Katılım İlkesi' neyi ifade eder?",
-            options: [
-                "A) Sadece devletin vergi ödemesini",
-                "B) Sadece işverenin tüm masrafları karşılamasını",
-                "C) Sigortalı, işveren ve devletin (bazı durumlarda) finansmana katılımını",
-                "D) Finansmanın tamamen bağışlarla sağlanmasını",
-                "E) Banka kredilerinin kullanılmasını"
-            ],
-            correct: 2 // C şıkkı
-        },
-        {
-            text: "9. Almanya'da kurulan ilk sigorta kolları hangi sırayla yasalaşmıştır?",
-            options: [
-                "A) İşsizlik - Hastalık - İş Kazası",
-                "B) Hastalık (1883) - İş Kazaları (1884) - Malullük/Yaşlılık (1889)",
-                "C) Yaşlılık - İşsizlik - Hastalık",
-                "D) İş Kazası - Analık - Ölüm",
-                "E) Analık - Hastalık - İşsizlik"
-            ],
-            correct: 1 // B şıkkı
-        },
-        {
-            text: "10. Sosyal sigortaların yönetimi ile ilgili 'Özerk Yönetim İlkesi' ne demektir?",
-            options: [
-                "A) Yönetimin tamamen özel sektöre ait olması",
-                "B) Devlet tarafından kurulmasına rağmen yönetime sosyal tarafların (işçi-işveren) da katılması",
-                "C) Kurumun devletten tamamen bağımsız hareket etmesi",
-                "D) Yöneticilerin sadece işçiler tarafından seçilmesi",
-                "E) Kurumun uluslararası kuruluşlarca yönetilmesi"
-            ],
-            correct: 1 // B şıkkı
-        }
-    ];
+    <script>
+        const questions = [
+            {
+                q: "Sosyal sigortalar temel olarak hangi toplum yapısının ortaya çıkardığı güvenlik sorunlarını çözmek için geliştirilmiştir?",
+                options: ["A) Feodal toplum", "B) Tarım toplumu", "C) Sanayi toplumu", "D) İlkel toplum", "E) Bilgi toplumu"],
+                a: 2
+            },
+            {
+                q: "İlk sosyal sigorta sistemi hangi ülkede ve kim tarafından kurulmuştur?",
+                options: ["A) İngiltere - Beveridge", "B) ABD - Roosevelt", "C) Fransa - Napolyon", "D) Almanya - Otto Von Bismarck", "E) İtalya - Mussolini"],
+                a: 3
+            },
+            {
+                q: "Almanya'da kurulan ilk sosyal sigorta kolu hangisidir ve hangi yılda yasalaşmıştır?",
+                options: ["A) İş Kazaları (1884)", "B) Hastalık (1883)", "C) Yaşlılık (1889)", "D) İşsizlik (1907)", "E) Analık (1945)"],
+                a: 1
+            },
+            {
+                q: "William Henry Beveridge tarafından geliştirilen 'Beveridge Modeli'nin temel finansman kaynağı nedir?",
+                options: ["A) İşçi primleri", "B) İşveren primleri", "C) Vergiler", "D) Vakıf gelirleri", "E) Özel bağışlar"],
+                a: 2
+            },
+            {
+                q: "Sosyal sigorta kollarından 'İşsizlik Sigortası' ilk defa hangi ülkede ve ne zaman kurulmuştur?",
+                options: ["A) Almanya - 1883", "B) İngiltere - 1942", "C) Danimarka - 1907", "D) Türkiye - 1945", "E) Fransa - 1894"],
+                a: 2
+            },
+            {
+                q: "ILO'nun sosyal sigortaların standartlarını belirlediği ve ülkelere teknik destek sağlayan sözleşmesi hangisidir?",
+                options: ["A) 87 sayılı Sözleşme", "B) 102 sayılı Sözleşme", "C) 158 sayılı Sözleşme", "D) 98 sayılı Sözleşme", "E) 111 sayılı Sözleşme"],
+                a: 1
+            },
+            {
+                q: "Türkiye'de 1945 yılında kurulan İşçi Sigortaları İdaresi bünyesinde ilk oluşturulan sigorta kolu hangisidir?",
+                options: ["A) Hastalık Sigortası", "B) Yaşlılık Sigortası", "C) İşsizlik Sigortası", "D) İş Kazaları, Meslek Hastalıkları ve Analık", "E) Malullük Sigortası"],
+                a: 3
+            },
+            {
+                q: "Türkiye'de farklı sosyal sigorta kollarının birleştirilmesi hangi yıl ve hangi kanunla gerçekleşmiştir?",
+                options: ["A) 1938 - 3008 sayılı Kanun", "B) 1945 - 4772 sayılı Kanun", "C) 1964 - 506 sayılı Kanun", "D) 2006 - 5510 sayılı Kanun", "E) 1971 - 1475 sayılı Kanun"],
+                a: 2
+            },
+            {
+                q: "Aşağıdakilerden hangisi sosyal sigortaların temel özelliklerinden biri DEĞİLDİR?",
+                options: ["A) Zorunluluk ilkesi", "B) Sözleşme serbestîsi ilkesi", "C) Devletin garantör olma ilkesi", "D) Özerk yönetim ilkesi", "E) Finansmana katılım ilkesi"],
+                a: 1
+            },
+            {
+                q: "Sosyal sigortaların finansmanında açık oluşması durumunda ne olur?",
+                options: ["A) Kurum iflas eder.", "B) Sigortalıların hakları iptal edilir.", "C) Devlet açıkları kapatır (Garantörlük).", "D) Sadece işçilerden ek prim istenir.", "E) Kurum özelleştirilir."],
+                a: 2
+            },
+            {
+                q: "Bismarck'ın Almanya'da sosyal sigortaları kurarken gözettiği temel siyasi amaç neydi?",
+                options: ["A) Sosyalist akımlara karşı rejimi korumak ve devlete bağlılığı artırmak", "B) Özel sigorta şirketlerini zengin etmek", "C) Nüfus artışını engellemek", "D) Sadece işverenleri korumak", "E) İngiltere ile savaşa hazırlanmak"],
+                a: 0
+            },
+            {
+                q: "Sosyal sigortalar ile özel sigortalar arasındaki 'Koruma Birimi' farkı nasıldır?",
+                options: ["A) Sosyal sigorta bireyi, özel sigorta aileyi esas alır.", "B) Sosyal sigorta aileyi, özel sigorta bireyi (ferdi) esas alır.", "C) Her ikisi de sadece bireyi esas alır.", "D) Her ikisi de aileyi esas alır.", "E) Özel sigorta sadece eşleri kapsar."],
+                a: 1
+            },
+            {
+                q: "Sosyal sigortaların yönetim yapısı nasıldır?",
+                options: ["A) Tamamen özel sektör yönetir.", "B) Sadece devlet memurları yönetir.", "C) Devlet tarafından kurulur ancak yönetime sosyal taraflar (işçi-işveren) katılır (Özerk).", "D) Uluslararası kuruluşlar yönetir.", "E) Belediyeler yönetir."],
+                a: 2
+            },
+            {
+                q: "Risk analizi ve prim ödemesi açısından sosyal sigortaların yaklaşımı nasıldır?",
+                options: ["A) Yaşlı ve hastalardan yüksek prim alır.", "B) Risk ne olursa olsun herkesi kapsar ve gelire göre prim alır.", "C) Yüksek riskli kişileri sigorta yapmaz.", "D) Sigorta yapmak tamamen şirketin inisiyatifindedir.", "E) Sadece sağlıklı gençleri sigortalar."],
+                a: 1
+            },
+            {
+                q: "Özel sigortalar genellikle hangi tür kayıpları karşılamaya odaklanır?",
+                options: ["A) Gelir kesilmesi", "B) İş gücü kaybı", "C) Mal varlığı kayıpları", "D) Sosyal dışlanma", "E) Gelecek kaygısı"],
+                a: 2
+            },
+            {
+                q: "Sosyal sigortalarda 'Gelirin Yeniden Dağılımı' ilkesi en çok hangi sigorta kolunda belirgindir?",
+                options: ["A) Bireysel Emeklilik", "B) Hayat Sigortası", "C) Kasko", "D) Sağlık/Hastalık Sigortası", "E) Trafik Sigortası"],
+                a: 3
+            },
+            {
+                q: "1938 tarihli ve 3008 sayılı İş Kanunu'nun sosyal sigortalar tarihindeki önemi nedir?",
+                options: ["A) Sosyal sigortaları fiilen kurmuştur.", "B) Sosyal sigortaların kurulmasını öngörmüş ancak fiilen kuramamıştır.", "C) Sosyal sigortaları yasaklamıştır.", "D) Özel sigortaları zorunlu kılmıştır.", "E) İşsizlik sigortasını başlatmıştır."],
+                a: 1
+            },
+            {
+                q: "Almanya'da sosyal sigortaların kuruluş sırası aşağıdakilerden hangisinde doğru verilmiştir?",
+                options: ["A) İş Kazası > Hastalık > Yaşlılık", "B) Yaşlılık > Hastalık > İş Kazası", "C) Hastalık > İş Kazası > Yaşlılık/Malullük", "D) İşsizlik > Hastalık > Analık", "E) Analık > İş Kazası > Hastalık"],
+                a: 2
+            },
+            {
+                q: "Özel sigortalar ne zaman iflas eder?",
+                options: ["A) Hiçbir zaman iflas etmezler.", "B) Yükümlülüklerini yerine getiremez hale geldiklerinde iflas edebilirler.", "C) Devlet her zaman kurtarır.", "D) Sadece savaş zamanı iflas ederler.", "E) Poliçe sayısı artınca iflas ederler."],
+                a: 1
+            },
+            {
+                q: "Devletin özel sigorta alanına (örneğin Bireysel Emeklilik) müdahale etmesinin temel nedeni nedir?",
+                options: ["A) Şirketlerin karını artırmak", "B) Kamu menfaatini korumak ve tamamlayıcı sosyal güvenliği güçlendirmek", "C) Vergileri artırmak", "D) Özel sektörü ortadan kaldırmak", "E) Yabancı yatırımcıyı engellemek"],
+                a: 1
+            }
+        ];
 
-    let score = 0;
-    let answersGiven = 0;
+        let score = 0;
+        let answeredCount = 0;
 
-    function loadQuiz() {
-        const quizArea = document.getElementById("quiz-area");
-        
-        questions.forEach((q, index) => {
-            const questionBox = document.createElement("div");
-            questionBox.className = "question-box";
+        function initQuiz() {
+            const container = document.getElementById('quiz-container');
             
-            const questionTitle = document.createElement("div");
-            questionTitle.className = "question-text";
-            questionTitle.innerText = q.text;
-            questionBox.appendChild(questionTitle);
+            questions.forEach((q, index) => {
+                // Soru Kartı
+                const card = document.createElement('div');
+                card.className = 'question-card';
+                
+                // Başlık
+                const qNum = document.createElement('span');
+                qNum.className = 'question-number';
+                qNum.innerText = `SORU ${index + 1}`;
+                
+                const qText = document.createElement('div');
+                qText.className = 'question-text';
+                qText.innerText = q.q;
 
-            const optionsList = document.createElement("ul");
-            optionsList.className = "options";
+                // Şıklar
+                const optionsList = document.createElement('ul');
+                optionsList.className = 'options-list';
+                optionsList.id = `q${index}-options`;
 
-            q.options.forEach((opt, optIndex) => {
-                const li = document.createElement("li");
-                const btn = document.createElement("button");
-                btn.className = "option-btn";
-                btn.innerText = opt;
-                btn.onclick = function() { checkAnswer(this, optIndex, q.correct, index); };
-                li.appendChild(btn);
-                optionsList.appendChild(li);
+                q.options.forEach((opt, optIndex) => {
+                    const li = document.createElement('li');
+                    const btn = document.createElement('button');
+                    btn.className = 'option-btn';
+                    btn.innerText = opt;
+                    // Tıklama Olayı
+                    btn.onclick = () => checkAnswer(index, optIndex, btn);
+                    
+                    li.appendChild(btn);
+                    optionsList.appendChild(li);
+                });
+
+                // Geri Bildirim Alanı
+                const feedback = document.createElement('div');
+                feedback.id = `feedback-${index}`;
+                feedback.className = 'feedback';
+
+                // Elemanları birleştir
+                card.appendChild(qNum);
+                card.appendChild(qText);
+                card.appendChild(optionsList);
+                card.appendChild(feedback);
+                container.appendChild(card);
             });
-
-            const feedback = document.createElement("div");
-            feedback.className = "feedback";
-            feedback.id = "feedback-" + index;
-            questionBox.appendChild(feedback);
-
-            quizArea.appendChild(questionBox);
-        });
-    }
-
-    function checkAnswer(btn, selectedIndex, correctIndex, questionIndex) {
-        // Bu soru için butonları kilitle
-        const parent = btn.parentElement.parentElement;
-        const buttons = parent.getElementsByClassName("option-btn");
-        
-        // Eğer zaten cevaplandıysa işlem yapma
-        if (parent.getAttribute("data-answered") === "true") return;
-
-        parent.setAttribute("data-answered", "true");
-        answersGiven++;
-
-        const feedbackDiv = document.getElementById("feedback-" + questionIndex);
-        feedbackDiv.style.display = "block";
-
-        if (selectedIndex === correctIndex) {
-            btn.classList.add("correct");
-            score++;
-            feedbackDiv.style.color = "#155724";
-            feedbackDiv.innerText = "Doğru Cevap! ✔️";
-        } else {
-            btn.classList.add("wrong");
-            // Doğru olanı göster
-            buttons[correctIndex].classList.add("correct");
-            feedbackDiv.style.color = "#721c24";
-            feedbackDiv.innerText = "Yanlış Cevap. Doğru seçenek: " + questions[questionIndex].options[correctIndex];
         }
-    }
 
-    function showResult() {
-        if (answersGiven < questions.length) {
-            if(!confirm("Hepsini cevaplamadınız. Yine de bitirmek istiyor musunuz?")) return;
+        function checkAnswer(questionIndex, selectedOptionIndex, btnElement) {
+            const optionsList = document.getElementById(`q${questionIndex}-options`);
+            const buttons = optionsList.getElementsByClassName('option-btn');
+            
+            // Eğer zaten cevaplanmışsa işlem yapma
+            if(optionsList.getAttribute('data-answered') === 'true') return;
+
+            // Cevaplandı olarak işaretle
+            optionsList.setAttribute('data-answered', 'true');
+            answeredCount++;
+
+            const correctAnswerIndex = questions[questionIndex].a;
+            const feedbackDiv = document.getElementById(`feedback-${questionIndex}`);
+
+            if (selectedOptionIndex === correctAnswerIndex) {
+                // Doğru Cevap
+                btnElement.classList.add('correct');
+                score++;
+                feedbackDiv.innerText = "Tebrikler! Doğru Cevap.";
+                feedbackDiv.className = "feedback success";
+                feedbackDiv.style.display = "block";
+            } else {
+                // Yanlış Cevap
+                btnElement.classList.add('wrong');
+                // Doğru olanı göster
+                buttons[correctAnswerIndex].classList.add('correct');
+                
+                feedbackDiv.innerText = `Yanlış! Doğru cevap: ${questions[questionIndex].options[correctAnswerIndex]}`;
+                feedbackDiv.className = "feedback error";
+                feedbackDiv.style.display = "block";
+            }
         }
-        
-        document.getElementById("finish-btn").style.display = "none";
-        document.getElementById("result-box").style.display = "block";
-        document.getElementById("quiz-area").style.opacity = "0.7";
-        
-        const scoreText = document.getElementById("score-text");
-        scoreText.innerHTML = "Toplam Soru: " + questions.length + "<br>" +
-                              "Doğru Sayısı: " + score + "<br>" +
-                              "Başarı Oranı: %" + (score / questions.length * 100);
-        
-        window.scrollTo(0, document.body.scrollHeight);
-    }
 
-    // Sayfa yüklendiğinde testi başlat
-    window.onload = loadQuiz;
+        function finishTest() {
+            if (answeredCount < questions.length) {
+                if(!confirm(`Henüz tüm soruları cevaplamadınız (${answeredCount}/${questions.length}). Bitirmek istiyor musunuz?`)) {
+                    return;
+                }
+            }
 
-</script>
+            document.getElementById('finish-btn').style.display = 'none';
+            document.getElementById('quiz-container').style.opacity = '0.6';
+            document.getElementById('quiz-container').style.pointerEvents = 'none'; // Tıklamayı engelle
 
+            const modal = document.getElementById('result-modal');
+            const scoreDisplay = document.getElementById('score-display');
+            const resultMsg = document.getElementById('result-message');
+            
+            const percentage = (score / questions.length) * 100;
+            
+            scoreDisplay.innerText = `${score} / ${questions.length}`;
+            
+            let message = "";
+            if(percentage >= 90) message = "Mükemmel! Konuya tamamen hakimsin.";
+            else if(percentage >= 70) message = "Gayet iyi! Ufak tekrarlarla tam puan alabilirsin.";
+            else if(percentage >= 50) message = "Fena değil, ancak bazı kısımları tekrar etmelisin.";
+            else message = "Konuyu tekrar çalışman faydalı olacaktır.";
+
+            resultMsg.innerText = `Başarı Oranı: %${percentage.toFixed(0)} - ${message}`;
+            modal.style.display = 'block';
+
+            // Sayfayı sonucun olduğu yere kaydır
+            modal.scrollIntoView({behavior: "smooth"});
+        }
+
+        // Başlat
+        initQuiz();
+
+    </script>
 </body>
 </html>
