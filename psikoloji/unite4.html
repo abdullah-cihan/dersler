@@ -1,1 +1,319 @@
 
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Psikoloji - 4. Ünite: Öğrenme Psikolojisi</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f9ebe7; color: #333; margin: 0; padding: 20px; }
+        .container { max-width: 900px; margin: 0 auto; background: #fff; padding: 40px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        h1 { text-align: center; color: #c0392b; border-bottom: 2px solid #e74c3c; padding-bottom: 10px; margin-bottom: 30px; }
+        
+        /* İlerleme Çubuğu */
+        .progress-container { background-color: #fadbd8; border-radius: 10px; margin-bottom: 20px; height: 10px; overflow: hidden; }
+        .progress-bar { height: 100%; background-color: #c0392b; width: 0%; transition: width 0.3s; }
+        .progress-text { text-align: right; font-size: 0.9em; color: #922b21; margin-bottom: 15px; }
+
+        /* Soru Alanı */
+        .question-block { display: none; animation: fadeIn 0.5s; }
+        .question-block.active { display: block; }
+        .question-text { font-weight: 600; font-size: 1.25em; margin-bottom: 20px; color: #641e16; }
+        
+        /* Seçenekler */
+        .options { display: flex; flex-direction: column; gap: 10px; }
+        .option-label { 
+            display: flex; align-items: center; padding: 12px 15px; border: 2px solid #e0e0e0; 
+            border-radius: 8px; cursor: pointer; transition: all 0.2s; background: #fff;
+        }
+        .option-label:hover { background-color: #fdedec; border-color: #f5b7b1; }
+        .option-label.selected { border-color: #c0392b; background-color: #fadbd8; }
+        .option-label input { margin-right: 15px; transform: scale(1.2); }
+        
+        /* Cevap Göster Stilleri */
+        .option-label.correct-highlight { border-color: #27ae60; background-color: #d5f5e3; color: #1e8449; font-weight: bold; }
+        .option-label.wrong-highlight { border-color: #e74c3c; background-color: #fadbd8; }
+
+        /* Butonlar */
+        .controls { margin-top: 30px; display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
+        button { border: none; padding: 12px 24px; border-radius: 6px; cursor: pointer; font-size: 16px; font-weight: 600; transition: background 0.2s; }
+        .nav-btn { background-color: #c0392b; color: white; }
+        .nav-btn:hover { background-color: #922b21; }
+        .nav-btn:disabled { background-color: #bdc3c7; cursor: not-allowed; }
+        
+        .show-answer-btn { background-color: #f39c12; color: white; }
+        .show-answer-btn:hover { background-color: #d35400; }
+        
+        .finish-btn { background-color: #27ae60; color: white; display: none; }
+        .finish-btn:hover { background-color: #219150; }
+
+        /* Sonuç Ekranı */
+        #result-screen { display: none; }
+        .score-card { text-align: center; background: #f8f9fa; padding: 20px; border-radius: 10px; margin-bottom: 30px; }
+        .score-circle { 
+            width: 120px; height: 120px; border-radius: 50%; background: #c0392b; color: white; 
+            display: flex; align-items: center; justify-content: center; font-size: 2em; font-weight: bold; 
+            margin: 0 auto 15px; 
+        }
+        
+        .review-table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 0.95em; }
+        .review-table th, .review-table td { padding: 12px; border: 1px solid #ddd; text-align: left; }
+        .review-table th { background-color: #641e16; color: white; }
+        .review-table tr:nth-child(even) { background-color: #f2f2f2; }
+        .status-correct { color: #27ae60; font-weight: bold; }
+        .status-wrong { color: #c0392b; font-weight: bold; }
+        .status-empty { color: #f39c12; font-weight: bold; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div id="quiz-screen">
+        <h1>4. Ünite: Öğrenme Psikolojisi</h1>
+        
+        <div class="progress-text" id="progress-text">Soru 1 / 50</div>
+        <div class="progress-container">
+            <div class="progress-bar" id="progress-bar"></div>
+        </div>
+        
+        <div id="quiz-container">
+            <!-- Sorular buraya JS ile gelecek -->
+        </div>
+
+        <div class="controls">
+            <div>
+                <button class="nav-btn" id="prevBtn" onclick="prevQuestion()" disabled>&#8592; Önceki</button>
+            </div>
+            <div>
+                <button class="show-answer-btn" onclick="showCurrentAnswer()">👁️ Cevabı Göster</button>
+            </div>
+            <div>
+                <button class="nav-btn" id="nextBtn" onclick="nextQuestion()">Sonraki &#8594;</button>
+                <button class="finish-btn" id="finishBtn" onclick="finishQuiz()">Testi Bitir &#10004;</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="result-screen">
+        <h1>Değerlendirme Sonucu</h1>
+        <div class="score-card">
+            <div class="score-circle" id="score-circle">0</div>
+            <h3>Toplam Puan</h3>
+            <p id="score-details"></p>
+        </div>
+        
+        <h3>Detaylı Soru Analizi</h3>
+        <table class="review-table">
+            <thead>
+                <tr>
+                    <th style="width: 5%">No</th>
+                    <th style="width: 45%">Soru</th>
+                    <th style="width: 20%">Senin Cevabın</th>
+                    <th style="width: 20%">Doğru Cevap</th>
+                    <th style="width: 10%">Durum</th>
+                </tr>
+            </thead>
+            <tbody id="review-body">
+                <!-- Sonuç satırları buraya gelecek -->
+            </tbody>
+        </table>
+        <div style="text-align: center; margin-top: 30px;">
+            <button class="nav-btn" onclick="location.reload()">Testi Tekrar Çöz</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // 4. Ünite Konuları: Klasik Koşullanma, Edimsel Koşullanma, Bilişsel Öğrenme, Sosyal Öğrenme, Bellek (kısmen)
+    const questions = [
+        { q: "Tekrar veya yaşantı sonucu davranışlarda meydana gelen nispeten kalıcı izli değişikliğe ne denir?", o: ["Refleks", "İçgüdü", "Öğrenme", "Büyüme", "Olgunlaşma"], a: 2 },
+        { q: "Klasik koşullanma (Classical Conditioning) kuramının kurucusu olan Rus fizyolog kimdir?", o: ["B.F. Skinner", "Ivan Pavlov", "John Watson", "Albert Bandura", "Edward Thorndike"], a: 1 },
+        { q: "Pavlov'un deneyinde, başlangıçta salya tepkisi yaratmayan 'zil sesi' ne tür bir uyarıcıdır?", o: ["Koşulsuz Uyarıcı", "Koşullu Uyarıcı", "Nötr Uyarıcı", "Pekiştireç", "Ayırt Edici Uyarıcı"], a: 2 },
+        { q: "Pavlov'un deneyinde, köpeğin ağzına konulan 'et tozu' doğal olarak salya salgılattığı için ne ad verilir?", o: ["Koşulsuz (Doğal) Uyarıcı", "Koşullu Uyarıcı", "Nötr Uyarıcı", "Cezalandırıcı", "Tepki"], a: 0 },
+        { q: "Klasik koşullanma sürecinde, nötr uyarıcının (zil) koşulsuz uyarıcı (et) ile eşleştirilmesi sonucu kazandığı tepki yaratma gücüne ne denir?", o: ["Koşulsuz Tepki", "Koşullu Uyarıcı", "Koşullu Tepki", "Refleks", "Sönme"], a: 1 },
+        { q: "Köpeğin sadece zili duyunca (et verilmese bile) salya salgılaması ne tür bir tepkidir?", o: ["Koşulsuz Tepki", "Koşullu Tepki", "Nötr Tepki", "Edimsel Tepki", "Bilişsel Tepki"], a: 1 },
+        { q: "Koşullu uyarıcı (zil) verildikten sonra uzun süre koşulsuz uyarıcı (et) verilmezse, davranışın azalması ve kaybolmasına ne denir?", o: ["Alışma", "Duyarlılaşma", "Sönme (Extinction)", "Ceza", "Unutma"], a: 2 },
+        { q: "Sönme gerçekleştikten bir süre sonra, koşullu uyarıcı tekrar verildiğinde tepkinin zayıf da olsa tekrar ortaya çıkmasına ne denir?", o: ["Genelleme", "Ayırt Etme", "Kendiliğinden Geri Gelme", "Pekiştirme", "Öğrenme"], a: 2 },
+        { q: "Organizmanın koşullu uyarıcıya (örneğin zil) benzeyen diğer uyarıcılara (örneğin çan sesi) da aynı tepkiyi vermesine ne denir?", o: ["Ayırt Etme", "Uyarıcı Genellemesi", "Tepki Genellemesi", "Sönme", "Biçimlendirme"], a: 1 },
+        { q: "Organizmanın sadece belirli bir uyarıcıya tepki verip, ona benzeyen diğerlerine tepki vermemeyi öğrenmesine ne denir?", o: ["Genelleme", "Ayırt Etme", "Sönme", "Alışma", "Unutma"], a: 1 },
+        { q: "John B. Watson'ın 'Küçük Albert' deneyinde, Albert'in beyaz fare korkusunu beyaz tavşana ve pamuğa da yansıtması neye örnektir?", o: ["Sönme", "Ayırt Etme", "Genelleme", "Ceza", "Pekiştirme"], a: 2 },
+        { q: "Edimsel (Operant) koşullanma kuramının en önemli temsilcisi kimdir?", o: ["Ivan Pavlov", "B.F. Skinner", "Albert Bandura", "Jean Piaget", "Sigmund Freud"], a: 1 },
+        { q: "Davranışın sonucuna (ödül veya ceza) bağlı olarak davranışın sıklığının artması veya azalması hangi öğrenme türüdür?", o: ["Klasik Koşullanma", "Edimsel Koşullanma", "Sosyal Öğrenme", "Gizil Öğrenme", "İçgörüsel Öğrenme"], a: 1 },
+        { q: "Bir davranışın yapılma sıklığını artıran her türlü uyarıcıya ne denir?", o: ["Ceza", "Pekiştireç", "Tepki", "Dürtü", "Güdü"], a: 1 },
+        { q: "Ortama hoşa giden bir uyarıcı eklenerek davranışın sıklığının artırılmasına ne denir? (Örn: Ödevini yapan çocuğa çikolata vermek)", o: ["Olumsuz Pekiştirme", "Olumlu Pekiştirme", "I. Tip Ceza", "II. Tip Ceza", "Sönme"], a: 1 },
+        { q: "Ortamdan hoşa gitmeyen (itici) bir uyarıcının çıkarılmasıyla davranışın sıklığının artırılmasına ne denir? (Örn: Baş ağrısı geçsin diye ilaç içmek)", o: ["Olumlu Pekiştirme", "Olumsuz Pekiştirme", "Ceza", "Sönme", "Genelleme"], a: 1 },
+        { q: "Davranışın sıklığını azaltmak amacıyla ortama hoşa gitmeyen bir uyarıcı eklemeye ne denir? (Örn: Yaramazlık yapan çocuğa kızmak)", o: ["Olumsuz Pekiştirme", "I. Tip Ceza (Maruz bırakma)", "II. Tip Ceza", "Olumlu Pekiştirme", "Ayırt Etme"], a: 1 },
+        { q: "Davranışın sıklığını azaltmak amacıyla ortamdan hoşa giden bir uyarıcıyı almaya ne denir? (Örn: Yaramazlık yapan çocuğun tabletini almak)", o: ["I. Tip Ceza", "II. Tip Ceza (Mahrum bırakma)", "Olumsuz Pekiştirme", "Sönme", "Alışma"], a: 1 },
+        { q: "Yiyecek, su, uyku gibi doğuştan tatmin edici olan pekiştireçlere ne ad verilir?", o: ["İkincil Pekiştireçler", "Birincil Pekiştireçler", "Sosyal Pekiştireçler", "Sembolik Pekiştireçler", "Negatif Pekiştireçler"], a: 1 },
+        { q: "Para, not, statü gibi değeri sonradan öğrenilen pekiştireçlere ne ad verilir?", o: ["Birincil Pekiştireçler", "İkincil (Koşullu) Pekiştireçler", "Doğal Pekiştireçler", "Olumsuz Pekiştireçler", "Nötr Uyarıcılar"], a: 1 },
+        { q: "Davranışın her seferinde değil, belli aralıklarla veya sayılarda pekiştirilmesine ne denir?", o: ["Sürekli Pekiştirme", "Aralıklı (Kısmi) Pekiştirme", "Cezalandırma", "Sönme", "Biçimlendirme"], a: 1 },
+        { q: "Sönmeye karşı en dirençli davranışı oluşturan pekiştirme tarifesi hangisidir? (Kumar makineleri örneği)", o: ["Sabit Oranlı", "Sürekli", "Değişken Oranlı", "Sabit Aralıklı", "Sabit Zamanlı"], a: 2 },
+        { q: "Maaşın her ayın 15'inde alınması hangi pekiştirme tarifesine örnektir?", o: ["Sabit Oranlı", "Değişken Oranlı", "Sabit Aralıklı", "Değişken Aralıklı", "Sürekli"], a: 2 },
+        { q: "Parça başı iş yapan bir işçinin her 5 gömlek diktiğinde ödeme alması hangi tarifedir?", o: ["Sabit Aralıklı", "Sabit Oranlı", "Değişken Aralıklı", "Değişken Oranlı", "Sürekli"], a: 1 },
+        { q: "İstenen karmaşık bir davranışı, küçük adımlara bölerek ve her adımı pekiştirerek öğretme tekniğine ne denir?", o: ["Genelleme", "Ayırt Etme", "Biçimlendirme (Kademeli Yaklaştırma)", "Sönme", "Ceza"], a: 2 },
+        { q: "Edward Thorndike'ın 'Etki Yasası'na (Law of Effect) göre, sonucu tatmin edici olan davranışların tekrarlanma olasılığı nasıldır?", o: ["Azalır", "Artar", "Değişmez", "Yok olur", "Unutulur"], a: 1 },
+        { q: "Premack İlkesi (Büyükanne Kuralı) neyi ifade eder?", o: ["Az yapılan bir davranışın, çok yapılan bir davranışı pekiştirmek için kullanılması", "Çok tercih edilen bir etkinliğin, az tercih edilen bir davranışı pekiştirmek için ödül olarak kullanılması", "Cezanın her zaman işe yaraması", "Öğrenmenin yaşla azalması", "Her davranışın pekiştirilmesi"], a: 1 },
+        { q: "Sosyal Öğrenme Kuramı'nın (Gözlem Yoluyla Öğrenme) kurucusu kimdir?", o: ["B.F. Skinner", "Albert Bandura", "Ivan Pavlov", "Jean Piaget", "Lev Vygotsky"], a: 1 },
+        { q: "Bandura'nın ünlü 'Hacıyatmaz (Bobo Doll)' deneyi neyi kanıtlamıştır?", o: ["Saldırganlığın doğuştan geldiğini", "Çocukların saldırganlığı gözlem yoluyla (model alarak) öğrenebildiğini", "Cezanın saldırganlığı azalttığını", "Televizyonun etkisiz olduğunu", "Kız çocukların daha saldırgan olduğunu"], a: 1 },
+        { q: "Gözlem yoluyla öğrenmenin dört temel süreci sırasıyla nedir?", o: ["Dikkat - Hatırlama - Uygulama - Güdülenme", "Uygulama - Dikkat - Hatırlama - Güdülenme", "Güdülenme - Dikkat - Uygulama - Hatırlama", "Hatırlama - Dikkat - Güdülenme - Uygulama", "Dikkat - Güdülenme - Hatırlama - Uygulama"], a: 0 },
+        { q: "Modelin davranışının ödüllendirildiğini gören kişinin o davranışı yapma eğiliminin artmasına ne denir?", o: ["Doğrudan Pekiştirme", "Dolaylı Pekiştirme", "Dolaylı Ceza", "Öz Yeterlilik", "İçgörü"], a: 1 },
+        { q: "Bir kişinin kendi yeteneklerine ve bir işi başarabileceğine olan inancına ne ad verilir?", o: ["Öz Saygı", "Öz Yeterlilik (Self-Efficacy)", "Öz Disiplin", "Benlik Algısı", "Narsisizm"], a: 1 },
+        { q: "Tolman'ın farelerle yaptığı deneylerde, ödül olmasa bile öğrenmenin gerçekleştiği ancak performansa dökülmediği duruma ne denir?", o: ["Sosyal Öğrenme", "Gizil (Örtük) Öğrenme", "Klasik Koşullanma", "İçgörüsel Öğrenme", "Deneme-Yanılma"], a: 1 },
+        { q: "Problemin çözümünün aniden, bir anda zihinde belirmesi şeklindeki öğrenme türüne ne denir? (Köhler'in maymun deneyleri)", o: ["Deneme-Yanılma", "Kavrama Yoluyla (İçgörüsel) Öğrenme", "Gizil Öğrenme", "Sosyal Öğrenme", "Klasik Koşullanma"], a: 1 },
+        { q: "Organizmanın ne yaparsa yapsın sonucu değiştiremeyeceğine inanıp, pasif kalmayı öğrenmesine ne denir?", o: ["Öğrenilmiş Çaresizlik", "Kendini Gerçekleştiren Kehanet", "Depresyon", "Sönme", "Kaçınma"], a: 0 },
+        { q: "Olumsuz pekiştirme ile Ceza arasındaki temel fark nedir?", o: ["İkisi de davranışı azaltır", "Olumsuz pekiştirme davranışı artırır, ceza davranışı azaltır", "Olumsuz pekiştirme davranışı azaltır, ceza artırır", "Fark yoktur", "Ceza ödüldür"], a: 1 },
+        { q: "Bir davranışın ortamda belirli bir uyarıcı varken yapılması, yokken yapılmamasına ne denir? (Örn: Polisi görünce yavaşlamak)", o: ["Uyarıcı Kontrolü / Ayırt Etme", "Genelleme", "Sönme", "Alışma", "Unutma"], a: 0 },
+        { q: "Hoşa gitmeyen bir uyarıcıyla karşılaşmamak için önceden önlem almaya ne tür öğrenme denir?", o: ["Kaçma", "Kaçınma", "Sönme", "Ceza", "Yaklaşma"], a: 1 },
+        { q: "Hoşa gitmeyen uyarıcı başladıktan sonra ortamdan uzaklaşmaya ne denir?", o: ["Kaçınma", "Kaçma", "Sönme", "Pekiştirme", "Ceza"], a: 1 },
+        { q: "Sürekli aynı şiddetteki uyarana maruz kalınca duyu organlarının tepkisinin azalmasına 'Duyusal Uyum', pekiştirecin sürekli verilmesiyle etkisini yitirmesine ne denir?", o: ["Alışma", "Duyarlılaşma", "Sönme", "Unutma", "Ceza"], a: 0 },
+        { q: "Garcia Etkisi (Tat Koşullanması) klasik koşullanmanın hangi ilkesine istisna oluşturur?", o: ["Bitişiklik (Zamanlamanın çok yakın olması gerekliliği)", "Pekiştirme", "Sönme", "Genelleme", "Ayırt Etme"], a: 0 },
+        { q: "Bir fobinin klasik koşullanma yoluyla nasıl oluşabileceğini gösteren deney hangisidir?", o: ["Pavlov'un Köpeği", "Skinner'ın Kutusu", "Küçük Albert Deneyi", "Bobo Doll Deneyi", "Milgram Deneyi"], a: 2 },
+        { q: "Edimsel koşullanmada, davranışın hemen ardından gelen ödülün etkisi, geciken ödülden daha ...... dır.", o: ["Zayıf", "Güçlü", "Aynı", "Belirsiz", "Kötü"], a: 1 },
+        { q: "Cezanın davranış üzerindeki etkisi genellikle nasıldır?", o: ["Davranışı kalıcı olarak yok eder", "Davranışı geçici olarak baskılar ama yan etkileri olabilir", "Yeni ve doğru davranışı öğretir", "Kişiyi mutlu eder", "Ödül kadar etkilidir"], a: 1 },
+        { q: "Bilişsel harita kavramını ortaya atan ve öğrenmenin sadece uyarıcı-tepki bağı olmadığını savunan kuramcı kimdir?", o: ["Skinner", "Watson", "Tolman", "Pavlov", "Thorndike"], a: 2 },
+        { q: "Bir davranışı model alırken, modelin özelliklerinin (statüsü, benzerliği vb.) etkisi var mıdır?", o: ["Hayır, yoktur", "Evet, modelin statüsü ve benzerliği öğrenmeyi artırır", "Sadece cinsiyeti önemlidir", "Sadece yaşı önemlidir", "Bilinmiyor"], a: 1 },
+        { q: "Pekiştirmenin davranış gerçekleştikten hemen sonra verilmesi ilkesine ne denir?", o: ["Anında Dönüt / Zamanlama", "Süreklilik", "Genelleme", "Ayırt Etme", "Ceza"], a: 0 },
+        { q: "Skinner Kutusu (Skinner Box) hangi öğrenme türünü incelemek için tasarlanmıştır?", o: ["Klasik Koşullanma", "Edimsel Koşullanma", "Sosyal Öğrenme", "Gizil Öğrenme", "Bilişsel Öğrenme"], a: 1 },
+        { q: "Korku, sevgi, mide bulantısı gibi duygusal tepkiler genellikle hangi yolla öğrenilir?", o: ["Edimsel Koşullanma", "Bilişsel Öğrenme", "Klasik Koşullanma", "Deneme-Yanılma", "İçgörü"], a: 2 },
+        { q: "Bir öğrencinin derste parmak kaldırdığında öğretmenin onu övmesi, parmak kaldırma davranışını artırıyorsa, övgü burada nedir?", o: ["Ceza", "Olumsuz Pekiştireç", "Olumlu Pekiştireç", "Nötr Uyarıcı", "Koşullu Uyarıcı"], a: 2 }
+    ];
+
+    let currentQuestion = 0;
+    let userAnswers = new Array(questions.length).fill(null);
+
+    function loadQuestion() {
+        const container = document.getElementById('quiz-container');
+        container.innerHTML = '';
+
+        const q = questions[currentQuestion];
+        
+        let html = `
+            <div class="question-block active">
+                <div class="question-text">${currentQuestion + 1}. ${q.q}</div>
+                <div class="options">
+        `;
+
+        q.o.forEach((opt, index) => {
+            const isSelected = userAnswers[currentQuestion] === index ? 'selected' : '';
+            const isChecked = userAnswers[currentQuestion] === index ? 'checked' : '';
+            html += `
+                <label class="option-label ${isSelected}" id="opt-${index}">
+                    <input type="radio" name="q${currentQuestion}" value="${index}" onclick="selectAnswer(${index})" ${isChecked}>
+                    ${String.fromCharCode(65 + index)}) ${opt}
+                </label>
+            `;
+        });
+
+        html += `</div></div>`;
+        container.innerHTML = html;
+
+        // Progress Bar
+        const progressPercent = ((currentQuestion + 1) / questions.length) * 100;
+        document.getElementById('progress-bar').style.width = progressPercent + '%';
+        document.getElementById('progress-text').innerText = `Soru ${currentQuestion + 1} / ${questions.length}`;
+        
+        // Buton Yönetimi
+        document.getElementById('prevBtn').disabled = currentQuestion === 0;
+        
+        if (currentQuestion === questions.length - 1) {
+            document.getElementById('nextBtn').style.display = 'none';
+            document.getElementById('finishBtn').style.display = 'inline-block';
+        } else {
+            document.getElementById('nextBtn').style.display = 'inline-block';
+            document.getElementById('finishBtn').style.display = 'none';
+        }
+    }
+
+    function selectAnswer(index) {
+        userAnswers[currentQuestion] = index;
+        const labels = document.querySelectorAll('.option-label');
+        labels.forEach(label => label.classList.remove('selected'));
+        document.getElementById(`opt-${index}`).classList.add('selected');
+    }
+
+    function showCurrentAnswer() {
+        const correctIndex = questions[currentQuestion].a;
+        const correctLabel = document.getElementById(`opt-${correctIndex}`);
+        if(correctLabel) correctLabel.classList.add('correct-highlight');
+        
+        if (userAnswers[currentQuestion] !== null && userAnswers[currentQuestion] !== correctIndex) {
+            document.getElementById(`opt-${userAnswers[currentQuestion]}`).classList.add('wrong-highlight');
+        }
+    }
+
+    function nextQuestion() {
+        if (currentQuestion < questions.length - 1) {
+            currentQuestion++;
+            loadQuestion();
+        }
+    }
+
+    function prevQuestion() {
+        if (currentQuestion > 0) {
+            currentQuestion--;
+            loadQuestion();
+        }
+    }
+
+    function finishQuiz() {
+        let correctCount = 0;
+        let wrongCount = 0;
+        let emptyCount = 0;
+        let reviewHtml = '';
+
+        questions.forEach((q, index) => {
+            const userAnswer = userAnswers[index];
+            const isCorrect = userAnswer === q.a;
+            
+            let statusText = '';
+            let statusClass = '';
+
+            if (userAnswer === null) {
+                emptyCount++;
+                statusText = 'Boş';
+                statusClass = 'status-empty';
+            } else if (isCorrect) {
+                correctCount++;
+                statusText = 'Doğru';
+                statusClass = 'status-correct';
+            } else {
+                wrongCount++;
+                statusText = 'Yanlış';
+                statusClass = 'status-wrong';
+            }
+
+            reviewHtml += `
+                <tr>
+                    <td>${index + 1}</td>
+                    <td>${q.q}</td>
+                    <td>${userAnswer !== null ? String.fromCharCode(65 + userAnswer) + ') ' + q.o[userAnswer] : '-'}</td>
+                    <td>${String.fromCharCode(65 + q.a)}) ${q.o[q.a]}</td>
+                    <td class="${statusClass}">${statusText}</td>
+                </tr>
+            `;
+        });
+
+        document.getElementById('quiz-screen').style.display = 'none';
+        document.getElementById('result-screen').style.display = 'block';
+
+        // Puanlama: Her soru 2 puan (100/50)
+        const score = Math.round((correctCount / questions.length) * 100);
+        
+        document.getElementById('score-circle').innerText = score;
+        document.getElementById('score-details').innerHTML = `
+            <strong>Doğru:</strong> ${correctCount} | 
+            <strong>Yanlış:</strong> ${wrongCount} | 
+            <strong>Boş:</strong> ${emptyCount}
+        `;
+        
+        document.getElementById('review-body').innerHTML = reviewHtml;
+    }
+
+    // Uygulamayı başlat
+    loadQuestion();
+</script>
+
+</body>
+</html>
