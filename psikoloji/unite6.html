@@ -1,1 +1,318 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Psikoloji - 6. Ünite: Güdülenme ve Duygular</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #fce4ec; color: #333; margin: 0; padding: 20px; }
+        .container { max-width: 900px; margin: 0 auto; background: #fff; padding: 40px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        h1 { text-align: center; color: #c2185b; border-bottom: 2px solid #e91e63; padding-bottom: 10px; margin-bottom: 30px; }
+        
+        /* İlerleme Çubuğu */
+        .progress-container { background-color: #f8bbd0; border-radius: 10px; margin-bottom: 20px; height: 10px; overflow: hidden; }
+        .progress-bar { height: 100%; background-color: #c2185b; width: 0%; transition: width 0.3s; }
+        .progress-text { text-align: right; font-size: 0.9em; color: #880e4f; margin-bottom: 15px; }
 
+        /* Soru Alanı */
+        .question-block { display: none; animation: fadeIn 0.5s; }
+        .question-block.active { display: block; }
+        .question-text { font-weight: 600; font-size: 1.25em; margin-bottom: 20px; color: #880e4f; }
+        
+        /* Seçenekler */
+        .options { display: flex; flex-direction: column; gap: 10px; }
+        .option-label { 
+            display: flex; align-items: center; padding: 12px 15px; border: 2px solid #e0e0e0; 
+            border-radius: 8px; cursor: pointer; transition: all 0.2s; background: #fff;
+        }
+        .option-label:hover { background-color: #fce4ec; border-color: #f48fb1; }
+        .option-label.selected { border-color: #c2185b; background-color: #f8bbd0; }
+        .option-label input { margin-right: 15px; transform: scale(1.2); }
+        
+        /* Cevap Göster Stilleri */
+        .option-label.correct-highlight { border-color: #27ae60; background-color: #d5f5e3; color: #1e8449; font-weight: bold; }
+        .option-label.wrong-highlight { border-color: #e74c3c; background-color: #fadbd8; }
+
+        /* Butonlar */
+        .controls { margin-top: 30px; display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
+        button { border: none; padding: 12px 24px; border-radius: 6px; cursor: pointer; font-size: 16px; font-weight: 600; transition: background 0.2s; }
+        .nav-btn { background-color: #c2185b; color: white; }
+        .nav-btn:hover { background-color: #880e4f; }
+        .nav-btn:disabled { background-color: #bdc3c7; cursor: not-allowed; }
+        
+        .show-answer-btn { background-color: #f39c12; color: white; }
+        .show-answer-btn:hover { background-color: #e67e22; }
+        
+        .finish-btn { background-color: #27ae60; color: white; display: none; }
+        .finish-btn:hover { background-color: #219150; }
+
+        /* Sonuç Ekranı */
+        #result-screen { display: none; }
+        .score-card { text-align: center; background: #f8f9fa; padding: 20px; border-radius: 10px; margin-bottom: 30px; }
+        .score-circle { 
+            width: 120px; height: 120px; border-radius: 50%; background: #c2185b; color: white; 
+            display: flex; align-items: center; justify-content: center; font-size: 2em; font-weight: bold; 
+            margin: 0 auto 15px; 
+        }
+        
+        .review-table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 0.95em; }
+        .review-table th, .review-table td { padding: 12px; border: 1px solid #ddd; text-align: left; }
+        .review-table th { background-color: #880e4f; color: white; }
+        .review-table tr:nth-child(even) { background-color: #f2f2f2; }
+        .status-correct { color: #27ae60; font-weight: bold; }
+        .status-wrong { color: #c0392b; font-weight: bold; }
+        .status-empty { color: #f39c12; font-weight: bold; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div id="quiz-screen">
+        <h1>6. Ünite: Güdülenme ve Duygular</h1>
+        
+        <div class="progress-text" id="progress-text">Soru 1 / 50</div>
+        <div class="progress-container">
+            <div class="progress-bar" id="progress-bar"></div>
+        </div>
+        
+        <div id="quiz-container">
+            <!-- Sorular buraya JS ile gelecek -->
+        </div>
+
+        <div class="controls">
+            <div>
+                <button class="nav-btn" id="prevBtn" onclick="prevQuestion()" disabled>&#8592; Önceki</button>
+            </div>
+            <div>
+                <button class="show-answer-btn" onclick="showCurrentAnswer()">👁️ Cevabı Göster</button>
+            </div>
+            <div>
+                <button class="nav-btn" id="nextBtn" onclick="nextQuestion()">Sonraki &#8594;</button>
+                <button class="finish-btn" id="finishBtn" onclick="finishQuiz()">Testi Bitir &#10004;</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="result-screen">
+        <h1>Değerlendirme Sonucu</h1>
+        <div class="score-card">
+            <div class="score-circle" id="score-circle">0</div>
+            <h3>Toplam Puan</h3>
+            <p id="score-details"></p>
+        </div>
+        
+        <h3>Detaylı Soru Analizi</h3>
+        <table class="review-table">
+            <thead>
+                <tr>
+                    <th style="width: 5%">No</th>
+                    <th style="width: 45%">Soru</th>
+                    <th style="width: 20%">Senin Cevabın</th>
+                    <th style="width: 20%">Doğru Cevap</th>
+                    <th style="width: 10%">Durum</th>
+                </tr>
+            </thead>
+            <tbody id="review-body">
+                <!-- Sonuç satırları buraya gelecek -->
+            </tbody>
+        </table>
+        <div style="text-align: center; margin-top: 30px;">
+            <button class="nav-btn" onclick="location.reload()">Testi Tekrar Çöz</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // 6. Ünite Konuları: Güdülenme Kuramları (İçgüdü, Dürtü, Uyarılma), İhtiyaçlar Hiyerarşisi, Yeme, Cinsellik, Sosyal Güdüler, Duygu Kuramları (James-Lange, Cannon-Bard vb.)
+    const questions = [
+        { q: "Organizmayı harekete geçiren, davranışı yönlendiren ve sürdüren içsel güce ne denir?", o: ["Duygu", "Güdülenme (Motivasyon)", "Refleks", "İçgüdü", "Algı"], a: 1 },
+        { q: "Doğuştan gelen, öğrenilmemiş, türe özgü ve karmaşık davranış kalıplarına ne denir?", o: ["Dürtü", "Güdü", "İçgüdü", "Refleks", "Alışkanlık"], a: 2 },
+        { q: "Vücudun iç dengesini (su, sıcaklık, şeker vb.) sabit bir seviyede tutma eğilimine ne ad verilir?", o: ["Homeostazi (Dengeleşme)", "Uyarılma", "Dürtü", "İhtiyaç", "Doyum"], a: 0 },
+        { q: "Organizmanın biyolojik bir ihtiyacından kaynaklanan ve organizmayı bu ihtiyacı gidermeye iten gerilim durumuna ne denir?", o: ["Güdü", "Dürtü", "İçgüdü", "Duygu", "Amaç"], a: 1 },
+        { q: "Dürtü Azalma Kuramı'na göre, organizmanın birincil amacı nedir?", o: ["Sürekli uyarılma aramak", "Kendini gerçekleştirmek", "Rahatsız edici gerilimi azaltarak dengeyi (homeostazi) yeniden sağlamak", "Sosyal ilişki kurmak", "Başarılı olmak"], a: 2 },
+        { q: "Yerkes-Dodson Yasası'na göre, performans ile uyarılma düzeyi arasındaki ilişki nasıldır?", o: ["Uyarılma arttıkça performans sürekli artar", "Uyarılma azaldıkça performans artar", "Performans için orta düzeyde (optimal) bir uyarılma gereklidir (Ters U eğrisi)", "İlişki yoktur", "Uyarılma performansı düşürür"], a: 2 },
+        { q: "Abraham Maslow'un İhtiyaçlar Hiyerarşisi'nde piramidin en tabanında hangi ihtiyaçlar yer alır?", o: ["Güvenlik ihtiyaçları", "Ait olma ve sevgi ihtiyaçları", "Fizyolojik ihtiyaçlar (Açlık, susuzluk vb.)", "Saygınlık ihtiyacı", "Kendini gerçekleştirme"], a: 2 },
+        { q: "Maslow'a göre hiyerarşinin en tepesinde bulunan, kişinin potansiyelini tam olarak ortaya koyma ihtiyacına ne denir?", o: ["Başarı İhtiyacı", "Kendini Gerçekleştirme", "Öz Saygı", "Estetik İhtiyaç", "Bilişsel İhtiyaç"], a: 1 },
+        { q: "Kişinin davranışı, dışsal bir ödül (para, not) için değil, davranışın kendisinden keyif aldığı için yapmasına ne denir?", o: ["Dışsal Güdülenme", "İçsel Güdülenme", "Dürtüsel Davranış", "Sosyal Güdülenme", "Başarı Güdüsü"], a: 1 },
+        { q: "Beyinde açlık ve tokluk sinyallerini yöneten, yeme davranışının 'kontrol merkezi' olarak bilinen yapı hangisidir?", o: ["Talamus", "Hipotalamus", "Amigdala", "Hipokampus", "Beyincik"], a: 1 },
+        { q: "Hipotalamusun hangi bölgesi hasar görürse organizma tokluk hissetmez ve aşırı yemek yer (hiperfaji)?", o: ["Lateral Hipotalamus", "Ventromedial Hipotalamus", "Ön Hipotalamus", "Arka Hipotalamus", "Korteks"], a: 1 },
+        { q: "Kişinin kilo almaktan aşırı korktuğu ve kendini aç bırakarak tehlikeli derecede zayıfladığı yeme bozukluğu hangisidir?", o: ["Bulimia Nervoza", "Obezite", "Anoreksiya Nervoza", "Tıkınırcasına Yeme Bozukluğu", "Pika"], a: 2 },
+        { q: "Aşırı yeme ataklarını (binge) takip eden kusma, laksatif kullanma veya aşırı spor yapma (telafi) davranışlarıyla karakterize bozukluk hangisidir?", o: ["Anoreksiya Nervoza", "Bulimia Nervoza", "Obezite", "Diyabet", "Ortoreksiya"], a: 1 },
+        { q: "Cinsellik güdüsü ile açlık güdüsü arasındaki temel fark nedir?", o: ["Cinsellik biyolojik değildir", "Açlık türün devamı, cinsellik bireyin devamı içindir", "Cinsellik bireyin hayatta kalması için zorunlu değildir, açlık zorunludur", "Fark yoktur", "Cinsellik hormonlardan etkilenmez"], a: 2 },
+        { q: "Zorlukların üstesinden gelme, mükemmelliğe ulaşma ve yüksek standartları yakalama isteğine ne denir?", o: ["Güç İhtiyacı", "İlişki İhtiyacı", "Başarı İhtiyacı", "Güvenlik İhtiyacı", "Fizyolojik İhtiyaç"], a: 2 },
+        { q: "McClelland'a göre, başkalarıyla yakın ve sıcak ilişkiler kurma isteğine ne ad verilir?", o: ["Başarı İhtiyacı", "Güç İhtiyacı", "İlişki Kurma / Bağlanma (Affiliation) İhtiyacı", "Özerklik İhtiyacı", "Yeterlilik İhtiyacı"], a: 2 },
+        { q: "Duyguların (Emotions) üç temel bileşeni nelerdir?", o: ["Düşünce, Hafıza, Zeka", "Fizyolojik uyarılma, Bilişsel değerlendirme, Davranışsal ifade", "Dürtü, Güdü, İçgüdü", "İd, Ego, Süperego", "Algı, Dikkat, Bellek"], a: 1 },
+        { q: "'Üzgün olduğum için ağlamıyorum, ağladığım için üzgünüm' (Önce fizyolojik tepki, sonra duygu) görüşünü savunan kuram hangisidir?", o: ["Cannon-Bard Kuramı", "James-Lange Kuramı", "Schachter-Singer Kuramı", "Bilişsel Değerlendirme Kuramı", "Yüz Geri Bildirim Hipotezi"], a: 1 },
+        { q: "Fizyolojik uyarılma ve duygusal hissin aynı anda ve birbirinden bağımsız olarak gerçekleştiğini savunan kuram hangisidir?", o: ["James-Lange Kuramı", "Cannon-Bard Kuramı", "İki Faktör Kuramı", "Lazarus Kuramı", "Evrimsel Kuram"], a: 1 },
+        { q: "Schachter-Singer'in 'İki Faktör Kuramı'na göre duygu nasıl oluşur?", o: ["Sadece fizyolojik tepkiyle", "Sadece düşünceyle", "Genel fizyolojik uyarılma ve bu uyarılmanın bilişsel olarak etiketlenmesiyle", "Doğuştan gelir", "Sosyal çevreyle"], a: 2 },
+        { q: "Yüz ifadelerinin sadece duyguyu yansıtmadığını, aynı zamanda duyguyu başlattığını veya güçlendirdiğini savunan hipotez nedir?", o: ["James-Lange Hipotezi", "Yüz Geri Bildirim (Facial Feedback) Hipotezi", "Cannon-Bard Hipotezi", "Katarsis Hipotezi", "Adaptasyon Hipotezi"], a: 1 },
+        { q: "Paul Ekman'ın araştırmalarına göre, kültürden bağımsız olarak evrensel olduğu kabul edilen temel duygular nelerdir?", o: ["Aşk, Nefret, Kıskançlık", "Mutluluk, Üzüntü, Korku, Öfke, Şaşkınlık, Tiksinme", "Gurur, Utanç, Suçluluk", "Umut, Çaresizlik, Neşe", "Merak, İlgi, Can sıkıntısı"], a: 1 },
+        { q: "Beyinde özellikle korku koşullanması ve tehdit algısında merkezi rol oynayan yapı hangisidir?", o: ["Hipokampus", "Amigdala", "Talamus", "Korteks", "Beyincik"], a: 1 },
+        { q: "Yalan makinesi (Poligraf) yalanı doğrudan tespit eder mi?", o: ["Evet, %100 doğrulukla tespit eder", "Hayır, sadece otonom sinir sistemindeki fizyolojik uyarılmayı (stres tepkilerini) ölçer", "Evet, beyin dalgalarını okur", "Hayır, sadece göz hareketlerini izler", "Evet, ses tonunu analiz eder"], a: 1 },
+        { q: "Kişinin kendi ve başkalarının duygularını anlama, yönetme ve empati kurma yeteneğine ne denir?", o: ["Genel Zeka", "Duygusal Zeka (EQ)", "Sosyal Zeka", "Mantiksal Zeka", "Sözel Zeka"], a: 1 },
+        { q: "Stres durumunda vücudun verdiği tepkileri açıklayan Hans Selye'nin modeli nedir?", o: ["Savaş ya da Kaç", "Genel Uyum (Adaptasyon) Sendromu (GAS)", "Psikanalitik Kuram", "Öğrenilmiş Çaresizlik", "Bilişsel Uyum"], a: 1 },
+        { q: "Genel Uyum Sendromu'nun üç aşaması sırasıyla nedir?", o: ["Direnç - Alarm - Tükenme", "Alarm - Direnç - Tükenme", "Tükenme - Alarm - Direnç", "Şok - İnkar - Kabullenme", "Korku - Öfke - Pazarlık"], a: 1 },
+        { q: "Stresle başa çıkmada, sorunun kaynağını değiştirmeye odaklanan yönteme ne denir?", o: ["Duygu Odaklı Başa Çıkma", "Problem Odaklı Başa Çıkma", "Savunma Mekanizmaları", "İnkar", "Bastırma"], a: 1 },
+        { q: "A Tipi kişilik yapısının hangi özelliği kalp hastalığı riskini en çok artırır?", o: ["Çalışkanlık", "Hız", "Düşmanlık ve Öfke", "Rekabetçilik", "Titizlik"], a: 2 },
+        { q: "Kişinin bir durumu 'tehdit' veya 'fırsat' olarak yorumlamasının stresi belirlediğini savunan görüş kime aittir?", o: ["Selye", "Lazarus (Bilişsel Değerlendirme)", "Freud", "Skinner", "Pavlov"], a: 1 },
+        { q: "Vücut ağırlığının genetik olarak belirlenmiş sabit bir noktada tutulmaya çalışıldığını savunan teori nedir?", o: ["Dürtü Kuramı", "Ayar Noktası (Set Point) Kuramı", "Evrimsel Kuram", "Teşvik Kuramı", "Biyolojik Ritim"], a: 1 },
+        { q: "Kanda şeker (glikoz) seviyesi düştüğünde hangi duygu ortaya çıkar?", o: ["Susuzluk", "Açlık", "Korku", "Mutluluk", "Uykusuzluk"], a: 1 },
+        { q: "Dışsal ödüllerin (para vb.), kişinin içsel motivasyonunu azaltması etkisine ne denir?", o: ["Aşırı Gerekçelendirme Etkisi (Overjustification Effect)", "Pekiştirme", "Sönme", "Garcia Etkisi", "Plasebo Etkisi"], a: 0 },
+        { q: "İnsanların fizyolojik bir uyarılmayı (örneğin köprüde heyecanlanma) yanlışlıkla cinsel çekim olarak yorumlamasına ne denir?", o: ["Duygu Transferi", "Uyarılma Transferi (Misattribution of Arousal)", "Yansıtma", "Yer Değiştirme", "Bastırma"], a: 1 },
+        { q: "Kültürlerin, duyguların ne zaman ve nasıl ifade edileceğini belirleyen kurallarına ne denir?", o: ["Gösterim Kuralları (Display Rules)", "Evrensel Kurallar", "Ahlak Kuralları", "Yasal Kurallar", "Görgü Kuralları"], a: 0 },
+        { q: "Obezitenin nedenleri arasında aşağıdakilerden hangisi yer alır?", o: ["Sadece iradesizlik", "Genetik, çevresel faktörler, hareketsizlik ve uyku düzeni", "Sadece çok yemek", "Sadece hormonlar", "Sadece psikolojik sorunlar"], a: 1 },
+        { q: "Cinsel yönelim (heteroseksüel, homoseksüel vb.) bir tercih midir yoksa biyolojik temelli midir?", o: ["Tamamen bir tercihtir", "Bilimsel veriler biyolojik, genetik ve hormonal faktörlerin belirleyici olduğunu göstermektedir", "Sadece yetiştirilme tarzına bağlıdır", "Geçici bir hevestir", "Öğrenilmiş bir davranıştır"], a: 1 },
+        { q: "Başarı motivasyonu yüksek bireyler genellikle nasıl görevleri tercih ederler?", o: ["Çok kolay görevleri", "Çok zor görevleri (şans faktörü yüksek)", "Orta zorlukta, yeteneklerini gösterebilecekleri görevleri", "Hiçbir görevi", "Sadece grup ödevlerini"], a: 2 },
+        { q: "Bir amaca ulaşırken engellenme sonucu ortaya çıkan duygu genellikle hangisidir?", o: ["Korku", "Öfke (Engellenme-Saldırganlık Hipotezi)", "Üzüntü", "Şaşkınlık", "Mutluluk"], a: 1 },
+        { q: "Korku duygusu evrimsel açıdan ne işe yarar?", o: ["Sadece rahatsız eder", "Hayatta kalmayı ve tehlikeden korunmayı sağlar", "Zayıflık göstergesidir", "Hiçbir işe yaramaz", "Sosyalleşmeyi sağlar"], a: 1 },
+        { q: "Pozitif psikoloji akımı neye odaklanır?", o: ["Ruhsal hastalıklara", "Bireyin güçlü yönlerine, mutluluğa ve iyi oluşa (Well-being)", "Bilinçdışına", "Çocukluk travmalarına", "Beyin hasarına"], a: 1 },
+        { q: "Akış (Flow) deneyimi nedir?", o: ["Suyun akışını izlemek", "Bir işle uğraşırken zamanın nasıl geçtiğini anlamayacak kadar odaklanma ve keyif alma durumu", "Dikkatin dağılması", "Uyumak", "Rüya görmek"], a: 1 },
+        { q: "Sosyal dışlanma (Ostracism) beyinde hangi bölgeyi aktive eder?", o: ["Ödül merkezini", "Fiziksel acı ile ilişkili bölgeleri (Anterior Singulat Korteks)", "Görme merkezini", "İşitme merkezini", "Dil merkezini"], a: 1 },
+        { q: "Duyguların sağ ve sol beyin yarımkürelerindeki işleyişi nasıldır?", o: ["Fark yoktur", "Sol yarımküre daha çok pozitif, sağ yarımküre daha çok negatif duygularla ilişkilidir", "Sağ yarımküre pozitif duyguları işler", "Duygular sadece beyin sapındadır", "Sadece sol beyin duygu işler"], a: 1 },
+        { q: "İnsanların kendi duygusal durumlarını tahmin etmedeki başarısı nasıldır (Affective Forecasting)?", o: ["Mükemmeldir", "Gelecekteki olayların duygusal etkisinin süresini ve şiddetini genellikle abartırlar", "Her zaman yanlıştır", "Duygular tahmin edilemez", "Sadece kadınlar iyi tahmin eder"], a: 1 },
+        { q: "Duygusal ifadeyi anlamada kadınlar ve erkekler arasında fark var mıdır?", o: ["Yoktur", "Kadınlar genellikle sözel olmayan ipuçlarını okumada ve duygusal ifadede daha iyidirler", "Erkekler daha duygusaldır", "Erkekler yüz ifadelerini daha iyi okur", "Fark biyolojik değildir"], a: 1 },
+        { q: "Maslow'un hiyerarşisinde 'Güvenlik' ihtiyacı karşılanmadan 'Saygınlık' ihtiyacı ortaya çıkar mı?", o: ["Evet, ihtiyaçlar sırasızdır", "Hayır, alt basamaktaki ihtiyaçlar belli oranda karşılanmalıdır", "Sadece sanatçılarda çıkar", "Bilinmiyor", "Maslow'a göre ihtiyaç yoktur"], a: 1 },
+        { q: "Yüksek uyarılma (örneğin aşırı heyecan) hangi tür görevlerde performansı bozar?", o: ["Basit ve iyi öğrenilmiş görevlerde", "Zor ve karmaşık görevlerde", "Fiziksel güç gerektiren görevlerde", "Hiçbir görevde", "Uyumada"], a: 1 },
+        { q: "Sirkadiyen ritim nedir?", o: ["Kalp atış ritmi", "Nefes alma ritmi", "Yaklaşık 24 saatlik biyolojik döngü (Uyku-uyanıklık)", "Müzik ritmi", "Yürüme ritmi"], a: 2 },
+        { q: "Duyguların işlevlerinden biri olan 'iletişim' neyi sağlar?", o: ["Kendi iç dünyamızı başkalarına aktarmayı ve onların niyetini anlamayı", "Sadece kendimizle konuşmayı", "Yalan söylemeyi", "Hiçbir şeyi", "Sadece hayvanlarla anlaşmayı"], a: 0 }
+    ];
+
+    let currentQuestion = 0;
+    let userAnswers = new Array(questions.length).fill(null);
+
+    function loadQuestion() {
+        const container = document.getElementById('quiz-container');
+        container.innerHTML = '';
+
+        const q = questions[currentQuestion];
+        
+        let html = `
+            <div class="question-block active">
+                <div class="question-text">${currentQuestion + 1}. ${q.q}</div>
+                <div class="options">
+        `;
+
+        q.o.forEach((opt, index) => {
+            const isSelected = userAnswers[currentQuestion] === index ? 'selected' : '';
+            const isChecked = userAnswers[currentQuestion] === index ? 'checked' : '';
+            html += `
+                <label class="option-label ${isSelected}" id="opt-${index}">
+                    <input type="radio" name="q${currentQuestion}" value="${index}" onclick="selectAnswer(${index})" ${isChecked}>
+                    ${String.fromCharCode(65 + index)}) ${opt}
+                </label>
+            `;
+        });
+
+        html += `</div></div>`;
+        container.innerHTML = html;
+
+        // Progress Bar
+        const progressPercent = ((currentQuestion + 1) / questions.length) * 100;
+        document.getElementById('progress-bar').style.width = progressPercent + '%';
+        document.getElementById('progress-text').innerText = `Soru ${currentQuestion + 1} / ${questions.length}`;
+        
+        // Buton Yönetimi
+        document.getElementById('prevBtn').disabled = currentQuestion === 0;
+        
+        if (currentQuestion === questions.length - 1) {
+            document.getElementById('nextBtn').style.display = 'none';
+            document.getElementById('finishBtn').style.display = 'inline-block';
+        } else {
+            document.getElementById('nextBtn').style.display = 'inline-block';
+            document.getElementById('finishBtn').style.display = 'none';
+        }
+    }
+
+    function selectAnswer(index) {
+        userAnswers[currentQuestion] = index;
+        const labels = document.querySelectorAll('.option-label');
+        labels.forEach(label => label.classList.remove('selected'));
+        document.getElementById(`opt-${index}`).classList.add('selected');
+    }
+
+    function showCurrentAnswer() {
+        const correctIndex = questions[currentQuestion].a;
+        const correctLabel = document.getElementById(`opt-${correctIndex}`);
+        if(correctLabel) correctLabel.classList.add('correct-highlight');
+        
+        if (userAnswers[currentQuestion] !== null && userAnswers[currentQuestion] !== correctIndex) {
+            document.getElementById(`opt-${userAnswers[currentQuestion]}`).classList.add('wrong-highlight');
+        }
+    }
+
+    function nextQuestion() {
+        if (currentQuestion < questions.length - 1) {
+            currentQuestion++;
+            loadQuestion();
+        }
+    }
+
+    function prevQuestion() {
+        if (currentQuestion > 0) {
+            currentQuestion--;
+            loadQuestion();
+        }
+    }
+
+    function finishQuiz() {
+        let correctCount = 0;
+        let wrongCount = 0;
+        let emptyCount = 0;
+        let reviewHtml = '';
+
+        questions.forEach((q, index) => {
+            const userAnswer = userAnswers[index];
+            const isCorrect = userAnswer === q.a;
+            
+            let statusText = '';
+            let statusClass = '';
+
+            if (userAnswer === null) {
+                emptyCount++;
+                statusText = 'Boş';
+                statusClass = 'status-empty';
+            } else if (isCorrect) {
+                correctCount++;
+                statusText = 'Doğru';
+                statusClass = 'status-correct';
+            } else {
+                wrongCount++;
+                statusText = 'Yanlış';
+                statusClass = 'status-wrong';
+            }
+
+            reviewHtml += `
+                <tr>
+                    <td>${index + 1}</td>
+                    <td>${q.q}</td>
+                    <td>${userAnswer !== null ? String.fromCharCode(65 + userAnswer) + ') ' + q.o[userAnswer] : '-'}</td>
+                    <td>${String.fromCharCode(65 + q.a)}) ${q.o[q.a]}</td>
+                    <td class="${statusClass}">${statusText}</td>
+                </tr>
+            `;
+        });
+
+        document.getElementById('quiz-screen').style.display = 'none';
+        document.getElementById('result-screen').style.display = 'block';
+
+        // Puanlama: Her soru 2 puan (100/50)
+        const score = Math.round((correctCount / questions.length) * 100);
+        
+        document.getElementById('score-circle').innerText = score;
+        document.getElementById('score-details').innerHTML = `
+            <strong>Doğru:</strong> ${correctCount} | 
+            <strong>Yanlış:</strong> ${wrongCount} | 
+            <strong>Boş:</strong> ${emptyCount}
+        `;
+        
+        document.getElementById('review-body').innerHTML = reviewHtml;
+    }
+
+    // Uygulamayı başlat
+    loadQuestion();
+</script>
+
+</body>
+</html>
