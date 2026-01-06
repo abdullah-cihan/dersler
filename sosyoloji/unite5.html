@@ -1,1 +1,318 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sosyoloji - 5. Ünite: Aile ve Toplumsal Cinsiyet</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #fce4ec; color: #333; margin: 0; padding: 20px; }
+        .container { max-width: 900px; margin: 0 auto; background: #fff; padding: 40px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        h1 { text-align: center; color: #d81b60; border-bottom: 2px solid #e91e63; padding-bottom: 10px; margin-bottom: 30px; }
+        
+        /* İlerleme Çubuğu */
+        .progress-container { background-color: #f8bbd0; border-radius: 10px; margin-bottom: 20px; height: 10px; overflow: hidden; }
+        .progress-bar { height: 100%; background-color: #d81b60; width: 0%; transition: width 0.3s; }
+        .progress-text { text-align: right; font-size: 0.9em; color: #880e4f; margin-bottom: 15px; }
 
+        /* Soru Alanı */
+        .question-block { display: none; animation: fadeIn 0.5s; }
+        .question-block.active { display: block; }
+        .question-text { font-weight: 600; font-size: 1.25em; margin-bottom: 20px; color: #880e4f; }
+        
+        /* Seçenekler */
+        .options { display: flex; flex-direction: column; gap: 10px; }
+        .option-label { 
+            display: flex; align-items: center; padding: 12px 15px; border: 2px solid #e0e0e0; 
+            border-radius: 8px; cursor: pointer; transition: all 0.2s; background: #fff;
+        }
+        .option-label:hover { background-color: #fce4ec; border-color: #f48fb1; }
+        .option-label.selected { border-color: #d81b60; background-color: #f8bbd0; }
+        .option-label input { margin-right: 15px; transform: scale(1.2); }
+        
+        /* Cevap Göster Stilleri */
+        .option-label.correct-highlight { border-color: #27ae60; background-color: #d5f5e3; color: #1e8449; font-weight: bold; }
+        .option-label.wrong-highlight { border-color: #e74c3c; background-color: #fadbd8; }
+
+        /* Butonlar */
+        .controls { margin-top: 30px; display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
+        button { border: none; padding: 12px 24px; border-radius: 6px; cursor: pointer; font-size: 16px; font-weight: 600; transition: background 0.2s; }
+        .nav-btn { background-color: #d81b60; color: white; }
+        .nav-btn:hover { background-color: #ad1457; }
+        .nav-btn:disabled { background-color: #bdc3c7; cursor: not-allowed; }
+        
+        .show-answer-btn { background-color: #f39c12; color: white; }
+        .show-answer-btn:hover { background-color: #e67e22; }
+        
+        .finish-btn { background-color: #27ae60; color: white; display: none; }
+        .finish-btn:hover { background-color: #219150; }
+
+        /* Sonuç Ekranı */
+        #result-screen { display: none; }
+        .score-card { text-align: center; background: #f8f9fa; padding: 20px; border-radius: 10px; margin-bottom: 30px; }
+        .score-circle { 
+            width: 120px; height: 120px; border-radius: 50%; background: #d81b60; color: white; 
+            display: flex; align-items: center; justify-content: center; font-size: 2em; font-weight: bold; 
+            margin: 0 auto 15px; 
+        }
+        
+        .review-table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 0.95em; }
+        .review-table th, .review-table td { padding: 12px; border: 1px solid #ddd; text-align: left; }
+        .review-table th { background-color: #880e4f; color: white; }
+        .review-table tr:nth-child(even) { background-color: #f2f2f2; }
+        .status-correct { color: #27ae60; font-weight: bold; }
+        .status-wrong { color: #c0392b; font-weight: bold; }
+        .status-empty { color: #f39c12; font-weight: bold; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div id="quiz-screen">
+        <h1>5. Ünite: Aile ve Toplumsal Cinsiyet</h1>
+        
+        <div class="progress-text" id="progress-text">Soru 1 / 50</div>
+        <div class="progress-container">
+            <div class="progress-bar" id="progress-bar"></div>
+        </div>
+        
+        <div id="quiz-container">
+            <!-- Sorular buraya JS ile gelecek -->
+        </div>
+
+        <div class="controls">
+            <div>
+                <button class="nav-btn" id="prevBtn" onclick="prevQuestion()" disabled>&#8592; Önceki</button>
+            </div>
+            <div>
+                <button class="show-answer-btn" onclick="showCurrentAnswer()">👁️ Cevabı Göster</button>
+            </div>
+            <div>
+                <button class="nav-btn" id="nextBtn" onclick="nextQuestion()">Sonraki &#8594;</button>
+                <button class="finish-btn" id="finishBtn" onclick="finishQuiz()">Testi Bitir &#10004;</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="result-screen">
+        <h1>Değerlendirme Sonucu</h1>
+        <div class="score-card">
+            <div class="score-circle" id="score-circle">0</div>
+            <h3>Toplam Puan</h3>
+            <p id="score-details"></p>
+        </div>
+        
+        <h3>Detaylı Soru Analizi</h3>
+        <table class="review-table">
+            <thead>
+                <tr>
+                    <th style="width: 5%">No</th>
+                    <th style="width: 45%">Soru</th>
+                    <th style="width: 20%">Senin Cevabın</th>
+                    <th style="width: 20%">Doğru Cevap</th>
+                    <th style="width: 10%">Durum</th>
+                </tr>
+            </thead>
+            <tbody id="review-body">
+                <!-- Sonuç satırları buraya gelecek -->
+            </tbody>
+        </table>
+        <div style="text-align: center; margin-top: 30px;">
+            <button class="nav-btn" onclick="location.reload()">Testi Tekrar Çöz</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // 5. Ünite Konuları: Aile Kurumu, Aile Türleri, Evlilik Türleri, Boşanma, Toplumsal Cinsiyet (Gender), Ataerkillik, Feminizm
+    const questions = [
+        { q: "Aralarında kan bağı, evlilik veya evlat edinme bağı bulunan, aynı haneyi paylaşan ve ekonomik işbirliği yapan gruba ne denir?", o: ["Sülale", "Klan", "Aile", "Kabile", "Topluluk"], a: 2 },
+        { q: "Anne, baba ve evlenmemiş çocuklardan oluşan, modern sanayi toplumlarında yaygın olan aile tipine ne ad verilir?", o: ["Geniş Aile", "Çekirdek Aile (Nükleer Aile)", "Tek Ebeveynli Aile", "Ataerkil Aile", "Anaerkil Aile"], a: 1 },
+        { q: "Aynı çatı altında üç veya daha fazla kuşağın (büyükanne, dede, torunlar vb.) bir arada yaşadığı aile tipine ne denir?", o: ["Çekirdek Aile", "Modern Aile", "Geniş Aile", "Parçalanmış Aile", "Sanal Aile"], a: 2 },
+        { q: "Bireyin içine doğduğu ve büyüdüğü, ilk sosyalleşmesini aldığı aileye ne denir?", o: ["Kurulan Aile", "Kök Aile (Yönelim Ailesi)", "Geniş Aile", "Üvey Aile", "Sanal Aile"], a: 1 },
+        { q: "Bireyin evlenerek veya çocuk sahibi olarak sonradan oluşturduğu aileye ne denir?", o: ["Kök Aile", "Kurulan Aile (Üreme Ailesi)", "Büyük Aile", "Ataerkil Aile", "Soy Ailesi"], a: 1 },
+        { q: "Sosyolojide 'biyolojik cinsiyet' (sex) ile 'toplumsal cinsiyet' (gender) arasındaki fark nedir?", o: ["Fark yoktur", "Biyolojik cinsiyet doğuştan gelen fiziksel özellikleri, toplumsal cinsiyet ise toplumun kadın ve erkeğe yüklediği rolleri ifade eder", "Biyolojik cinsiyet sonradan kazanılır", "Toplumsal cinsiyet sabittir", "Biyolojik cinsiyet değişkendir"], a: 1 },
+        { q: "Erkeğin birden fazla kadınla evlenmesine dayalı evlilik türüne ne denir?", o: ["Monogami", "Poliandri", "Polijini", "Endogami", "Egzogami"], a: 2 },
+        { q: "Kadının birden fazla erkekle evlenmesine dayalı (nadir görülen) evlilik türüne ne denir?", o: ["Polijini", "Poliandri", "Monogami", "Levirat", "Sororat"], a: 1 },
+        { q: "Kişinin sadece tek bir eşle evli olmasına ne denir?", o: ["Poligami", "Monogami", "Endogami", "Grup Evliliği", "Açık Evlilik"], a: 1 },
+        { q: "Kişinin kendi grubu, klanı veya akrabaları içinden evlenmesi kuralına ne denir?", o: ["Egzogami", "Endogami (İçten Evlilik)", "Monogami", "Poligami", "Sororat"], a: 1 },
+        { q: "Kişinin kendi grubu dışından evlenmek zorunda olması kuralına ne denir?", o: ["Endogami", "Egzogami (Dıştan Evlilik)", "Polijini", "Levirat", "Berdel"], a: 1 },
+        { q: "Ölen kocanın erkek kardeşiyle dul kalan kadının evlenmesi geleneğine ne ad verilir?", o: ["Sororat", "Levirat (Kayınbirader Evliliği)", "Berdel", "Beşik Kertmesi", "Taygeldi"], a: 1 },
+        { q: "Ölen kadının kız kardeşiyle dul kalan kocanın evlenmesi geleneğine ne ad verilir?", o: ["Levirat", "Sororat (Baldız Evliliği)", "İç Güveysi", "Berdel", "Poligami"], a: 1 },
+        { q: "Erkeklerin kadınlar üzerinde hakimiyet kurduğu, soyun erkek üzerinden devam ettiği toplumsal yapıya ne denir?", o: ["Anaerkil (Matriarki)", "Ataerkil (Patriarki)", "Eşitlikçi", "Demokratik", "Feminist"], a: 1 },
+        { q: "Kadınların otoriteyi elinde tuttuğu ve soyun anne üzerinden devam ettiği (teorik veya az görülen) yapıya ne denir?", o: ["Ataerkil", "Anaerkil", "Modern", "Geleneksel", "Otoriter"], a: 1 },
+        { q: "Otoritenin ve kararların eşler arasında eşit paylaşıldığı aile yapısına ne denir?", o: ["Ataerkil Aile", "Anaerkil Aile", "Eşitlikçi (Egaliter) Aile", "Geniş Aile", "Kök Aile"], a: 2 },
+        { q: "Yeni evli çiftin erkeğin ailesinin yanına veya yakınına yerleşmesine ne denir?", o: ["Matrilokal", "Patrilokal", "Neolokal", "Bilokal", "Avunkulokal"], a: 1 },
+        { q: "Yeni evli çiftin kadının ailesinin yanına yerleşmesine ne denir?", o: ["Patrilokal", "Matrilokal (İç Güveysi)", "Neolokal", "Evrensel", "Lokal"], a: 1 },
+        { q: "Yeni evli çiftin her iki aileden de bağımsız, ayrı bir eve yerleşmesine (modern toplumlarda yaygın) ne denir?", o: ["Patrilokal", "Matrilokal", "Neolokal", "Geleneksel", "Kırsal"], a: 2 },
+        { q: "İşlevselci yaklaşıma (örneğin Talcott Parsons) göre ailenin temel işlevlerinden biri nedir?", o: ["Kadını sömürmek", "Sınıf eşitsizliğini sürdürmek", "Çocuğun birincil sosyalleşmesi ve yetişkinlerin kişilik istikrarını sağlamak", "Tüketimi artırmak", "Devleti yıkmak"], a: 2 },
+        { q: "Çatışma kuramına (Marksist ve Feminist yaklaşım) göre aile kurumu neye hizmet eder?", o: ["Toplumsal uyuma", "Erkek egemenliğinin (ataerkilliğin) ve kapitalist düzenin devamına", "Bireysel özgürlüğe", "Dini inanca", "Eğitime"], a: 1 },
+        { q: "Kadınların hem ev dışında ücretli işte çalışıp hem de ev işleri ve çocuk bakımını üstlenmek zorunda kalmasına ne denir?", o: ["Kariyer", "İkinci Vardiya (Second Shift)", "Ev Hanımlığı", "Gönüllü Çalışma", "Meslek"], a: 1 },
+        { q: "Boşanma oranlarının artmasının nedenlerinden biri aşağıdakilerden hangisidir?", o: ["Ekonomik bağımlılığın artması", "Kadınların ekonomik özgürlüğünü kazanması ve yasal kolaylıklar", "Dinin etkisinin artması", "İnsan ömrünün kısalması", "Çocuk sayısının artması"], a: 1 },
+        { q: "Tek ebeveynli ailelerin artışında en büyük paya sahip olan grup hangisidir?", o: ["Dul babalar", "Bekar veya boşanmış anneler", "Büyükanneler", "Amcalar", "Teyzeler"], a: 1 },
+        { q: "Kadın ve erkeğin toplumsal yaşamın her alanında (hukuk, eğitim, iş vb.) eşit haklara sahip olmasını savunan akıma ne denir?", o: ["Feminizm", "Maskülenizm", "Komünizm", "Kapitalizm", "Liberalizm"], a: 0 },
+        { q: "Cam Tavan (Glass Ceiling) kavramı neyi ifade eder?", o: ["Camdan yapılmış binaları", "Kadınların iş hayatında üst düzey yöneticiliğe yükselmelerini engelleyen görünmez engelleri", "Şeffaf yönetimi", "Kırılgan ekonomiyi", "Ev işlerini"], a: 1 },
+        { q: "'Toplumsal Cinsiyet Rolleri' (Gender Roles) ne demektir?", o: ["Biyolojik cinsiyet", "Toplumun kadın ve erkekten beklediği, uygun gördüğü davranış, tutum ve görevler", "Tiyatro rolleri", "İş rolleri", "Okul rolleri"], a: 1 },
+        { q: "Ensest yasağı (aile içi cinsel ilişki yasağı) neden evrensel bir kural olarak kabul edilir?", o: ["Genetik bozulmayı önlemek ve aile içi rol karmaşasını engelleyip dışarıdan evliliği (sosyal bağları) teşvik etmek için", "Dini nedenlerle", "Yasal nedenlerle", "Ekonomik nedenlerle", "Tesadüfen"], a: 0 },
+        { q: "Boşanmış kişilerin, yanlarında önceki evliliklerinden olan çocuklarıyla birlikte yeni bir evlilik yaparak oluşturdukları aileye ne denir?", o: ["Üvey Aile / Yeniden Kurulmuş Aile (Blended Family)", "Geniş Aile", "Kök Aile", "Geleneksel Aile", "Sanal Aile"], a: 0 },
+        { q: "Anneliğin 'kutsal' ve kadının 'doğal' görevi olduğu düşüncesi, feministlere göre neyin bir ürünüdür?", o: ["Biyolojinin", "Tanrının emrinin", "Ataerkil ideolojinin ve kültürel inşanın", "Tıbbın", "Ekonominin"], a: 2 },
+        { q: "Modernleşme ile birlikte aile yapısında nasıl bir değişim gözlenmiştir?", o: ["Geniş aileden çekirdek aileye geçiş ve küçülme", "Çekirdek aileden geniş aileye geçiş", "Aile kurumunun tamamen yok olması", "Çok eşliliğin artması", "Akrabalık bağlarının güçlenmesi"], a: 0 },
+        { q: "Aile içi şiddetin en yaygın mağdurları kimlerdir?", o: ["Erkekler", "Kadınlar ve çocuklar", "Yaşlılar", "Komşular", "Yabancılar"], a: 1 },
+        { q: "Sanayileşme öncesi toplumlarda ailenin temel işlevi neydi?", o: ["Sadece tüketim", "Üretim birimi olması (Ekonomik işlev)", "Sadece eğitim", "Sadece eğlence", "Sadece barınma"], a: 1 },
+        { q: "Modern toplumlarda ailenin ekonomik işlevi neye dönüşmüştür?", o: ["Üretim biriminden tüketim birimine", "Tüketimden üretime", "Tamamen yok olmuştur", "Sadece tarıma", "Sadece ticarete"], a: 0 },
+        { q: "Parsons'a göre modern ailede erkeğin rolü 'araçsal' (dış dünyada çalışmak), kadının rolü nasıldır?", o: ["Lider", "Dışsal", "Duygusal / İfade edici (Expressive) (Ev içi düzen ve şefkat)", "Otoriter", "Pasif"], a: 2 },
+        { q: "Sosyolojide 'evlilik' nasıl tanımlanır?", o: ["Sadece aşk", "İki kişi arasındaki cinsel ilişki", "Toplumca onaylanmış, yasal veya geleneksel bir sözleşme ile kurulan birliktelik", "Sadece dini tören", "Aynı evde yaşamak"], a: 2 },
+        { q: "Kadınların iş hayatına katılımının artması doğurganlık oranını nasıl etkilemiştir?", o: ["Artırmıştır", "Etkilememiştir", "Genellikle düşürmüştür (Çocuk sahibi olma yaşının ertelenmesi ve sayısının azalması)", "İkiz doğumları artırmıştır", "Bilinmiyor"], a: 2 },
+        { q: "Bir arada yaşayan ancak resmi nikahı olmayan çiftlerin oluşturduğu birlikteliğe ne denir?", o: ["Birlikte Yaşama (Cohabitation)", "Evlilik", "Nişanlılık", "Boşanma", "Ayrılık"], a: 0 },
+        { q: "Ailenin çocuklara toplumsal değerleri öğretmesi işlevine ne denir?", o: ["Ekonomik işlev", "Sosyalleştirme işlevi", "Biyolojik işlev", "Koruma işlevi", "Statü kazandırma işlevi"], a: 1 },
+        { q: "Türkiye'de kırsal kesimden kente göç, aile yapısını nasıl etkilemiştir?", o: ["Geniş aileyi güçlendirmiştir", "Gecekondu ailesi / Geçiş ailesi gibi hem geleneksel hem modern özellikler taşıyan yapıları ortaya çıkarmıştır", "Aileyi yok etmiştir", "Boşanmaları azaltmıştır", "Etkilememiştir"], a: 1 },
+        { q: "Liberal feminizm, kadın-erkek eşitsizliğinin çözümünü nerede görür?", o: ["Devrimi yapmakta", "Erkekleri yok etmekte", "Yasal reformlar, eğitim ve fırsat eşitliğinde", "Ev işlerini yasaklamakta", "Dini değiştirmekte"], a: 2 },
+        { q: "Radikal feminizm, kadın ezilmişliğinin temel nedeni olarak neyi görür?", o: ["Kapitalizmi", "Eğitimsizliği", "Ataerkil sistemi (Patriyarka) ve erkek egemenliğini", "Yasaları", "Biyolojiyi"], a: 2 },
+        { q: "Marksist feminizm, kadının ezilmişliğini neyle ilişkilendirir?", o: ["Özel mülkiyet ve kapitalist sistemle", "Erkeklerin doğasıyla", "Dinle", "Kültürle", "Psikolojiyle"], a: 0 },
+        { q: "Ailenin yaşlı, hasta ve engelli bireylerine bakım sağlama işlevini günümüzde büyük ölçüde hangi kurumlar üstlenmeye başlamıştır?", o: ["Okullar", "Devlet ve özel bakım kurumları (Huzurevleri, hastaneler)", "Fabrikalar", "Bankalar", "Parklar"], a: 1 },
+        { q: "Evlilikte eşlerin birbirine sadakat göstermesi hangi tür normdur?", o: ["Yazılı olmayan ahlaki norm ve aynı zamanda yasal norm", "Sadece moda", "Sadece teknik kural", "Sadece görgü kuralı", "Önemsiz bir detay"], a: 0 },
+        { q: "Soyun hem anne hem de baba tarafından takip edildiği sisteme ne denir?", o: ["Patrilineal", "Matrilineal", "Bilateral (İki yanlı) Soy", "Tek taraflı soy", "Klan"], a: 2 },
+        { q: "Toplumsal cinsiyet eşitsizliği endekslerinde genellikle hangi alanlar ölçülür?", o: ["Sadece ev işleri", "Eğitim, sağlık, siyasi temsil ve ekonomik katılım", "Sadece spor başarısı", "Sadece sanat", "Sadece nüfus"], a: 1 },
+        { q: "Görücü usulü evliliğin modern toplumlarda azalmasının nedeni nedir?", o: ["Ailelerin ilgisizliği", "Bireyselleşme, romantik aşk ideali ve kişisel tercihlerin önem kazanması", "Yasaklanması", "Daha pahalı olması", "Geleneklerin güçlenmesi"], a: 1 },
+        { q: "Boşanmanın çocuklar üzerindeki etkisi nasıldır?", o: ["Her zaman olumludur", "Her zaman yıkıcıdır", "Çocuğun yaşına, cinsiyetine ve ebeveynlerin boşanma sonrası ilişkisine göre değişir (Genellikle kısa vadede stres, uzun vadede uyum)", "Hiçbir etkisi yoktur", "Sadece erkek çocukları etkiler"], a: 2 },
+        { q: "'Namus' kavramı genellikle hangi cinsiyetin davranışlarını kontrol etmek için kullanılır?", o: ["Erkeklerin", "Kadınların (Cinselliği ve bedeni üzerinden)", "Çocukların", "Yaşlıların", "Herkesin"], a: 1 }
+    ];
+
+    let currentQuestion = 0;
+    let userAnswers = new Array(questions.length).fill(null);
+
+    function loadQuestion() {
+        const container = document.getElementById('quiz-container');
+        container.innerHTML = '';
+
+        const q = questions[currentQuestion];
+        
+        let html = `
+            <div class="question-block active">
+                <div class="question-text">${currentQuestion + 1}. ${q.q}</div>
+                <div class="options">
+        `;
+
+        q.o.forEach((opt, index) => {
+            const isSelected = userAnswers[currentQuestion] === index ? 'selected' : '';
+            const isChecked = userAnswers[currentQuestion] === index ? 'checked' : '';
+            html += `
+                <label class="option-label ${isSelected}" id="opt-${index}">
+                    <input type="radio" name="q${currentQuestion}" value="${index}" onclick="selectAnswer(${index})" ${isChecked}>
+                    ${String.fromCharCode(65 + index)}) ${opt}
+                </label>
+            `;
+        });
+
+        html += `</div></div>`;
+        container.innerHTML = html;
+
+        // Progress Bar
+        const progressPercent = ((currentQuestion + 1) / questions.length) * 100;
+        document.getElementById('progress-bar').style.width = progressPercent + '%';
+        document.getElementById('progress-text').innerText = `Soru ${currentQuestion + 1} / ${questions.length}`;
+        
+        // Buton Yönetimi
+        document.getElementById('prevBtn').disabled = currentQuestion === 0;
+        
+        if (currentQuestion === questions.length - 1) {
+            document.getElementById('nextBtn').style.display = 'none';
+            document.getElementById('finishBtn').style.display = 'inline-block';
+        } else {
+            document.getElementById('nextBtn').style.display = 'inline-block';
+            document.getElementById('finishBtn').style.display = 'none';
+        }
+    }
+
+    function selectAnswer(index) {
+        userAnswers[currentQuestion] = index;
+        const labels = document.querySelectorAll('.option-label');
+        labels.forEach(label => label.classList.remove('selected'));
+        document.getElementById(`opt-${index}`).classList.add('selected');
+    }
+
+    function showCurrentAnswer() {
+        const correctIndex = questions[currentQuestion].a;
+        const correctLabel = document.getElementById(`opt-${correctIndex}`);
+        if(correctLabel) correctLabel.classList.add('correct-highlight');
+        
+        if (userAnswers[currentQuestion] !== null && userAnswers[currentQuestion] !== correctIndex) {
+            document.getElementById(`opt-${userAnswers[currentQuestion]}`).classList.add('wrong-highlight');
+        }
+    }
+
+    function nextQuestion() {
+        if (currentQuestion < questions.length - 1) {
+            currentQuestion++;
+            loadQuestion();
+        }
+    }
+
+    function prevQuestion() {
+        if (currentQuestion > 0) {
+            currentQuestion--;
+            loadQuestion();
+        }
+    }
+
+    function finishQuiz() {
+        let correctCount = 0;
+        let wrongCount = 0;
+        let emptyCount = 0;
+        let reviewHtml = '';
+
+        questions.forEach((q, index) => {
+            const userAnswer = userAnswers[index];
+            const isCorrect = userAnswer === q.a;
+            
+            let statusText = '';
+            let statusClass = '';
+
+            if (userAnswer === null) {
+                emptyCount++;
+                statusText = 'Boş';
+                statusClass = 'status-empty';
+            } else if (isCorrect) {
+                correctCount++;
+                statusText = 'Doğru';
+                statusClass = 'status-correct';
+            } else {
+                wrongCount++;
+                statusText = 'Yanlış';
+                statusClass = 'status-wrong';
+            }
+
+            reviewHtml += `
+                <tr>
+                    <td>${index + 1}</td>
+                    <td>${q.q}</td>
+                    <td>${userAnswer !== null ? String.fromCharCode(65 + userAnswer) + ') ' + q.o[userAnswer] : '-'}</td>
+                    <td>${String.fromCharCode(65 + q.a)}) ${q.o[q.a]}</td>
+                    <td class="${statusClass}">${statusText}</td>
+                </tr>
+            `;
+        });
+
+        document.getElementById('quiz-screen').style.display = 'none';
+        document.getElementById('result-screen').style.display = 'block';
+
+        // Puanlama: Her soru 2 puan (100/50)
+        const score = Math.round((correctCount / questions.length) * 100);
+        
+        document.getElementById('score-circle').innerText = score;
+        document.getElementById('score-details').innerHTML = `
+            <strong>Doğru:</strong> ${correctCount} | 
+            <strong>Yanlış:</strong> ${wrongCount} | 
+            <strong>Boş:</strong> ${emptyCount}
+        `;
+        
+        document.getElementById('review-body').innerHTML = reviewHtml;
+    }
+
+    // Uygulamayı başlat
+    loadQuestion();
+</script>
+
+</body>
+</html>
