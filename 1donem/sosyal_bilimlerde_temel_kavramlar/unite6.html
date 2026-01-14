@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sosyal Bilimlerde Temel Kavramlar - 6. Ünite: Toplumsal Tabakalaşma</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #e8eaf6; color: #1a237e; margin: 0; padding: 20px; }
+        .container { max-width: 900px; margin: 0 auto; background: #fff; padding: 40px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); position: relative; }
+        h1 { text-align: center; color: #283593; border-bottom: 2px solid #3949ab; padding-bottom: 15px; margin-bottom: 30px; font-size: 24px; }
+        
+        /* Home Button */
+        .home-btn {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background-color: #303f9f;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 14px;
+            transition: background 0.2s;
+        }
+        .home-btn:hover { background-color: #1a237e; }
+
+        /* İlerleme Çubuğu */
+        .progress-container { background-color: #c5cae9; border-radius: 10px; margin-bottom: 20px; height: 12px; overflow: hidden; }
+        .progress-bar { height: 100%; background-color: #3949ab; width: 0%; transition: width 0.3s; }
+        .progress-text { text-align: right; font-size: 0.9em; color: #1a237e; margin-bottom: 15px; font-weight: bold; }
+
+        /* Soru Alanı */
+        .question-block { display: none; animation: fadeIn 0.4s; }
+        .question-block.active { display: block; }
+        .question-text { font-weight: 700; font-size: 1.2em; margin-bottom: 25px; color: #000051; line-height: 1.4; }
+        
+        /* Seçenekler */
+        .options { display: flex; flex-direction: column; gap: 12px; }
+        .option-label { 
+            display: flex; align-items: center; padding: 15px 20px; border: 2px solid #c5cae9; 
+            border-radius: 8px; cursor: pointer; transition: all 0.2s; background: #fff; font-size: 1em;
+        }
+        .option-label:hover { background-color: #e8eaf6; border-color: #7986cb; }
+        .option-label.selected { border-color: #3949ab; background-color: #c5cae9; }
+        .option-label input { margin-right: 15px; transform: scale(1.2); cursor: pointer; }
+        
+        /* Cevap Göster Stilleri */
+        .option-label.correct-highlight { border-color: #2e7d32; background-color: #c8e6c9; color: #1b5e20; font-weight: bold; }
+        .option-label.wrong-highlight { border-color: #c62828; background-color: #ffcdd2; color: #b71c1c; }
+
+        /* Açıklama Kutusu */
+        .explanation-box {
+            margin-top: 25px;
+            padding: 20px;
+            background-color: #e8eaf6;
+            border-left: 5px solid #303f9f;
+            border-radius: 4px;
+            color: #1a237e;
+            display: none;
+            font-size: 0.95em;
+            line-height: 1.6;
+        }
+
+        /* Butonlar */
+        .controls { margin-top: 35px; display: flex; justify-content: space-between; align-items: center; gap: 15px; flex-wrap: wrap; }
+        button { border: none; padding: 12px 28px; border-radius: 6px; cursor: pointer; font-size: 16px; font-weight: 600; transition: transform 0.1s, background 0.2s; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        button:active { transform: translateY(1px); }
+        
+        .nav-btn { background-color: #3949ab; color: white; }
+        .nav-btn:hover { background-color: #283593; }
+        .nav-btn:disabled { background-color: #9fa8da; cursor: not-allowed; box-shadow: none; }
+        
+        .show-answer-btn { background-color: #ff8f00; color: white; }
+        .show-answer-btn:hover { background-color: #ef6c00; }
+        
+        .finish-btn { background-color: #2e7d32; color: white; display: none; }
+        .finish-btn:hover { background-color: #1b5e20; }
+
+        /* Sonuç Ekranı */
+        #result-screen { display: none; }
+        .score-card { text-align: center; background: #e8eaf6; padding: 30px; border-radius: 12px; margin-bottom: 30px; border: 1px solid #9fa8da; }
+        .score-circle { 
+            width: 140px; height: 140px; border-radius: 50%; background: #3949ab; color: white; 
+            display: flex; align-items: center; justify-content: center; font-size: 2.5em; font-weight: bold; 
+            margin: 0 auto 20px; box-shadow: 0 4px 10px rgba(57, 73, 171, 0.4);
+        }
+        
+        .review-table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 0.9em; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        .review-table th, .review-table td { padding: 15px; border: 1px solid #c5cae9; text-align: left; }
+        .review-table th { background-color: #283593; color: white; font-weight: 600; }
+        .review-table tr:nth-child(even) { background-color: #e8eaf6; }
+        .review-table tr:hover { background-color: #c5cae9; }
+        .status-correct { color: #2e7d32; font-weight: bold; }
+        .status-wrong { color: #c62828; font-weight: bold; }
+        .status-empty { color: #f57f17; font-weight: bold; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        /* Responsive adjustments */
+        @media (max-width: 600px) {
+            .container { padding: 20px; }
+            .option-label { padding: 10px 15px; }
+            .question-text { font-size: 1.1em; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <button class="home-btn" onclick="if(confirm('Testi yeniden başlatmak istediğinize emin misiniz?')) location.reload();">⌂ Testi Yenile</button>
+    
+    <div id="quiz-screen">
+        <h1>6. Ünite: Toplumsal Tabakalaşma ve Eşitsizlik (55 Soru)</h1>
+        
+        <div class="progress-text" id="progress-text">Soru 1 / 55</div>
+        <div class="progress-container">
+            <div class="progress-bar" id="progress-bar"></div>
+        </div>
+        
+        <div id="quiz-container">
+            <!-- Sorular buraya JS ile gelecek -->
+        </div>
+
+        <!-- Açıklama Alanı -->
+        <div id="explanation-area" class="explanation-box"></div>
+
+        <div class="controls">
+            <div>
+                <button class="nav-btn" id="prevBtn" onclick="prevQuestion()" disabled>&#8592; Önceki</button>
+            </div>
+            <div>
+                <button class="show-answer-btn" onclick="showCurrentAnswer()">👁️ Cevabı Göster</button>
+            </div>
+            <div>
+                <button class="nav-btn" id="nextBtn" onclick="nextQuestion()">Sonraki &#8594;</button>
+                <button class="finish-btn" id="finishBtn" onclick="finishQuiz()">Testi Bitir &#10004;</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="result-screen">
+        <h1>Değerlendirme Sonucu</h1>
+        <div class="score-card">
+            <div class="score-circle" id="score-circle">0</div>
+            <h3>Başarı Puanı</h3>
+            <p id="score-details" style="font-size: 1.1em; color: #555;"></p>
+        </div>
+        
+        <h3>Detaylı Soru Analizi</h3>
+        <div style="overflow-x: auto;">
+            <table class="review-table">
+                <thead>
+                    <tr>
+                        <th style="width: 5%">No</th>
+                        <th style="width: 45%">Soru</th>
+                        <th style="width: 20%">Senin Cevabın</th>
+                        <th style="width: 20%">Doğru Cevap</th>
+                        <th style="width: 10%">Durum</th>
+                    </tr>
+                </thead>
+                <tbody id="review-body">
+                    <!-- Sonuç satırları buraya gelecek -->
+                </tbody>
+            </table>
+        </div>
+        <div style="text-align: center; margin-top: 30px;">
+            <button class="nav-btn" onclick="location.reload()">Testi Tekrar Çöz</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // 55 Soruluk AÖF Tarzı Soru Havuzu - 6. Ünite: Toplumsal Tabakalaşma
+    const questions = [
+        // Giriş ve Tarihsel Sistemler (Kölelik, Kast, Feodalite)
+        { q: "Toplumsal tabakalaşma (stratification) ne demektir?", o: ["İnsanların rastgele dizilmesi", "Bireylerin veya grupların hiyerarşik olarak katmanlar şeklinde sıralanması (eşitsizlik sistemi)", "Herkesin eşit olması", "Nüfus sayımı yapmak", "Coğrafi yerleşim"], a: 1, exp: "Tabakalaşma, toplumdaki ödüllerin (servet, güç, prestij) eşitsiz dağılımını ifade eder." },
+        { q: "İnsanların başkalarının mülkü olarak görüldüğü, en katı ve kapalı tabakalaşma sistemi hangisidir?", o: ["Sınıf Sistemi", "Kast Sistemi", "Kölelik Sistemi", "Feodalite", "Meritokrasi"], a: 2, exp: "Kölelik, bir insanın başka bir insanın malı olduğu, hak ve özgürlüklerinin bulunmadığı sistemdir." },
+        { q: "Hindistan ile özdeşleşen, toplumsal konumun doğuştan geldiği ve değiştirilmesinin (evlilik vb. yoluyla) mümkün olmadığı kapalı sistem hangisidir?", o: ["Kölelik", "Kast Sistemi", "Sınıf Sistemi", "Zümre Sistemi", "Lonca"], a: 1, exp: "Kast sistemi, dini temellere (Hinduizm) dayanır ve dikey hareketliliğe izin vermez." },
+        { q: "Kast sisteminde en üstte yer alan rahip ve bilginler grubuna ne ad verilir?", o: ["Kşatriyalar", "Vaisyalar", "Sudralar", "Brahminler", "Paryalar"], a: 3, exp: "Brahminler, kast hiyerarşisinin en tepesindeki dini liderler sınıfıdır." },
+        { q: "Ortaçağ Avrupası'nda görülen, toprak mülkiyetine dayalı, soylular, rahipler ve köylülerden (serfler) oluşan tabakalaşma sistemine ne denir?", o: ["Kölelik", "Kast", "Zümre (Estate) / Feodal Sistem", "Sınıf", "Kapitalizm"], a: 2, exp: "Zümre sistemi, yasalara ve karşılıklı yükümlülüklere dayalı, kısmen geçirgen bir sistemdir." },
+
+        // Sosyal Sınıflar ve Modern Toplum
+        { q: "Modern sanayi toplumlarında görülen, ekonomik temelli ve başarıya dayalı (kısmen açık) tabakalaşma sistemi hangisidir?", o: ["Kast", "Zümre", "Sınıf Sistemi", "Kölelik", "Klan"], a: 2, exp: "Sınıf sistemi, bireylerin yetenek ve çabalarıyla konum değiştirebildiği (hareketlilik) açık bir sistemdir." },
+        { q: "Sınıf sistemini diğerlerinden (Kast, Kölelik) ayıran en temel özellik nedir?", o: ["Dini olması", "Kapalı olması", "Hukuki ve dini engellerin olmaması, akışkan ve kazanılmış statülere dayanması", "Sadece kralların olması", "Hiçbir fark olmaması"], a: 2, exp: "Sınıf sisteminde sınırlar kesin değildir ve bireyler sınıf atlayabilir (meritokrasi)." },
+        
+        // Karl Marx ve Sınıf Kuramı
+        { q: "Karl Marx'a göre toplumsal tabakalaşmanın ve sınıfların temel belirleyicisi nedir?", o: ["Eğitim düzeyi", "Dini inanç", "Üretim araçlarına sahiplik (Ekonomik yapı)", "Siyasi güç", "Kişisel yetenek"], a: 2, exp: "Marx'a göre sınıf, üretim araçlarına sahip olanlar (Burjuvazi) ve olmayanlar (Proletarya) arasındaki ilişkiye dayanır." },
+        { q: "Marx'a göre kapitalist toplumdaki temel çatışma hangi iki sınıf arasındadır?", o: ["Soylular ve Köylüler", "Burjuvazi (Sermayedar) ve Proletarya (İşçi)", "Memurlar ve Esnaf", "Askerler ve Siviller", "Kadınlar ve Erkekler"], a: 1, exp: "Burjuvazi kâr peşindedir, proletarya ise emeğini satar; çıkarları uzlaşmaz bir çatışma içindedir." },
+        { q: "Marx'ın 'Sınıf Bilinci' kavramı neyi ifade eder?", o: ["Sınıfını bilmemeyi", "İşçilerin kendi ortak çıkarlarının ve sömürüldüklerinin farkına vararak 'kendisi için sınıf' olmaları", "Zengin olmayı istemek", "Okula gitmek", "Sendikadan istifa etmek"], a: 1, exp: "Marx'a göre işçiler 'kendinde sınıf'tan 'kendisi için sınıf'a geçmeli ve devrim yapmalıdır." },
+        { q: "Marx'a göre işçilerin sömürüldüklerini fark etmelerini engelleyen, mevcut düzeni doğal gösteren düşünce sistemine ne denir?", o: ["Sınıf Bilinci", "Yanlış Bilinç (İdeoloji)", "Bilim", "Felsefe", "Devrim"], a: 1, exp: "Din, hukuk ve medya gibi üstyapı kurumları, yanlış bilinç yaratarak statükoyu korur." },
+        
+        // Max Weber ve Tabakalaşma Kuramı
+        { q: "Max Weber, Marx'ın sadece ekonomik temelli analizine karşı çıkarak tabakalaşmanın üç boyutu olduğunu savunmuştur. Bunlar nelerdir?", o: ["Para, Altın, Döviz", "Sınıf (Ekonomi), Statü (Saygınlık), Parti (Güç)", "Din, Dil, Irk", "Eğitim, Sağlık, Güvenlik", "Aile, Okul, Devlet"], a: 1, exp: "Weber, eşitsizliğin sadece parada değil, toplumsal prestijde (statü) ve siyasi güçte (parti) de olduğunu gösterir." },
+        { q: "Weber'e göre 'Statü Grupları' neye göre belirlenir?", o: ["Üretim araçlarına göre", "Toplumsal saygınlık, yaşam tarzı ve tüketim alışkanlıklarına göre", "Siyasi partiye üyeliğe göre", "Kas gücüne göre", "Yaşa göre"], a: 1, exp: "Statü, ekonomik güçten bağımsız olabilir (Örn: Soylu ama fakir bir aristokrat, zengin ama saygınlığı düşük bir sonradan görme)." },
+        { q: "Weber'e göre 'Parti' boyutu neyi ifade eder?", o: ["Eğlence partilerini", "Siyasi iktidarı ve gücü etkilemeye çalışan örgütlü grupları", "Doğum günü kutlamasını", "Sadece seçimleri", "Hiçbir şeyi"], a: 1, exp: "Parti, iktidar mücadelesi veren her türlü örgütlenmedir (sendika, dernek, siyasi parti vb.)." },
+        
+        // Yapısal-İşlevselci Okul (Davis & Moore, Parsons)
+        { q: "Davis ve Moore'un (İşlevselci Teori) toplumsal tabakalaşma hakkındaki temel tezi nedir?", o: ["Tabakalaşma kötüdür ve yok edilmelidir", "Tabakalaşma gereksizdir", "Tabakalaşma evrenseldir ve toplumun en yetenekli bireylerini en önemli pozisyonlara getirmek için (motivasyon) gereklidir", "Tabakalaşma sadece kapitalizmde vardır", "Tabakalaşma suç oranını artırır"], a: 2, exp: "Onlara göre yüksek ödüller (yüksek maaş, prestij), zor ve önemli meslekleri (örn: doktorluk) yapacak kişileri motive etmek için işlevseldir." },
+        { q: "İşlevselci yaklaşıma göre eşitsizlik neyin sonucudur?", o: ["Sömürünün", "Yetenek ve çaba farkının (Meritokrasi)", "Şansın", "Mirasın", "Hırsızlığın"], a: 1, exp: "Sistem adildir; çok çalışan ve yetenekli olan yükselir." },
+        
+        // E.O. Wright ve Çelişkili Sınıf Konumları
+        { q: "Erik Olin Wright'ın Marksist analizi güncelleyerek ortaya attığı 'Çelişkili Sınıf Konumları' kime işaret eder?", o: ["Sadece işçilere", "Sadece patronlara", "Yöneticiler ve uzmanlar gibi hem sömürülen hem de başkalarını denetleyen (ara) gruplara", "İşsizlere", "Köylülere"], a: 2, exp: "Beyaz yakalı yöneticiler, işçi değildirler (yetkileri vardır) ama patron da değildirler (mülk sahibi değillerdir); arada kalmışlardır." },
+        
+        // Toplumsal Hareketlilik
+        { q: "Bireylerin veya grupların bir tabakadan diğerine geçmesine ne ad verilir?", o: ["Toplumsal Değişme", "Toplumsal Hareketlilik (Social Mobility)", "Göç", "Devrim", "Statüko"], a: 1, exp: "Hareketlilik, sınıf veya statü değiştirmeyi ifade eder." },
+        { q: "Bir bireyin kendi yaşam süresi içinde statüsünün değişmesine (Örn: Çırakken usta olması) ne denir?", o: ["Kuşaklararası Hareketlilik", "Kuşak içi Hareketlilik (Intragenerational)", "Yatay Hareketlilik", "Coğrafi Hareketlilik", "Tersine Hareketlilik"], a: 1, exp: "Kuşak içi hareketlilik, kişinin kariyerindeki iniş çıkışlardır." },
+        { q: "Çocukların ebeveynlerine göre daha yüksek veya düşük bir statüye geçmesine (Örn: Çiftçi babanın doktor oğlu) ne denir?", o: ["Kuşak içi Hareketlilik", "Kuşaklararası Hareketlilik (Intergenerational)", "Yatay Hareketlilik", "Durgunluk", "Sabitlik"], a: 1, exp: "Kuşaklararası hareketlilik, toplumun fırsat eşitliği hakkında bilgi verir." },
+        { q: "Bir kişinin aynı statü düzeyinde kalan farklı bir işe geçmesine (Örn: Manavın bakkal olması) ne denir?", o: ["Dikey Hareketlilik", "Yatay Hareketlilik", "Aşağı Hareketlilik", "Yukarı Hareketlilik", "Yapısal Hareketlilik"], a: 1, exp: "Yatay hareketlilikte gelir veya prestijde önemli bir değişiklik olmaz." },
+        
+        // Kesişimsellik ve Orta Sınıf
+        { q: "Toplumsal eşitsizliğin sadece sınıfla değil; ırk, cinsiyet, etnik köken gibi faktörlerin birleşimiyle oluştuğunu savunan yaklaşım hangisidir?", o: ["Fonksiyonalizm", "Kesişimsellik (Intersectionality)", "Liberalizm", "Pozitivizm", "Marksizm"], a: 1, exp: "Kimberlé Crenshaw'ın kavramı; siyah bir kadının ezilmişliğinin, sadece siyah veya sadece kadın olmaktan farklı ve katmanlı olduğunu anlatır." },
+        { q: "Modern toplumlarda geleneksel işçi sınıfı ile burjuvazi arasında yer alan, eğitimli, beyaz yakalı profesyonellerden oluşan genişleyen sınıfa ne denir?", o: ["Alt Sınıf", "Lümpen Proletarya", "Yeni Orta Sınıf", "Aristokrasi", "Kast"], a: 2, exp: "Hizmet sektörünün büyümesiyle mühendisler, öğretmenler, memurlar 'yeni orta sınıf'ı oluşturmuştur." },
+        
+        // Bourdieu ve Kültürel Dönüş
+        { q: "Pierre Bourdieu'ya göre, bireyin ailesinden ve eğitiminden edindiği bilgi, görgü, diploma ve estetik beğenilere ne ad verilir?", o: ["Ekonomik Sermaye", "Sosyal Sermaye", "Kültürel Sermaye", "Simgesel Sermaye", "Politik Sermaye"], a: 2, exp: "Kültürel sermaye, sınıf atlamada en az para kadar önemlidir." },
+        { q: "Bourdieu'nun 'Habitus' kavramı neyi ifade eder?", o: ["Kıyafetleri", "Bireyin içinde yetiştiği sınıfsal koşullara göre şekillenen düşünme ve davranma yatkınlıklarını", "Ev dekorasyonunu", "Eğitim sistemini", "Siyasi partiyi"], a: 1, exp: "Habitus, bizim 'doğal' sandığımız zevklerimizin aslında sınıfsal olduğunu gösterir." },
+        { q: "Bourdieu'ya göre sınıflar arasındaki ayrım sadece ekonomik değil, aynı zamanda ...... temellidir.", o: ["Dini", "Yaşam tarzı ve Tüketim (Beğeni)", "Askeri", "Coğrafi", "Biyolojik"], a: 1, exp: "Üst sınıf klasik müzik dinlerken alt sınıfın arabesk dinlemesi, bir beğeni değil sınıfsal bir ayrımdır (Ayrım/Distinction)." },
+        
+        // Yoksulluk ve Yeni Yoksulluk
+        { q: "Bir bireyin veya ailenin, biyolojik varlığını sürdürebilmek için gerekli olan temel gıda ve barınma ihtiyaçlarını karşılayamamasına ne denir?", o: ["Göreli Yoksulluk", "Mutlak Yoksulluk", "Öznel Yoksulluk", "İnsani Yoksulluk", "Yeni Yoksulluk"], a: 1, exp: "Mutlak yoksulluk, açlık sınırının altında yaşamaktır." },
+        { q: "Bireyin, içinde yaşadığı toplumun ortalama yaşam standardının altında kalması ve toplumsal etkinliklere katılamamasına ne denir?", o: ["Mutlak Yoksulluk", "Göreli Yoksulluk", "Açlık", "Sefalet", "Zenginlik"], a: 1, exp: "Göreli yoksulluk, başkalarına göre fakir olmaktır (Örn: Herkesin arabası varken senin olmaması)." },
+        { q: "Küreselleşme ve esnek çalışma ile ortaya çıkan, çalışan ancak kazancı yoksulluk sınırını aşmaya yetmeyen kitleye (Working Poor) ne ad verilir?", o: ["Zenginler", "Eski Yoksullar", "Yeni Yoksulluk / Çalışan Yoksullar", "Orta Sınıf", "Emekliler"], a: 2, exp: "Eskiden işsizler yoksuldu; şimdi çalışanlar da güvencesiz ve düşük ücretli işler nedeniyle yoksuldur." },
+        { q: "Yoksulluğun sadece ekonomik değil; sosyal, kültürel ve siyasal haklardan mahrumiyet (dışlanma) olarak tanımlanmasına ne denir?", o: ["Zenginleşme", "Sosyal Dışlanma (Social Exclusion)", "Sınıf Atlam", "Entegrasyon", "Küreselleşme"], a: 1, exp: "Sosyal dışlanma, bireyin toplumla bağlarının kopmasıdır." },
+        { q: "Oscar Lewis'in 'Yoksulluk Kültürü' tezi neyi iddia eder?", o: ["Yoksulluğun suç olduğunu", "Yoksulluğun, kuşaktan kuşağa aktarılan bir değerler ve davranışlar bütünü (kabullenmişlik, geleceği düşünmeme) yarattığını", "Yoksulların çok kültürlü olduğunu", "Zenginlerin yoksulları sevdiğini", "Yoksulluğun geçici olduğunu"], a: 1, exp: "Bu tez, yoksulluğun yapısal nedenlerden çok yoksulların yaşam tarzından kaynaklandığını ima ettiği için eleştirilir." },
+        
+        // Karışık / Pekiştirme
+        { q: "Kuznets Eğrisi'ne göre sanayileşmenin ilk aşamalarında eşitsizlik ......, ileri aşamalarında ise .......", o: ["Azalır - Artar", "Artar - Azalır", "Değişmez - Değişmez", "Yok olur - Başlar", "Sabittir - Artar"], a: 1, exp: "Kuznets, kapitalizmin gelişmesiyle eşitsizliğin önce artacağını, sonra refahın tabana yayılmasıyla azalacağını öngörmüştür." },
+        { q: "Gini Katsayısı neyi ölçer?", o: ["Enflasyonu", "İşsizliği", "Gelir dağılımı eşitsizliğini", "Nüfus artışını", "Eğitim seviyesini"], a: 2, exp: "0 (tam eşitlik) ile 1 (tam eşitsizlik) arasında bir değerdir." },
+        { q: "Prekarya (Precariat) kavramı hangi sınıfı tanımlar?", o: ["Zenginleri", "Güvencesiz, geçici ve esnek işlerde çalışan, gelecek kaygısı taşıyan yeni sınıfı", "Kadrolu işçileri", "Toprak ağalarını", "Devlet memurlarını"], a: 1, exp: "Prekarya, proletaryanın yerini alan, iş güvencesi olmayan kitledir." },
+        { q: "Meritokrasi nedir?", o: ["Soylu yönetimi", "Liyakat sistemi (Konumların yetenek ve başarıya göre dağıtılması)", "Zengin yönetimi", "Askeri yönetim", "Dini yönetim"], a: 1, exp: "Modern sınıf toplumunun ideali, soyun değil yeteneğin belirleyici olmasıdır." },
+        { q: "Cam Tavan (Glass Ceiling) kavramı tabakalaşmada neyi ifade eder?", o: ["Camcıları", "Kadınların ve azınlıkların kariyerlerinde yükselmelerini engelleyen görünmez bariyerleri", "Şeffaf yönetimi", "Binaları", "Tavan fiyatı"], a: 1, exp: "Kadınlar belirli bir yere kadar yükselir ama tepe yönetime geçişleri görünmez engellerle durdurulur." },
+        { q: "Weber'e göre bir bürokratın veya profesörün sahip olduğu güç, hangi boyuta örnektir?", o: ["Sınıf (Ekonomik)", "Statü (Prestij)", "Parti (Siyasi)", "Kast", "Kölelik"], a: 1, exp: "Akademisyenler çok zengin olmayabilir (sınıf) ama toplumda saygınlıkları (statü) yüksektir." },
+        { q: "Marx'a göre 'Lümpen Proletarya' kimlerdir?", o: ["Devrimci işçiler", "Sınıf bilinci olmayan, suça meyilli, üretim dışı (dilenci, hırsız vb.) alt tabaka", "Zengin işçiler", "Sendikacılar", "Köylüler"], a: 1, exp: "Marx, bu grubu devrimci potansiyeli olmayan, gerici güçlerce kullanılabilecek 'sosyal tortu' olarak görür." },
+        { q: "Kültürel Dönüş (Cultural Turn) tartışmalarında sınıf analizi nasıl değişmiştir?", o: ["Sadece ekonomiye odaklanılmıştır", "Sınıfın sadece üretimle değil, tüketim ve kültürel kimliklerle de ilişkili olduğu vurgulanmıştır", "Sınıf kavramı atılmıştır", "Sadece siyaset konuşulmuştur", "Tarihe dönülmüştür"], a: 1, exp: "Artık ne ürettiğimiz kadar ne tükettiğimiz ve nasıl yaşadığımız da sınıfımızı belirler." },
+        { q: "Aşağıdakilerden hangisi 'Dikey Hareketlilik' örneğidir?", o: ["Ankara'dan İstanbul'a taşınmak", "Öğretmenin müdür olması", "İşçinin ustabaşı olması", "Kapıcının oğlunun doktor olması", "Hepsi"], a: 4, exp: "Seçeneklerin hepsi (biri coğrafi olsa da statü değişimi içeriyorsa) veya özellikle son üçü dikey hareketliliktir. En net örnek kapıcının oğlunun doktor olmasıdır." },
+        { q: "Apartheid rejimi (Güney Afrika) hangi tabakalaşma sistemine benzer özellikler taşır?", o: ["Sınıf", "Kast (Irk temelli kapalı sistem)", "Feodalite", "Meritokrasi", "Demokrasi"], a: 1, exp: "Irk ayrımına dayalı, geçişin yasak olduğu kapalı bir sistemdi." },
+        { q: "Feminist kuramlar tabakalaşma analizine neyi eklemiştir?", o: ["Parayı", "Cinsiyeti (Toplumsal cinsiyetin de bir tabakalaşma ekseni olduğunu)", "Dini", "Yaşı", "Coğrafyayı"], a: 1, exp: "Eşitsizlik sadece sınıf değil, cinsiyet hiyerarşisi üzerinden de işler." },
+        { q: "Küresel tabakalaşmada 'Merkez Ülkeler' (Wallerstein) hangileridir?", o: ["Hammadde satan fakir ülkeler", "Sanayileşmiş, zengin, teknolojiyi üreten ve sömüren ülkeler (ABD, Batı Avrupa)", "Gelişmekte olan ülkeler", "Tarım ülkeleri", "Sömürgeler"], a: 1, exp: "Dünya Sistemi Teorisinde merkez, yarı-çevre ve çevre ülkeler vardır." },
+        { q: "Serfler ve Lordlar hangi sistemin sınıflarıdır?", o: ["Kapitalizm", "Kölelik", "Feodalizm", "Kast", "Sosyalizm"], a: 2, exp: "Feodal düzende toprak sahibi lordlar ve toprağa bağlı köylüler (serfler) vardır." },
+        { q: "Weber'e göre otoritenin meşruiyet kaynağı geleneklerse buna ne denir?", o: ["Yasal Otorite", "Geleneksel Otorite", "Karizmatik Otorite", "Zorba Otorite", "Demokratik Otorite"], a: 1, exp: "Padişahlık veya aşiret reisliği buna örnektir." },
+        { q: "Sınıfın 'nesnel' (objektif) ölçütü nedir?", o: ["Kişinin kendini nasıl hissettiği", "Gelir, meslek ve eğitim düzeyi", "Kişinin hobileri", "Kişinin arkadaşları", "Kişinin rüyaları"], a: 1, exp: "Sosyologlar sınıfı ölçerken genellikle ölçülebilir göstergeler (SES endeksi) kullanırlar." },
+        { q: "Underclass (Sınıf Altı) kavramı kimler için kullanılır?", o: ["İşçiler", "Sürekli işsiz, sosyal yardımla geçinen, sistemin tamamen dışına itilmiş kitle", "Öğrenciler", "Emekliler", "Memurlar"], a: 1, exp: "Genellikle gettolarda yaşayan, yoksulluk döngüsünden çıkamayan en alt tabakadır." },
+        // Yeni Eklenen Sorular
+        { q: "Ekonomik yapıda veya işgücü piyasasında meydana gelen köklü değişimlerin (örn: sanayileşme) neden olduğu kitlesel hareketliliğe ne denir?", o: ["Bireysel Hareketlilik", "Yapısal Hareketlilik", "Yatay Hareketlilik", "Tersine Hareketlilik", "Döngüsel Hareketlilik"], a: 1, exp: "Yapısal hareketlilik, bireylerin çabasından ziyade toplumun yapısındaki değişimlerden (tarımdan sanayiye geçiş gibi) kaynaklanır." },
+        { q: "Bourdieu'ya göre, bireyin sahip olduğu sosyal ilişkiler ağı ve grup üyeliklerinden elde ettiği avantaja ne ad verilir?", o: ["Ekonomik Sermaye", "Kültürel Sermaye", "Sosyal Sermaye", "Simgesel Sermaye", "Beşeri Sermaye"], a: 2, exp: "Sosyal sermaye, 'kimi tanıdığınız' ve hangi çevrelere girebildiğinizle ilgilidir." },
+        { q: "Bir bireyin statü özelliklerinin (gelir, eğitim, meslek vb.) birbiriyle uyumsuz olması durumuna ne denir?", o: ["Statü Tutarlılığı", "Statü Tutarsızlığı", "Sınıf Bilinci", "Yabancılaşma", "Anomi"], a: 1, exp: "Örneğin, doktora yapmış birinin taksi şoförlüğü yapması veya çok zengin birinin eğitiminin düşük olması statü tutarsızlığıdır." },
+        { q: "Bedensel emeğe dayalı işlerde çalışan işçilere (örn: fabrika işçisi, inşaat işçisi) ne ad verilir?", o: ["Beyaz Yakalılar", "Mavi Yakalılar", "Altın Yakalılar", "Pembe Yakalılar", "Gri Yakalılar"], a: 1, exp: "Mavi yakalılar genellikle üretim sürecinde fiziksel güç harcayan, saat ücretiyle çalışan kesimdir." },
+        { q: "Zihinsel emeğe dayalı, ofis ortamında çalışan, idari ve teknik personele ne ad verilir?", o: ["Mavi Yakalılar", "Beyaz Yakalılar", "Siyah Yakalılar", "Mor Yakalılar", "Turuncu Yakalılar"], a: 1, exp: "Beyaz yakalılar, genellikle masa başı iş yapan, maaşlı profesyonelleri ifade eder." },
+        { q: "Wallerstein'ın Dünya Sistemi Teorisi'ne göre, hem sömüren hem sömürülen ara ülkeler grubuna ne denir?", o: ["Merkez", "Çevre", "Yarı-Çevre", "Bağımsız", "Gelişmiş"], a: 2, exp: "Yarı-çevre ülkeler (örn: Brezilya, Türkiye), merkez ülkelere hammadde satarken çevre ülkelerden de faydalanabilir." },
+        { q: "Toplumsal tabakalaşma sadece modern toplumlara mı özgüdür?", o: ["Evet, sadece kapitalizmde vardır", "Hayır, tarih boyunca neredeyse tüm toplumlarda (avcı-toplayıcılar hariç) görülmüştür", "Sadece feodalitede vardır", "Sadece şehirlerde vardır", "Asla görülmemiştir"], a: 1, exp: "İlkel komünal toplumlar dışında, yerleşik hayata geçişten itibaren eşitsizlik ve tabakalaşma evrensel bir olgudur." },
+        { q: "Marx'a göre kapitalizmin kaçınılmaz sonu nedir?", o: ["Sürekli büyüme", "Proletarya devrimi ve sınıfsız toplum (Komünizm)", "Feodalizme dönüş", "Krallık", "Kaos"], a: 1, exp: "Marx, sınıf çatışmasının sonunda işçi sınıfının devrim yaparak sınıfları ortadan kaldıracağına inanıyordu." }
+    ];
+
+    let currentQuestion = 0;
+    let userAnswers = new Array(questions.length).fill(null);
+
+    function loadQuestion() {
+        const container = document.getElementById('quiz-container');
+        const explanationArea = document.getElementById('explanation-area');
+        
+        container.innerHTML = '';
+        explanationArea.style.display = 'none';
+
+        const q = questions[currentQuestion];
+        
+        let html = `
+            <div class="question-block active">
+                <div class="question-text">${currentQuestion + 1}. ${q.q}</div>
+                <div class="options">
+        `;
+
+        q.o.forEach((opt, index) => {
+            const isSelected = userAnswers[currentQuestion] === index ? 'selected' : '';
+            const isChecked = userAnswers[currentQuestion] === index ? 'checked' : '';
+            html += `
+                <label class="option-label ${isSelected}" id="opt-${index}">
+                    <input type="radio" name="q${currentQuestion}" value="${index}" onclick="selectAnswer(${index})" ${isChecked}>
+                    ${String.fromCharCode(65 + index)}) ${opt}
+                </label>
+            `;
+        });
+
+        html += `</div></div>`;
+        container.innerHTML = html;
+
+        // Progress Bar
+        const progressPercent = ((currentQuestion + 1) / questions.length) * 100;
+        document.getElementById('progress-bar').style.width = progressPercent + '%';
+        document.getElementById('progress-text').innerText = `Soru ${currentQuestion + 1} / ${questions.length}`;
+        
+        // Buton Yönetimi
+        document.getElementById('prevBtn').disabled = currentQuestion === 0;
+        
+        if (currentQuestion === questions.length - 1) {
+            document.getElementById('nextBtn').style.display = 'none';
+            document.getElementById('finishBtn').style.display = 'inline-block';
+        } else {
+            document.getElementById('nextBtn').style.display = 'inline-block';
+            document.getElementById('finishBtn').style.display = 'none';
+        }
+    }
+
+    function selectAnswer(index) {
+        userAnswers[currentQuestion] = index;
+        const labels = document.querySelectorAll('.option-label');
+        labels.forEach(label => label.classList.remove('selected'));
+        document.getElementById(`opt-${index}`).classList.add('selected');
+    }
+
+    function showCurrentAnswer() {
+        const q = questions[currentQuestion];
+        const correctIndex = q.a;
+        const correctLabel = document.getElementById(`opt-${correctIndex}`);
+        const explanationArea = document.getElementById('explanation-area');
+
+        if(correctLabel) correctLabel.classList.add('correct-highlight');
+        
+        if (userAnswers[currentQuestion] !== null && userAnswers[currentQuestion] !== correctIndex) {
+            document.getElementById(`opt-${userAnswers[currentQuestion]}`).classList.add('wrong-highlight');
+        }
+
+        explanationArea.innerHTML = `<strong>Açıklama:</strong> ${q.exp}`;
+        explanationArea.style.display = 'block';
+    }
+
+    function nextQuestion() {
+        if (currentQuestion < questions.length - 1) {
+            currentQuestion++;
+            loadQuestion();
+        }
+    }
+
+    function prevQuestion() {
+        if (currentQuestion > 0) {
+            currentQuestion--;
+            loadQuestion();
+        }
+    }
+
+    function finishQuiz() {
+        let correctCount = 0;
+        let wrongCount = 0;
+        let emptyCount = 0;
+        let reviewHtml = '';
+
+        questions.forEach((q, index) => {
+            const userAnswer = userAnswers[index];
+            const isCorrect = userAnswer === q.a;
+            
+            let statusText = '';
+            let statusClass = '';
+
+            if (userAnswer === null) {
+                emptyCount++;
+                statusText = 'Boş';
+                statusClass = 'status-empty';
+            } else if (isCorrect) {
+                correctCount++;
+                statusText = 'Doğru';
+                statusClass = 'status-correct';
+            } else {
+                wrongCount++;
+                statusText = 'Yanlış';
+                statusClass = 'status-wrong';
+            }
+
+            reviewHtml += `
+                <tr>
+                    <td>${index + 1}</td>
+                    <td>${q.q}</td>
+                    <td>${userAnswer !== null ? String.fromCharCode(65 + userAnswer) + ') ' + q.o[userAnswer] : '-'}</td>
+                    <td>${String.fromCharCode(65 + q.a)}) ${q.o[q.a]}</td>
+                    <td class="${statusClass}">${statusText}</td>
+                </tr>
+            `;
+        });
+
+        document.getElementById('quiz-screen').style.display = 'none';
+        document.getElementById('result-screen').style.display = 'block';
+
+        const score = Math.round((correctCount / questions.length) * 100);
+        
+        document.getElementById('score-circle').innerText = score;
+        document.getElementById('score-details').innerHTML = `
+            <strong>Doğru:</strong> ${correctCount} &nbsp;|&nbsp; 
+            <strong>Yanlış:</strong> ${wrongCount} &nbsp;|&nbsp; 
+            <strong>Boş:</strong> ${emptyCount}
+        `;
+        
+        document.getElementById('review-body').innerHTML = reviewHtml;
+    }
+
+    // Uygulamayı başlat
+    loadQuestion();
+</script>
+
+</body>
+</html>
