@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hukuk 4. Ünite: Yargı Örgütü</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #e8eaf6; color: #1a237e; margin: 0; padding: 20px; }
+        .container { max-width: 900px; margin: 0 auto; background: #fff; padding: 40px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); position: relative; }
+        h1 { text-align: center; color: #283593; border-bottom: 2px solid #3949ab; padding-bottom: 15px; margin-bottom: 30px; font-size: 24px; }
+        
+        /* Home Button */
+        .home-btn {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background-color: #3949ab;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 14px;
+            transition: background 0.2s;
+        }
+        .home-btn:hover { background-color: #1a237e; }
+
+        /* İlerleme Çubuğu */
+        .progress-container { background-color: #c5cae9; border-radius: 10px; margin-bottom: 20px; height: 12px; overflow: hidden; }
+        .progress-bar { height: 100%; background-color: #304ffe; width: 0%; transition: width 0.3s; }
+        .progress-text { text-align: right; font-size: 0.9em; color: #1a237e; margin-bottom: 15px; font-weight: bold; }
+
+        /* Soru Alanı */
+        .question-block { display: none; animation: fadeIn 0.4s; }
+        .question-block.active { display: block; }
+        .question-text { font-weight: 700; font-size: 1.2em; margin-bottom: 25px; color: #0d47a1; line-height: 1.4; }
+        
+        /* Seçenekler */
+        .options { display: flex; flex-direction: column; gap: 12px; }
+        .option-label { 
+            display: flex; align-items: center; padding: 15px 20px; border: 2px solid #c5cae9; 
+            border-radius: 8px; cursor: pointer; transition: all 0.2s; background: #fff; font-size: 1em;
+        }
+        .option-label:hover { background-color: #e8eaf6; border-color: #7986cb; }
+        .option-label.selected { border-color: #304ffe; background-color: #c5cae9; }
+        .option-label input { margin-right: 15px; transform: scale(1.2); cursor: pointer; }
+        
+        /* Cevap Göster Stilleri */
+        .option-label.correct-highlight { border-color: #2e7d32; background-color: #c8e6c9; color: #1b5e20; font-weight: bold; }
+        .option-label.wrong-highlight { border-color: #c62828; background-color: #ffcdd2; color: #b71c1c; }
+
+        /* Açıklama Kutusu */
+        .explanation-box {
+            margin-top: 25px;
+            padding: 20px;
+            background-color: #e8eaf6;
+            border-left: 5px solid #283593;
+            border-radius: 4px;
+            color: #1a237e;
+            display: none;
+            font-size: 0.95em;
+            line-height: 1.6;
+        }
+
+        /* Butonlar */
+        .controls { margin-top: 35px; display: flex; justify-content: space-between; align-items: center; gap: 15px; flex-wrap: wrap; }
+        button { border: none; padding: 12px 28px; border-radius: 6px; cursor: pointer; font-size: 16px; font-weight: 600; transition: transform 0.1s, background 0.2s; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        button:active { transform: translateY(1px); }
+        
+        .nav-btn { background-color: #3f51b5; color: white; }
+        .nav-btn:hover { background-color: #1a237e; }
+        .nav-btn:disabled { background-color: #9fa8da; cursor: not-allowed; box-shadow: none; }
+        
+        .show-answer-btn { background-color: #ffca28; color: #1a237e; }
+        .show-answer-btn:hover { background-color: #ffb300; }
+        
+        .finish-btn { background-color: #2e7d32; color: white; display: none; }
+        .finish-btn:hover { background-color: #1b5e20; }
+
+        /* Sonuç Ekranı */
+        #result-screen { display: none; }
+        .score-card { text-align: center; background: #e8eaf6; padding: 30px; border-radius: 12px; margin-bottom: 30px; border: 1px solid #9fa8da; }
+        .score-circle { 
+            width: 140px; height: 140px; border-radius: 50%; background: #283593; color: white; 
+            display: flex; align-items: center; justify-content: center; font-size: 2.5em; font-weight: bold; 
+            margin: 0 auto 20px; box-shadow: 0 4px 10px rgba(40, 53, 147, 0.4);
+        }
+        
+        .review-table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 0.9em; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        .review-table th, .review-table td { padding: 15px; border: 1px solid #c5cae9; text-align: left; }
+        .review-table th { background-color: #283593; color: white; font-weight: 600; }
+        .review-table tr:nth-child(even) { background-color: #f5f5f5; }
+        .review-table tr:hover { background-color: #e8eaf6; }
+        .status-correct { color: #2e7d32; font-weight: bold; }
+        .status-wrong { color: #c62828; font-weight: bold; }
+        .status-empty { color: #f9a825; font-weight: bold; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        /* Responsive adjustments */
+        @media (max-width: 600px) {
+            .container { padding: 20px; }
+            .option-label { padding: 10px 15px; }
+            .question-text { font-size: 1.1em; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <button class="home-btn" onclick="if(confirm('Testi yeniden başlatmak istediğinize emin misiniz?')) location.reload();">⌂ Testi Yenile</button>
+    
+    <div id="quiz-screen">
+        <h1>4. Ünite: Yargı Örgütü</h1>
+        
+        <div class="progress-text" id="progress-text">Soru 1 / 55</div>
+        <div class="progress-container">
+            <div class="progress-bar" id="progress-bar"></div>
+        </div>
+        
+        <div id="quiz-container">
+            <!-- Sorular buraya JS ile gelecek -->
+        </div>
+
+        <!-- Açıklama Alanı -->
+        <div id="explanation-area" class="explanation-box"></div>
+
+        <div class="controls">
+            <div>
+                <button class="nav-btn" id="prevBtn" onclick="prevQuestion()" disabled>&#8592; Önceki</button>
+            </div>
+            <div>
+                <button class="show-answer-btn" onclick="showCurrentAnswer()">👁️ Cevabı Göster</button>
+            </div>
+            <div>
+                <button class="nav-btn" id="nextBtn" onclick="nextQuestion()">Sonraki &#8594;</button>
+                <button class="finish-btn" id="finishBtn" onclick="finishQuiz()">Testi Bitir &#10004;</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="result-screen">
+        <h1>Değerlendirme Sonucu</h1>
+        <div class="score-card">
+            <div class="score-circle" id="score-circle">0</div>
+            <h3>Başarı Puanı</h3>
+            <p id="score-details" style="font-size: 1.1em; color: #555;"></p>
+        </div>
+        
+        <h3>Detaylı Soru Analizi</h3>
+        <div style="overflow-x: auto;">
+            <table class="review-table">
+                <thead>
+                    <tr>
+                        <th style="width: 5%">No</th>
+                        <th style="width: 45%">Soru</th>
+                        <th style="width: 20%">Senin Cevabın</th>
+                        <th style="width: 20%">Doğru Cevap</th>
+                        <th style="width: 10%">Durum</th>
+                    </tr>
+                </thead>
+                <tbody id="review-body">
+                    <!-- Sonuç satırları buraya gelecek -->
+                </tbody>
+            </table>
+        </div>
+        <div style="text-align: center; margin-top: 30px;">
+            <button class="nav-btn" onclick="location.reload()">Testi Tekrar Çöz</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // 55 Soruluk Hukuk 4. Ünite Testi (Yargı Örgütü)
+    const questions = [
+        // 1. Giriş ve Yargı Kolları Genel
+        { q: "Türkiye'de yargı sistemi tek bir çatı altında mı toplanmıştır, yoksa ayrık (ikili/çoklu) bir sistem mi vardır?", o: ["Tekli Sistem", "Ayrık (Çoklu) Yargı Sistemi", "Sadece Adli Yargı", "Sadece İdari Yargı", "Karma Sistem"], a: 1, exp: "Türkiye'de Adli, İdari, Anayasa ve Uyuşmazlık yargısı gibi farklı yargı kolları vardır." },
+        { q: "Özel hukuk uyuşmazlıklarına (boşanma, alacak) ve ceza davalarına bakan 'Genel Yargı Kolu' hangisidir?", o: ["İdari Yargı", "Adli Yargı", "Anayasa Yargısı", "Sayıştay", "AİHM"], a: 1, exp: "Adli yargı, en geniş kapsamlı yargı koludur." },
+        { q: "İdarenin (Devletin) işlem ve eylemlerinden doğan uyuşmazlıklara bakan yargı kolu hangisidir?", o: ["Adli Yargı", "İdari Yargı", "Ceza Yargısı", "Hukuk Yargısı", "Uyuşmazlık Yargısı"], a: 1, exp: "İdarenin hukuka aykırı işlemlerini iptal etmek veya zararını tazmin etmek İdari Yargı'nın görevidir." },
+
+        // 2. Adlî Yargı - İlk Derece Mahkemeleri
+        { q: "Adli yargıda mahkemeler temel olarak hangi iki ana gruba ayrılır?", o: ["Sulh ve Asliye", "Hukuk ve Ceza Mahkemeleri", "İdare ve Vergi", "Bölge ve Yargıtay", "Ağır ve Hafif"], a: 1, exp: "Özel hukuk uyuşmazlıkları için Hukuk Mahkemeleri, suçlar için Ceza Mahkemeleri vardır." },
+        { q: "Aşağıdakilerden hangisi Adli Yargıdaki 'Hukuk' mahkemelerinden biridir?", o: ["Ağır Ceza Mahkemesi", "Asliye Hukuk Mahkemesi", "İdare Mahkemesi", "Vergi Mahkemesi", "Bölge İdare Mahkemesi"], a: 1, exp: "Asliye Hukuk Mahkemesi, genel görevli hukuk mahkemesidir." },
+        { q: "Hukuk mahkemeleri içinde 'Genel Görevli' olan (aksi belirtilmedikçe tüm davalara bakan) mahkeme hangisidir?", o: ["Sulh Hukuk Mahkemesi", "Asliye Hukuk Mahkemesi", "Aile Mahkemesi", "Ticaret Mahkemesi", "İş Mahkemesi"], a: 1, exp: "Özel bir mahkemenin görevine girmeyen tüm uyuşmazlıklar Asliye Hukuk'ta görülür." },
+        { q: "Kira uyuşmazlıkları, mirasçılık belgesi alma gibi işlere bakan hukuk mahkemesi hangisidir?", o: ["Asliye Hukuk", "Sulh Hukuk Mahkemesi", "Tüketici Mahkemesi", "Kadastro Mahkemesi", "İcra Mahkemesi"], a: 1, exp: "Sulh Hukuk Mahkemeleri genellikle daha basit veya çekişmesiz yargı işlerine bakar." },
+        { q: "Aşağıdakilerden hangisi 'Özel Görevli' bir hukuk mahkemesidir?", o: ["Asliye Hukuk", "Sulh Hukuk", "Aile Mahkemesi", "Bölge Adliye", "Yargıtay"], a: 2, exp: "Boşanma, velayet gibi sadece aile hukukundan doğan davalara Aile Mahkemesi bakar." },
+        { q: "Ceza yargılamasında 'Genel Görevli' mahkeme hangisidir?", o: ["Ağır Ceza Mahkemesi", "Asliye Ceza Mahkemesi", "Sulh Ceza Hakimliği", "Trafik Mahkemesi", "Disiplin Mahkemesi"], a: 1, exp: "Ağır Ceza'nın görevine girmeyen tüm suçlara Asliye Ceza Mahkemesi bakar." },
+        { q: "Kanunların en ağır suçlar (örn: kasten öldürme, yağma) için öngördüğü davalara hangi mahkeme bakar?", o: ["Asliye Ceza Mahkemesi", "Ağır Ceza Mahkemesi", "Sulh Ceza Hakimliği", "İnfaz Hakimliği", "Çocuk Mahkemesi"], a: 1, exp: "Ağırlaştırılmış müebbet, müebbet ve 10 yıldan fazla hapis gerektiren suçlar Ağır Ceza'dadır." },
+        { q: "Soruşturma aşamasında tutuklama, arama gibi kararları veren merci hangisidir?", o: ["Savcı", "Sulh Ceza Hakimliği", "Ağır Ceza Mahkemesi", "Yargıtay", "Vali"], a: 1, exp: "Sulh Ceza Hakimliği yargılama yapmaz, soruşturma aşamasındaki hakim kararlarını verir." },
+
+        // 3. Adlî Yargı - Kanun Yolu (İstinaf ve Temyiz)
+        { q: "İlk derece mahkemelerinin kararlarına karşı başvurulan 'İkinci Derece' (İstinaf) mahkemesi hangisidir?", o: ["Yargıtay", "Danıştay", "Bölge Adliye Mahkemesi", "Anayasa Mahkemesi", "Ağır Ceza Mahkemesi"], a: 2, exp: "Bölge Adliye Mahkemeleri (BAM), hem olay hem hukuk denetimi yapar." },
+        { q: "Bölge Adliye Mahkemesi kararlarına karşı başvurulan son inceleme mercii (Temyiz) neresidir?", o: ["Anayasa Mahkemesi", "Yargıtay", "Danıştay", "Sayıştay", "Uyuşmazlık Mahkemesi"], a: 1, exp: "Yargıtay, adli yargının en üst mahkemesidir ve içtihat birliğini sağlar." },
+        { q: "Yargıtay'ın temel görevi nedir?", o: ["Yeniden yargılama yapmak", "Tanık dinlemek", "Alt derece mahkemesi kararlarının hukuka uygunluğunu denetlemek (Hukukilik Denetimi)", "Kanun yapmak", "İdari işlem yapmak"], a: 2, exp: "Yargıtay kural olarak maddi olayı incelemez, kararın hukuka uygun olup olmadığına bakar." },
+
+        // 4. İdari Yargı
+        { q: "İdari yargıda genel görevli ilk derece mahkemesi hangisidir?", o: ["Vergi Mahkemesi", "İdare Mahkemesi", "Bölge İdare Mahkemesi", "Danıştay", "Asliye Hukuk"], a: 1, exp: "İdari eylem ve işlemlere karşı açılan iptal ve tam yargı davalarına İdare Mahkemesi bakar." },
+        { q: "Vergi, resim ve harçlarla ilgili uyuşmazlıklara bakan özel görevli idari mahkeme hangisidir?", o: ["İdare Mahkemesi", "Vergi Mahkemesi", "Ticaret Mahkemesi", "Sayıştay", "Maliye Bakanlığı"], a: 1, exp: "Vergi uyuşmazlıkları için ihtisaslaşmış mahkemedir." },
+        { q: "İdari yargıda 'İstinaf' mercii neresidir?", o: ["Danıştay", "Bölge İdare Mahkemesi (BİM)", "Yargıtay", "İdare Mahkemesi", "Bölge Adliye Mahkemesi"], a: 1, exp: "Bölge İdare Mahkemeleri, idare ve vergi mahkemesi kararlarını inceler." },
+        { q: "İdari yargının en üst mahkemesi (Temyiz Mercii) hangisidir?", o: ["Yargıtay", "Danıştay", "Sayıştay", "Anayasa Mahkemesi", "Askeri Yüksek İdare Mahkemesi"], a: 1, exp: "Danıştay hem temyiz merciidir hem de bazı davalarda (örn: Bakanlar Kurulu kararları) ilk derece mahkemesidir." },
+        { q: "Danıştay'ın idari (yargısal olmayan) görevi nedir?", o: ["Kanun yapmak", "Kamu görevlilerini atamak", "Cumhurbaşkanlığı kararnameleri ve imtiyaz sözleşmeleri hakkında görüş bildirmek", "Bütçeyi denetlemek", "Belediyeleri denetlemek"], a: 2, exp: "Danıştay, devletin en yüksek danışma organı sıfatıyla idari görüş bildirir." },
+
+        // 5. Anayasa Yargısı (Anayasa Mahkemesi - AYM)
+        { q: "Anayasa Mahkemesi kaç üyeden oluşur?", o: ["11", "15", "17", "21", "9"], a: 1, exp: "2017 Anayasa değişikliği ile üye sayısı 15 olarak belirlenmiştir." },
+        { q: "Anayasa Mahkemesi üyelerini kim seçer?", o: ["Sadece Cumhurbaşkanı", "Sadece TBMM", "Halk", "TBMM ve Cumhurbaşkanı", "Yüksek Hakimler"], a: 3, exp: "3 üyeyi TBMM, 12 üyeyi ise Cumhurbaşkanı seçer." },
+        { q: "Anayasa Mahkemesi üyelerinin görev süresi kaç yıldır?", o: ["4 Yıl", "5 Yıl", "12 Yıl", "Ömür Boyu", "10 Yıl"], a: 2, exp: "Üyeler 12 yıllığına seçilir ve bir daha seçilemezler (65 yaş sınırı vardır)." },
+        { q: "Aşağıdakilerden hangisi Anayasa Mahkemesi'nin görevlerinden biri DEĞİLDİR?", o: ["Kanunların Anayasaya uygunluğunu denetlemek", "Bireysel başvuruları karara bağlamak", "Yüce Divan sıfatıyla yargılama yapmak", "Siyasi partilerin kapatılması davalarına bakmak", "Temyiz incelemesi yapmak (Yargıtay kararlarını bozmak)"], a: 4, exp: "AYM bir temyiz mercii değildir; Yargıtay veya Danıştay kararlarını kural olarak bozamaz (Bireysel başvuru istisnası hariç)." },
+        { q: "Kanunların şekil ve esas bakımından Anayasa'ya uygunluğunu denetleyen dava türüne ne denir?", o: ["İtiraz Yolu", "İptal Davası (Soyut Norm Denetimi)", "Tam Yargı Davası", "Tazminat Davası", "Ceza Davası"], a: 1, exp: "İptal davasını Cumhurbaşkanı veya en az 120 milletvekili (1/5) açabilir." },
+        { q: "Bir mahkemede görülmekte olan davada, uygulanacak kanun maddesinin Anayasa'ya aykırı olduğu iddiasıyla AYM'ye başvurulmasına ne denir?", o: ["İptal Davası", "İtiraz Yolu (Somut Norm Denetimi / Def'i)", "Bireysel Başvuru", "Temyiz", "İstinaf"], a: 1, exp: "Bu yolu sadece davaya bakan hakim kullanabilir." },
+        { q: "Temel hakları kamu gücü tarafından ihlal edilen herkesin, iç hukuk yollarını tükettikten sonra AYM'ye başvurmasına ne denir?", o: ["İptal Davası", "İtiraz Yolu", "Bireysel Başvuru", "AİHM Başvurusu", "Dilekçe Hakkı"], a: 2, exp: "2010 yılında hukukumuza giren bireysel başvuru, temel hakların korunması için önemli bir yoldur." },
+        { q: "Cumhurbaşkanı, Bakanlar ve yüksek yargı mensuplarını görevleriyle ilgili suçlardan dolayı yargılayan AYM sıfatı nedir?", o: ["Ağır Ceza Mahkemesi", "Yüce Divan", "Disiplin Kurulu", "Devlet Güvenlik Mahkemesi", "Divan-ı Harp"], a: 1, exp: "Yüce Divan yargılaması sonucunda verilen kararlar kesindir (Yeniden inceleme hariç)." },
+        { q: "Siyasi partilerin mali denetimini AYM adına kim yapar?", o: ["Maliye Bakanlığı", "Merkez Bankası", "Sayıştay", "Yargıtay Başsavcısı", "TBMM"], a: 2, exp: "Siyasi partilerin kapatılmasına AYM karar verir, mali denetimini Sayıştay yardımıyla yapar." },
+
+        // 6. Diğer Yargı Kolları (Uyuşmazlık, Sayıştay)
+        { q: "Adli ve İdari yargı kolları arasındaki görev ve hüküm uyuşmazlıklarını kesin olarak çözen yüksek mahkeme hangisidir?", o: ["Anayasa Mahkemesi", "Yargıtay", "Danıştay", "Uyuşmazlık Mahkemesi", "Sayıştay"], a: 3, exp: "Uyuşmazlık Mahkemesi, yargı kolları arasındaki çatışmayı giderir." },
+        { q: "Genel ve katma bütçeli dairelerin bütün gelir ve giderlerini TBMM adına denetleyen mali yargı organı hangisidir?", o: ["Maliye Bakanlığı", "Sayıştay", "Danıştay", "Hazine Müsteşarlığı", "Yargıtay"], a: 1, exp: "Sayıştay, 'kamu harcamalarını denetleyen' hesap mahkemesidir; kararları kesindir." },
+        { q: "Askeri Yargı (Askeri Mahkemeler ve AYİM) ne zaman kaldırılmıştır?", o: ["1982", "2001", "2010", "2017 Anayasa Değişikliği", "Hala vardır"], a: 3, exp: "2017 değişikliğiyle disiplin mahkemeleri hariç askeri yargı tamamen kaldırılmıştır." },
+
+        // 7. Avrupa İnsan Hakları Mahkemesi (AİHM)
+        { q: "AİHM hangi uluslararası örgütün bünyesinde yer alır?", o: ["Avrupa Birliği (AB)", "Birleşmiş Milletler (BM)", "Avrupa Konseyi", "NATO", "AGİT"], a: 2, exp: "AİHM, Avrupa Konseyi'ne bağlıdır ve Avrupa İnsan Hakları Sözleşmesi'ni (AİHS) uygular." },
+        { q: "AİHM'e bireysel başvuru yapabilmek için öncelikli şart nedir?", o: ["Vatandaş olmak", "İç hukuk yollarının (AYM Bireysel Başvuru dahil) tüketilmiş olması", "Avukat tutmak", "Zengin olmak", "Siyasetçi olmak"], a: 1, exp: "AİHM, ikincil (tamamlayıcı) niteliktedir; önce ülkedeki tüm mahkemeler denenmelidir." },
+        { q: "AİHM kararlarının Türk hukuku açısından bağlayıcılığı nedir?", o: ["Bağlayıcı değildir, tavsiye niteliğindedir", "Kesinlikle bağlayıcıdır ve uyulması zorunludur", "Sadece tazminat ödenir", "Hakim isterse uyar", "Sadece ceza davalarında bağlayıcıdır"], a: 1, exp: "Anayasa m.90 gereği AİHM kararları bağlayıcıdır; uyulmaması ihlal sayılır." },
+        
+        // 8. Hakimler ve Savcılar
+        { q: "Hakimlerin görevlerinde bağımsız olmaları, kimseden emir almamaları ilkesine ne denir?", o: ["Hakimlik Teminatı", "Mahkemelerin Bağımsızlığı", "Tabii Hakim İlkesi", "Savcılık", "Adalet"], a: 1, exp: "Yargı bağımsızlığı, hukuk devletinin ön koşuludur." },
+        { q: "Hakimlerin azledilememesi, emekliye sevk edilememesi ve özlük haklarından yoksun bırakılamaması güvencesine ne denir?", o: ["Mahkemelerin Bağımsızlığı", "Hakimlik ve Savcılık Teminatı", "Yasama Dokunulmazlığı", "Memuriyet Güvencesi", "Sendikal Hak"], a: 1, exp: "Hakimler coğrafi teminat hariç, istekleri dışında görevden alınamazlar." },
+        { q: "Hakimler ve Savcıların atama, terfi, disiplin ve görevden alma işlemlerini yapan kurul hangisidir?", o: ["Adalet Bakanlığı", "TBMM", "Hakimler ve Savcılar Kurulu (HSK)", "Yargıtay", "Anayasa Mahkemesi"], a: 2, exp: "HSK, yargının idari patronudur." },
+        { q: "HSK'nın başkanı kimdir?", o: ["Cumhurbaşkanı", "Adalet Bakanı", "Yargıtay Başkanı", "AYM Başkanı", "En yaşlı üye"], a: 1, exp: "Adalet Bakanı kurulun başkanıdır; Bakan Yardımcısı da doğal üyedir." },
+        
+        // 9. Karışık ve Pekiştirme Soruları
+        { q: "İdari yargıda açılan, idarenin bir eylemi nedeniyle uğranılan zararın ödenmesi istemli davaya ne denir?", o: ["İptal Davası", "Tam Yargı Davası", "Ceza Davası", "Boşanma Davası", "Tespit Davası"], a: 1, exp: "Tam yargı davası, idari hukukta 'tazminat davası'dır." },
+        { q: "Aşağıdakilerden hangisi Yüksek Mahkeme DEĞİLDİR?", o: ["Yargıtay", "Danıştay", "Uyuşmazlık Mahkemesi", "Bölge Adliye Mahkemesi (İstinaf)", "Anayasa Mahkemesi"], a: 3, exp: "BAM ve BİM ara derece mahkemeleridir; yüksek mahkeme (temyiz mercii) değildirler." },
+        { q: "Ceza muhakemesinde iddia makamını kim temsil eder?", o: ["Hakim", "Avukat (Müdafi)", "Cumhuriyet Savcısı", "Sanık", "Tanık"], a: 2, exp: "Savcı, devlet ve toplum adına suçluları takip eder ve cezalandırılmalarını ister." },
+        { q: "Savunma makamını kim temsil eder?", o: ["Hakim", "Savcı", "Avukat (Müdafi/Vekil)", "Katip", "Mübaşir"], a: 2, exp: "Avukat, sanığın veya davacının haklarını savunur." },
+        { q: "Hüküm (Karar) makamı kimdir?", o: ["Savcı", "Avukat", "Hakim", "Bilirkişi", "Jüri"], a: 2, exp: "Türk hukukunda kararı bağımsız hakim verir." },
+        { q: "Bir davanın taraflarının, o dava için kanunen belirlenmiş mahkemede yargılanma hakkına ne denir?", o: ["Kanuni Hakim Güvencesi (Tabii Hakim)", "Adil Yargılanma", "Masumiyet Karinesi", "Savunma Hakkı", "Eşitlik"], a: 0, exp: "Suç işlendikten sonra kişiye özel mahkeme kurulamaz; herkes önceden belli mahkemede yargılanır." },
+        { q: "Yüksek Seçim Kurulu (YSK) yargısal bir organ mıdır?", o: ["Hayır, idari organdır", "Evet, seçimlerin yargısal denetimini yapan, kararları kesin olan bir yüksek kuruldur", "Sadece oy sayar", "Siyasi partidir", "Meclise bağlıdır"], a: 1, exp: "YSK kararlarına karşı başka bir mercie başvurulamaz; seçim yargısı organıdır." },
+        { q: "Danıştay üyelerinin dörtte birini (1/4) kim seçer?", o: ["HSK", "TBMM", "Cumhurbaşkanı", "Adalet Bakanı", "Yargıtay"], a: 2, exp: "Kalan 3/4'ünü HSK seçer." },
+        { q: "Yargıtay üyelerini kim seçer?", o: ["Cumhurbaşkanı", "TBMM", "Hakimler ve Savcılar Kurulu (HSK)", "Adalet Bakanı", "Barolar"], a: 2, exp: "Yargıtay üyelerinin tamamını HSK seçer." },
+        { q: "Anayasa Mahkemesi'ne bireysel başvuru süresi ne kadardır?", o: ["15 Gün", "30 Gün", "60 Gün", "1 Yıl", "Süre yoktur"], a: 1, exp: "İç hukuk yollarının tüketildiği tarihten (kesin karar tebliğinden) itibaren 30 gün içinde başvurulmalıdır." },
+        { q: "Kamu davası açmak konusunda takdir yetkisi kime aittir?", o: ["Hakim", "Polis", "Cumhuriyet Savcısı", "Vali", "Adalet Bakanı"], a: 2, exp: "Savcı, yeterli şüphe varsa iddianame düzenleyerek kamu davası açar." },
+        { q: "İdari yargıda 'Yürütmenin Durdurülmesi' kararı ne işe yarar?", o: ["Davayı bitirir", "Telafisi güç zararlar doğacaksa, dava sonuçlanana kadar işlemin uygulanmasını geçici olarak durdurur", "İşlemi iptal eder", "Memuru kovar", "Tazminat ödetir"], a: 1, exp: "Yürütmeyi durdurma, idari işlemin etkisini donduran geçici bir tedbirdir." },
+        { q: "Sayıştay'ın kesin hükümlerine karşı ilgililer kaç gün içinde 'Karar Düzeltme' isteyebilir?", o: ["7 gün", "15 gün", "30 gün", "60 gün", "90 gün"], a: 1, exp: "Sayıştay kararları kesindir, sadece bir defaya mahsus 15 gün içinde karar düzeltme istenebilir." },
+        { q: "Uyuşmazlık Mahkemesi Başkanı nereden seçilir?", o: ["Yargıtay üyelerinden", "Danıştay üyelerinden", "Anayasa Mahkemesi üyelerinden", "TBMM'den", "Dışarıdan"], a: 2, exp: "Başkan, AYM üyeleri arasından seçilir." },
+        { q: "Aşağıdaki mahkemelerden hangisi kapatılmıştır?", o: ["DGM (Devlet Güvenlik Mahkemesi)", "İstiklal Mahkemeleri", "Özel Yetkili Ağır Ceza Mahkemeleri", "Askeri Yargıtay", "Hepsi"], a: 4, exp: "Bu mahkemelerin hepsi farklı dönemlerde hukuk sisteminden kaldırılmıştır." }
+    ];
+
+    let currentQuestion = 0;
+    let userAnswers = new Array(questions.length).fill(null);
+
+    function loadQuestion() {
+        const container = document.getElementById('quiz-container');
+        const explanationArea = document.getElementById('explanation-area');
+        
+        container.innerHTML = '';
+        explanationArea.style.display = 'none';
+
+        const q = questions[currentQuestion];
+        
+        let html = `
+            <div class="question-block active">
+                <div class="question-text">${currentQuestion + 1}. ${q.q}</div>
+                <div class="options">
+        `;
+
+        q.o.forEach((opt, index) => {
+            const isSelected = userAnswers[currentQuestion] === index ? 'selected' : '';
+            const isChecked = userAnswers[currentQuestion] === index ? 'checked' : '';
+            html += `
+                <label class="option-label ${isSelected}" id="opt-${index}">
+                    <input type="radio" name="q${currentQuestion}" value="${index}" onclick="selectAnswer(${index})" ${isChecked}>
+                    ${String.fromCharCode(65 + index)}) ${opt}
+                </label>
+            `;
+        });
+
+        html += `</div></div>`;
+        container.innerHTML = html;
+
+        // Progress Bar
+        const progressPercent = ((currentQuestion + 1) / questions.length) * 100;
+        document.getElementById('progress-bar').style.width = progressPercent + '%';
+        document.getElementById('progress-text').innerText = `Soru ${currentQuestion + 1} / ${questions.length}`;
+        
+        // Buton Yönetimi
+        document.getElementById('prevBtn').disabled = currentQuestion === 0;
+        
+        if (currentQuestion === questions.length - 1) {
+            document.getElementById('nextBtn').style.display = 'none';
+            document.getElementById('finishBtn').style.display = 'inline-block';
+        } else {
+            document.getElementById('nextBtn').style.display = 'inline-block';
+            document.getElementById('finishBtn').style.display = 'none';
+        }
+    }
+
+    function selectAnswer(index) {
+        userAnswers[currentQuestion] = index;
+        const labels = document.querySelectorAll('.option-label');
+        labels.forEach(label => label.classList.remove('selected'));
+        document.getElementById(`opt-${index}`).classList.add('selected');
+    }
+
+    function showCurrentAnswer() {
+        const q = questions[currentQuestion];
+        const correctIndex = q.a;
+        const correctLabel = document.getElementById(`opt-${correctIndex}`);
+        const explanationArea = document.getElementById('explanation-area');
+
+        if(correctLabel) correctLabel.classList.add('correct-highlight');
+        
+        if (userAnswers[currentQuestion] !== null && userAnswers[currentQuestion] !== correctIndex) {
+            document.getElementById(`opt-${userAnswers[currentQuestion]}`).classList.add('wrong-highlight');
+        }
+
+        explanationArea.innerHTML = `<strong>Açıklama:</strong> ${q.exp}`;
+        explanationArea.style.display = 'block';
+    }
+
+    function nextQuestion() {
+        if (currentQuestion < questions.length - 1) {
+            currentQuestion++;
+            loadQuestion();
+        }
+    }
+
+    function prevQuestion() {
+        if (currentQuestion > 0) {
+            currentQuestion--;
+            loadQuestion();
+        }
+    }
+
+    function finishQuiz() {
+        let correctCount = 0;
+        let wrongCount = 0;
+        let emptyCount = 0;
+        let reviewHtml = '';
+
+        questions.forEach((q, index) => {
+            const userAnswer = userAnswers[index];
+            const isCorrect = userAnswer === q.a;
+            
+            let statusText = '';
+            let statusClass = '';
+
+            if (userAnswer === null) {
+                emptyCount++;
+                statusText = 'Boş';
+                statusClass = 'status-empty';
+            } else if (isCorrect) {
+                correctCount++;
+                statusText = 'Doğru';
+                statusClass = 'status-correct';
+            } else {
+                wrongCount++;
+                statusText = 'Yanlış';
+                statusClass = 'status-wrong';
+            }
+
+            reviewHtml += `
+                <tr>
+                    <td>${index + 1}</td>
+                    <td>${q.q}</td>
+                    <td>${userAnswer !== null ? String.fromCharCode(65 + userAnswer) + ') ' + q.o[userAnswer] : '-'}</td>
+                    <td>${String.fromCharCode(65 + q.a)}) ${q.o[q.a]}</td>
+                    <td class="${statusClass}">${statusText}</td>
+                </tr>
+            `;
+        });
+
+        document.getElementById('quiz-screen').style.display = 'none';
+        document.getElementById('result-screen').style.display = 'block';
+
+        const score = Math.round((correctCount / questions.length) * 100);
+        
+        document.getElementById('score-circle').innerText = score;
+        document.getElementById('score-details').innerHTML = `
+            <strong>Doğru:</strong> ${correctCount} &nbsp;|&nbsp; 
+            <strong>Yanlış:</strong> ${wrongCount} &nbsp;|&nbsp; 
+            <strong>Boş:</strong> ${emptyCount}
+        `;
+        
+        document.getElementById('review-body').innerHTML = reviewHtml;
+    }
+
+    // Uygulamayı başlat
+    loadQuestion();
+</script>
+
+</body>
+</html>
