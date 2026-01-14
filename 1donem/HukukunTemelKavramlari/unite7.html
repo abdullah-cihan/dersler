@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hukuk 7. Ünite: Özel Hukukun Dalları</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #e0f7fa; color: #006064; margin: 0; padding: 20px; }
+        .container { max-width: 900px; margin: 0 auto; background: #fff; padding: 40px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); position: relative; }
+        h1 { text-align: center; color: #00838f; border-bottom: 2px solid #00acc1; padding-bottom: 15px; margin-bottom: 30px; font-size: 24px; }
+        
+        /* Home Button */
+        .home-btn {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background-color: #0097a7;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 14px;
+            transition: background 0.2s;
+        }
+        .home-btn:hover { background-color: #006064; }
+
+        /* İlerleme Çubuğu */
+        .progress-container { background-color: #b2ebf2; border-radius: 10px; margin-bottom: 20px; height: 12px; overflow: hidden; }
+        .progress-bar { height: 100%; background-color: #00bcd4; width: 0%; transition: width 0.3s; }
+        .progress-text { text-align: right; font-size: 0.9em; color: #006064; margin-bottom: 15px; font-weight: bold; }
+
+        /* Soru Alanı */
+        .question-block { display: none; animation: fadeIn 0.4s; }
+        .question-block.active { display: block; }
+        .question-text { font-weight: 700; font-size: 1.2em; margin-bottom: 25px; color: #00363a; line-height: 1.4; }
+        
+        /* Seçenekler */
+        .options { display: flex; flex-direction: column; gap: 12px; }
+        .option-label { 
+            display: flex; align-items: center; padding: 15px 20px; border: 2px solid #b2ebf2; 
+            border-radius: 8px; cursor: pointer; transition: all 0.2s; background: #fff; font-size: 1em;
+        }
+        .option-label:hover { background-color: #e0f7fa; border-color: #4dd0e1; }
+        .option-label.selected { border-color: #00bcd4; background-color: #b2ebf2; }
+        .option-label input { margin-right: 15px; transform: scale(1.2); cursor: pointer; }
+        
+        /* Cevap Göster Stilleri */
+        .option-label.correct-highlight { border-color: #2e7d32; background-color: #c8e6c9; color: #1b5e20; font-weight: bold; }
+        .option-label.wrong-highlight { border-color: #c62828; background-color: #ffcdd2; color: #b71c1c; }
+
+        /* Açıklama Kutusu */
+        .explanation-box {
+            margin-top: 25px;
+            padding: 20px;
+            background-color: #e0f7fa;
+            border-left: 5px solid #00bcd4;
+            border-radius: 4px;
+            color: #006064;
+            display: none;
+            font-size: 0.95em;
+            line-height: 1.6;
+        }
+
+        /* Butonlar */
+        .controls { margin-top: 35px; display: flex; justify-content: space-between; align-items: center; gap: 15px; flex-wrap: wrap; }
+        button { border: none; padding: 12px 28px; border-radius: 6px; cursor: pointer; font-size: 16px; font-weight: 600; transition: transform 0.1s, background 0.2s; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        button:active { transform: translateY(1px); }
+        
+        .nav-btn { background-color: #00838f; color: white; }
+        .nav-btn:hover { background-color: #006064; }
+        .nav-btn:disabled { background-color: #80deea; cursor: not-allowed; box-shadow: none; }
+        
+        .show-answer-btn { background-color: #ffb74d; color: #3e2723; }
+        .show-answer-btn:hover { background-color: #ffa726; }
+        
+        .finish-btn { background-color: #2e7d32; color: white; display: none; }
+        .finish-btn:hover { background-color: #1b5e20; }
+
+        /* Sonuç Ekranı */
+        #result-screen { display: none; }
+        .score-card { text-align: center; background: #e0f7fa; padding: 30px; border-radius: 12px; margin-bottom: 30px; border: 1px solid #80deea; }
+        .score-circle { 
+            width: 140px; height: 140px; border-radius: 50%; background: #00bcd4; color: white; 
+            display: flex; align-items: center; justify-content: center; font-size: 2.5em; font-weight: bold; 
+            margin: 0 auto 20px; box-shadow: 0 4px 10px rgba(0, 188, 212, 0.4);
+        }
+        
+        .review-table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 0.9em; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        .review-table th, .review-table td { padding: 15px; border: 1px solid #b2ebf2; text-align: left; }
+        .review-table th { background-color: #00838f; color: white; font-weight: 600; }
+        .review-table tr:nth-child(even) { background-color: #e0f7fa; }
+        .review-table tr:hover { background-color: #b2ebf2; }
+        .status-correct { color: #2e7d32; font-weight: bold; }
+        .status-wrong { color: #c62828; font-weight: bold; }
+        .status-empty { color: #f57f17; font-weight: bold; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        /* Responsive adjustments */
+        @media (max-width: 600px) {
+            .container { padding: 20px; }
+            .option-label { padding: 10px 15px; }
+            .question-text { font-size: 1.1em; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <button class="home-btn" onclick="if(confirm('Testi yeniden başlatmak istediğinize emin misiniz?')) location.reload();">⌂ Testi Yenile</button>
+    
+    <div id="quiz-screen">
+        <h1>7. Ünite: Özel Hukukun Dalları (55 Soru)</h1>
+        
+        <div class="progress-text" id="progress-text">Soru 1 / 55</div>
+        <div class="progress-container">
+            <div class="progress-bar" id="progress-bar"></div>
+        </div>
+        
+        <div id="quiz-container">
+            <!-- Sorular buraya JS ile gelecek -->
+        </div>
+
+        <!-- Açıklama Alanı -->
+        <div id="explanation-area" class="explanation-box"></div>
+
+        <div class="controls">
+            <div>
+                <button class="nav-btn" id="prevBtn" onclick="prevQuestion()" disabled>&#8592; Önceki</button>
+            </div>
+            <div>
+                <button class="show-answer-btn" onclick="showCurrentAnswer()">👁️ Cevabı Göster</button>
+            </div>
+            <div>
+                <button class="nav-btn" id="nextBtn" onclick="nextQuestion()">Sonraki &#8594;</button>
+                <button class="finish-btn" id="finishBtn" onclick="finishQuiz()">Testi Bitir &#10004;</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="result-screen">
+        <h1>Değerlendirme Sonucu</h1>
+        <div class="score-card">
+            <div class="score-circle" id="score-circle">0</div>
+            <h3>Başarı Puanı</h3>
+            <p id="score-details" style="font-size: 1.1em; color: #555;"></p>
+        </div>
+        
+        <h3>Detaylı Soru Analizi</h3>
+        <div style="overflow-x: auto;">
+            <table class="review-table">
+                <thead>
+                    <tr>
+                        <th style="width: 5%">No</th>
+                        <th style="width: 45%">Soru</th>
+                        <th style="width: 20%">Senin Cevabın</th>
+                        <th style="width: 20%">Doğru Cevap</th>
+                        <th style="width: 10%">Durum</th>
+                    </tr>
+                </thead>
+                <tbody id="review-body">
+                    <!-- Sonuç satırları buraya gelecek -->
+                </tbody>
+            </table>
+        </div>
+        <div style="text-align: center; margin-top: 30px;">
+            <button class="nav-btn" onclick="location.reload()">Testi Tekrar Çöz</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // 55 Soruluk Hukuk 7. Ünite Testi (Özel Hukukun Dalları)
+    const questions = [
+        // 1. Özel Hukukun En Temel ve Kapsamlı Dalı
+        { q: "Özel hukukun en geniş, en temel ve günlük hayatta en çok karşılaşılan dalı hangisidir?", o: ["Ticaret Hukuku", "Borçlar Hukuku", "Medeni Hukuk", "İş Hukuku", "Devletler Özel Hukuku"], a: 2, exp: "Medeni Hukuk, doğumdan ölüme kadar kişinin tüm özel ilişkilerini düzenleyen ana gövdedir." },
+        { q: "Türk Medeni Kanunu'nun (TMK) yapısında aşağıdakilerden hangisi yer ALMAZ?", o: ["Kişiler Hukuku", "Aile Hukuku", "Miras Hukuku", "Eşya Hukuku", "Ticari İşletme Hukuku"], a: 4, exp: "Ticari İşletme, Medeni Kanun'da değil, Ticaret Kanunu'nda yer alır. Borçlar Hukuku ise TMK'nın ayrılmaz parçası olsa da ayrı kanundur." },
+
+        // 2. Medeni Hukuk: Kişiler Hukuku
+        { q: "Kişiliğin başlangıcı, sonu, ehliyetler, ikametgah ve hısımlık gibi konuları düzenleyen hukuk dalı hangisidir?", o: ["Eşya Hukuku", "Miras Hukuku", "Kişiler Hukuku", "Aile Hukuku", "Borçlar Hukuku"], a: 2, exp: "Kişiler Hukuku, hak sahibini (kişiyi) tanıtan temel bölümdür." },
+        { q: "Belirli bir amacı gerçekleştirmek üzere örgütlenmiş, tüzel kişiliğe sahip kişi topluluklarına ne denir?", o: ["Vakıf", "Dernek", "Sendika", "Kooperatif", "Şirket"], a: 1, exp: "Dernekler kişi topluluğudur; vakıflar ise mal topluluğudur." },
+        { q: "Belli bir amacı gerçekleştirmek üzere bir malvarlığının tahsis edilmesiyle oluşan tüzel kişiliğe ne denir?", o: ["Dernek", "Vakıf", "Şirket", "Parti", "Sendika"], a: 1, exp: "Vakıflarda üyelik yoktur, tahsis edilen malvarlığı vardır." },
+
+        // 3. Medeni Hukuk: Aile Hukuku
+        { q: "Evlenme, boşanma, nişanlanma, soybağı, velayet ve vesayet gibi konuları düzenleyen hukuk dalı hangisidir?", o: ["Kişiler Hukuku", "Eşya Hukuku", "Aile Hukuku", "Miras Hukuku", "Borçlar Hukuku"], a: 2, exp: "Aile hukuku, aile birliğinin kurulması, işleyişi ve sona ermesini inceler." },
+        { q: "Aşağıdakilerden hangisi evlenmenin geçerlilik şartlarından biri DEĞİLDİR?", o: ["Resmi memur önünde yapılması", "Tarafların ayırt etme gücüne sahip olması", "Tarafların aynı cinsiyetten olmaması", "Dini tören yapılması", "Yakın akraba olunmaması"], a: 3, exp: "Dini tören (imam nikahı) hukuki geçerlilik şartı değildir; resmi nikah zorunludur." },
+        { q: "Velayet hakkı kime aittir?", o: ["Devlete", "Okula", "Anne ve Babaya", "Vasiye", "Dedeye"], a: 2, exp: "Velayet, ergin olmayan çocuk üzerinde anne ve babanın sahip olduğu haktır." },
+
+        // 4. Medeni Hukuk: Miras Hukuku
+        { q: "Ölen bir kimsenin (muris) malvarlığının kimlere ve nasıl geçeceğini düzenleyen hukuk dalı hangisidir?", o: ["Eşya Hukuku", "Borçlar Hukuku", "Miras Hukuku", "Aile Hukuku", "Ticaret Hukuku"], a: 2, exp: "Miras hukuku, ölüm sonrası intikali düzenler." },
+        { q: "Mirasbırakanın iradesiyle değiştiremeyeceği, mirasçıların kanunen korunan payına ne denir?", o: ["Yasal Pay", "Saklı Pay", "Miras Payı", "Vasiyet", "Tereke"], a: 1, exp: "Saklı paylı mirasçılar (altsoy, ana-baba, eş) vasiyetname ile mirastan tamamen mahrum edilemez." },
+        { q: "Mirasbırakanın son arzularını içeren, resmi veya el yazılı belgeye ne denir?", o: ["Vasiyetname", "Sözleşme", "Tapu", "Senet", "Poliçe"], a: 0, exp: "Vasiyetname, ölüme bağlı bir tasarruftur." },
+
+        // 5. Medeni Hukuk: Eşya Hukuku
+        { q: "Kişilerin eşyalar (nesneler) üzerindeki doğrudan hakimiyet haklarını (ayni hakları) düzenleyen hukuk dalı hangisidir?", o: ["Borçlar Hukuku", "Eşya Hukuku", "Miras Hukuku", "Ticaret Hukuku", "Kişiler Hukuku"], a: 1, exp: "Mülkiyet ve zilyetlik gibi kavramlar Eşya Hukuku'nun konusudur." },
+        { q: "Bir eşya üzerinde sahibine kullanma, yararlanma ve tasarruf etme yetkilerinin tamamını veren en geniş ayni hak hangisidir?", o: ["İrtifak Hakkı", "Rehin Hakkı", "Mülkiyet Hakkı", "Zilyetlik", "İntifa Hakkı"], a: 2, exp: "Mülkiyet hakkı, sahibine eşya üzerinde tam egemenlik sağlar." },
+        { q: "Taşınmaz malların üzerindeki hakların durumunu göstermek üzere devlet tarafından tutulan resmi sicile ne denir?", o: ["Nüfus Sicili", "Ticaret Sicili", "Tapu Sicili", "Adli Sicil", "Vergi Sicili"], a: 2, exp: "Taşınmaz mülkiyeti ancak Tapu Siciline tescil ile kazanılır." },
+        { q: "Bir eşyayı fiilen elinde bulundurma ve hakimiyet altında tutma durumuna ne denir?", o: ["Mülkiyet", "Zilyetlik", "Tapu", "Rehin", "Hapis"], a: 1, exp: "Zilyetlik bir hak değil, fiili bir durumdur (Örn: Kiracı evde zilyettir ama malik değildir)." },
+
+        // 6. Borçlar Hukuku
+        { q: "Kişiler arasındaki borç ilişkilerini (alacak-verecek) düzenleyen hukuk dalı hangisidir?", o: ["Ticaret Hukuku", "İş Hukuku", "Borçlar Hukuku", "İcra Hukuku", "Vergi Hukuku"], a: 2, exp: "Borçlar Hukuku, sözleşmeler ve haksız fiillerden doğan borçları inceler." },
+        { q: "Aşağıdakilerden hangisi borcun kaynaklarından biri DEĞİLDİR?", o: ["Sözleşme (Hukuki İşlem)", "Haksız Fiil", "Sebepsiz Zenginleşme", "Hatır Sormak", "Kanun"], a: 3, exp: "Hatır sormak hukuki bir borç doğurmaz; diğerleri borcun temel kaynaklarıdır." },
+        { q: "Sözleşme özgürlüğü ilkesi neyi ifade eder?", o: ["Herkesin istediği gibi sözleşme yapabilmesini veya yapmamasını", "Devletin her sözleşmeyi onaylamasını", "Sözleşmelerin ücretsiz olmasını", "Sadece yazılı sözleşme yapılabilmesini", "Sözleşme yapılamamasını"], a: 0, exp: "Kanuna ve ahlaka aykırı olmamak şartıyla herkes dilediği sözleşmeyi yapabilir (Borçlar Kanunu m.26)." },
+        { q: "Hukuka aykırı bir fiille başkasına zarar verenin, bu zararı tazmin etme yükümlülüğüne ne denir?", o: ["Sözleşme", "Haksız Fiil Sorumluluğu", "Sebepsiz Zenginleşme", "Ceza Sorumluluğu", "İdari Sorumluluk"], a: 1, exp: "Kusurlu bir hareketle başkasına zarar veren (örn: cam kırmak), o zararı öder." },
+
+        // 7. İş Hukuku
+        { q: "İşçi ile işveren arasındaki hizmet sözleşmesinden doğan ilişkileri düzenleyen hukuk dalı hangisidir?", o: ["Ticaret Hukuku", "İş Hukuku", "Borçlar Hukuku", "İdare Hukuku", "Ceza Hukuku"], a: 1, exp: "İş Hukuku, işçiyi koruma ilkesine dayanır." },
+        { q: "Bir iş sözleşmesine dayanarak çalışan gerçek kişiye ne denir?", o: ["Memur", "Esnaf", "İşçi", "Tacir", "Vekil"], a: 2, exp: "İşçi, işverene bağımlı olarak ücret karşılığı çalışır." },
+        { q: "İşçilerin haklarını korumak amacıyla kurdukları mesleki örgütlere ne denir?", o: ["Dernek", "Vakıf", "Sendika", "Oda", "Baro"], a: 2, exp: "Sendikalar, toplu iş hukukunun temel aktörleridir." },
+        { q: "İşçilerin, iş koşullarını iyileştirmek amacıyla işi topluca bırakmalarına ne denir?", o: ["Lokavt", "Grev", "Direniş", "İstifa", "Fesih"], a: 1, exp: "Grev işçilerin, Lokavt ise işverenin (işçileri uzaklaştırma) eylemidir." },
+        { q: "İşçilerle işverenler arasında sendikalar aracılığıyla yapılan ve genel çalışma koşullarını belirleyen sözleşmeye ne denir?", o: ["Hizmet Sözleşmesi", "Toplu İş Sözleşmesi (TİS)", "Satış Sözleşmesi", "Kira Sözleşmesi", "Vekalet Sözleşmesi"], a: 1, exp: "TİS, sendika ile işveren arasında yapılır ve işyeri düzenini sağlar." },
+
+        // 8. Sosyal Güvenlik Hukuku
+        { q: "Bireyleri sosyal risklere (hastalık, yaşlılık, işsizlik) karşı koruyan ve onlara gelecek güvencesi sağlayan hukuk dalı hangisidir?", o: ["İş Hukuku", "Sosyal Güvenlik Hukuku", "Sigorta Hukuku", "Ticaret Hukuku", "Ceza Hukuku"], a: 1, exp: "SGK (Sosyal Güvenlik Kurumu) bu alanın ana kurumudur." },
+        { q: "Türkiye'de tüm sosyal güvenlik kurumlarının (SSK, Bağ-Kur, Emekli Sandığı) birleştiği çatı kurum hangisidir?", o: ["İŞKUR", "SGK (Sosyal Güvenlik Kurumu)", "Kızılay", "TBMM", "Sağlık Bakanlığı"], a: 1, exp: "2006 reformuyla tek çatı altında toplanmıştır." },
+
+        // 9. Ticaret Hukuku - Ticari İşletme
+        { q: "Ticari ilişkileri, taciri ve ticari işletmeyi düzenleyen özel hukuk dalı hangisidir?", o: ["Borçlar Hukuku", "Ticaret Hukuku", "İş Hukuku", "İcra Hukuku", "Mali Hukuk"], a: 1, exp: "Türk Ticaret Kanunu (TTK) ile düzenlenir." },
+        { q: "Bir ticari işletmeyi kısmen dahi olsa kendi adına işleten kimseye ne denir?", o: ["Esnaf", "Tacir", "İşçi", "Memur", "Müdür"], a: 1, exp: "Tacir sıfatı, Ticaret Hukuku'nun uygulanması için temel şarttır." },
+        { q: "Tacirlerin ve ticari işletmelerin durumunun kaydedildiği resmi sicile ne denir?", o: ["Nüfus Sicili", "Tapu Sicili", "Ticaret Sicili", "Adli Sicil", "Vergi Sicili"], a: 2, exp: "Ticaret sicili alenidir; tacirler buraya kaydolmak zorundadır." },
+        { q: "Ticari dürüstlüğe aykırı davranışlarla rakiplerin zarara uğratılmasına ne denir?", o: ["Rekabet", "Haksız Rekabet", "Tekelleşme", "İflas", "Konkordato"], a: 1, exp: "Örn: Başkasının markasını taklit etmek haksız rekabettir." },
+
+        // 10. Ticaret Hukuku - Şirketler
+        { q: "İki veya daha fazla kişinin ortak bir ekonomik amaç için emek ve mallarını birleştirmeleriyle oluşan tüzel kişiliğe ne denir?", o: ["Dernek", "Vakıf", "Ticaret Şirketi / Ortaklık", "Sendika", "Parti"], a: 2, exp: "Şirketlerin amacı kâr elde etmek ve paylaşmaktır." },
+        { q: "Sermayesi belirli ve paylara bölünmüş, borçlarından dolayı sadece malvarlığıyla sorumlu olan en yaygın büyük şirket türü hangisidir?", o: ["Kollektif Şirket", "Anonim Şirket (A.Ş.)", "Komandit Şirket", "Adi Şirket", "Kooperatif"], a: 1, exp: "Anonim şirketlerde ortakların sorumluluğu koydukları sermaye ile sınırlıdır." },
+        { q: "En az bir sermaye (10.000 TL) ile kurulan, ortak sayısı 50'yi geçemeyen, küçük ve orta ölçekli işletmelerin tercih ettiği şirket türü hangisidir?", o: ["Anonim Şirket", "Limited Şirket (Ltd. Şti.)", "Kollektif Şirket", "Halka Açık Şirket", "Holding"], a: 1, exp: "Limited şirketler daha kapalı ve kişisel güvene dayalı sermaye şirketleridir." },
+
+        // 11. Ticaret Hukuku - Kıymetli Evrak
+        { q: "İçerdiği hak senede bağlı olan ve senetsiz devredilemeyen belgelere ne denir?", o: ["Makbuz", "Fatura", "Kıymetli Evrak", "Tapu", "Sözleşme"], a: 2, exp: "Çek, bono ve poliçe kıymetli evraktır; hak kağıtla bütünleşmiştir." },
+        { q: "Bir banka üzerine çekilen ve 'görüldüğünde' ödenmesi gereken ödeme aracına ne denir?", o: ["Bono", "Poliçe", "Çek", "Tahvil", "Hisse Senedi"], a: 2, exp: "Çek bir kredi aracı değil, ödeme aracıdır; vade olmaz." },
+        { q: "Borçlunun, alacaklıya belli bir parayı belli bir tarihte ödemeyi taahhüt ettiği senede ne denir?", o: ["Çek", "Bono (Emre Muharrer Senet)", "Poliçe", "Fatura", "İrsaliye"], a: 1, exp: "Bono bir ödeme vaadidir." },
+
+        // 12. Diğer Ticaret Hukuku Dalları
+        { q: "Deniz yoluyla yük ve yolcu taşımayı, gemi ve kaptan kavramlarını düzenleyen hukuk dalı hangisidir?", o: ["Kara Ticareti", "Deniz Ticareti Hukuku", "Hava Hukuku", "Sigorta Hukuku", "İş Hukuku"], a: 1, exp: "Navlun sözleşmesi, çatma, kurtarma gibi konuları içerir." },
+        { q: "Bir prim karşılığında, kişinin karşılaşabileceği risklerin (kaza, yangın, ölüm) ekonomik sonuçlarını güvence altına alan hukuk dalı hangisidir?", o: ["Banka Hukuku", "Sigorta Hukuku", "Vergi Hukuku", "Ceza Hukuku", "Borçlar Hukuku"], a: 1, exp: "Sigortacı riski üstlenir, sigortalı prim öder." },
+
+        // 13. Devletler Özel Hukuku
+        { q: "Farklı ülke vatandaşları arasındaki özel hukuk ilişkilerinde (örn: bir Türk ile bir Alman'ın evlenmesi) hangi ülke hukukunun uygulanacağını belirleyen hukuk dalı hangisidir?", o: ["Devletler Umumi Hukuku", "Devletler Özel Hukuku (Kanunlar İhtilafı)", "Anayasa Hukuku", "Ceza Hukuku", "İdare Hukuku"], a: 1, exp: "Yabancılık unsuru taşıyan özel hukuk uyuşmazlıklarını çözer." },
+        { q: "Devletler Özel Hukuku'nun alt dallarından biri olan 'Vatandaşlık Hukuku' neyi düzenler?", o: ["Devletlerin sınırlarını", "Kişinin devlete olan siyasi ve hukuki bağını (Uyrukluk)", "Savaş kurallarını", "Ticaret kurallarını", "Vergi oranlarını"], a: 1, exp: "Vatandaşlığın kazanılması ve kaybedilmesi bu dalın konusudur." },
+        { q: "Ülkede bulunan yabancıların (turist, göçmen vb.) hak ve yükümlülüklerini düzenleyen hukuk dalı hangisidir?", o: ["Vatandaşlık Hukuku", "Yabancılar Hukuku", "Ceza Hukuku", "Miras Hukuku", "Borçlar Hukuku"], a: 1, exp: "Yabancıların çalışma, mülk edinme veya seyahat haklarını düzenler." },
+
+        // 14. Karışık ve Pekiştirme Soruları
+        { q: "Boşanma davası sonucunda eşlerden birinin diğerine yoksulluğa düşmemesi için ödediği paraya ne denir?", o: ["Tazminat", "Nafaka", "Miras", "Hibe", "Ücret"], a: 1, exp: "Nafaka, aile hukukunun sosyal bir kurumudur." },
+        { q: "İşverenin işçiye işten çıkarırken ödediği, çalışma süresine göre hesaplanan tazminata ne denir?", o: ["İhbar Tazminatı", "Kıdem Tazminatı", "Maddi Tazminat", "Manevi Tazminat", "Sendika Aidatı"], a: 1, exp: "En az 1 yıl çalışan ve haklı nedenle işten çıkarılmayan işçi kıdem tazminatı alır." },
+        { q: "Tacirler arasındaki uyuşmazlıklara bakan mahkeme hangisidir?", o: ["Asliye Hukuk", "Asliye Ticaret Mahkemesi", "Tüketici Mahkemesi", "Sulh Hukuk", "Aile Mahkemesi"], a: 1, exp: "Ticari davalar Asliye Ticaret Mahkemelerinde görülür." },
+        { q: "Anonim şirketlerde sermayeyi temsil eden ve ortaklığı gösteren kıymetli evraka ne denir?", o: ["Tahvil", "Hisse Senedi (Pay Senedi)", "Çek", "Bono", "Poliçe"], a: 1, exp: "Hisse senedi sahipleri şirketin ortağıdır ve kârdan pay (temettü) alır." },
+        { q: "Borçlar hukukunda 'Sözleşme' (Akit) nasıl kurulur?", o: ["Tek taraflı iradeyle", "Karşılıklı ve birbirine uygun irade beyanlarıyla (İcap ve Kabul)", "Hakim kararıyla", "Noter onayıyla", "Susarak"], a: 1, exp: "Öneri (icap) ve kabulün uyuşmasıyla sözleşme kurulur." },
+        { q: "Kişinin öldükten sonra organlarının bağışlanmasını istemesi hangi hukuk dalının konusudur?", o: ["Eşya Hukuku", "Kişiler Hukuku / Miras Hukuku", "Ticaret Hukuku", "İş Hukuku", "Vergi Hukuku"], a: 1, exp: "Kişilik hakları ve ölüme bağlı tasarruflar kapsamında değerlendirilir." },
+        { q: "Marka, patent ve endüstriyel tasarımların korunması hangi hukuk dalına girer?", o: ["Fikri ve Sınai Mülkiyet Hukuku (Özel Hukuk)", "Ceza Hukuku", "İdare Hukuku", "Anayasa Hukuku", "İş Hukuku"], a: 0, exp: "Fikri haklar, yaratıcı emeği korur." },
+        { q: "İş kazası geçiren bir işçinin tedavi masraflarını ve gelir kaybını kim karşılar?", o: ["Sadece işveren", "SGK (İş kazası ve meslek hastalığı sigortasından)", "İşçi kendi cebinden", "Devlet hazinesi", "Sendika"], a: 1, exp: "Sosyal güvenlik sistemi bu riskleri karşılamak için vardır." },
+        { q: "Hangisi 'Sınırlı Ayni Hak'tır?", o: ["Mülkiyet", "İrtifak Hakkı (Örn: Geçit hakkı)", "Alacak Hakkı", "Telif Hakkı", "Velayet"], a: 1, exp: "Sınırlı ayni haklar, mülkiyetin bazı yetkilerini (kullanma/yararlanma) başkasına verir." },
+        { q: "Nişanlanma hukuken ne anlama gelir?", o: ["Evlilik sözleşmesi", "Evlenme vaadi", "Arkadaşlık", "Akrabalık", "Ticari ortaklık"], a: 1, exp: "Nişanlanma, ileride evlenmek üzere verilen karşılıklı sözdür; hukuki sonuçları (tazminat, hediyelerin iadesi) vardır." },
+        { q: "Sebepsiz zenginleşme nedir?", o: ["Piyangodan para çıkması", "Haklı bir sebep olmaksızın birinin malvarlığının diğeri aleyhine artması (Örn: Yanlış hesaba para yatması)", "Çok çalışmak", "Miras kalması", "Hediye almak"], a: 1, exp: "Sebepsiz zenginleşen, aldığını iade etmekle yükümlüdür." },
+        { q: "Türk Ticaret Kanunu'na göre 'Esnaf' ile 'Tacir' arasındaki fark nedir?", o: ["Fark yoktur", "Tacir büyük işletme, esnaf ise geçimini sağlamaya yetecek kadar az sermayeli ve bedeni çalışmaya dayalı işletme sahibidir", "Esnaf zengindir", "Tacir vergiden muaftır", "Esnaf şirket kuramaz"], a: 1, exp: "Esnaf-Tacir ayrımı, işletmenin ekonomik boyutuna göre yapılır." },
+        { q: "Kamulaştırma (İstimlak) hangi hukuk dalının konusudur?", o: ["Özel Hukuk", "İdare Hukuku (Kamu Hukuku)", "Ticaret Hukuku", "Ceza Hukuku", "İş Hukuku"], a: 1, exp: "Devletin kamu yararı için özel mülkiyetteki taşınmaza el koyması idari bir işlemdir." },
+        { q: "Yabancı mahkeme kararlarının Türkiye'de geçerli olabilmesi için açılan davaya ne denir?", o: ["İptal Davası", "Tenfiz ve Tanıma Davası", "Boşanma Davası", "Tazminat Davası", "Ceza Davası"], a: 1, exp: "Örneğin Almanya'da boşanan bir Türk, bu kararı Türkiye'de işletmek için Tenfiz davası açmalıdır." },
+        { q: "İpotek ne tür bir haktır?", o: ["Taşınır Rehni", "Taşınmaz Rehni (Sınırlı Ayni Hak)", "Kişilik Hakkı", "Fikri Hak", "Kullanma Hakkı"], a: 1, exp: "Alacağı güvence altına almak için taşınmaz üzerine konulan rehin hakkıdır." }
+    ];
+
+    let currentQuestion = 0;
+    let userAnswers = new Array(questions.length).fill(null);
+
+    function loadQuestion() {
+        const container = document.getElementById('quiz-container');
+        const explanationArea = document.getElementById('explanation-area');
+        
+        container.innerHTML = '';
+        explanationArea.style.display = 'none';
+
+        const q = questions[currentQuestion];
+        
+        let html = `
+            <div class="question-block active">
+                <div class="question-text">${currentQuestion + 1}. ${q.q}</div>
+                <div class="options">
+        `;
+
+        q.o.forEach((opt, index) => {
+            const isSelected = userAnswers[currentQuestion] === index ? 'selected' : '';
+            const isChecked = userAnswers[currentQuestion] === index ? 'checked' : '';
+            html += `
+                <label class="option-label ${isSelected}" id="opt-${index}">
+                    <input type="radio" name="q${currentQuestion}" value="${index}" onclick="selectAnswer(${index})" ${isChecked}>
+                    ${String.fromCharCode(65 + index)}) ${opt}
+                </label>
+            `;
+        });
+
+        html += `</div></div>`;
+        container.innerHTML = html;
+
+        // Progress Bar
+        const progressPercent = ((currentQuestion + 1) / questions.length) * 100;
+        document.getElementById('progress-bar').style.width = progressPercent + '%';
+        document.getElementById('progress-text').innerText = `Soru ${currentQuestion + 1} / ${questions.length}`;
+        
+        // Buton Yönetimi
+        document.getElementById('prevBtn').disabled = currentQuestion === 0;
+        
+        if (currentQuestion === questions.length - 1) {
+            document.getElementById('nextBtn').style.display = 'none';
+            document.getElementById('finishBtn').style.display = 'inline-block';
+        } else {
+            document.getElementById('nextBtn').style.display = 'inline-block';
+            document.getElementById('finishBtn').style.display = 'none';
+        }
+    }
+
+    function selectAnswer(index) {
+        userAnswers[currentQuestion] = index;
+        const labels = document.querySelectorAll('.option-label');
+        labels.forEach(label => label.classList.remove('selected'));
+        document.getElementById(`opt-${index}`).classList.add('selected');
+    }
+
+    function showCurrentAnswer() {
+        const q = questions[currentQuestion];
+        const correctIndex = q.a;
+        const correctLabel = document.getElementById(`opt-${correctIndex}`);
+        const explanationArea = document.getElementById('explanation-area');
+
+        if(correctLabel) correctLabel.classList.add('correct-highlight');
+        
+        if (userAnswers[currentQuestion] !== null && userAnswers[currentQuestion] !== correctIndex) {
+            document.getElementById(`opt-${userAnswers[currentQuestion]}`).classList.add('wrong-highlight');
+        }
+
+        explanationArea.innerHTML = `<strong>Açıklama:</strong> ${q.exp}`;
+        explanationArea.style.display = 'block';
+    }
+
+    function nextQuestion() {
+        if (currentQuestion < questions.length - 1) {
+            currentQuestion++;
+            loadQuestion();
+        }
+    }
+
+    function prevQuestion() {
+        if (currentQuestion > 0) {
+            currentQuestion--;
+            loadQuestion();
+        }
+    }
+
+    function finishQuiz() {
+        let correctCount = 0;
+        let wrongCount = 0;
+        let emptyCount = 0;
+        let reviewHtml = '';
+
+        questions.forEach((q, index) => {
+            const userAnswer = userAnswers[index];
+            const isCorrect = userAnswer === q.a;
+            
+            let statusText = '';
+            let statusClass = '';
+
+            if (userAnswer === null) {
+                emptyCount++;
+                statusText = 'Boş';
+                statusClass = 'status-empty';
+            } else if (isCorrect) {
+                correctCount++;
+                statusText = 'Doğru';
+                statusClass = 'status-correct';
+            } else {
+                wrongCount++;
+                statusText = 'Yanlış';
+                statusClass = 'status-wrong';
+            }
+
+            reviewHtml += `
+                <tr>
+                    <td>${index + 1}</td>
+                    <td>${q.q}</td>
+                    <td>${userAnswer !== null ? String.fromCharCode(65 + userAnswer) + ') ' + q.o[userAnswer] : '-'}</td>
+                    <td>${String.fromCharCode(65 + q.a)}) ${q.o[q.a]}</td>
+                    <td class="${statusClass}">${statusText}</td>
+                </tr>
+            `;
+        });
+
+        document.getElementById('quiz-screen').style.display = 'none';
+        document.getElementById('result-screen').style.display = 'block';
+
+        const score = Math.round((correctCount / questions.length) * 100);
+        
+        document.getElementById('score-circle').innerText = score;
+        document.getElementById('score-details').innerHTML = `
+            <strong>Doğru:</strong> ${correctCount} &nbsp;|&nbsp; 
+            <strong>Yanlış:</strong> ${wrongCount} &nbsp;|&nbsp; 
+            <strong>Boş:</strong> ${emptyCount}
+        `;
+        
+        document.getElementById('review-body').innerHTML = reviewHtml;
+    }
+
+    // Uygulamayı başlat
+    loadQuestion();
+</script>
+
+</body>
+</html>
