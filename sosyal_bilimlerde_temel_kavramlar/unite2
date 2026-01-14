@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sosyal Bilimlerde Temel Kavramlar - 2. Ünite</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #e0f2f1; color: #333; margin: 0; padding: 20px; }
+        .container { max-width: 900px; margin: 0 auto; background: #fff; padding: 40px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); position: relative; }
+        h1 { text-align: center; color: #00796b; border-bottom: 2px solid #009688; padding-bottom: 10px; margin-bottom: 30px; }
+        
+        /* Home Button */
+        .home-btn {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background-color: #4db6ac;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 14px;
+            transition: background 0.2s;
+        }
+        .home-btn:hover { background-color: #00796b; }
+
+        /* İlerleme Çubuğu */
+        .progress-container { background-color: #b2dfdb; border-radius: 10px; margin-bottom: 20px; height: 10px; overflow: hidden; }
+        .progress-bar { height: 100%; background-color: #00796b; width: 0%; transition: width 0.3s; }
+        .progress-text { text-align: right; font-size: 0.9em; color: #004d40; margin-bottom: 15px; }
+
+        /* Soru Alanı */
+        .question-block { display: none; animation: fadeIn 0.5s; }
+        .question-block.active { display: block; }
+        .question-text { font-weight: 600; font-size: 1.25em; margin-bottom: 20px; color: #00695c; }
+        
+        /* Seçenekler */
+        .options { display: flex; flex-direction: column; gap: 10px; }
+        .option-label { 
+            display: flex; align-items: center; padding: 12px 15px; border: 2px solid #e0e0e0; 
+            border-radius: 8px; cursor: pointer; transition: all 0.2s; background: #fff;
+        }
+        .option-label:hover { background-color: #e0f2f1; border-color: #80cbc4; }
+        .option-label.selected { border-color: #00796b; background-color: #b2dfdb; }
+        .option-label input { margin-right: 15px; transform: scale(1.2); }
+        
+        /* Cevap Göster Stilleri */
+        .option-label.correct-highlight { border-color: #27ae60; background-color: #d5f5e3; color: #1e8449; font-weight: bold; }
+        .option-label.wrong-highlight { border-color: #e74c3c; background-color: #fadbd8; }
+
+        /* Açıklama Kutusu */
+        .explanation-box {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #e0f7fa;
+            border-left: 5px solid #00acc1;
+            border-radius: 4px;
+            color: #006064;
+            display: none;
+            font-size: 0.95em;
+            line-height: 1.5;
+        }
+
+        /* Butonlar */
+        .controls { margin-top: 30px; display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
+        button { border: none; padding: 12px 24px; border-radius: 6px; cursor: pointer; font-size: 16px; font-weight: 600; transition: background 0.2s; }
+        .nav-btn { background-color: #00796b; color: white; }
+        .nav-btn:hover { background-color: #004d40; }
+        .nav-btn:disabled { background-color: #bdc3c7; cursor: not-allowed; }
+        
+        .show-answer-btn { background-color: #f39c12; color: white; }
+        .show-answer-btn:hover { background-color: #e67e22; }
+        
+        .finish-btn { background-color: #27ae60; color: white; display: none; }
+        .finish-btn:hover { background-color: #219150; }
+
+        /* Sonuç Ekranı */
+        #result-screen { display: none; }
+        .score-card { text-align: center; background: #f8f9fa; padding: 20px; border-radius: 10px; margin-bottom: 30px; }
+        .score-circle { 
+            width: 120px; height: 120px; border-radius: 50%; background: #00796b; color: white; 
+            display: flex; align-items: center; justify-content: center; font-size: 2em; font-weight: bold; 
+            margin: 0 auto 15px; 
+        }
+        
+        .review-table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 0.95em; }
+        .review-table th, .review-table td { padding: 12px; border: 1px solid #ddd; text-align: left; }
+        .review-table th { background-color: #004d40; color: white; }
+        .review-table tr:nth-child(even) { background-color: #f2f2f2; }
+        .status-correct { color: #27ae60; font-weight: bold; }
+        .status-wrong { color: #c0392b; font-weight: bold; }
+        .status-empty { color: #f39c12; font-weight: bold; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <a href="#" class="home-btn" onclick="alert('Anasayfaya yönlendiriliyorsunuz...'); location.reload();">⌂ Anasayfa</a>
+    
+    <div id="quiz-screen">
+        <h1>2. Ünite: Birey ve Toplum</h1>
+        
+        <div class="progress-text" id="progress-text">Soru 1 / 50</div>
+        <div class="progress-container">
+            <div class="progress-bar" id="progress-bar"></div>
+        </div>
+        
+        <div id="quiz-container">
+            <!-- Sorular buraya JS ile gelecek -->
+        </div>
+
+        <!-- Açıklama Alanı -->
+        <div id="explanation-area" class="explanation-box"></div>
+
+        <div class="controls">
+            <div>
+                <button class="nav-btn" id="prevBtn" onclick="prevQuestion()" disabled>&#8592; Önceki</button>
+            </div>
+            <div>
+                <button class="show-answer-btn" onclick="showCurrentAnswer()">👁️ Cevabı Göster</button>
+            </div>
+            <div>
+                <button class="nav-btn" id="nextBtn" onclick="nextQuestion()">Sonraki &#8594;</button>
+                <button class="finish-btn" id="finishBtn" onclick="finishQuiz()">Testi Bitir &#10004;</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="result-screen">
+        <h1>Değerlendirme Sonucu</h1>
+        <div class="score-card">
+            <div class="score-circle" id="score-circle">0</div>
+            <h3>Toplam Puan</h3>
+            <p id="score-details"></p>
+        </div>
+        
+        <h3>Detaylı Soru Analizi</h3>
+        <table class="review-table">
+            <thead>
+                <tr>
+                    <th style="width: 5%">No</th>
+                    <th style="width: 45%">Soru</th>
+                    <th style="width: 20%">Senin Cevabın</th>
+                    <th style="width: 20%">Doğru Cevap</th>
+                    <th style="width: 10%">Durum</th>
+                </tr>
+            </thead>
+            <tbody id="review-body">
+                <!-- Sonuç satırları buraya gelecek -->
+            </tbody>
+        </table>
+        <div style="text-align: center; margin-top: 30px;">
+            <button class="nav-btn" onclick="location.reload()">Testi Tekrar Çöz</button>
+            <button class="home-btn" style="position: static; display: inline-block; margin-left: 10px;" onclick="location.reload()">Anasayfaya Dön</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // 2. Ünite Konuları: Kültür, Sosyalleşme, Statü, Rol, Sosyal Kontrol, Normlar, Değerler
+    const questions = [
+        { q: "Bir toplumun tarihsel süreç içinde ürettiği ve kuşaktan kuşağa aktardığı maddi ve manevi her türlü birikime ne ad verilir?", o: ["Medeniyet", "Kültür", "Teknoloji", "Tarih", "Edebiyat"], a: 1, exp: "Kültür, bir toplumun yaşam biçimi, düşünce tarzı, sanat ve teknik eserlerinin tümünü kapsayan geniş bir kavramdır." },
+        { q: "Kültürün, binalar, araç-gereçler, giysiler gibi elle tutulur, gözle görülür unsurlarına ne denir?", o: ["Manevi Kültür", "Maddi Kültür", "İdeal Kültür", "Popüler Kültür", "Folklor"], a: 1, exp: "Maddi kültür, toplumun teknolojik ve fiziksel üretimlerini kapsar." },
+        { q: "Kültürün inançlar, değerler, normlar, dil ve düşünce biçimleri gibi soyut unsurlarına ne ad verilir?", o: ["Maddi Kültür", "Manevi Kültür", "Teknik Kültür", "Reel Kültür", "Sanayi Kültürü"], a: 1, exp: "Manevi kültür, toplumun zihniyet yapısını, ahlakını ve kurallarını ifade eder." },
+        { q: "Bireyin, içine doğduğu toplumun kültürel değerlerini, normlarını ve rollerini öğrenerek topluma uyum sağlama sürecine ne denir?", o: ["Büyüme", "Gelişme", "Sosyalleşme (Toplumsallaşma)", "Olgunlaşma", "Eğitim"], a: 2, exp: "Sosyalleşme, bireyin biyolojik bir varlıktan sosyal bir varlığa dönüşme sürecidir." },
+        { q: "Aşağıdakilerden hangisi 'Birincil Sosyalleşme' kurumudur?", o: ["Okul", "Aile", "Arkadaş Grubu", "Medya", "İşyeri"], a: 1, exp: "Aile, bireyin hayatının ilk yıllarında en temel değerleri öğrendiği ve kişiliğinin temellerinin atıldığı birincil sosyalleşme kurumudur." },
+        { q: "Bir toplumda kişilerin işgal ettiği konuma veya mevkye ne ad verilir?", o: ["Rol", "Statü", "Sınıf", "Grup", "Kategori"], a: 1, exp: "Statü, bireyin toplum içindeki yerini belirleyen, ona belirli hak ve ödevler yükleyen konumdur." },
+        { q: "Bireyin kendi çabası ve yeteneği sonucunda elde ettiği statülere ne denir?", o: ["Verilmiş (Edinilmiş) Statü", "Kazanılmış Statü", "Zorunlu Statü", "Doğal Statü", "Biyolojik Statü"], a: 1, exp: "Kazanılmış statüler (örn: doktor, öğretmen, başkan), eğitim ve kişisel başarı ile elde edilir." },
+        { q: "Bireyin doğuştan sahip olduğu veya kendi iradesi dışında (yaş, cinsiyet, ırk gibi) elde ettiği statülere ne denir?", o: ["Kazanılmış Statü", "Verilmiş (Edinilmiş) Statü", "Başarılmış Statü", "Aktif Statü", "Mesleki Statü"], a: 1, exp: "Verilmiş statüler, bireyin kontrolü dışında toplum tarafından ona atfedilen konumlardır." },
+        { q: "Bir statüye sahip olan bireyden toplumun beklediği davranış kalıplarına ne denir?", o: ["Statü", "Rol", "Norm", "Değer", "Yetki"], a: 1, exp: "Rol, statünün dinamik yönüdür; yani o statüdeki kişinin 'yapması gereken' şeylerdir." },
+        { q: "Bireyin sahip olduğu birden fazla rolün gereklerini yerine getirirken zorlanması veya bu rollerin birbiriyle çelişmesi durumuna ne denir?", o: ["Rol Pekiştirmesi", "Rol Çatışması", "Rol Oynama", "Rol Mesafe", "Rol Yapma"], a: 1, exp: "Rol çatışması, örneğin bir annenin aynı zamanda iş yerinde müdür olması ve bu iki rolün taleplerinin (zaman, ilgi) çatışmasıdır." },
+        { q: "Toplumda neyin doğru, iyi, güzel ve arzu edilir olduğuna dair paylaşılan genel inanç ve ideallere ne denir?", o: ["Normlar", "Değerler", "Semboller", "Teknikler", "Kanunlar"], a: 1, exp: "Değerler, davranışlarımıza yön veren genel ilkeler ve ideallerdir (Örn: dürüstlük, vatanseverlik)." },
+        { q: "Değerlerin somutlaşmış hali olan, belirli durumlarda nasıl davranılması gerektiğini belirleyen kurallara ne denir?", o: ["Değer", "Norm", "İnanç", "Bilgi", "Fikir"], a: 1, exp: "Normlar, değerlere dayalı olarak oluşturulan ve yaptırımı olan somut davranış kurallarıdır." },
+        { q: "Yaptırımı kınama, ayıplama veya dışlanma gibi manevi nitelikte olan, yazılı olmayan kurallara ne denir?", o: ["Kanun", "Yönetmelik", "Örf ve Adetler", "Anayasa", "Tüzük"], a: 2, exp: "Örf ve adetler, toplumun vicdanında yer etmiş, resmi olmayan ancak güçlü yaptırımı olan kurallardır." },
+        { q: "Devletin yetkili organlarınca konulan ve uyulması zorunlu olan, maddi yaptırımlı (ceza, hapis) kurallara ne denir?", o: ["Ahlak", "Görgü", "Hukuk (Yasa)", "Gelenek", "Moda"], a: 2, exp: "Hukuk kuralları, devlet gücüyle desteklenen ve ihlali durumunda resmi cezaların uygulandığı normlardır." },
+        { q: "Bireylerin veya grupların toplumun normlarına ve değerlerine uymasını sağlamak amacıyla uygulanan mekanizmalara ne denir?", o: ["Toplumsal Değişme", "Toplumsal Kontrol", "Toplumsal Hareketlilik", "Toplumsal Sapma", "Toplumsal Tabakalaşma"], a: 1, exp: "Toplumsal kontrol, düzeni sağlamak ve sapmayı önlemek için toplumun kullandığı baskı ve teşvik araçlarıdır." },
+        { q: "Bireyin toplumun veya grubun kabul ettiği normlara aykırı davranışlar sergilemesine ne denir?", o: ["Uyum", "Toplumsal Sapma", "Bütünleşme", "Sosyalleşme", "İtaat"], a: 1, exp: "Sapma, normların ihlal edilmesidir. Bu suç olabileceği gibi, sadece garip karşılanan bir davranış da olabilir." },
+        { q: "Bir bireyin toplumdaki saygınlığını ve itibarını ifade eden kavrama ne denir?", o: ["Gelir", "Servet", "Sosyal Prestij (Saygınlık)", "Güç", "Yetki"], a: 2, exp: "Prestij, bir statüye veya kişiye toplumun verdiği manevi değer ve saygıdır." },
+        { q: "Bireyin en baskın olan, diğer tüm statülerini gölgede bırakan ve toplumdaki kimliğini belirleyen statüsüne ne denir?", o: ["Anahtar (Baskın) Statü", "Yan Statü", "Geçici Statü", "Verilmiş Statü", "Tamamlayıcı Statü"], a: 0, exp: "Anahtar statü, kişinin toplumda en çok bilindiği ve tanımlandığı statüsüdür (Genellikle meslek veya cinsiyet olabilir)." },
+        { q: "Kişinin bir rolünün gerektirdiği davranışların, diğer rolünü kolaylaştırması durumuna ne denir? (Örn: Anaokulu öğretmeninin kendi çocuğuna daha iyi bakması)", o: ["Rol Çatışması", "Rol Pekiştirmesi", "Rol Karmaşası", "Rol Belirsizliği", "Rol Beklentisi"], a: 1, exp: "Rol pekiştirmesi, rollerin birbirini desteklemesi ve güçlendirmesidir." },
+        { q: "William Ogburn'a göre, maddi kültürün (teknoloji) manevi kültürden (değerler, hukuk) daha hızlı değişmesi sonucu oluşan uyumsuzluğa ne denir?", o: ["Kültür Şoku", "Kültürel Gecikme (Cultural Lag)", "Kültürel Yayılma", "Kültürel Yozlaşma", "Kültürel Asimilasyon"], a: 1, exp: "Kültürel gecikme, teknolojinin hızına hukukun ve ahlakın yetişememesi durumudur (Örn: İnternet suçlarına karşı yasaların geç çıkması)." },
+        { q: "Farklı kültürlerin karşılaşması sonucu, karşılıklı etkileşimle her iki kültürün de değişime uğramasına ne denir?", o: ["Kültürleşme", "Kültürleme", "Asimilasyon", "Zorla Kültürleme", "Yayılma"], a: 0, exp: "Kültürleşme, kültürler arası etkileşim ve alışveriş sürecidir." },
+        { q: "Bireyin kendi kültürünü merkeze alarak diğer kültürleri kendi kültürünün standartlarına göre yargılamasına ve aşağı görmesine ne denir?", o: ["Kültürel Görelilik", "Etnosentrizm", "Hoşgörü", "Empati", "Nesnellik"], a: 1, exp: "Etnosentrizm, kendi kültürünü en üstün ve doğru kabul etme eğilimidir." },
+        { q: "Her kültürün kendi koşulları içinde değerlendirilmesi gerektiğini, 'iyi' veya 'kötü' kültür olmadığını savunan yaklaşıma ne denir?", o: ["Etnosentrizm", "Kültürel Görelilik (Relyativizm)", "Irkçılık", "Evrensellik", "Yabancı Hayranlığı"], a: 1, exp: "Kültürel görelilik, bir kültürü anlamak için o kültürün kendi iç dinamiklerine bakmak gerektiğini savunur." },
+        { q: "Genel kültürün içinde yer alan ancak kendine özgü değer, norm ve yaşam tarzına sahip olan gruba ne denir?", o: ["Karşıt Kültür", "Alt Kültür", "Popüler Kültür", "Kitle Kültürü", "Yüksek Kültür"], a: 1, exp: "Alt kültür, ana kültürden tamamen kopmadan farklılaşan grupları (örn: gençlik grupları, meslek grupları) ifade eder." },
+        { q: "Mevcut toplumsal düzene ve hakim kültürel değerlere kökten karşı çıkan ve onları değiştirmeyi hedefleyen gruba ne denir?", o: ["Alt Kültür", "Karşıt (Kontra) Kültür", "Popüler Kültür", "Folklor", "Elit Kültür"], a: 1, exp: "Karşıt kültür, ana akım değerlerle çatışan ve alternatif bir yaşam tarzı öneren gruplardır (Örn: 68 kuşağı hippiler)." },
+        { q: "Normlara uymayan davranışlara karşı toplumun verdiği tepkilere (ödül veya ceza) ne denir?", o: ["Yaptırım", "Değer", "İnanç", "İdeoloji", "Ritüel"], a: 0, exp: "Yaptırım, uyumu teşvik etmek (ödül) veya sapmayı cezalandırmak için kullanılan araçlardır." },
+        { q: "Bireyin, toplumun bir üyesi olabilmek için gerekli bilgi ve becerileri (dil, giyinme, yemek yeme vb.) öğrenme sürecine ne denir?", o: ["Kültürleşme", "Kültürleme (Enculturation)", "Asimilasyon", "Entegrasyon", "Difüzyon"], a: 1, exp: "Kültürleme, eğitimin geniş anlamıdır; bireyin içine doğduğu kültürü öğrenmesidir." },
+        { q: "Kültürel öğelerin bir toplumdan diğerine geçmesi ve yayılması sürecine ne denir?", o: ["Kültürel Gecikme", "Kültürel Yayılma (Difüzyon)", "Buluş", "Keşif", "Yozlaşma"], a: 1, exp: "Difüzyon, kültürel özelliklerin (yemek, moda, fikir) toplumlar arasında yayılmasıdır." },
+        { q: "Sosyalleşmenin yaşam boyu devam eden bir süreç olmasının nedeni nedir?", o: ["İnsanların unutkan olması", "Bireyin yaşamı boyunca farklı statülere geçmesi ve yeni roller öğrenmek zorunda kalması", "Eğitimin zor olması", "Toplumun değişmemesi", "Çocukluğun uzun sürmesi"], a: 1, exp: "İnsanlar yaşlandıkça, evlendikçe, iş değiştirdikçe yeni roller öğrenirler (ikincil sosyalleşme)." },
+        { q: "Medya (Kitle İletişim Araçları), günümüzde sosyalleşme üzerinde nasıl bir etkiye sahiptir?", o: ["Etkisi yoktur", "Sadece haber verir", "Rol modeller sunarak, tüketim alışkanlıklarını ve değerleri şekillendirerek çok güçlü bir etkiye sahiptir", "Sadece çocukları etkiler", "Ailenin yerini tamamen almıştır"], a: 2, exp: "Medya, özellikle gençler üzerinde güçlü bir sosyalleştirici ajan olarak değerleri ve yaşam tarzlarını yayar." },
+        { q: "Aşağıdakilerden hangisi 'Resmi Olmayan (Enformel) Sosyal Kontrol' aracıdır?", o: ["Hapis cezası", "Para cezası", "Alay etme / Dışlama", "Tutuklama", "İdam"], a: 2, exp: "Alay etme, dedikodu veya dışlama, yasalarla değil toplum baskısı ile uygulanan etkili bir kontrol mekanizmasıdır." },
+        { q: "Bir toplumda egemen olan ve gücü elinde bulunduran grubun kültürüne ne denir?", o: ["Baskın (Egemen) Kültür", "Alt Kültür", "Azınlık Kültürü", "Karşıt Kültür", "Halk Kültürü"], a: 0, exp: "Baskın kültür, toplumun genelinde kabul gören ve kurumları yöneten kültürdür." },
+        { q: "Geniş kitleler tarafından tüketilen, ticari amaçla üretilen ve hızla değişen kültüre ne denir?", o: ["Yüksek Kültür", "Popüler Kültür", "Halk Kültürü", "Geleneksel Kültür", "Elit Kültür"], a: 1, exp: "Popüler kültür, kitle iletişim araçlarıyla yayılan ve tüketim odaklı olan kültürdür." },
+        { q: "Bir kişinin işini kaybetmesi sonucu yaşadığı statü kaybı hangi hareketlilik türüne örnektir?", o: ["Yatay Hareketlilik", "Dikey Hareketlilik (Aşağı Doğru)", "Coğrafi Hareketlilik", "Kuşaklararası Hareketlilik", "Sanal Hareketlilik"], a: 1, exp: "Statü ve yaşam standardında belirgin bir düşüş olduğu için dikey hareketliliktir." },
+        { q: "Eğitim kurumu, sosyalleşme sürecinde hangi işlevi yerine getirir?", o: ["Sadece meslek kazandırır", "Toplumun ortak değerlerini, disiplini ve vatandaşlık bilincini (resmi ve gizli müfredatla) aktarır", "Aileyi yok eder", "Dini yayar", "Sadece oyun oynatır"], a: 1, exp: "Okul, sadece bilgi değil, toplumsal kuralları ve uyumu da öğreten önemli bir sosyalleşme ajanıdır." },
+        { q: "Cooley'nin 'Ayna Benlik' kuramına göre benlik nasıl gelişir?", o: ["Doğuştan gelir", "Başkalarının bize nasıl tepki verdiğine dair yorumlarımızla şekillenir", "Sadece aynaya bakarak", "Kitap okuyarak", "Genetik faktörlerle"], a: 1, exp: "Benlik, sosyal etkileşim içinde, başkalarının bize tuttuğu 'ayna'ya göre (bizi nasıl gördüklerini düşünmemize göre) gelişir." },
+        { q: "Freud'a göre, kişiliğin ahlaki denetimini yapan ve vicdanı temsil eden bölümü hangisidir?", o: ["İd", "Ego", "Süperego", "Bilinç", "Dürtü"], a: 2, exp: "Süperego, toplumun ahlaki kurallarının içselleştirilmiş halidir ve bizi denetler." },
+        { q: "Mead'e göre 'Genelleştirilmiş Öteki' kavramı neyi ifade eder?", o: ["Yabancıları", "Toplumun genel tutum, beklenti ve normlarının birey tarafından içselleştirilmesini", "Aileyi", "Düşmanları", "Öğretmenleri"], a: 1, exp: "Genelleştirilmiş öteki, bireyin davranışlarını şekillendirirken referans aldığı 'toplumun sesi'dir." },
+        { q: "Bir toplumda statüler arası geçişin (sosyal hareketliliğin) mümkün olduğu sisteme ne denir?", o: ["Kapalı Sınıf Sistemi", "Açık Sınıf Sistemi", "Kast Sistemi", "Kölelik Sistemi", "Feodal Sistem"], a: 1, exp: "Açık sınıf sistemi, bireylerin yetenek ve başarılarına göre tabaka değiştirebildiği modern sistemdir." },
+        { q: "Kast sistemi hangi özelliği ile bilinir?", o: ["Sınıf atlamanın kolay olmasıyla", "Doğumla kazanılan ve değiştirilemeyen statüleriyle (Kapalı Tabakalaşma)", "Eğitime önem vermesiyle", "Demokratik olmasıyla", "Modern olmasıyla"], a: 1, exp: "Kast sistemi, geçişin yasak olduğu en katı (kapalı) tabakalaşma türüdür." },
+        { q: "Aşağıdakilerden hangisi bir 'Toplumsal Kurum' örneğidir?", o: ["Bir arkadaş grubu", "Bir futbol takımı", "Aile", "Bir süpermarket", "Bir park"], a: 2, exp: "Aile, eğitim, din, ekonomi ve siyaset; toplumun temel ihtiyaçlarını karşılayan köklü ve yerleşik toplumsal kurumlardır." },
+        { q: "Toplumsal değişme ne demektir?", o: ["Toplumun aynı kalması", "Toplumsal yapıda, kurumlarda ve ilişkilerde zamanla meydana gelen farklılaşma", "Nüfusun azalması", "Savaş çıkması", "Hükümetin değişmesi"], a: 1, exp: "Toplumsal değişme, toplumun yapısında ve işleyişinde meydana gelen her türlü (ileriye veya geriye) hareketi ifade eder." },
+        { q: "Modernleşme sürecinde aile yapısında nasıl bir değişim gözlenir?", o: ["Geniş aileden çekirdek aileye geçiş", "Çekirdek aileden geniş aileye geçiş", "Ailenin yok olması", "Çok eşliliğin artması", "Boşanmaların azalması"], a: 0, exp: "Sanayileşme ve kentleşme ile birlikte aileler küçülmüş ve çekirdek aile (anne-baba-çocuk) yaygınlaşmıştır." },
+        { q: "Kültürel asimilasyon ne demektir?", o: ["Kültürlerin barış içinde yaşaması", "Bir kültürün başka bir kültür içinde eriyerek kendi özelliklerini kaybetmesi", "Kültür alışverişi", "Yeni bir kültür yaratmak", "Turizm faaliyeti"], a: 1, exp: "Asimilasyon, egemen kültürün baskısı veya etkisiyle azınlık kültürünün yok olması sürecidir." },
+        { q: "Hangi sosyalleşme türü yetişkinlikte, yeni bir işe veya role uyum sağlarken gerçekleşir?", o: ["Birincil Sosyalleşme", "İkincil Sosyalleşme", "Tersine Sosyalleşme", "Erken Sosyalleşme", "Doğal Sosyalleşme"], a: 1, exp: "İkincil sosyalleşme, çocukluktan sonraki evrelerde (okul, iş, evlilik vb.) gerçekleşen öğrenme sürecidir." },
+        { q: "Toplumsal rollerden beklenen davranışların kişiden kişiye değişmemesi, rolün hangi özelliğini gösterir?", o: ["Kişisel olduğunu", "Nesnel ve toplumsal olarak tanımlandığını", "Önemsiz olduğunu", "Zor olduğunu", "Rastgele olduğunu"], a: 1, exp: "Roller bireylerden bağımsız olarak toplum tarafından tanımlanmıştır (Örn: Bir doktordan beklenen davranışlar bellidir)." },
+        { q: "Akran gruplarının sosyalleşmedeki en önemli farkı nedir?", o: ["Otoriter olmaları", "Eşit statüdeki bireylerden oluşması ve otoriteden bağımsız ilişkiler sunması", "Ders öğretmesi", "Para kazandırması", "Resmi olması"], a: 1, exp: "Akran grupları, çocuklara hiyerarşik olmayan, eşitlikçi ilişkileri ve müzakereyi öğretir." },
+        { q: "Aşağıdakilerden hangisi 'Yüksek Kültür' ürünü sayılır?", o: ["Arabesk müzik", "Opera ve Bale", "Televizyon dizileri", "Magazin dergileri", "Pop müzik"], a: 1, exp: "Yüksek kültür, entelektüel birikim ve eğitim gerektiren, elit kesime hitap eden sanat ürünlerini kapsar." },
+        { q: "Bir toplumda 'moda' ne tür bir normdur?", o: ["Kanun", "Tabu", "Geçici ve değişken bir halk yordamı (Folkway)", "Ahlak kuralı", "Dini kural"], a: 2, exp: "Moda, kısa süreliğine popüler olan ve uymamanın yaptırımı hafif olan (demode olmak) davranış kalıplarıdır." },
+        { q: "Sosyolojide 'Anomi' kavramı neyi ifade eder?", o: ["Mutluluğu", "Kuralsızlık ve normsuzluk durumunu", "Zenginliği", "Dindarlığı", "Aileyi"], a: 1, exp: "Anomi (Durkheim), hızlı toplumsal değişimlerde eski normların yıkılması ve yenilerinin oluşmaması sonucu ortaya çıkan kuralsızlık ve belirsizlik halidir." }
+    ];
+
+    let currentQuestion = 0;
+    let userAnswers = new Array(questions.length).fill(null);
+
+    function loadQuestion() {
+        const container = document.getElementById('quiz-container');
+        const explanationArea = document.getElementById('explanation-area');
+        
+        container.innerHTML = '';
+        explanationArea.style.display = 'none'; // Yeni soruda açıklamayı gizle
+
+        const q = questions[currentQuestion];
+        
+        let html = `
+            <div class="question-block active">
+                <div class="question-text">${currentQuestion + 1}. ${q.q}</div>
+                <div class="options">
+        `;
+
+        q.o.forEach((opt, index) => {
+            const isSelected = userAnswers[currentQuestion] === index ? 'selected' : '';
+            const isChecked = userAnswers[currentQuestion] === index ? 'checked' : '';
+            html += `
+                <label class="option-label ${isSelected}" id="opt-${index}">
+                    <input type="radio" name="q${currentQuestion}" value="${index}" onclick="selectAnswer(${index})" ${isChecked}>
+                    ${String.fromCharCode(65 + index)}) ${opt}
+                </label>
+            `;
+        });
+
+        html += `</div></div>`;
+        container.innerHTML = html;
+
+        // Progress Bar
+        const progressPercent = ((currentQuestion + 1) / questions.length) * 100;
+        document.getElementById('progress-bar').style.width = progressPercent + '%';
+        document.getElementById('progress-text').innerText = `Soru ${currentQuestion + 1} / ${questions.length}`;
+        
+        // Buton Yönetimi
+        document.getElementById('prevBtn').disabled = currentQuestion === 0;
+        
+        if (currentQuestion === questions.length - 1) {
+            document.getElementById('nextBtn').style.display = 'none';
+            document.getElementById('finishBtn').style.display = 'inline-block';
+        } else {
+            document.getElementById('nextBtn').style.display = 'inline-block';
+            document.getElementById('finishBtn').style.display = 'none';
+        }
+    }
+
+    function selectAnswer(index) {
+        userAnswers[currentQuestion] = index;
+        const labels = document.querySelectorAll('.option-label');
+        labels.forEach(label => label.classList.remove('selected'));
+        document.getElementById(`opt-${index}`).classList.add('selected');
+    }
+
+    function showCurrentAnswer() {
+        const q = questions[currentQuestion];
+        const correctIndex = q.a;
+        const correctLabel = document.getElementById(`opt-${correctIndex}`);
+        const explanationArea = document.getElementById('explanation-area');
+
+        if(correctLabel) correctLabel.classList.add('correct-highlight');
+        
+        if (userAnswers[currentQuestion] !== null && userAnswers[currentQuestion] !== correctIndex) {
+            document.getElementById(`opt-${userAnswers[currentQuestion]}`).classList.add('wrong-highlight');
+        }
+
+        // Açıklamayı Göster
+        explanationArea.innerHTML = `<strong>Açıklama:</strong> ${q.exp}`;
+        explanationArea.style.display = 'block';
+    }
+
+    function nextQuestion() {
+        if (currentQuestion < questions.length - 1) {
+            currentQuestion++;
+            loadQuestion();
+        }
+    }
+
+    function prevQuestion() {
+        if (currentQuestion > 0) {
+            currentQuestion--;
+            loadQuestion();
+        }
+    }
+
+    function finishQuiz() {
+        let correctCount = 0;
+        let wrongCount = 0;
+        let emptyCount = 0;
+        let reviewHtml = '';
+
+        questions.forEach((q, index) => {
+            const userAnswer = userAnswers[index];
+            const isCorrect = userAnswer === q.a;
+            
+            let statusText = '';
+            let statusClass = '';
+
+            if (userAnswer === null) {
+                emptyCount++;
+                statusText = 'Boş';
+                statusClass = 'status-empty';
+            } else if (isCorrect) {
+                correctCount++;
+                statusText = 'Doğru';
+                statusClass = 'status-correct';
+            } else {
+                wrongCount++;
+                statusText = 'Yanlış';
+                statusClass = 'status-wrong';
+            }
+
+            reviewHtml += `
+                <tr>
+                    <td>${index + 1}</td>
+                    <td>${q.q}</td>
+                    <td>${userAnswer !== null ? String.fromCharCode(65 + userAnswer) + ') ' + q.o[userAnswer] : '-'}</td>
+                    <td>${String.fromCharCode(65 + q.a)}) ${q.o[q.a]}</td>
+                    <td class="${statusClass}">${statusText}</td>
+                </tr>
+            `;
+        });
+
+        document.getElementById('quiz-screen').style.display = 'none';
+        document.getElementById('result-screen').style.display = 'block';
+
+        // Puanlama: Her soru 2 puan (100/50)
+        const score = Math.round((correctCount / questions.length) * 100);
+        
+        document.getElementById('score-circle').innerText = score;
+        document.getElementById('score-details').innerHTML = `
+            <strong>Doğru:</strong> ${correctCount} | 
+            <strong>Yanlış:</strong> ${wrongCount} | 
+            <strong>Boş:</strong> ${emptyCount}
+        `;
+        
+        document.getElementById('review-body').innerHTML = reviewHtml;
+    }
+
+    // Uygulamayı başlat
+    loadQuestion();
+</script>
+
+</body>
+</html>
