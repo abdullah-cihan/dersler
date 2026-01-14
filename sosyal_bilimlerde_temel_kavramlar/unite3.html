@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sosyal Bilimlerde Temel Kavramlar - 3. Ünite</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #fff8e1; color: #333; margin: 0; padding: 20px; }
+        .container { max-width: 900px; margin: 0 auto; background: #fff; padding: 40px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); position: relative; }
+        h1 { text-align: center; color: #f57f17; border-bottom: 2px solid #fbc02d; padding-bottom: 10px; margin-bottom: 30px; }
+        
+        /* Home Button */
+        .home-btn {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background-color: #ffb74d;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 14px;
+            transition: background 0.2s;
+        }
+        .home-btn:hover { background-color: #f57f17; }
+
+        /* İlerleme Çubuğu */
+        .progress-container { background-color: #ffecb3; border-radius: 10px; margin-bottom: 20px; height: 10px; overflow: hidden; }
+        .progress-bar { height: 100%; background-color: #f57f17; width: 0%; transition: width 0.3s; }
+        .progress-text { text-align: right; font-size: 0.9em; color: #e65100; margin-bottom: 15px; }
+
+        /* Soru Alanı */
+        .question-block { display: none; animation: fadeIn 0.5s; }
+        .question-block.active { display: block; }
+        .question-text { font-weight: 600; font-size: 1.25em; margin-bottom: 20px; color: #e65100; }
+        
+        /* Seçenekler */
+        .options { display: flex; flex-direction: column; gap: 10px; }
+        .option-label { 
+            display: flex; align-items: center; padding: 12px 15px; border: 2px solid #e0e0e0; 
+            border-radius: 8px; cursor: pointer; transition: all 0.2s; background: #fff;
+        }
+        .option-label:hover { background-color: #fff8e1; border-color: #ffe082; }
+        .option-label.selected { border-color: #f57f17; background-color: #ffecb3; }
+        .option-label input { margin-right: 15px; transform: scale(1.2); }
+        
+        /* Cevap Göster Stilleri */
+        .option-label.correct-highlight { border-color: #27ae60; background-color: #d5f5e3; color: #1e8449; font-weight: bold; }
+        .option-label.wrong-highlight { border-color: #e74c3c; background-color: #fadbd8; }
+
+        /* Açıklama Kutusu */
+        .explanation-box {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #fff3e0;
+            border-left: 5px solid #ff9800;
+            border-radius: 4px;
+            color: #ef6c00;
+            display: none;
+            font-size: 0.95em;
+            line-height: 1.5;
+        }
+
+        /* Butonlar */
+        .controls { margin-top: 30px; display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
+        button { border: none; padding: 12px 24px; border-radius: 6px; cursor: pointer; font-size: 16px; font-weight: 600; transition: background 0.2s; }
+        .nav-btn { background-color: #f57f17; color: white; }
+        .nav-btn:hover { background-color: #e65100; }
+        .nav-btn:disabled { background-color: #bdc3c7; cursor: not-allowed; }
+        
+        .show-answer-btn { background-color: #ff9800; color: white; }
+        .show-answer-btn:hover { background-color: #fb8c00; }
+        
+        .finish-btn { background-color: #27ae60; color: white; display: none; }
+        .finish-btn:hover { background-color: #219150; }
+
+        /* Sonuç Ekranı */
+        #result-screen { display: none; }
+        .score-card { text-align: center; background: #f8f9fa; padding: 20px; border-radius: 10px; margin-bottom: 30px; }
+        .score-circle { 
+            width: 120px; height: 120px; border-radius: 50%; background: #f57f17; color: white; 
+            display: flex; align-items: center; justify-content: center; font-size: 2em; font-weight: bold; 
+            margin: 0 auto 15px; 
+        }
+        
+        .review-table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 0.95em; }
+        .review-table th, .review-table td { padding: 12px; border: 1px solid #ddd; text-align: left; }
+        .review-table th { background-color: #e65100; color: white; }
+        .review-table tr:nth-child(even) { background-color: #f2f2f2; }
+        .status-correct { color: #27ae60; font-weight: bold; }
+        .status-wrong { color: #c0392b; font-weight: bold; }
+        .status-empty { color: #f39c12; font-weight: bold; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <a href="#" class="home-btn" onclick="alert('Anasayfaya yönlendiriliyorsunuz...'); location.reload();">⌂ Anasayfa</a>
+    
+    <div id="quiz-screen">
+        <h1>3. Ünite: Toplumsal Yapı ve Değişme</h1>
+        
+        <div class="progress-text" id="progress-text">Soru 1 / 50</div>
+        <div class="progress-container">
+            <div class="progress-bar" id="progress-bar"></div>
+        </div>
+        
+        <div id="quiz-container">
+            <!-- Sorular buraya JS ile gelecek -->
+        </div>
+
+        <!-- Açıklama Alanı -->
+        <div id="explanation-area" class="explanation-box"></div>
+
+        <div class="controls">
+            <div>
+                <button class="nav-btn" id="prevBtn" onclick="prevQuestion()" disabled>&#8592; Önceki</button>
+            </div>
+            <div>
+                <button class="show-answer-btn" onclick="showCurrentAnswer()">👁️ Cevabı Göster</button>
+            </div>
+            <div>
+                <button class="nav-btn" id="nextBtn" onclick="nextQuestion()">Sonraki &#8594;</button>
+                <button class="finish-btn" id="finishBtn" onclick="finishQuiz()">Testi Bitir &#10004;</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="result-screen">
+        <h1>Değerlendirme Sonucu</h1>
+        <div class="score-card">
+            <div class="score-circle" id="score-circle">0</div>
+            <h3>Toplam Puan</h3>
+            <p id="score-details"></p>
+        </div>
+        
+        <h3>Detaylı Soru Analizi</h3>
+        <table class="review-table">
+            <thead>
+                <tr>
+                    <th style="width: 5%">No</th>
+                    <th style="width: 45%">Soru</th>
+                    <th style="width: 20%">Senin Cevabın</th>
+                    <th style="width: 20%">Doğru Cevap</th>
+                    <th style="width: 10%">Durum</th>
+                </tr>
+            </thead>
+            <tbody id="review-body">
+                <!-- Sonuç satırları buraya gelecek -->
+            </tbody>
+        </table>
+        <div style="text-align: center; margin-top: 30px;">
+            <button class="nav-btn" onclick="location.reload()">Testi Tekrar Çöz</button>
+            <button class="home-btn" style="position: static; display: inline-block; margin-left: 10px;" onclick="location.reload()">Anasayfaya Dön</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // 3. Ünite Konuları: Toplumsal Yapı, Statü, Rol, Gruplar (Birincil/İkincil), Tabakalaşma, Hareketlilik, Toplumsal Değişme
+    const questions = [
+        { q: "Toplumun işleyişini sağlayan, organize olmuş ilişkiler bütününe ne ad verilir?", o: ["Toplumsal Değişme", "Toplumsal Yapı", "Toplumsal Hareketlilik", "Toplumsal Grup", "Toplumsal Yığın"], a: 1, exp: "Toplumsal yapı; kültür, toplumsal sınıflar, statüler, roller, gruplar ve kurumların birbiriyle ilişkili olduğu organize bütündür." },
+        { q: "Toplumsal yapının en temel unsurlarından biri olan, ortak amaçları ve karşılıklı etkileşimi olan en az iki kişiden oluşan topluluğa ne denir?", o: ["Yığın", "Kalabalık", "Toplumsal Grup", "Kategori", "Sınıf"], a: 2, exp: "Toplumsal grup, üyeleri arasında sürekli bir etkileşim, biz duygusu ve ortak amaç bulunan topluluktur." },
+        { q: "Charles Horton Cooley'e göre, yüz yüze, samimi ve duygusal ilişkilerin baskın olduğu gruplara ne ad verilir?", o: ["İkincil Grup", "Birincil Grup", "Referans Grubu", "Dış Grup", "Resmi Grup"], a: 1, exp: "Birincil gruplar (aile, yakın arkadaşlar), duygusal bağların güçlü olduğu, 'biz' duygusunun yoğun yaşandığı küçük gruplardır." },
+        { q: "Resmi, geçici, çıkar odaklı ve belirli bir amacı gerçekleştirmek için kurulan gruplara ne denir?", o: ["Birincil Grup", "İkincil Grup", "İç Grup", "Aile", "Oyun Grubu"], a: 1, exp: "İkincil gruplar (şirketler, sendikalar, siyasi partiler), kişisel olmayan, resmi ve görev odaklı ilişkilerin olduğu gruplardır." },
+        { q: "Bireyin kendi davranışlarını, değerlerini ve tutumlarını şekillendirirken kıyaslama yaptığı veya model aldığı gruba ne denir?", o: ["Birincil Grup", "Referans Grubu (Danışma Grubu)", "İç Grup", "İkincil Grup", "Dış Grup"], a: 1, exp: "Referans grubu, üyesi olmasak bile kendimizi değerlendirirken ölçüt aldığımız gruptur (Örn: Bir tıp öğrencisinin doktorları model alması)." },
+        { q: "Fiziksel olarak bir arada bulunan ancak aralarında karşılıklı ilişki ve ortak amaç olmayan insan topluluğuna ne denir?", o: ["Grup", "Toplumsal Yığın / Kalabalık", "Örgüt", "Cemaat", "Kurum"], a: 1, exp: "Otobüs durağında bekleyenler veya bir kazayı izleyenler, etkileşimleri sınırlı olduğu için grup değil, yığın veya kalabalıktır." },
+        { q: "Toplumsal tabakalaşma sistemlerinden biri olan 'Kast Sistemi'nin en belirgin özelliği nedir?", o: ["Sınıflar arası geçişin serbest olması", "Doğumla kazanılan ve değiştirilemeyen kapalı bir statü sistemine sahip olması", "Ekonomik temelli olması", "Modern toplumlarda görülmesi", "Eğitimle statü kazanılması"], a: 1, exp: "Kast sistemi (Hindistan örneği), tabakalar arası geçişin yasak olduğu, statünün doğuştan belirlendiği kapalı bir sistemdir." },
+        { q: "Sanayi toplumlarında görülen, tabakalar arası geçişin mümkün olduğu ve temel ölçütün ekonomik olduğu sisteme ne denir?", o: ["Kast Sistemi", "Sınıf Sistemi", "Zümre Sistemi", "Kölelik Sistemi", "Feodal Sistem"], a: 1, exp: "Sınıf sistemi, açık uçlu bir tabakalaşmadır; bireyler yetenek ve başarılarıyla sınıf değiştirebilirler." },
+        { q: "Orta Çağ Avrupa'sında görülen, toprak sahipliği ve soyluluk temeline dayanan tabakalaşma sistemi hangisidir?", o: ["Sınıf", "Kast", "Zümre (Feodal) Sistemi", "Kölelik", "Klan"], a: 2, exp: "Zümre sistemi, soylular, rahipler ve köylüler gibi hukuki olarak farklı haklara sahip tabakalardan oluşur." },
+        { q: "Bireylerin veya grupların bir toplumsal tabakadan diğerine geçmesine ne ad verilir?", o: ["Toplumsal Değişme", "Toplumsal Hareketlilik", "Toplumsal Bütünleşme", "Toplumsal Sapma", "Toplumsal Kontrol"], a: 1, exp: "Toplumsal hareketlilik, dikey (aşağı-yukarı) veya yatay (aynı seviyede) olarak konum değiştirme sürecidir." },
+        { q: "Bir memurun istifa edip taksi şoförlüğü yapmaya başlaması veya bir işçinin fabrika sahibi olması ne tür bir hareketliliktir?", o: ["Yatay Hareketlilik", "Dikey Hareketlilik", "Coğrafi Hareketlilik", "Kuşaklararası Hareketlilik", "Sanal Hareketlilik"], a: 1, exp: "Statü ve yaşam standardında belirgin bir değişim (artış veya azalış) olduğu için dikey hareketliliktir." },
+        { q: "Bir bakkalın manavlık yapmaya başlaması gibi, yaşam standardında ve saygınlıkta önemli bir değişim yaratmayan hareketliliğe ne denir?", o: ["Dikey Hareketlilik", "Yatay Hareketlilik", "Aşağı Doğru Hareketlilik", "Yukarı Doğru Hareketlilik", "Yapısal Hareketlilik"], a: 1, exp: "Yatay hareketlilik, benzer prestij ve gelir düzeyindeki pozisyonlar arası geçiştir." },
+        { q: "Toplumsal yapının, kurumların ve ilişkilerin zaman içinde farklılaşması sürecine ne denir?", o: ["Toplumsal Hareketlilik", "Toplumsal Değişme", "Toplumsal Tabakalaşma", "Toplumsal Sapma", "Toplumsal Çözülme"], a: 1, exp: "Toplumsal değişme; kültürel, yapısal ve çevresel faktörlerin etkisiyle toplumun bir halden başka bir hale geçmesidir." },
+        { q: "Aşağıdakilerden hangisi toplumsal değişmeyi etkileyen faktörlerden biri değildir?", o: ["Fiziksel Çevre / Doğal Afetler", "Teknoloji", "Nüfus (Demografi)", "Kültürel Etkileşim", "Değişmez İnsan Doğası"], a: 4, exp: "Sosyolojide 'değişmez insan doğası' diye bir faktör değişimin nedeni olarak kabul edilmez; aksine insan ve toplum sürekli değişim halindedir." },
+        { q: "Modernleşme teorisine göre toplumlar hangi yönde değişir?", o: ["Gelenekselden moderne (sanayileşmiş, kentleşmiş, rasyonel) doğru", "Modernden geleneksele doğru", "Karmaşık yapıdan basit yapıya doğru", "Sadece ekonomik olarak", "Geriye doğru"], a: 0, exp: "Modernleşme, tarım toplumundan sanayi ve hizmet toplumuna, kırsaldan kente geçiş sürecini ifade eder." },
+        { q: "Dünyanın tek bir pazar haline gelmesi, iletişim ve ulaşım teknolojileriyle sınırların aşınması sürecine ne denir?", o: ["Modernleşme", "Küreselleşme (Globalleşme)", "Sanayileşme", "Kentleşme", "Bürokratikleşme"], a: 1, exp: "Küreselleşme, ekonomik, kültürel ve siyasi ilişkilerin dünya çapında yoğunlaşması ve karşılıklı bağımlılığın artmasıdır." },
+        { q: "Toplumsal kurumların (aile, eğitim, din vb.) temel işlevi nedir?", o: ["Bireyleri baskılamak", "Toplumsal ihtiyaçları karşılamak ve düzeni sürdürmek", "Değişimi engellemek", "Zenginleri korumak", "Sadece yasak koymak"], a: 1, exp: "Toplumsal kurumlar, toplumun sürekliliği için gerekli olan üreme, eğitim, düzen, üretim gibi temel ihtiyaçları karşılayan yerleşik yapılardır." },
+        { q: "Ferdinand Tönnies'in toplumsal değişmeyi açıklarken kullandığı, samimi ve yüz yüze ilişkilerin olduğu geleneksel topluluk tipine ne denir?", o: ["Gesellschaft (Cemiyet)", "Gemeinschaft (Cemaat)", "Organik Dayanışma", "Mekanik Dayanışma", "Sanayi Toplumu"], a: 1, exp: "Gemeinschaft (Cemaat), köy gibi küçük, ilişkilerin samimi ve duygusal olduğu toplulukları ifade eder." },
+        { q: "Tönnies'e göre, ilişkilerin resmi, çıkar odaklı ve sözleşmeye dayalı olduğu modern toplum tipine ne denir?", o: ["Gemeinschaft", "Gesellschaft (Cemiyet)", "Klan", "Kabile", "Mekanik Dayanışma"], a: 1, exp: "Gesellschaft (Cemiyet), şehir hayatı ve iş dünyası gibi ilişkilerin rasyonel ve mesafeli olduğu topluluk tipidir." },
+        { q: "Emile Durkheim'a göre, geleneksel toplumlarda görülen ve benzerliklere dayalı dayanışma türü hangisidir?", o: ["Organik Dayanışma", "Mekanik Dayanışma", "Sınıfsal Dayanışma", "Fonksiyonel Dayanışma", "Zümre Dayanışması"], a: 1, exp: "Mekanik dayanışma, işbölümünün az olduğu, insanların benzer işler yaptığı ve benzer değerleri paylaştığı toplumlarda görülür." },
+        { q: "Durkheim'a göre, modern sanayi toplumlarında görülen, işbölümü ve farklılaşmaya dayalı dayanışma türü hangisidir?", o: ["Mekanik Dayanışma", "Organik Dayanışma", "Klan Dayanışması", "Cemaat Dayanışması", "Aile Dayanışması"], a: 1, exp: "Organik dayanışma, işbölümünün arttığı, bireylerin birbirine bağımlı olduğu (organlar gibi) modern toplumlarda görülür." },
+        { q: "Karl Marx'a göre toplumsal değişmenin motoru (temel nedeni) nedir?", o: ["Dini inançlar", "Coğrafi keşifler", "Sınıf çatışması ve ekonomik altyapıdaki değişimler", "Nüfus artışı", "Büyük liderler"], a: 2, exp: "Marx'a göre tarih, üretim araçlarına sahip olanlar ile olmayanlar arasındaki sınıf mücadelesiyle ilerler." },
+        { q: "Max Weber, toplumsal değişmede neyin önemine vurgu yapmıştır?", o: ["Sadece ekonominin", "Sadece teknolojinin", "Fikirlerin, inançların (örn. Protestan Ahlakı) ve karizmatik liderlerin", "Coğrafyanın", "Biyolojinin"], a: 2, exp: "Weber, Marx'ın aksine, zihniyet yapısının ve kültürel değerlerin de değişimi tetikleyebileceğini savunmuştur." },
+        { q: "Toplumsal değişmeyi 'evrimsel' bir süreç olarak gören ve toplumların basitten karmaşığa doğru geliştiğini savunan yaklaşım kime aittir?", o: ["Marx", "Weber", "Spencer ve Comte (Evrimci Yaklaşım)", "Mills", "Goffman"], a: 2, exp: "Evrimci yaklaşım, toplumların biyolojik organizmalar gibi ilkelden gelişmişe doğru doğrusal bir evrim izlediğini savunur." },
+        { q: "Küreselleşmenin kültürel boyutuyla ilgili 'McDonaldisation' (McDonaldlaşma) kavramı neyi ifade eder?", o: ["Sadece yemek kültürünü", "Yerel kültürlerin güçlenmesini", "Dünyanın tek tip, standart ve rasyonel bir kültüre (Amerikanlaşma) doğru gitmesini", "Sağlıklı yaşamı", "Turizmin artmasını"], a: 2, exp: "McDonaldlaşma (Ritzer), toplumun verimlilik, hesaplanabilirlik ve denetim ilkelerine göre standartlaşmasını ifade eder." },
+        { q: "Bireyin, üyesi olduğu gruba duyduğu bağlılık ve o grubu diğerlerinden üstün görme eğilimine ne denir?", o: ["Dış Grup Yanlılığı", "İç Grup (Biz Grubu) Yanlılığı", "Yabancılaşma", "Anomi", "Empati"], a: 1, exp: "İç grup (In-group), bireyin 'biz' dediği ve kendini özdeşleştirdiği gruptur; dış grup (Out-group) ise 'onlar' dediği gruptur." },
+        { q: "Aşağıdakilerden hangisi bir 'İkincil Grup' örneğidir?", o: ["Aile", "Oyun grubu", "Bir bankanın çalışanları", "Komşular", "Akrabalar"], a: 2, exp: "Banka çalışanları arasındaki ilişki resmi, kurallara dayalı ve iş odaklıdır, bu yüzden ikincil gruptur." },
+        { q: "Toplumsal tabakalaşmada bireylerin sahip oldukları ekonomik kaynaklara (gelir, servet) ne denir?", o: ["Statü", "Sınıf", "Güç", "Prestij", "Rol"], a: 1, exp: "Sınıf, ekonomik temelli bir ayrımdır; üretim araçlarına sahiplik veya pazar konumuna göre belirlenir." },
+        { q: "Weber'e göre toplumsal tabakalaşmanın 'güç' boyutunu temsil eden örgütlenme hangisidir?", o: ["Sınıf", "Statü Grubu", "Parti (Siyasi Güç)", "Aile", "Din"], a: 2, exp: "Weber tabakalaşmayı Sınıf (Ekonomi), Statü (Saygınlık) ve Parti (Güç) olarak üç boyutta inceler." },
+        { q: "Bir kişinin aynı anda hem doktor (üst statü) hem de azınlık mensubu (düşük statü) olması durumuna ne denir?", o: ["Statü Tutarsızlığı", "Statü Kümesi", "Anahtar Statü", "Rol Çatışması", "Statü Kaybı"], a: 0, exp: "Statü tutarsızlığı, bireyin farklı statülerinin toplumun gözünde aynı saygınlık seviyesinde olmaması durumudur." },
+        { q: "Toplumsal değişmenin 'döngüsel' olduğunu, medeniyetlerin doğup, büyüyüp, öldüğünü savunan düşünür kimdir?", o: ["Marx", "Comte", "İbni Haldun ve Toynbee", "Spencer", "Parsons"], a: 2, exp: "Döngüsel teoriler, toplumların sürekli ilerlemediğini, canlılar gibi bir yaşam döngüsü olduğunu savunur." },
+        { q: "Sanayileşme ile birlikte ortaya çıkan, çekirdek ailenin yaygınlaşması ve akrabalık bağlarının zayıflaması hangi değişime örnektir?", o: ["Ekonomik değişimin toplumsal kurumlara etkisi", "Siyasi değişim", "Dini değişim", "Bireysel değişim", "Rastgele değişim"], a: 0, exp: "Ekonomik yapıdaki (üretim biçimi) değişim, aile yapısını doğrudan etkileyerek geniş aileden çekirdek aileye geçişi sağlamıştır." },
+        { q: "Demografi (Nüfus Bilimi) toplumsal değişmeyi nasıl etkiler?", o: ["Etkilemez", "Nüfus artışı, göçler ve yaşlanma toplumsal yapıyı ve kurumları dönüştürür", "Sadece ekonomiyi etkiler", "Sadece siyaseti etkiler", "Geçici bir etkidir"], a: 1, exp: "Nüfus hareketleri, kentleşme, işgücü yapısı ve sosyal güvenlik sistemleri üzerinde büyük değişimlere yol açar." },
+        { q: "Küreselleşme sürecinde yerel kültürlerin küresel unsurlarla harmanlanarak yeniden üretilmesine ne denir?", o: ["Asimilasyon", "Küyerelleşme (Glocalization)", "Emperyalizm", "Yozlaşma", "İzolasyon"], a: 1, exp: "Küyerelleşme, global ürünlerin yerel zevklere ve kültüre uyarlanmasıdır (Örn: Türkiye'deki pizzalara sucuk konulması)." },
+        { q: "Toplumsal normlardan sapmanın onaylanmadığı ve cezalandırıldığı mekanizmalara ne denir?", o: ["Toplumsal Hareketlilik", "Toplumsal Kontrol", "Toplumsal Değişme", "Toplumsal Statü", "Toplumsal Rol"], a: 1, exp: "Toplumsal kontrol, sapmayı önlemek ve uyumu sağlamak için uygulanan baskı ve denetimdir." },
+        { q: "Bir grubun üye sayısı arttıkça ilişkilerin niteliği nasıl değişir?", o: ["Daha samimi olur", "Değişmez", "İlişkiler daha resmi ve yüzeysel hale gelir, grup içi bölünmeler artar", "Grup dağılır", "Herkes lider olur"], a: 2, exp: "Grup büyüdükçe yüz yüze etkileşim azalır, formalleşme artar ve alt gruplar oluşur." },
+        { q: "Bürokrasi, hangi grup türünün en gelişmiş örneğidir?", o: ["Birincil Grup", "İkincil Grup (Örgüt)", "Referans Grubu", "Oyun Grubu", "Kalabalık"], a: 1, exp: "Bürokrasi, rasyonel kurallara dayalı, hiyerarşik ve resmi bir ikincil gruptur (örgüttür)." },
+        { q: "Aşağıdakilerden hangisi 'Kazanılmış Statü'ye örnektir?", o: ["Kadın olmak", "Türk olmak", "Üniversite mezunu olmak", "Yaşlı olmak", "Prens olmak"], a: 2, exp: "Üniversite mezuniyeti, bireyin kendi çabası ve eğitimi sonucu elde ettiği bir statüdür." },
+        { q: "Toplumsal değişmeye karşı direnç gösteren, mevcut düzeni korumaya çalışan gruplara ne denir?", o: ["Yenilikçi", "Devrimci", "Muhafazakar / Tutucu", "Radikal", "Liberal"], a: 2, exp: "Muhafazakar gruplar, geleneksel değerlerin ve yapıların korunmasını savunarak değişime direnç gösterebilirler." },
+        { q: "Teknolojik determinizm neyi savunur?", o: ["Teknolojinin önemsiz olduğunu", "Toplumsal değişmenin temel motorunun teknolojik gelişmeler olduğunu", "Kültürün teknolojiyi belirlediğini", "Siyasetin teknolojiden üstün olduğunu", "Teknolojinin zararlı olduğunu"], a: 1, exp: "Teknolojik determinizm, buhar makinesinin, internetin vb. icadının toplumu kaçınılmaz olarak değiştirdiğini savunur." },
+        { q: "Aşağıdakilerden hangisi toplumsal bir 'Kurum'dur?", o: ["Bir hastane binası", "Bir okul binası", "Sağlık sistemi", "Bir doktor", "Bir öğretmen"], a: 2, exp: "Hastane veya okul somut örgütlerdir; ancak 'Sağlık' veya 'Eğitim' toplumsal ihtiyaçları karşılayan soyut ve yerleşik kurumlardır." },
+        { q: "Statü ve Rol arasındaki ilişki nasıldır?", o: ["İlişkisi yoktur", "Statü bir pozisyondur, rol ise o pozisyonun gerektirdiği davranıştır (Statü işgal edilir, rol oynanır)", "Rol statüden önce gelir", "Statü değişir rol değişmez", "Rol statüyü belirler"], a: 1, exp: "Statü toplumdaki yerimiz, rol ise o yerin bizden beklediği performanstır." },
+        { q: "Toplumsal değişmenin hızı her toplumda ve her dönemde aynı mıdır?", o: ["Evet, sabittir", "Hayır, modern toplumlarda ve günümüzde değişim hızı çok daha yüksektir", "Eski toplumlarda daha hızlıydı", "Sadece savaşlarda değişir", "Hiç değişmez"], a: 1, exp: "Teknoloji ve iletişimdeki gelişmeler, günümüzde toplumsal değişimin hızını tarihte görülmemiş düzeyde artırmıştır." },
+        { q: "Kültürel gecikme (Cultural Lag) en çok hangi durumlarda ortaya çıkar?", o: ["Hızlı teknolojik değişimlerde", "Savaşlarda", "Ekonomik krizlerde", "Nüfus azaldığında", "Geleneksel toplumlarda"], a: 0, exp: "Teknoloji hızla değişirken, ona uyum sağlayacak hukuk ve ahlak kuralları (manevi kültür) geriden gelir." },
+        { q: "Bir toplumda orta sınıfın genişlemesi neyin göstergesidir?", o: ["Kast sisteminin", "Dikey hareketliliğin (Yukarı doğru) ve refahın arttığının", "Yoksulluğun arttığının", "Nüfusun azaldığının", "Eğitimin önemsizleştiğinin"], a: 1, exp: "Orta sınıfın büyümesi, alt tabakadan yukarıya doğru geçişin ve gelir dağılımının düzeldiğinin bir işaretidir." },
+        { q: "Toplumsal tabakalaşma evrensel midir?", o: ["Hayır, sadece Batı'da vardır", "Evet, her toplumda (basit veya karmaşık) bir eşitsizlik ve sıralama sistemi bulunur", "Sadece modern toplumlarda vardır", "Sadece ilkel toplumlarda vardır", "Bilinmiyor"], a: 1, exp: "Tarih boyunca tüm toplumlarda cinsiyet, yaş, güç veya servet temelinde bir hiyerarşi olmuştur." },
+        { q: "Aşağıdakilerden hangisi 'Dikey Hareketlilik' örneği değildir?", o: ["İşçinin fabrika müdürü olması", "Müdürün iflas edip işçi olması", "Öğretmenin başka bir şehre tayin olması", "Kapıcının oğlunun doktor olması", "Zengin birinin yoksullaşması"], a: 2, exp: "Tayin olmak, statü ve gelirde dikey bir değişim yaratmaz, sadece mekansal (yatay) bir değişimdir." },
+        { q: "Bilgi toplumunun temel sermayesi nedir?", o: ["Toprak", "Makine", "Bilgi ve İnsan Kaynağı", "Altın", "Petrol"], a: 2, exp: "Sanayi toplumunda makine ve sermaye önemliyken, bilgi toplumunda bilgi üretimi ve nitelikli insan gücü en önemli sermayedir." },
+        { q: "Küreselleşme karşıtlarının temel eleştirisi nedir?", o: ["Dünyayı birleştirmesi", "Yerel kültürleri yok etmesi ve eşitsizliği derinleştirmesi", "Ticari engelleri kaldırması", "İnterneti yaygınlaştırması", "Seyahati kolaylaştırması"], a: 1, exp: "Küreselleşme karşıtları, sürecin zengin ülkelerin lehine işlediğini ve yerel değerleri, ekonomileri tahrip ettiğini savunur." },
+        { q: "Toplumsal yapıyı oluşturan en küçük birim nedir?", o: ["Kurum", "Grup", "Birey ve Sosyal İlişki", "Devlet", "Sınıf"], a: 2, exp: "Toplumsal yapı, bireylerin kurduğu sosyal ilişkiler ağından başlar ve gruplara, kurumlara doğru genişler." }
+    ];
+
+    let currentQuestion = 0;
+    let userAnswers = new Array(questions.length).fill(null);
+
+    function loadQuestion() {
+        const container = document.getElementById('quiz-container');
+        const explanationArea = document.getElementById('explanation-area');
+        
+        container.innerHTML = '';
+        explanationArea.style.display = 'none'; // Yeni soruda açıklamayı gizle
+
+        const q = questions[currentQuestion];
+        
+        let html = `
+            <div class="question-block active">
+                <div class="question-text">${currentQuestion + 1}. ${q.q}</div>
+                <div class="options">
+        `;
+
+        q.o.forEach((opt, index) => {
+            const isSelected = userAnswers[currentQuestion] === index ? 'selected' : '';
+            const isChecked = userAnswers[currentQuestion] === index ? 'checked' : '';
+            html += `
+                <label class="option-label ${isSelected}" id="opt-${index}">
+                    <input type="radio" name="q${currentQuestion}" value="${index}" onclick="selectAnswer(${index})" ${isChecked}>
+                    ${String.fromCharCode(65 + index)}) ${opt}
+                </label>
+            `;
+        });
+
+        html += `</div></div>`;
+        container.innerHTML = html;
+
+        // Progress Bar
+        const progressPercent = ((currentQuestion + 1) / questions.length) * 100;
+        document.getElementById('progress-bar').style.width = progressPercent + '%';
+        document.getElementById('progress-text').innerText = `Soru ${currentQuestion + 1} / ${questions.length}`;
+        
+        // Buton Yönetimi
+        document.getElementById('prevBtn').disabled = currentQuestion === 0;
+        
+        if (currentQuestion === questions.length - 1) {
+            document.getElementById('nextBtn').style.display = 'none';
+            document.getElementById('finishBtn').style.display = 'inline-block';
+        } else {
+            document.getElementById('nextBtn').style.display = 'inline-block';
+            document.getElementById('finishBtn').style.display = 'none';
+        }
+    }
+
+    function selectAnswer(index) {
+        userAnswers[currentQuestion] = index;
+        const labels = document.querySelectorAll('.option-label');
+        labels.forEach(label => label.classList.remove('selected'));
+        document.getElementById(`opt-${index}`).classList.add('selected');
+    }
+
+    function showCurrentAnswer() {
+        const q = questions[currentQuestion];
+        const correctIndex = q.a;
+        const correctLabel = document.getElementById(`opt-${correctIndex}`);
+        const explanationArea = document.getElementById('explanation-area');
+
+        if(correctLabel) correctLabel.classList.add('correct-highlight');
+        
+        if (userAnswers[currentQuestion] !== null && userAnswers[currentQuestion] !== correctIndex) {
+            document.getElementById(`opt-${userAnswers[currentQuestion]}`).classList.add('wrong-highlight');
+        }
+
+        // Açıklamayı Göster
+        explanationArea.innerHTML = `<strong>Açıklama:</strong> ${q.exp}`;
+        explanationArea.style.display = 'block';
+    }
+
+    function nextQuestion() {
+        if (currentQuestion < questions.length - 1) {
+            currentQuestion++;
+            loadQuestion();
+        }
+    }
+
+    function prevQuestion() {
+        if (currentQuestion > 0) {
+            currentQuestion--;
+            loadQuestion();
+        }
+    }
+
+    function finishQuiz() {
+        let correctCount = 0;
+        let wrongCount = 0;
+        let emptyCount = 0;
+        let reviewHtml = '';
+
+        questions.forEach((q, index) => {
+            const userAnswer = userAnswers[index];
+            const isCorrect = userAnswer === q.a;
+            
+            let statusText = '';
+            let statusClass = '';
+
+            if (userAnswer === null) {
+                emptyCount++;
+                statusText = 'Boş';
+                statusClass = 'status-empty';
+            } else if (isCorrect) {
+                correctCount++;
+                statusText = 'Doğru';
+                statusClass = 'status-correct';
+            } else {
+                wrongCount++;
+                statusText = 'Yanlış';
+                statusClass = 'status-wrong';
+            }
+
+            reviewHtml += `
+                <tr>
+                    <td>${index + 1}</td>
+                    <td>${q.q}</td>
+                    <td>${userAnswer !== null ? String.fromCharCode(65 + userAnswer) + ') ' + q.o[userAnswer] : '-'}</td>
+                    <td>${String.fromCharCode(65 + q.a)}) ${q.o[q.a]}</td>
+                    <td class="${statusClass}">${statusText}</td>
+                </tr>
+            `;
+        });
+
+        document.getElementById('quiz-screen').style.display = 'none';
+        document.getElementById('result-screen').style.display = 'block';
+
+        // Puanlama: Her soru 2 puan (100/50)
+        const score = Math.round((correctCount / questions.length) * 100);
+        
+        document.getElementById('score-circle').innerText = score;
+        document.getElementById('score-details').innerHTML = `
+            <strong>Doğru:</strong> ${correctCount} | 
+            <strong>Yanlış:</strong> ${wrongCount} | 
+            <strong>Boş:</strong> ${emptyCount}
+        `;
+        
+        document.getElementById('review-body').innerHTML = reviewHtml;
+    }
+
+    // Uygulamayı başlat
+    loadQuestion();
+</script>
+
+</body>
+</html>
