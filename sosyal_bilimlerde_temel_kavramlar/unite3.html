@@ -3,18 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sosyal Bilimlerde Temel Kavramlar - 3. Ünite</title>
+    <title>Sosyal Bilimlerde Temel Kavramlar - 3. Ünite: Din</title>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #fff8e1; color: #333; margin: 0; padding: 20px; }
-        .container { max-width: 900px; margin: 0 auto; background: #fff; padding: 40px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); position: relative; }
-        h1 { text-align: center; color: #f57f17; border-bottom: 2px solid #fbc02d; padding-bottom: 10px; margin-bottom: 30px; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #e0f2f1; color: #004d40; margin: 0; padding: 20px; }
+        .container { max-width: 900px; margin: 0 auto; background: #fff; padding: 40px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); position: relative; }
+        h1 { text-align: center; color: #00695c; border-bottom: 2px solid #26a69a; padding-bottom: 15px; margin-bottom: 30px; font-size: 24px; }
         
         /* Home Button */
         .home-btn {
             position: absolute;
             top: 20px;
             left: 20px;
-            background-color: #ffb74d;
+            background-color: #00695c;
             color: white;
             border: none;
             padding: 8px 15px;
@@ -24,85 +24,95 @@
             font-size: 14px;
             transition: background 0.2s;
         }
-        .home-btn:hover { background-color: #f57f17; }
+        .home-btn:hover { background-color: #004d40; }
 
         /* İlerleme Çubuğu */
-        .progress-container { background-color: #ffecb3; border-radius: 10px; margin-bottom: 20px; height: 10px; overflow: hidden; }
-        .progress-bar { height: 100%; background-color: #f57f17; width: 0%; transition: width 0.3s; }
-        .progress-text { text-align: right; font-size: 0.9em; color: #e65100; margin-bottom: 15px; }
+        .progress-container { background-color: #b2dfdb; border-radius: 10px; margin-bottom: 20px; height: 12px; overflow: hidden; }
+        .progress-bar { height: 100%; background-color: #009688; width: 0%; transition: width 0.3s; }
+        .progress-text { text-align: right; font-size: 0.9em; color: #00796b; margin-bottom: 15px; font-weight: bold; }
 
         /* Soru Alanı */
-        .question-block { display: none; animation: fadeIn 0.5s; }
+        .question-block { display: none; animation: fadeIn 0.4s; }
         .question-block.active { display: block; }
-        .question-text { font-weight: 600; font-size: 1.25em; margin-bottom: 20px; color: #e65100; }
+        .question-text { font-weight: 700; font-size: 1.2em; margin-bottom: 25px; color: #004d40; line-height: 1.4; }
         
         /* Seçenekler */
-        .options { display: flex; flex-direction: column; gap: 10px; }
+        .options { display: flex; flex-direction: column; gap: 12px; }
         .option-label { 
-            display: flex; align-items: center; padding: 12px 15px; border: 2px solid #e0e0e0; 
-            border-radius: 8px; cursor: pointer; transition: all 0.2s; background: #fff;
+            display: flex; align-items: center; padding: 15px 20px; border: 2px solid #b2dfdb; 
+            border-radius: 8px; cursor: pointer; transition: all 0.2s; background: #fff; font-size: 1em;
         }
-        .option-label:hover { background-color: #fff8e1; border-color: #ffe082; }
-        .option-label.selected { border-color: #f57f17; background-color: #ffecb3; }
-        .option-label input { margin-right: 15px; transform: scale(1.2); }
+        .option-label:hover { background-color: #e0f2f1; border-color: #4db6ac; }
+        .option-label.selected { border-color: #009688; background-color: #b2dfdb; }
+        .option-label input { margin-right: 15px; transform: scale(1.2); cursor: pointer; }
         
         /* Cevap Göster Stilleri */
-        .option-label.correct-highlight { border-color: #27ae60; background-color: #d5f5e3; color: #1e8449; font-weight: bold; }
-        .option-label.wrong-highlight { border-color: #e74c3c; background-color: #fadbd8; }
+        .option-label.correct-highlight { border-color: #2e7d32; background-color: #c8e6c9; color: #1b5e20; font-weight: bold; }
+        .option-label.wrong-highlight { border-color: #c62828; background-color: #ffcdd2; color: #b71c1c; }
 
         /* Açıklama Kutusu */
         .explanation-box {
-            margin-top: 20px;
-            padding: 15px;
-            background-color: #fff3e0;
-            border-left: 5px solid #ff9800;
+            margin-top: 25px;
+            padding: 20px;
+            background-color: #e0f2f1;
+            border-left: 5px solid #009688;
             border-radius: 4px;
-            color: #ef6c00;
+            color: #00695c;
             display: none;
             font-size: 0.95em;
-            line-height: 1.5;
+            line-height: 1.6;
         }
 
         /* Butonlar */
-        .controls { margin-top: 30px; display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
-        button { border: none; padding: 12px 24px; border-radius: 6px; cursor: pointer; font-size: 16px; font-weight: 600; transition: background 0.2s; }
-        .nav-btn { background-color: #f57f17; color: white; }
-        .nav-btn:hover { background-color: #e65100; }
-        .nav-btn:disabled { background-color: #bdc3c7; cursor: not-allowed; }
+        .controls { margin-top: 35px; display: flex; justify-content: space-between; align-items: center; gap: 15px; flex-wrap: wrap; }
+        button { border: none; padding: 12px 28px; border-radius: 6px; cursor: pointer; font-size: 16px; font-weight: 600; transition: transform 0.1s, background 0.2s; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        button:active { transform: translateY(1px); }
         
-        .show-answer-btn { background-color: #ff9800; color: white; }
-        .show-answer-btn:hover { background-color: #fb8c00; }
+        .nav-btn { background-color: #00796b; color: white; }
+        .nav-btn:hover { background-color: #004d40; }
+        .nav-btn:disabled { background-color: #b2dfdb; cursor: not-allowed; box-shadow: none; }
         
-        .finish-btn { background-color: #27ae60; color: white; display: none; }
-        .finish-btn:hover { background-color: #219150; }
+        .show-answer-btn { background-color: #ef6c00; color: white; }
+        .show-answer-btn:hover { background-color: #e65100; }
+        
+        .finish-btn { background-color: #2e7d32; color: white; display: none; }
+        .finish-btn:hover { background-color: #1b5e20; }
 
         /* Sonuç Ekranı */
         #result-screen { display: none; }
-        .score-card { text-align: center; background: #f8f9fa; padding: 20px; border-radius: 10px; margin-bottom: 30px; }
+        .score-card { text-align: center; background: #f1f8e9; padding: 30px; border-radius: 12px; margin-bottom: 30px; border: 1px solid #c5e1a5; }
         .score-circle { 
-            width: 120px; height: 120px; border-radius: 50%; background: #f57f17; color: white; 
-            display: flex; align-items: center; justify-content: center; font-size: 2em; font-weight: bold; 
-            margin: 0 auto 15px; 
+            width: 140px; height: 140px; border-radius: 50%; background: #009688; color: white; 
+            display: flex; align-items: center; justify-content: center; font-size: 2.5em; font-weight: bold; 
+            margin: 0 auto 20px; box-shadow: 0 4px 10px rgba(0, 150, 136, 0.4);
         }
         
-        .review-table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 0.95em; }
-        .review-table th, .review-table td { padding: 12px; border: 1px solid #ddd; text-align: left; }
-        .review-table th { background-color: #e65100; color: white; }
-        .review-table tr:nth-child(even) { background-color: #f2f2f2; }
-        .status-correct { color: #27ae60; font-weight: bold; }
-        .status-wrong { color: #c0392b; font-weight: bold; }
-        .status-empty { color: #f39c12; font-weight: bold; }
+        .review-table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 0.9em; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        .review-table th, .review-table td { padding: 15px; border: 1px solid #b2dfdb; text-align: left; }
+        .review-table th { background-color: #00695c; color: white; font-weight: 600; }
+        .review-table tr:nth-child(even) { background-color: #f1f8e9; }
+        .review-table tr:hover { background-color: #e0f2f1; }
+        .status-correct { color: #2e7d32; font-weight: bold; }
+        .status-wrong { color: #c62828; font-weight: bold; }
+        .status-empty { color: #f57f17; font-weight: bold; }
 
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        /* Responsive adjustments */
+        @media (max-width: 600px) {
+            .container { padding: 20px; }
+            .option-label { padding: 10px 15px; }
+            .question-text { font-size: 1.1em; }
+        }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <a href="#" class="home-btn" onclick="alert('Anasayfaya yönlendiriliyorsunuz...'); location.reload();">⌂ Anasayfa</a>
+    <button class="home-btn" onclick="if(confirm('Testi yeniden başlatmak istediğinize emin misiniz?')) location.reload();">⌂ Testi Yenile</button>
     
     <div id="quiz-screen">
-        <h1>3. Ünite: Toplumsal Yapı ve Değişme</h1>
+        <h1>3. Ünite: Din</h1>
         
         <div class="progress-text" id="progress-text">Soru 1 / 50</div>
         <div class="progress-container">
@@ -134,85 +144,105 @@
         <h1>Değerlendirme Sonucu</h1>
         <div class="score-card">
             <div class="score-circle" id="score-circle">0</div>
-            <h3>Toplam Puan</h3>
-            <p id="score-details"></p>
+            <h3>Başarı Puanı</h3>
+            <p id="score-details" style="font-size: 1.1em; color: #555;"></p>
         </div>
         
         <h3>Detaylı Soru Analizi</h3>
-        <table class="review-table">
-            <thead>
-                <tr>
-                    <th style="width: 5%">No</th>
-                    <th style="width: 45%">Soru</th>
-                    <th style="width: 20%">Senin Cevabın</th>
-                    <th style="width: 20%">Doğru Cevap</th>
-                    <th style="width: 10%">Durum</th>
-                </tr>
-            </thead>
-            <tbody id="review-body">
-                <!-- Sonuç satırları buraya gelecek -->
-            </tbody>
-        </table>
+        <div style="overflow-x: auto;">
+            <table class="review-table">
+                <thead>
+                    <tr>
+                        <th style="width: 5%">No</th>
+                        <th style="width: 45%">Soru</th>
+                        <th style="width: 20%">Senin Cevabın</th>
+                        <th style="width: 20%">Doğru Cevap</th>
+                        <th style="width: 10%">Durum</th>
+                    </tr>
+                </thead>
+                <tbody id="review-body">
+                    <!-- Sonuç satırları buraya gelecek -->
+                </tbody>
+            </table>
+        </div>
         <div style="text-align: center; margin-top: 30px;">
             <button class="nav-btn" onclick="location.reload()">Testi Tekrar Çöz</button>
-            <button class="home-btn" style="position: static; display: inline-block; margin-left: 10px;" onclick="location.reload()">Anasayfaya Dön</button>
         </div>
     </div>
 </div>
 
 <script>
-    // 3. Ünite Konuları: Toplumsal Yapı, Statü, Rol, Gruplar (Birincil/İkincil), Tabakalaşma, Hareketlilik, Toplumsal Değişme
+    // 50 Soruluk AÖF Tarzı Soru Havuzu - 3. Ünite: Din
     const questions = [
-        { q: "Toplumun işleyişini sağlayan, organize olmuş ilişkiler bütününe ne ad verilir?", o: ["Toplumsal Değişme", "Toplumsal Yapı", "Toplumsal Hareketlilik", "Toplumsal Grup", "Toplumsal Yığın"], a: 1, exp: "Toplumsal yapı; kültür, toplumsal sınıflar, statüler, roller, gruplar ve kurumların birbiriyle ilişkili olduğu organize bütündür." },
-        { q: "Toplumsal yapının en temel unsurlarından biri olan, ortak amaçları ve karşılıklı etkileşimi olan en az iki kişiden oluşan topluluğa ne denir?", o: ["Yığın", "Kalabalık", "Toplumsal Grup", "Kategori", "Sınıf"], a: 2, exp: "Toplumsal grup, üyeleri arasında sürekli bir etkileşim, biz duygusu ve ortak amaç bulunan topluluktur." },
-        { q: "Charles Horton Cooley'e göre, yüz yüze, samimi ve duygusal ilişkilerin baskın olduğu gruplara ne ad verilir?", o: ["İkincil Grup", "Birincil Grup", "Referans Grubu", "Dış Grup", "Resmi Grup"], a: 1, exp: "Birincil gruplar (aile, yakın arkadaşlar), duygusal bağların güçlü olduğu, 'biz' duygusunun yoğun yaşandığı küçük gruplardır." },
-        { q: "Resmi, geçici, çıkar odaklı ve belirli bir amacı gerçekleştirmek için kurulan gruplara ne denir?", o: ["Birincil Grup", "İkincil Grup", "İç Grup", "Aile", "Oyun Grubu"], a: 1, exp: "İkincil gruplar (şirketler, sendikalar, siyasi partiler), kişisel olmayan, resmi ve görev odaklı ilişkilerin olduğu gruplardır." },
-        { q: "Bireyin kendi davranışlarını, değerlerini ve tutumlarını şekillendirirken kıyaslama yaptığı veya model aldığı gruba ne denir?", o: ["Birincil Grup", "Referans Grubu (Danışma Grubu)", "İç Grup", "İkincil Grup", "Dış Grup"], a: 1, exp: "Referans grubu, üyesi olmasak bile kendimizi değerlendirirken ölçüt aldığımız gruptur (Örn: Bir tıp öğrencisinin doktorları model alması)." },
-        { q: "Fiziksel olarak bir arada bulunan ancak aralarında karşılıklı ilişki ve ortak amaç olmayan insan topluluğuna ne denir?", o: ["Grup", "Toplumsal Yığın / Kalabalık", "Örgüt", "Cemaat", "Kurum"], a: 1, exp: "Otobüs durağında bekleyenler veya bir kazayı izleyenler, etkileşimleri sınırlı olduğu için grup değil, yığın veya kalabalıktır." },
-        { q: "Toplumsal tabakalaşma sistemlerinden biri olan 'Kast Sistemi'nin en belirgin özelliği nedir?", o: ["Sınıflar arası geçişin serbest olması", "Doğumla kazanılan ve değiştirilemeyen kapalı bir statü sistemine sahip olması", "Ekonomik temelli olması", "Modern toplumlarda görülmesi", "Eğitimle statü kazanılması"], a: 1, exp: "Kast sistemi (Hindistan örneği), tabakalar arası geçişin yasak olduğu, statünün doğuştan belirlendiği kapalı bir sistemdir." },
-        { q: "Sanayi toplumlarında görülen, tabakalar arası geçişin mümkün olduğu ve temel ölçütün ekonomik olduğu sisteme ne denir?", o: ["Kast Sistemi", "Sınıf Sistemi", "Zümre Sistemi", "Kölelik Sistemi", "Feodal Sistem"], a: 1, exp: "Sınıf sistemi, açık uçlu bir tabakalaşmadır; bireyler yetenek ve başarılarıyla sınıf değiştirebilirler." },
-        { q: "Orta Çağ Avrupa'sında görülen, toprak sahipliği ve soyluluk temeline dayanan tabakalaşma sistemi hangisidir?", o: ["Sınıf", "Kast", "Zümre (Feodal) Sistemi", "Kölelik", "Klan"], a: 2, exp: "Zümre sistemi, soylular, rahipler ve köylüler gibi hukuki olarak farklı haklara sahip tabakalardan oluşur." },
-        { q: "Bireylerin veya grupların bir toplumsal tabakadan diğerine geçmesine ne ad verilir?", o: ["Toplumsal Değişme", "Toplumsal Hareketlilik", "Toplumsal Bütünleşme", "Toplumsal Sapma", "Toplumsal Kontrol"], a: 1, exp: "Toplumsal hareketlilik, dikey (aşağı-yukarı) veya yatay (aynı seviyede) olarak konum değiştirme sürecidir." },
-        { q: "Bir memurun istifa edip taksi şoförlüğü yapmaya başlaması veya bir işçinin fabrika sahibi olması ne tür bir hareketliliktir?", o: ["Yatay Hareketlilik", "Dikey Hareketlilik", "Coğrafi Hareketlilik", "Kuşaklararası Hareketlilik", "Sanal Hareketlilik"], a: 1, exp: "Statü ve yaşam standardında belirgin bir değişim (artış veya azalış) olduğu için dikey hareketliliktir." },
-        { q: "Bir bakkalın manavlık yapmaya başlaması gibi, yaşam standardında ve saygınlıkta önemli bir değişim yaratmayan hareketliliğe ne denir?", o: ["Dikey Hareketlilik", "Yatay Hareketlilik", "Aşağı Doğru Hareketlilik", "Yukarı Doğru Hareketlilik", "Yapısal Hareketlilik"], a: 1, exp: "Yatay hareketlilik, benzer prestij ve gelir düzeyindeki pozisyonlar arası geçiştir." },
-        { q: "Toplumsal yapının, kurumların ve ilişkilerin zaman içinde farklılaşması sürecine ne denir?", o: ["Toplumsal Hareketlilik", "Toplumsal Değişme", "Toplumsal Tabakalaşma", "Toplumsal Sapma", "Toplumsal Çözülme"], a: 1, exp: "Toplumsal değişme; kültürel, yapısal ve çevresel faktörlerin etkisiyle toplumun bir halden başka bir hale geçmesidir." },
-        { q: "Aşağıdakilerden hangisi toplumsal değişmeyi etkileyen faktörlerden biri değildir?", o: ["Fiziksel Çevre / Doğal Afetler", "Teknoloji", "Nüfus (Demografi)", "Kültürel Etkileşim", "Değişmez İnsan Doğası"], a: 4, exp: "Sosyolojide 'değişmez insan doğası' diye bir faktör değişimin nedeni olarak kabul edilmez; aksine insan ve toplum sürekli değişim halindedir." },
-        { q: "Modernleşme teorisine göre toplumlar hangi yönde değişir?", o: ["Gelenekselden moderne (sanayileşmiş, kentleşmiş, rasyonel) doğru", "Modernden geleneksele doğru", "Karmaşık yapıdan basit yapıya doğru", "Sadece ekonomik olarak", "Geriye doğru"], a: 0, exp: "Modernleşme, tarım toplumundan sanayi ve hizmet toplumuna, kırsaldan kente geçiş sürecini ifade eder." },
-        { q: "Dünyanın tek bir pazar haline gelmesi, iletişim ve ulaşım teknolojileriyle sınırların aşınması sürecine ne denir?", o: ["Modernleşme", "Küreselleşme (Globalleşme)", "Sanayileşme", "Kentleşme", "Bürokratikleşme"], a: 1, exp: "Küreselleşme, ekonomik, kültürel ve siyasi ilişkilerin dünya çapında yoğunlaşması ve karşılıklı bağımlılığın artmasıdır." },
-        { q: "Toplumsal kurumların (aile, eğitim, din vb.) temel işlevi nedir?", o: ["Bireyleri baskılamak", "Toplumsal ihtiyaçları karşılamak ve düzeni sürdürmek", "Değişimi engellemek", "Zenginleri korumak", "Sadece yasak koymak"], a: 1, exp: "Toplumsal kurumlar, toplumun sürekliliği için gerekli olan üreme, eğitim, düzen, üretim gibi temel ihtiyaçları karşılayan yerleşik yapılardır." },
-        { q: "Ferdinand Tönnies'in toplumsal değişmeyi açıklarken kullandığı, samimi ve yüz yüze ilişkilerin olduğu geleneksel topluluk tipine ne denir?", o: ["Gesellschaft (Cemiyet)", "Gemeinschaft (Cemaat)", "Organik Dayanışma", "Mekanik Dayanışma", "Sanayi Toplumu"], a: 1, exp: "Gemeinschaft (Cemaat), köy gibi küçük, ilişkilerin samimi ve duygusal olduğu toplulukları ifade eder." },
-        { q: "Tönnies'e göre, ilişkilerin resmi, çıkar odaklı ve sözleşmeye dayalı olduğu modern toplum tipine ne denir?", o: ["Gemeinschaft", "Gesellschaft (Cemiyet)", "Klan", "Kabile", "Mekanik Dayanışma"], a: 1, exp: "Gesellschaft (Cemiyet), şehir hayatı ve iş dünyası gibi ilişkilerin rasyonel ve mesafeli olduğu topluluk tipidir." },
-        { q: "Emile Durkheim'a göre, geleneksel toplumlarda görülen ve benzerliklere dayalı dayanışma türü hangisidir?", o: ["Organik Dayanışma", "Mekanik Dayanışma", "Sınıfsal Dayanışma", "Fonksiyonel Dayanışma", "Zümre Dayanışması"], a: 1, exp: "Mekanik dayanışma, işbölümünün az olduğu, insanların benzer işler yaptığı ve benzer değerleri paylaştığı toplumlarda görülür." },
-        { q: "Durkheim'a göre, modern sanayi toplumlarında görülen, işbölümü ve farklılaşmaya dayalı dayanışma türü hangisidir?", o: ["Mekanik Dayanışma", "Organik Dayanışma", "Klan Dayanışması", "Cemaat Dayanışması", "Aile Dayanışması"], a: 1, exp: "Organik dayanışma, işbölümünün arttığı, bireylerin birbirine bağımlı olduğu (organlar gibi) modern toplumlarda görülür." },
-        { q: "Karl Marx'a göre toplumsal değişmenin motoru (temel nedeni) nedir?", o: ["Dini inançlar", "Coğrafi keşifler", "Sınıf çatışması ve ekonomik altyapıdaki değişimler", "Nüfus artışı", "Büyük liderler"], a: 2, exp: "Marx'a göre tarih, üretim araçlarına sahip olanlar ile olmayanlar arasındaki sınıf mücadelesiyle ilerler." },
-        { q: "Max Weber, toplumsal değişmede neyin önemine vurgu yapmıştır?", o: ["Sadece ekonominin", "Sadece teknolojinin", "Fikirlerin, inançların (örn. Protestan Ahlakı) ve karizmatik liderlerin", "Coğrafyanın", "Biyolojinin"], a: 2, exp: "Weber, Marx'ın aksine, zihniyet yapısının ve kültürel değerlerin de değişimi tetikleyebileceğini savunmuştur." },
-        { q: "Toplumsal değişmeyi 'evrimsel' bir süreç olarak gören ve toplumların basitten karmaşığa doğru geliştiğini savunan yaklaşım kime aittir?", o: ["Marx", "Weber", "Spencer ve Comte (Evrimci Yaklaşım)", "Mills", "Goffman"], a: 2, exp: "Evrimci yaklaşım, toplumların biyolojik organizmalar gibi ilkelden gelişmişe doğru doğrusal bir evrim izlediğini savunur." },
-        { q: "Küreselleşmenin kültürel boyutuyla ilgili 'McDonaldisation' (McDonaldlaşma) kavramı neyi ifade eder?", o: ["Sadece yemek kültürünü", "Yerel kültürlerin güçlenmesini", "Dünyanın tek tip, standart ve rasyonel bir kültüre (Amerikanlaşma) doğru gitmesini", "Sağlıklı yaşamı", "Turizmin artmasını"], a: 2, exp: "McDonaldlaşma (Ritzer), toplumun verimlilik, hesaplanabilirlik ve denetim ilkelerine göre standartlaşmasını ifade eder." },
-        { q: "Bireyin, üyesi olduğu gruba duyduğu bağlılık ve o grubu diğerlerinden üstün görme eğilimine ne denir?", o: ["Dış Grup Yanlılığı", "İç Grup (Biz Grubu) Yanlılığı", "Yabancılaşma", "Anomi", "Empati"], a: 1, exp: "İç grup (In-group), bireyin 'biz' dediği ve kendini özdeşleştirdiği gruptur; dış grup (Out-group) ise 'onlar' dediği gruptur." },
-        { q: "Aşağıdakilerden hangisi bir 'İkincil Grup' örneğidir?", o: ["Aile", "Oyun grubu", "Bir bankanın çalışanları", "Komşular", "Akrabalar"], a: 2, exp: "Banka çalışanları arasındaki ilişki resmi, kurallara dayalı ve iş odaklıdır, bu yüzden ikincil gruptur." },
-        { q: "Toplumsal tabakalaşmada bireylerin sahip oldukları ekonomik kaynaklara (gelir, servet) ne denir?", o: ["Statü", "Sınıf", "Güç", "Prestij", "Rol"], a: 1, exp: "Sınıf, ekonomik temelli bir ayrımdır; üretim araçlarına sahiplik veya pazar konumuna göre belirlenir." },
-        { q: "Weber'e göre toplumsal tabakalaşmanın 'güç' boyutunu temsil eden örgütlenme hangisidir?", o: ["Sınıf", "Statü Grubu", "Parti (Siyasi Güç)", "Aile", "Din"], a: 2, exp: "Weber tabakalaşmayı Sınıf (Ekonomi), Statü (Saygınlık) ve Parti (Güç) olarak üç boyutta inceler." },
-        { q: "Bir kişinin aynı anda hem doktor (üst statü) hem de azınlık mensubu (düşük statü) olması durumuna ne denir?", o: ["Statü Tutarsızlığı", "Statü Kümesi", "Anahtar Statü", "Rol Çatışması", "Statü Kaybı"], a: 0, exp: "Statü tutarsızlığı, bireyin farklı statülerinin toplumun gözünde aynı saygınlık seviyesinde olmaması durumudur." },
-        { q: "Toplumsal değişmenin 'döngüsel' olduğunu, medeniyetlerin doğup, büyüyüp, öldüğünü savunan düşünür kimdir?", o: ["Marx", "Comte", "İbni Haldun ve Toynbee", "Spencer", "Parsons"], a: 2, exp: "Döngüsel teoriler, toplumların sürekli ilerlemediğini, canlılar gibi bir yaşam döngüsü olduğunu savunur." },
-        { q: "Sanayileşme ile birlikte ortaya çıkan, çekirdek ailenin yaygınlaşması ve akrabalık bağlarının zayıflaması hangi değişime örnektir?", o: ["Ekonomik değişimin toplumsal kurumlara etkisi", "Siyasi değişim", "Dini değişim", "Bireysel değişim", "Rastgele değişim"], a: 0, exp: "Ekonomik yapıdaki (üretim biçimi) değişim, aile yapısını doğrudan etkileyerek geniş aileden çekirdek aileye geçişi sağlamıştır." },
-        { q: "Demografi (Nüfus Bilimi) toplumsal değişmeyi nasıl etkiler?", o: ["Etkilemez", "Nüfus artışı, göçler ve yaşlanma toplumsal yapıyı ve kurumları dönüştürür", "Sadece ekonomiyi etkiler", "Sadece siyaseti etkiler", "Geçici bir etkidir"], a: 1, exp: "Nüfus hareketleri, kentleşme, işgücü yapısı ve sosyal güvenlik sistemleri üzerinde büyük değişimlere yol açar." },
-        { q: "Küreselleşme sürecinde yerel kültürlerin küresel unsurlarla harmanlanarak yeniden üretilmesine ne denir?", o: ["Asimilasyon", "Küyerelleşme (Glocalization)", "Emperyalizm", "Yozlaşma", "İzolasyon"], a: 1, exp: "Küyerelleşme, global ürünlerin yerel zevklere ve kültüre uyarlanmasıdır (Örn: Türkiye'deki pizzalara sucuk konulması)." },
-        { q: "Toplumsal normlardan sapmanın onaylanmadığı ve cezalandırıldığı mekanizmalara ne denir?", o: ["Toplumsal Hareketlilik", "Toplumsal Kontrol", "Toplumsal Değişme", "Toplumsal Statü", "Toplumsal Rol"], a: 1, exp: "Toplumsal kontrol, sapmayı önlemek ve uyumu sağlamak için uygulanan baskı ve denetimdir." },
-        { q: "Bir grubun üye sayısı arttıkça ilişkilerin niteliği nasıl değişir?", o: ["Daha samimi olur", "Değişmez", "İlişkiler daha resmi ve yüzeysel hale gelir, grup içi bölünmeler artar", "Grup dağılır", "Herkes lider olur"], a: 2, exp: "Grup büyüdükçe yüz yüze etkileşim azalır, formalleşme artar ve alt gruplar oluşur." },
-        { q: "Bürokrasi, hangi grup türünün en gelişmiş örneğidir?", o: ["Birincil Grup", "İkincil Grup (Örgüt)", "Referans Grubu", "Oyun Grubu", "Kalabalık"], a: 1, exp: "Bürokrasi, rasyonel kurallara dayalı, hiyerarşik ve resmi bir ikincil gruptur (örgüttür)." },
-        { q: "Aşağıdakilerden hangisi 'Kazanılmış Statü'ye örnektir?", o: ["Kadın olmak", "Türk olmak", "Üniversite mezunu olmak", "Yaşlı olmak", "Prens olmak"], a: 2, exp: "Üniversite mezuniyeti, bireyin kendi çabası ve eğitimi sonucu elde ettiği bir statüdür." },
-        { q: "Toplumsal değişmeye karşı direnç gösteren, mevcut düzeni korumaya çalışan gruplara ne denir?", o: ["Yenilikçi", "Devrimci", "Muhafazakar / Tutucu", "Radikal", "Liberal"], a: 2, exp: "Muhafazakar gruplar, geleneksel değerlerin ve yapıların korunmasını savunarak değişime direnç gösterebilirler." },
-        { q: "Teknolojik determinizm neyi savunur?", o: ["Teknolojinin önemsiz olduğunu", "Toplumsal değişmenin temel motorunun teknolojik gelişmeler olduğunu", "Kültürün teknolojiyi belirlediğini", "Siyasetin teknolojiden üstün olduğunu", "Teknolojinin zararlı olduğunu"], a: 1, exp: "Teknolojik determinizm, buhar makinesinin, internetin vb. icadının toplumu kaçınılmaz olarak değiştirdiğini savunur." },
-        { q: "Aşağıdakilerden hangisi toplumsal bir 'Kurum'dur?", o: ["Bir hastane binası", "Bir okul binası", "Sağlık sistemi", "Bir doktor", "Bir öğretmen"], a: 2, exp: "Hastane veya okul somut örgütlerdir; ancak 'Sağlık' veya 'Eğitim' toplumsal ihtiyaçları karşılayan soyut ve yerleşik kurumlardır." },
-        { q: "Statü ve Rol arasındaki ilişki nasıldır?", o: ["İlişkisi yoktur", "Statü bir pozisyondur, rol ise o pozisyonun gerektirdiği davranıştır (Statü işgal edilir, rol oynanır)", "Rol statüden önce gelir", "Statü değişir rol değişmez", "Rol statüyü belirler"], a: 1, exp: "Statü toplumdaki yerimiz, rol ise o yerin bizden beklediği performanstır." },
-        { q: "Toplumsal değişmenin hızı her toplumda ve her dönemde aynı mıdır?", o: ["Evet, sabittir", "Hayır, modern toplumlarda ve günümüzde değişim hızı çok daha yüksektir", "Eski toplumlarda daha hızlıydı", "Sadece savaşlarda değişir", "Hiç değişmez"], a: 1, exp: "Teknoloji ve iletişimdeki gelişmeler, günümüzde toplumsal değişimin hızını tarihte görülmemiş düzeyde artırmıştır." },
-        { q: "Kültürel gecikme (Cultural Lag) en çok hangi durumlarda ortaya çıkar?", o: ["Hızlı teknolojik değişimlerde", "Savaşlarda", "Ekonomik krizlerde", "Nüfus azaldığında", "Geleneksel toplumlarda"], a: 0, exp: "Teknoloji hızla değişirken, ona uyum sağlayacak hukuk ve ahlak kuralları (manevi kültür) geriden gelir." },
-        { q: "Bir toplumda orta sınıfın genişlemesi neyin göstergesidir?", o: ["Kast sisteminin", "Dikey hareketliliğin (Yukarı doğru) ve refahın arttığının", "Yoksulluğun arttığının", "Nüfusun azaldığının", "Eğitimin önemsizleştiğinin"], a: 1, exp: "Orta sınıfın büyümesi, alt tabakadan yukarıya doğru geçişin ve gelir dağılımının düzeldiğinin bir işaretidir." },
-        { q: "Toplumsal tabakalaşma evrensel midir?", o: ["Hayır, sadece Batı'da vardır", "Evet, her toplumda (basit veya karmaşık) bir eşitsizlik ve sıralama sistemi bulunur", "Sadece modern toplumlarda vardır", "Sadece ilkel toplumlarda vardır", "Bilinmiyor"], a: 1, exp: "Tarih boyunca tüm toplumlarda cinsiyet, yaş, güç veya servet temelinde bir hiyerarşi olmuştur." },
-        { q: "Aşağıdakilerden hangisi 'Dikey Hareketlilik' örneği değildir?", o: ["İşçinin fabrika müdürü olması", "Müdürün iflas edip işçi olması", "Öğretmenin başka bir şehre tayin olması", "Kapıcının oğlunun doktor olması", "Zengin birinin yoksullaşması"], a: 2, exp: "Tayin olmak, statü ve gelirde dikey bir değişim yaratmaz, sadece mekansal (yatay) bir değişimdir." },
-        { q: "Bilgi toplumunun temel sermayesi nedir?", o: ["Toprak", "Makine", "Bilgi ve İnsan Kaynağı", "Altın", "Petrol"], a: 2, exp: "Sanayi toplumunda makine ve sermaye önemliyken, bilgi toplumunda bilgi üretimi ve nitelikli insan gücü en önemli sermayedir." },
-        { q: "Küreselleşme karşıtlarının temel eleştirisi nedir?", o: ["Dünyayı birleştirmesi", "Yerel kültürleri yok etmesi ve eşitsizliği derinleştirmesi", "Ticari engelleri kaldırması", "İnterneti yaygınlaştırması", "Seyahati kolaylaştırması"], a: 1, exp: "Küreselleşme karşıtları, sürecin zengin ülkelerin lehine işlediğini ve yerel değerleri, ekonomileri tahrip ettiğini savunur." },
-        { q: "Toplumsal yapıyı oluşturan en küçük birim nedir?", o: ["Kurum", "Grup", "Birey ve Sosyal İlişki", "Devlet", "Sınıf"], a: 2, exp: "Toplumsal yapı, bireylerin kurduğu sosyal ilişkiler ağından başlar ve gruplara, kurumlara doğru genişler." }
+        // Dinin Tanımı ve Sosyolojik Yaklaşım
+        { q: "Sosyolojik açıdan din tanımlanırken aşağıdakilerden hangisi dikkate alınmaz?", o: ["Dinin toplumsal işlevleri", "Dinin inanç boyutu", "Dinin mutlak doğruluğu veya yanlışlığı (Normatiflik)", "Dini ritüeller", "Dini cemaat yapıları"], a: 2, exp: "Sosyoloji, dinin teolojik doğruluğuyla (Tanrı var mıdır?) ilgilenmez; dini toplumsal bir olgu olarak inceler." },
+        { q: "Dini, 'kutsal şeylerle ilgili inanç ve pratiklerden oluşan birleşik bir sistem' olarak tanımlayan sosyolog kimdir?", o: ["Karl Marx", "Emile Durkheim", "Max Weber", "Auguste Comte", "Herbert Spencer"], a: 1, exp: "Durkheim'ın 'Dini Hayatın İlkel Biçimleri' eserindeki bu tanım, din sosyolojisinin en temel tanımlarından biridir." },
+        { q: "Dini, 'bireyin toplum içindeki entegrasyonunu sağlayan bir kurum' olarak ele alan tanım türü hangisidir?", o: ["Özsel (Substantive) Tanım", "İşlevsel (Fonksiyonel) Tanım", "Teolojik Tanım", "Felsefi Tanım", "Bireysel Tanım"], a: 1, exp: "İşlevsel tanımlar, dinin 'ne olduğundan' ziyade 'ne yaptığına' (toplumu birleştirmesi, anlam vermesi vb.) odaklanır." },
+        { q: "Dini, 'insanüstü varlıklara inanç' veya 'kutsal olana dair içerik' üzerinden tanımlayan yaklaşım hangisidir?", o: ["İşlevsel Tanım", "Özsel (Substantive) Tanım", "Eleştirel Tanım", "Psikolojik Tanım", "Politik Tanım"], a: 1, exp: "Özsel tanımlar dinin içeriğine (Tanrı, ruh, kutsal vb.) odaklanır." },
+        
+        // Din ve Toplumsal Kurumlar İlişkisi
+        { q: "Dinin, aile kurumuyla ilişkisinde en belirgin rolü nedir?", o: ["Ekonomik kazanç sağlamak", "Siyasi oy toplamak", "Evlilik ve akrabalık ilişkilerini kutsayarak meşrulaştırmak ve denetlemek", "Bilimsel eğitim vermek", "Teknolojiyi geliştirmek"], a: 2, exp: "Nikah törenleri ve aile değerleri, dinin aile kurumu üzerindeki düzenleyici etkisinin en açık örneğidir." },
+        { q: "Tarihsel süreçte dinin siyaset kurumuyla ilişkisi nasıldır?", o: ["İlişkisizdir", "Din genellikle siyasi otoritenin meşruiyet kaynağı olmuştur (Tanrı adına yönetmek)", "Din siyaseti her zaman yok etmiştir", "Siyaset dini tamamen yok etmiştir", "Sadece modern çağda ilişki vardır"], a: 1, exp: "Geleneksel toplumlarda krallar veya yöneticiler otoritelerini dini kaynaklara (Tanrı'nın gölgesi, halife vb.) dayandırmışlardır." },
+        { q: "Din ve ekonomi ilişkisi bağlamında, 'faiz yasağı' veya 'zekat' gibi uygulamalar neyi gösterir?", o: ["Dinin ekonomik davranışları ve ahlakı düzenlediğini", "Dinin ekonomiyle ilgilenmediğini", "Ekonominin dinden üstün olduğunu", "Dinin sadece ibadet olduğunu", "Ticaretin yasak olduğunu"], a: 0, exp: "Din, sadece inanç değil, aynı zamanda ekonomik hayata dair normlar ve kurallar koyan bir kurumdur." },
+        
+        // Din Sosyolojisinin Ortaya Çıkışı ve Metodolojisi
+        { q: "Din Sosyolojisi'nin kurucu isimleri arasında aşağıdakilerden hangisi sayılmaz?", o: ["Emile Durkheim", "Max Weber", "Georg Simmel", "Isaac Newton", "Karl Marx"], a: 3, exp: "Newton bir fizikçidir; diğerleri ise din üzerine kapsamlı sosyolojik teoriler geliştirmişlerdir." },
+        { q: "'Din Sosyolojisi' ile 'Dini Sosyoloji' arasındaki temel fark nedir?", o: ["Fark yoktur", "Din Sosyolojisi dini bilimsel/objektif olarak incelerken, Dini Sosyoloji (Gabriel Le Bras ayrımıyla) kilisenin hizmetinde dini yaymayı amaçlayan pastoral bir çalışmadır", "Din sosyolojisi dine karşıdır", "Dini sosyoloji sadece İslam'ı inceler", "Biri tarih, biri felsefedir"], a: 1, exp: "Dini sosyoloji genellikle dini kurumların kendi iç işleyişini iyileştirmek için yaptıkları istatistiksel çalışmalardır." },
+        { q: "Din sosyolojisinin metodolojik ilkesi olan 'Epoche' (Paranteze Alma) ne anlama gelir?", o: ["Dini reddetmek", "Dini savunmak", "Araştırmacının kendi inanç veya inançsızlığını askıya alarak olguya nötr yaklaşması", "Dini metinleri ezberlemek", "İbadet etmek"], a: 2, exp: "Bilimsel nesnellik için araştırmacı, incelediği inancın doğruluğu hakkındaki kendi yargısını paranteze almalıdır." },
+        { q: "Sosyolojik açıdan din incelenirken hangi yöntem kullanılır?", o: ["Vahiy", "Empirik (Deneysel/Gözlemsel) Yöntem", "Metafizik Spekülasyon", "Kelam", "Fıkıh"], a: 1, exp: "Sosyoloji, gözlemlenebilir toplumsal olgulara dayandığı için empirik bir bilimdir." },
+        
+        // Dinin Kökenine Dair Yaklaşımlar
+        { q: "Edward B. Tylor'a göre dinin en ilkel biçimi olan ve 'ruh inancı'na dayanan anlayış hangisidir?", o: ["Tek Tanrıcılık", "Totemism", "Animism", "Naturism", "Fetişizm"], a: 2, exp: "Animizm (Canlandırmacılık), doğadaki nesnelerin ve canlıların ruhları olduğuna inanmaktır." },
+        { q: "Max Müller'e göre dinin kökeni nedir?", o: ["Rüyalar", "Doğa güçlerine (Güneş, şimşek vb.) duyulan korku ve hayranlık (Naturism)", "Atalar kültü", "Toplum", "Ekonomi"], a: 1, exp: "Naturism, insanların açıklayamadıkları doğa olaylarını tanrılaştırmasıyla dinin başladığını savunur." },
+        { q: "Durkheim'a göre dinin kökeni ve en basit biçimi nedir?", o: ["Vahiy", "Ruh", "Totemizm (Bir klanın kutsal saydığı simgeye tapınması)", "Büyü", "Mitoloji"], a: 2, exp: "Durkheim, Avustralya yerlilerini inceleyerek Totemizm'in dinin en ilkel hali olduğunu ve aslında tapılan şeyin 'Toplum'un kendisi olduğunu söyler." },
+
+        // Auguste Comte ve Din
+        { q: "Auguste Comte'un 'Üç Hal Yasası'na göre insanlık tarihinin ilk aşaması hangisidir?", o: ["Pozitif Aşama", "Metafizik Aşama", "Teolojik Aşama", "Sanayi Aşaması", "Bilgi Aşaması"], a: 2, exp: "Teolojik aşamada insanlar olayları tanrısal ve doğaüstü güçlerle açıklar." },
+        { q: "Comte'a göre modern toplumda (Pozitif aşamada) geleneksel dinlerin yerini ne alacaktır?", o: ["Hiçbir şey", "İnsanlık Dini (Religion of Humanity)", "Hristiyanlık", "Büyü", "Anarşi"], a: 1, exp: "Comte, toplumsal düzeni sağlamak için bilime dayalı ama ritüelleri olan seküler bir 'İnsanlık Dini' önermiştir." },
+        
+        // Karl Marx ve Din
+        { q: "Karl Marx'ın din konusundaki ünlü sözü nedir?", o: ["Din toplumun temelidir", "Din halkın afyonudur", "Din ahlaktır", "Din bilimdir", "Din özgürlüktür"], a: 1, exp: "Marx'a göre din, ezilen sınıfların acılarını hafifleten ama onları uyuşturarak devrim yapmalarını engelleyen bir afyondur." },
+        { q: "Marx'a göre din, 'Yabancılaşma'nın bir ürünüdür. Bu ne anlama gelir?", o: ["İnsanın kendi yarattığı güçlere (Tanrı) taparak kendi özüne yabancılaşması", "Başka ülkeye gitmek", "Dili unutmak", "Yalnız kalmak", "Çok çalışmak"], a: 0, exp: "Marx (ve Feuerbach), insanın kendi özelliklerini Tanrı'ya yansıtıp sonra ona boyun eğdiğini savunur." },
+        { q: "Tarihsel Materyalizm'e göre din, toplumun hangi yapısında yer alır?", o: ["Altyapı (Ekonomi)", "Üstyapı (Kültür, Hukuk, İdeoloji)", "Doğa", "Teknoloji", "Birey"], a: 1, exp: "Din, ekonomik altyapı tarafından belirlenen ideolojik üstyapının bir parçasıdır." },
+        
+        // Emile Durkheim ve Din
+        { q: "Durkheim'a göre dini inançların temelinde yatan en önemli ayrım nedir?", o: ["İyi ve Kötü", "Güzel ve Çirkin", "Kutsal (Sacred) ve Profan (Dindışı)", "Doğru ve Yanlış", "Zengin ve Fakir"], a: 2, exp: "Durkheim'a göre din, dünyayı 'kutsal' (yasaklanan, saygı duyulan) ve 'profan' (sıradan, gündelik) olarak ikiye ayırır." },
+        { q: "Durkheim'a göre dinin temel toplumsal işlevi nedir?", o: ["Bireyi zengin etmek", "Toplumsal dayanışmayı (solidarity) ve bütünleşmeyi sağlamak", "Savaş çıkarmak", "Bilimi geliştirmek", "Doğayı korumak"], a: 1, exp: "Din, ritüeller aracılığıyla bireyleri bir araya getirerek 'kolektif bilinç' oluşturur ve toplumu bir arada tutar (Toplumsal Çimento)." },
+        { q: "Durkheim'a göre dini ritüeller sırasında ortaya çıkan ve bireyleri kendinden geçirerek topluluğa bağlayan yoğun duyguya ne denir?", o: ["Yabancılaşma", "Kolektif Coşku (Collective Effervescence)", "Anomi", "Bürokrasi", "Rasyonelleşme"], a: 1, exp: "Bu coşku anlarında birey, toplumun gücünü hisseder ve bu gücü 'kutsal' olarak adlandırır." },
+        
+        // Max Weber ve Din
+        { q: "Max Weber, 'Protestan Ahlakı ve Kapitalizmin Ruhu' eserinde neyi savunmuştur?", o: ["Dinin ekonomiyi engellediğini", "Dini inançların (Kalvinizm) ekonomik zihniyeti ve kapitalizmin doğuşunu etkilediğini", "Ekonominin dini belirlediğini (Marx'ın tersine)", "Kapitalizmin kötü olduğunu", "Protestanlığın yanlış olduğunu"], a: 1, exp: "Weber, ekonomik değişimin sadece maddi faktörlerle değil, zihniyet ve inançlarla da şekillenebileceğini göstermiştir." },
+        { q: "Weber'e göre, 'dünyevi zevklerden uzak durup çok çalışmayı ve kazancı yatırıma dönüştürmeyi' emreden ahlak anlayışına ne denir?", o: ["Hedonizm", "Dünyevi Çilecilik (Asceticism)", "Mistiklik", "Fatalizm", "Gelenekçilik"], a: 1, exp: "Bu çilecilik, kapitalist sermaye birikiminin motoru olmuştur." },
+        { q: "Weber'in din sosyolojisinde kullandığı 'Teodise' (Theodicy) kavramı neyi ifade eder?", o: ["Tanrı'nın varlığını", "Kötülük problemini ve dünyadaki acıların/adaletsizliklerin dinsel olarak açıklanmasını", "İbadet şekillerini", "Dini bayramları", "Kilise örgütlenmesini"], a: 1, exp: "Dinler, 'Neden iyi insanların başına kötü şeyler gelir?' sorusuna teodise (adalet-i ilahi) teorileriyle cevap vererek anlam üretirler." },
+        { q: "Weber'e göre, bir dinin kurucusunun ölümünden sonra karizmatik otoritenin kurumsallaşması sürecine ne denir?", o: ["Laikleşme", "Karizmanın Rutinleşmesi (Sıradanlaşması)", "Yabancılaşma", "Reform", "Devrim"], a: 1, exp: "Peygamberin (karizmatik lider) ölümünden sonra hareketin devamı için kurallar, rahipler ve hiyerarşi oluşur; bu rutinleşmedir." },
+        
+        // Modern Dönem ve Din
+        { q: "Modernleşme ile birlikte dinin toplumsal hayattaki otoritesinin ve görünürlüğünün azalması sürecine ne ad verilir?", o: ["Radikalleşme", "Sekülerleşme (Dünyevileşme)", "Fundamentalizm", "Canlanma", "Dönüşüm"], a: 1, exp: "Sekülerleşme tezi, modern bilimin ve rasyonelleşmenin dini gerileteceğini öngörür." },
+        { q: "Sekülerleşme tezinin aksine, modern dünyada dinin yeniden kamusal alana dönmesi ve güçlenmesi durumuna ne denir?", o: ["Dinin Özelleşmesi", "Desekülerleşme / Dinin Canlanması", "Ateizm", "Deizm", "Pozitivizm"], a: 1, exp: "Berger gibi sosyologlar, modern dünyada dinin yok olmadığını, aksine yeni formlarla canlandığını savunmuşlardır." },
+        
+        // Karışık / Pekiştirme
+        { q: "Aşağıdakilerden hangisi dinin 'bireysel' işlevlerinden biridir?", o: ["Toplumsal kontrolü sağlamak", "Ölüm korkusuyla baş etmeyi sağlamak ve hayata anlam katmak", "Devleti meşrulaştırmak", "Hukuku oluşturmak", "Sınıf farklarını korumak"], a: 1, exp: "Din, bireye varoluşsal sorular (Ben kimim? Ölünce ne olacak?) konusunda cevaplar sunarak psikolojik rahatlama sağlar." },
+        { q: "Dini gruplar içinde en küçük, gevşek örgütlenmiş ve genellikle karizmatik bir lidere bağlı yapıya ne denir?", o: ["Kilise", "Tarikat", "Kült", "Mezhep", "Ümmet"], a: 2, exp: "Kültler genellikle yerleşik dinlerin dışında, yeni ve mistik inançlar etrafında oluşan küçük gruplardır." },
+        { q: "Marx'a göre din, egemen sınıfın çıkarlarına hizmet eden bir ......", o: ["Bilimdir", "İdeolojidir (Yanlış Bilinç)", "Gerçektir", "Sanattır", "Hukuktur"], a: 1, exp: "İdeoloji, gerçeği çarpıtarak mevcut sömürü düzenini doğal gösteren düşünceler bütünüdür." },
+        { q: "Durkheim'ın incelediği Arunta kabilesi hangi kıtada yaşamaktadır?", o: ["Afrika", "Avustralya", "Amerika", "Asya", "Avrupa"], a: 1, exp: "Durkheim, en ilkel dini formu bulmak için Avustralya yerlilerini incelemiştir." },
+        { q: "Weber'e göre 'Büyüden Arınma' (Disenchantment) ne demektir?", o: ["Büyü yapmanın yasaklanması", "Dünyanın gizemli/mistik karakterini kaybedip rasyonel ve hesaplanabilir hale gelmesi", "Dinin güçlenmesi", "Sanatın gelişmesi", "Duyguların artması"], a: 1, exp: "Modernite ve bilim, dünyayı büyüsünden arındırarak (rasyonalizasyon) onu teknik bir nesneye dönüştürür." },
+        { q: "Bir sosyal aktör olarak din ne yapabilir?", o: ["Sadece pasif kalır", "Toplumsal değişimi başlatabilir veya engelleyebilir", "Sadece ibadetle sınırlıdır", "Sadece öbür dünyayı ilgilendirir", "Hiçbir etkisi yoktur"], a: 1, exp: "Weber'in gösterdiği gibi din, toplumları değiştiren (örn: İslam'ın doğuşu, Reform) aktif bir güç olabilir." },
+        { q: "Aşağıdakilerden hangisi Tek Tanrılı (Monoteist) dinlerden biri değildir?", o: ["İslamiyet", "Hristiyanlık", "Musevilik", "Hinduizm (Çok tanrılı/Panteist yönleri vardır)", "Hiçbiri"], a: 3, exp: "Hinduizm genellikle çok tanrılı (politeist) veya panteist bir yapı arz eder." },
+        { q: "Sosyolojide dini inançların 'doğru' olup olmadığını tartışmak neden yanlıştır?", o: ["Çünkü din her zaman doğrudur", "Çünkü sosyoloji normatif değil, olgusal/pozitif bir bilimdir", "Çünkü din yasaktır", "Çünkü sosyologlar inanmaz", "Çünkü kanıtlanamaz"], a: 1, exp: "Bilim, 'olanı' inceler; 'olması gerekeni' veya 'mutlak doğruyu' (teolojinin alanı) değil." },
+        { q: "Comte'a göre 'Fetişizm' hangi aşamanın özelliğidir?", o: ["Pozitif", "Metafizik", "Teolojik", "Modern", "Postmodern"], a: 2, exp: "Teolojik aşamanın en ilkel basamağı, nesnelere canlıymış gibi tapınılan fetişizmdir." },
+        { q: "Din sosyolojisi, dini incelerken hangi veri kaynaklarını kullanmaz?", o: ["Dini metinler", "Tarihsel veriler", "Gözlem ve anket", "Vahiy (Bilgi kaynağı olarak)", "İstatistikler"], a: 3, exp: "Vahiy, inancın konusudur; sosyoloji ise gözlemlenebilir insan davranışlarına ve verilere dayanır." },
+        { q: "Peter Berger'e göre dinin oluşturduğu 'Kutsal Şemsiye' ne işe yarar?", o: ["Yağmurdan korur", "İnsanı kaos ve anlamsızlık karşısında koruyan bir anlam dünyası oluşturur", "Sadece rahipleri korur", "Devleti korur", "Ekonomiyi korur"], a: 1, exp: "Nomos (düzen) kurarak insanı anomiye (kuralsızlık/kaos) düşmekten korur." },
+        { q: "Robert Bellah'ın 'Sivil Din' kavramı neyi anlatır?", o: ["Sivillerin dinini", "Ulusal sembollerin, tarihin ve değerlerin (Örn: Bayrak, Anıtkabir) adeta dini bir kutsallıkla yüceltilmesini", "Askeri dini", "Gizli dini", "Yasak dini"], a: 1, exp: "Modern toplumlarda ulus-devlet, kendi ritüelleri ve kutsallarıyla bir nevi seküler din (sivil din) yaratır." },
+        { q: "Aşağıdakilerden hangisi dinin toplumsal bir kurum olduğunun kanıtıdır?", o: ["Sadece bireyin kalbinde olması", "Toplumsal normlar, roller, ritüeller ve örgütlenmeler içermesi", "Görünmez olması", "Değişmez olması", "Bilimsel olması"], a: 1, exp: "Kurumlar (aile, eğitim gibi), toplumsal ihtiyaçları karşılayan yapılanmış davranış kalıplarıdır." },
+        { q: "Marx ve Engels'e göre Hristiyanlık Roma İmparatorluğu'nda başlangıçta kimlerin diniydi?", o: ["Zenginlerin", "Kölelerin ve ezilenlerin", "Askerlerin", "Filozofların", "Kralların"], a: 1, exp: "Başlangıçta bir ezilenlerin protestosu olan din, kurumsallaşınca egemenlerin aracına dönüşmüştür." },
+        { q: "Weber'e göre 'Peygamber' nasıl bir lider tipidir?", o: ["Geleneksel", "Yasal", "Karizmatik", "Bürokratik", "Sıradan"], a: 2, exp: "Peygamber, kişisel vahiy ve misyonuyla yerleşik düzene meydan okuyan karizmatik bir figürdür." },
+        { q: "Durkheim'a göre intihar oranları ile dini aidiyet arasında nasıl bir ilişki vardır?", o: ["İlişki yoktur", "Katoliklerde (cemaat bağı güçlü) intihar oranı, Protestanlara (bireyci) göre daha düşüktür", "Dindarlar daha çok intihar eder", "Sadece ateistler intihar eder", "Herkes eşittir"], a: 1, exp: "Durkheim'ın 'İntihar' çalışması, toplumsal bütünleşmenin (dini cemaat gibi) intiharı önleyici etkisini gösterir." },
+        { q: "Sembolik etkileşimcilere göre dini ritüellerin önemi nedir?", o: ["Ekonomik maliyeti", "Katılımcıların bu ritüellere yükledikleri anlamlar ve kimlik inşası", "Tanrı'yı memnun etmesi", "Siyaseti etkilemesi", "Tarihi olması"], a: 1, exp: "Bu yaklaşım, ritüellerin bireyler için ne ifade ettiğine ve anlam dünyalarına odaklanır." },
+        { q: "Dini fundamentalizm (köktendincilik) genellikle neye bir tepki olarak ortaya çıkar?", o: ["Dine", "Geleneklere", "Modernizme ve sekülerleşmeye", "Fakirliğe", "Sanata"], a: 2, exp: "Fundamentalizm, modern dünyanın belirsizliğine karşı kutsal metinlerin değişmez doğruluğuna sığınma refleksidir." },
+        { q: "Türkiye'de din sosyolojisinin kurucusu kabul edilen, Durkheim ekolünü takip eden düşünür kimdir?", o: ["Ziya Gökalp", "Prens Sabahattin", "Namık Kemal", "Cemil Meriç", "Ali Şeriati"], a: 0, exp: "Ziya Gökalp, Durkheim'ın görüşlerini Türkiye şartlarına uyarlayarak din ve toplum üzerine çalışmalar yapmıştır." },
+        { q: "Thomas Luckmann'ın 'Görünmez Din' kavramı neyi ifade eder?", o: ["Gizli örgütleri", "Dinin kurumlardan çıkarak bireysel alana çekilmesini ve 'bireyselleşmiş din' formuna dönüşmesini", "Sanal dini", "Uzaylı dinini", "Devlet dinini"], a: 1, exp: "Luckmann'a göre modern birey, farklı inanç parçalarını birleştirerek kendi kişisel anlam dünyasını (brikolaj) oluşturur." },
+        { q: "Engels'e göre dinin 'Telafi Edici' fonksiyonu ne demektir?", o: ["Para vermesi", "Ezilenlere öbür dünyada mutluluk vaat ederek bu dünyadaki acılara katlanmalarını sağlaması", "Hastaları iyileştirmesi", "Eğitim vermesi", "Savaş kazandırması"], a: 1, exp: "Din, bu dünyada adaletsizliğe uğrayanlara ahirette adalet vaat ederek statükoyu korur." },
+        { q: "Geleneksel toplumlarda 'Mana' kavramı neyi ifade eder?", o: ["Para", "Kişilerde veya nesnelerde bulunduğuna inanılan gizemli, kutsal ve doğaüstü güç", "Makam", "Yemek", "Aile"], a: 1, exp: "Polinezya kültürlerinden gelen Mana, dinin en ilkel güç kavramlarından biridir." }
     ];
 
     let currentQuestion = 0;
@@ -223,7 +253,7 @@
         const explanationArea = document.getElementById('explanation-area');
         
         container.innerHTML = '';
-        explanationArea.style.display = 'none'; // Yeni soruda açıklamayı gizle
+        explanationArea.style.display = 'none';
 
         const q = questions[currentQuestion];
         
@@ -283,7 +313,6 @@
             document.getElementById(`opt-${userAnswers[currentQuestion]}`).classList.add('wrong-highlight');
         }
 
-        // Açıklamayı Göster
         explanationArea.innerHTML = `<strong>Açıklama:</strong> ${q.exp}`;
         explanationArea.style.display = 'block';
     }
@@ -343,13 +372,12 @@
         document.getElementById('quiz-screen').style.display = 'none';
         document.getElementById('result-screen').style.display = 'block';
 
-        // Puanlama: Her soru 2 puan (100/50)
         const score = Math.round((correctCount / questions.length) * 100);
         
         document.getElementById('score-circle').innerText = score;
         document.getElementById('score-details').innerHTML = `
-            <strong>Doğru:</strong> ${correctCount} | 
-            <strong>Yanlış:</strong> ${wrongCount} | 
+            <strong>Doğru:</strong> ${correctCount} &nbsp;|&nbsp; 
+            <strong>Yanlış:</strong> ${wrongCount} &nbsp;|&nbsp; 
             <strong>Boş:</strong> ${emptyCount}
         `;
         
