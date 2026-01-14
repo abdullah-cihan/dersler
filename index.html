@@ -3,39 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="AÖF Ders Notları, Çıkmış Sorular ve Ünite Testleri. Felsefe, Sosyoloji ve diğer bölümler için kapsamlı çalışma kaynağı.">
-    <meta name="keywords" content="AÖF, Açıköğretim, Ders Notları, Test Çöz, Felsefe, Sosyoloji, AÖF Soru Bankası">
+    <meta name="description" content="AÖF Ders Notları, Çıkmış Sorular ve Ünite Testleri.">
     <title>AÖF Ders Notları ve Test Platformu</title>
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* Google Font */
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
-
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f3f4f6;
-        }
-
-        /* Animasyonlar */
+        body { font-family: 'Inter', sans-serif; background-color: #f3f4f6; }
         .fade-in { animation: fadeIn 0.3s ease-in-out; }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* Akordeon */
-        .accordion-content {
-            transition: max-height 0.3s ease-out, opacity 0.3s ease-out;
-            max-height: 0;
-            opacity: 0;
-            overflow: hidden;
-        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .accordion-content { transition: max-height 0.3s ease-out, opacity 0.3s ease-out; max-height: 0; opacity: 0; overflow: hidden; }
         .accordion-content.active { opacity: 1; }
-
-        /* Scrollbar */
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: #f1f1f1; }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
@@ -44,7 +22,6 @@
 </head>
 <body class="flex flex-col min-h-screen text-slate-800">
 
-    <!-- HEADER -->
     <header class="bg-gradient-to-r from-slate-800 to-slate-900 text-white shadow-lg">
         <div class="container mx-auto px-4 py-6">
             <div class="flex flex-col md:flex-row justify-between items-center">
@@ -63,21 +40,16 @@
         </div>
     </header>
 
-    <!-- ANA İÇERİK -->
     <main class="container mx-auto px-4 py-8 flex-grow">
-        
-        <!-- Reklam Alanı -->
         <div class="w-full h-24 bg-gray-200 rounded-lg flex items-center justify-center mb-8 border border-gray-300 text-gray-500 text-sm">
             Google Reklam Alanı (Responsive)
         </div>
 
-        <!-- 1. BÖLÜM SEÇİMİ -->
         <div id="step-departments" class="fade-in">
             <h2 class="text-xl font-bold mb-6 text-slate-700 border-l-4 border-blue-500 pl-3">Bölüm Seçiniz</h2>
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6" id="department-grid"></div>
         </div>
 
-        <!-- 2. YARIYIL SEÇİMİ -->
         <div id="step-semesters" class="hidden fade-in">
             <button onclick="goHome()" class="mb-4 text-blue-600 hover:text-blue-800 flex items-center gap-2">
                 <i class="fa-solid fa-arrow-left"></i> Bölümlere Dön
@@ -88,7 +60,6 @@
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4" id="semester-grid"></div>
         </div>
 
-        <!-- 3. DERSLER -->
         <div id="step-courses" class="hidden fade-in">
             <button onclick="goBackToSemesters()" class="mb-4 text-blue-600 hover:text-blue-800 flex items-center gap-2">
                 <i class="fa-solid fa-arrow-left"></i> Dönemlere Dön
@@ -98,17 +69,14 @@
             </h2>
             <div id="courses-container" class="space-y-4"></div>
         </div>
-
     </main>
 
-    <!-- FOOTER -->
     <footer class="bg-slate-800 text-slate-400 py-8 mt-8">
         <div class="container mx-auto px-4 text-center">
             <p>&copy; 2025 AÖF Ders Notları. Tüm hakları saklıdır.</p>
         </div>
     </footer>
 
-    <!-- JAVASCRIPT -->
     <script>
         // --- VERİ TABANI ---
         const curriculum = {
@@ -120,39 +88,18 @@
                 borderColor: "border-blue-500",
                 semesters: {
                     1: [
-                        { 
-                            id: "ilk_cag_felsefesi", 
-                            name: "İlk Çağ Felsefesi", 
-                            folder: "IlkCagFel", 
-                            units: 8,
-                            fileSuffix: "_test" // uniteX_test.html formatı için
-                        },
-                        { 
-                            id: "psikoloji", 
-                            name: "Psikoloji", 
-                            folder: "psikoloji", 
-                            units: 8
-                        },
-                        { 
-                            id: "sosyolojiye_giris", 
-                            name: "Sosyolojiye Giriş", 
-                            folder: "sosyoloji", 
-                            units: 8 
-                        },
-                        { 
-                            id: "hukukun_temel_kavramlari", 
-                            name: "Hukukun Temel Kavramları", 
-                            folder: "hukuk", 
-                            units: 8 
-                        },
-                        { 
-                            id: "sosyal_bilimlerde_temel", 
-                            name: "Sosyal Bilimlerde Temel Kavramlar", 
-                            folder: "sosyal_bilimlerde_temel_kavramlar", 
-                            units: 8 
-                        }
+                        { id: "ilk_cag_felsefesi", name: "İlk Çağ Felsefesi", folder: "IlkCagFel", units: 8, fileSuffix: "_test" },
+                        { id: "psikoloji", name: "Psikoloji", folder: "psikoloji", units: 8 },
+                        { id: "sosyolojiye_giris", name: "Sosyolojiye Giriş", folder: "sosyoloji", units: 8 },
+                        { id: "hukukun_temel_kavramlari", name: "Hukukun Temel Kavramları", folder: "hukuk", units: 8 },
+                        { id: "sosyal_bilimlerde_temel", name: "Sosyal Bilimlerde Temel Kavramlar", folder: "sosyal_bilimlerde_temel_kavramlar", units: 8 }
                     ],
-                    2: [], 3: [], 4: [], 5: [], 6: [], 7: [], 8: []
+                    2: [
+                        { id: "ilk_cag_felsefesi_2", name: "İlk Çağ Felsefesi II", folder: "IlkCagFel2", units: 8, fileSuffix: "_test" },
+                        { id: "klasik_mantik", name: "Klasik Mantık", folder: "KlasikMantik", units: 8 },
+                        { id: "etik", name: "Etik", folder: "Etik", units: 8 }
+                    ],
+                    3: [], 4: [], 5: [], 6: [], 7: [], 8: []
                 }
             },
             "sosyoloji": {
@@ -204,7 +151,6 @@
             document.getElementById('step-semesters').classList.remove('hidden');
             document.getElementById('selected-dept-name').innerText = dept.title;
             updateBreadcrumb();
-
             const grid = document.getElementById('semester-grid');
             grid.innerHTML = '';
             for (let i = 1; i <= 8; i++) {
@@ -231,10 +177,8 @@
             document.getElementById('step-courses').classList.remove('hidden');
             document.getElementById('course-header-text').innerText = `${curriculum[currentDeptId].title} ${semesterNum}. Yarıyıl`;
             updateBreadcrumb();
-
             const container = document.getElementById('courses-container');
             container.innerHTML = '';
-            
             if (courses.length === 0) {
                 container.innerHTML = '<div class="text-center p-8 text-gray-500">Ders bulunamadı.</div>';
                 return;
@@ -243,14 +187,16 @@
             courses.forEach(course => {
                 const courseEl = document.createElement('div');
                 courseEl.className = "bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden";
-                
                 let unitsHtml = '';
                 const suffix = course.fileSuffix || ""; 
 
                 for(let u = 1; u <= course.units; u++) {
-                    // LINK GÜNCELLEMESİ YAPILDI
-                    // Örnek: /1donem/dersler/IlkCagFel/unite1_test.html
-                    const linkPath = `/${currentSemester}donem/dersler/${course.folder}/unite${u}${suffix}.html`;
+                    // --- PATH (YOL) AYARLAMASI ---
+                    // GÜNCELLEME: "dersler" klasörü aradan kaldırıldı.
+                    // Yeni format: 1donem/KlasorAdi/uniteX.html
+                    
+                    let folderPath = `${currentSemester}donem/${course.folder}`;
+                    const linkPath = `${folderPath}/unite${u}${suffix}.html`;
                     
                     unitsHtml += `
                         <a href="${linkPath}" class="block p-3 hover:bg-slate-50 border-b last:border-0 border-slate-100 flex items-center group transition">
@@ -314,7 +260,6 @@
         function updateBreadcrumb() {
             const deptText = document.getElementById('bc-dept');
             const semText = document.getElementById('bc-sem');
-            
             if (currentDeptId) {
                 document.getElementById('bc-dept-separator').classList.remove('hidden');
                 deptText.classList.remove('hidden');
@@ -324,7 +269,6 @@
                 document.getElementById('bc-dept-separator').classList.add('hidden');
                 deptText.classList.add('hidden');
             }
-
             if (currentSemester) {
                 document.getElementById('bc-sem-separator').classList.remove('hidden');
                 semText.classList.remove('hidden');
