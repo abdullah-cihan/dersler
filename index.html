@@ -3,279 +3,471 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- SEO Açıklamaları -->
     <meta name="description" content="AÖF Ders Notları, Çıkmış Sorular ve Ünite Testleri.">
     <title>AÖF Ders Notları ve Test Platformu</title>
+    
+    <!-- Tailwind CSS (Tasarım Kütüphanesi) -->
     <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- İkon Seti (FontAwesome) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Font (Inter) -->
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
-        body { font-family: 'Inter', sans-serif; background-color: #f3f4f6; }
-        .fade-in { animation: fadeIn 0.3s ease-in-out; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        .accordion-content { transition: max-height 0.3s ease-out, opacity 0.3s ease-out; max-height: 0; opacity: 0; overflow: hidden; }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: #f8fafc; /* Daha modern, hafif gri-mavi arka plan */
+        }
+
+        /* Sayfa geçiş animasyonları */
+        .fade-in { animation: fadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+        @keyframes fadeIn { 
+            from { opacity: 0; transform: translateY(15px); } 
+            to { opacity: 1; transform: translateY(0); } 
+        }
+
+        /* Akordeon açılma animasyonu */
+        .accordion-content { 
+            transition: max-height 0.3s ease-out, opacity 0.3s ease-out; 
+            max-height: 0; 
+            opacity: 0; 
+            overflow: hidden; 
+        }
         .accordion-content.active { opacity: 1; }
+
+        /* Modern Scrollbar Tasarımı */
         ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
     </style>
 </head>
 <body class="flex flex-col min-h-screen text-slate-800">
 
-    <header class="bg-gradient-to-r from-slate-800 to-slate-900 text-white shadow-lg">
-        <div class="container mx-auto px-4 py-6">
-            <div class="flex flex-col md:flex-row justify-between items-center">
-                <div class="text-center md:text-left mb-4 md:mb-0 cursor-pointer" onclick="goHome()">
-                    <h1 class="text-2xl font-bold tracking-wide"><i class="fa-solid fa-book-open mr-2"></i>AÖF Not & Test</h1>
-                    <p class="text-slate-400 text-sm mt-1">Akademik Başarı Platformu</p>
+    <!-- ========================================== -->
+    <!-- HEADER (ÜST MENÜ) -->
+    <!-- ========================================== -->
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-4">
+            <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+                <!-- Logo Alanı -->
+                <div class="flex items-center gap-3 cursor-pointer group" onclick="goHome()">
+                    <div class="w-10 h-10 bg-blue-600 text-white rounded-lg flex items-center justify-center shadow-lg group-hover:bg-blue-700 transition">
+                        <i class="fa-solid fa-graduation-cap text-lg"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-xl font-bold text-slate-800 leading-tight">AÖF Not & Test</h1>
+                        <p class="text-xs text-slate-500 font-medium">Öğrenci Çalışma Platformu</p>
+                    </div>
                 </div>
-                <nav id="breadcrumb-nav" class="hidden md:block text-sm text-slate-300">
-                    <span class="cursor-pointer hover:text-white" onclick="goHome()">Ana Sayfa</span>
-                    <span id="bc-dept-separator" class="hidden"> <i class="fa-solid fa-chevron-right mx-2 text-xs"></i> </span>
-                    <span id="bc-dept" class="font-semibold text-white hidden"></span>
-                    <span id="bc-sem-separator" class="hidden"> <i class="fa-solid fa-chevron-right mx-2 text-xs"></i> </span>
-                    <span id="bc-sem" class="font-semibold text-white hidden"></span>
+
+                <!-- Breadcrumb (Yol Haritası: Ana Sayfa > Felsefe > 1. Yarıyıl) -->
+                <nav id="breadcrumb-nav" class="hidden md:flex items-center text-sm font-medium text-slate-500 bg-slate-50 px-4 py-2 rounded-full border border-slate-100">
+                    <span class="cursor-pointer hover:text-blue-600 transition" onclick="goHome()">
+                        <i class="fa-solid fa-home mr-1"></i> Ana Sayfa
+                    </span>
+                    
+                    <span id="bc-dept-separator" class="hidden mx-2 text-slate-300">/</span>
+                    <span id="bc-dept" class="hidden font-semibold text-slate-700"></span>
+                    
+                    <span id="bc-sem-separator" class="hidden mx-2 text-slate-300">/</span>
+                    <span id="bc-sem" class="hidden text-blue-600 bg-blue-50 px-2 py-0.5 rounded-md"></span>
                 </nav>
             </div>
         </div>
     </header>
 
-    <main class="container mx-auto px-4 py-8 flex-grow">
-        <div class="w-full h-24 bg-gray-200 rounded-lg flex items-center justify-center mb-8 border border-gray-300 text-gray-500 text-sm">
-            Google Reklam Alanı (Responsive)
+    <!-- ========================================== -->
+    <!-- ANA İÇERİK (MAIN) -->
+    <!-- ========================================== -->
+    <main class="container mx-auto px-4 py-8 flex-grow max-w-6xl">
+        
+        <!-- Reklam Alanı (Responsive) -->
+        <!-- Google AdSense kodu buraya gelecek -->
+        <div class="w-full h-28 bg-slate-100 rounded-xl flex flex-col items-center justify-center mb-10 border-2 border-dashed border-slate-300 text-slate-400 text-sm overflow-hidden">
+            <span class="font-semibold">REKLAM ALANI</span>
+            <span class="text-xs mt-1">Siteniz onaylandığında buraya Google reklamları gelecek.</span>
         </div>
 
+        <!-- ADIM 1: BÖLÜM LİSTESİ -->
         <div id="step-departments" class="fade-in">
-            <h2 class="text-xl font-bold mb-6 text-slate-700 border-l-4 border-blue-500 pl-3">Bölüm Seçiniz</h2>
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6" id="department-grid"></div>
+            <div class="flex items-center gap-3 mb-6">
+                <span class="w-1 h-8 bg-blue-500 rounded-full"></span>
+                <h2 class="text-2xl font-bold text-slate-800">Bölüm Seçiniz</h2>
+            </div>
+            <!-- Bölüm Kartları Grid Yapısı -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6" id="department-grid">
+                <!-- JS tarafından doldurulacak -->
+            </div>
         </div>
 
+        <!-- ADIM 2: DÖNEM (YARIYIL) SEÇİMİ -->
         <div id="step-semesters" class="hidden fade-in">
-            <button onclick="goHome()" class="mb-4 text-blue-600 hover:text-blue-800 flex items-center gap-2">
-                <i class="fa-solid fa-arrow-left"></i> Bölümlere Dön
+            <button onclick="goHome()" class="mb-6 text-slate-500 hover:text-blue-600 flex items-center gap-2 font-medium transition group">
+                <div class="w-8 h-8 rounded-full bg-white border border-slate-200 flex items-center justify-center group-hover:border-blue-300">
+                    <i class="fa-solid fa-arrow-left text-sm"></i>
+                </div>
+                Bölümlere Dön
             </button>
-            <h2 class="text-xl font-bold mb-6 text-slate-700 border-l-4 border-green-500 pl-3">
-                <span id="selected-dept-name"></span> - Dönem Seçimi
-            </h2>
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4" id="semester-grid"></div>
+            
+            <div class="flex items-center gap-3 mb-6">
+                <span class="w-1 h-8 bg-green-500 rounded-full"></span>
+                <h2 class="text-2xl font-bold text-slate-800">
+                    <span id="selected-dept-name" class="text-slate-600"></span> 
+                    <span class="text-slate-300 mx-2">|</span> Dönem Seçimi
+                </h2>
+            </div>
+
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4" id="semester-grid">
+                <!-- JS tarafından doldurulacak -->
+            </div>
         </div>
 
+        <!-- ADIM 3: DERSLER VE ÜNİTELER -->
         <div id="step-courses" class="hidden fade-in">
-            <button onclick="goBackToSemesters()" class="mb-4 text-blue-600 hover:text-blue-800 flex items-center gap-2">
-                <i class="fa-solid fa-arrow-left"></i> Dönemlere Dön
+            <button onclick="goBackToSemesters()" class="mb-6 text-slate-500 hover:text-blue-600 flex items-center gap-2 font-medium transition group">
+                <div class="w-8 h-8 rounded-full bg-white border border-slate-200 flex items-center justify-center group-hover:border-blue-300">
+                    <i class="fa-solid fa-arrow-left text-sm"></i>
+                </div>
+                Dönemlere Dön
             </button>
-            <h2 class="text-xl font-bold mb-6 text-slate-700 border-l-4 border-purple-500 pl-3">
-                <span id="course-header-text"></span> Dersleri
-            </h2>
-            <div id="courses-container" class="space-y-4"></div>
+
+            <div class="flex items-center gap-3 mb-6">
+                <span class="w-1 h-8 bg-purple-500 rounded-full"></span>
+                <h2 class="text-2xl font-bold text-slate-800">
+                    <span id="course-header-text"></span> Dersleri
+                </h2>
+            </div>
+            
+            <div id="courses-container" class="space-y-4">
+                <!-- JS tarafından doldurulacak -->
+            </div>
         </div>
+
     </main>
 
-    <footer class="bg-slate-800 text-slate-400 py-8 mt-8">
+    <!-- FOOTER -->
+    <footer class="bg-white border-t border-slate-200 py-8 mt-auto">
         <div class="container mx-auto px-4 text-center">
-            <p>&copy; 2025 AÖF Ders Notları. Tüm hakları saklıdır.</p>
+            <p class="text-slate-600 font-medium">&copy; 2025 AÖF Ders Notları</p>
+            <p class="text-slate-400 text-sm mt-2">Öğrenci dostu ücretsiz çalışma kaynağı.</p>
         </div>
     </footer>
 
+    <!-- ========================================== -->
+    <!-- JAVASCRIPT: SİSTEMİN BEYNİ -->
+    <!-- ========================================== -->
     <script>
-        // --- VERİ TABANI ---
+        // ==========================================
+        // 1. VERİ TABANI (MÜFREDAT)
+        // Burayı düzenleyerek yeni bölüm, dönem ve ders ekleyebilirsiniz.
+        // ==========================================
         const curriculum = {
+            
+            // --- BÖLÜM 1: FELSEFE ---
             "felsefe": {
                 title: "Felsefe",
-                icon: "fa-solid fa-landmark",
+                icon: "fa-solid fa-landmark", // FontAwesome ikonu
                 description: "Varlık, bilgi ve değer kavramlarını inceleyen disiplin.",
-                color: "bg-blue-50",
-                borderColor: "border-blue-500",
+                color: "bg-blue-50",           // Arkaplan rengi (Tailwind)
+                borderColor: "border-blue-500",// Kenarlık rengi
                 semesters: {
+                    // 1. YARIYIL DERSLERİ
                     1: [
-                        { id: "ilk_cag_felsefesi", name: "İlk Çağ Felsefesi", folder: "IlkCagFel", units: 8, fileSuffix: "_test" },
+                        { 
+                            id: "ilk_cag_felsefesi", 
+                            name: "İlk Çağ Felsefesi", 
+                            folder: "IlkCagFel",    // Klasör adı (1donem/IlkCagFel/...)
+                            units: 8,               // Kaç ünite var?
+                            fileSuffix: "_test"     // Eğer dosya adı unite1_test.html ise bunu ekleyin. Yoksa boş bırakın.
+                        },
                         { id: "psikoloji", name: "Psikoloji", folder: "psikoloji", units: 8 },
                         { id: "sosyolojiye_giris", name: "Sosyolojiye Giriş", folder: "sosyoloji", units: 8 },
                         { id: "hukukun_temel_kavramlari", name: "Hukukun Temel Kavramları", folder: "hukuk", units: 8 },
                         { id: "sosyal_bilimlerde_temel", name: "Sosyal Bilimlerde Temel Kavramlar", folder: "sosyal_bilimlerde_temel_kavramlar", units: 8 }
                     ],
+                    // 2. YARIYIL DERSLERİ
                     2: [
-                        { id: "ilk_cag_felsefesi_2", name: "İlk Çağ Felsefesi II", folder: "IlkCagFel2", units: 8, fileSuffix: "_test" },
+                        { 
+                            id: "ilk_cag_felsefesi_2", 
+                            name: "İlk Çağ Felsefesi II", 
+                            folder: "IlkCagFel2", 
+                            units: 8,
+                            fileSuffix: "_test"
+                        },
                         { id: "klasik_mantik", name: "Klasik Mantık", folder: "KlasikMantik", units: 8 },
                         { id: "etik", name: "Etik", folder: "Etik", units: 8 }
                     ],
+                    // Gelecek dönemler için boş diziler
                     3: [], 4: [], 5: [], 6: [], 7: [], 8: []
                 }
             },
+
+            // --- BÖLÜM 2: SOSYOLOJİ ---
             "sosyoloji": {
                 title: "Sosyoloji",
                 icon: "fa-solid fa-users",
-                description: "Toplum bilimi.",
+                description: "Toplumu, kurumları ve grupları inceleyen bilim dalı.",
                 color: "bg-green-50",
                 borderColor: "border-green-500",
-                semesters: { 1: [] }
+                semesters: { 1: [], 2: [], 3: [], 4: [], 5: [], 6: [], 7: [], 8: [] }
             },
+
+            // --- BÖLÜM 3: TARİH ---
             "tarih": {
                 title: "Tarih",
                 icon: "fa-solid fa-scroll",
-                description: "Geçmiş bilimi.",
+                description: "Geçmiş olayları yer ve zaman göstererek inceleyen bilim.",
                 color: "bg-orange-50",
                 borderColor: "border-orange-500",
-                semesters: { 1: [] }
+                semesters: { 1: [], 2: [], 3: [], 4: [], 5: [], 6: [], 7: [], 8: [] }
             }
         };
 
+        // Mevcut durum değişkenleri
         let currentDeptId = null;
         let currentSemester = null;
 
-        document.addEventListener('DOMContentLoaded', () => { renderDepartments(); });
+        // Sayfa yüklendiğinde çalışacak kod
+        document.addEventListener('DOMContentLoaded', () => { 
+            renderDepartments(); 
+        });
 
+        // ==========================================
+        // 2. FONKSİYONLAR
+        // ==========================================
+
+        // A. BÖLÜMLERİ LİSTELEME
         function renderDepartments() {
             const grid = document.getElementById('department-grid');
-            grid.innerHTML = '';
+            grid.innerHTML = ''; // Temizle
+
             for (const [key, dept] of Object.entries(curriculum)) {
                 const card = document.createElement('div');
-                card.className = `${dept.color} p-6 rounded-xl shadow-sm hover:shadow-md transition cursor-pointer border-t-4 ${dept.borderColor} flex flex-col items-center text-center group`;
+                // Kart Tasarımı
+                card.className = `
+                    ${dept.color} relative p-6 rounded-2xl border border-slate-200 
+                    hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer 
+                    flex flex-col items-center text-center group overflow-hidden
+                `;
                 card.onclick = () => selectDepartment(key);
+
                 card.innerHTML = `
-                    <div class="w-16 h-16 bg-white rounded-full flex items-center justify-center mb-4 shadow-sm group-hover:scale-110 transition">
-                        <i class="${dept.icon} text-2xl text-slate-700"></i>
+                    <!-- Dekoratif Üst Çizgi -->
+                    <div class="absolute top-0 left-0 w-full h-1.5 bg-${dept.borderColor.replace('border-', '')}"></div>
+                    
+                    <div class="w-16 h-16 bg-white rounded-2xl flex items-center justify-center mb-4 shadow-sm group-hover:scale-110 transition-transform duration-300">
+                        <i class="${dept.icon} text-3xl text-slate-700"></i>
                     </div>
-                    <h3 class="text-xl font-bold text-slate-800 mb-2">${dept.title}</h3>
-                    <p class="text-sm text-slate-500 line-clamp-2">${dept.description}</p>
-                    <span class="mt-4 text-xs font-semibold uppercase tracking-wider text-slate-400 group-hover:text-slate-600">İncele &rarr;</span>
+                    <h3 class="text-xl font-bold text-slate-800 mb-2 group-hover:text-blue-700 transition">${dept.title}</h3>
+                    <p class="text-sm text-slate-500 leading-relaxed mb-4">${dept.description}</p>
+                    <span class="mt-auto inline-flex items-center text-xs font-bold uppercase tracking-wider text-blue-600 bg-white px-3 py-1 rounded-full shadow-sm">
+                        İncele <i class="fa-solid fa-arrow-right ml-2"></i>
+                    </span>
                 `;
                 grid.appendChild(card);
             }
         }
 
+        // B. BÖLÜM SEÇME MANTIĞI
         function selectDepartment(deptId) {
             currentDeptId = deptId;
             const dept = curriculum[deptId];
-            document.getElementById('step-departments').classList.add('hidden');
-            document.getElementById('step-semesters').classList.remove('hidden');
+
+            // Görünüm Değiştir
+            toggleView('step-semesters');
             document.getElementById('selected-dept-name').innerText = dept.title;
             updateBreadcrumb();
+
+            // Dönemleri Oluştur (1-8 arası)
             const grid = document.getElementById('semester-grid');
             grid.innerHTML = '';
+
             for (let i = 1; i <= 8; i++) {
+                // Ders var mı kontrolü
                 const hasCourses = dept.semesters[i] && dept.semesters[i].length > 0;
+                
                 const btn = document.createElement('div');
-                let styleClasses = "p-6 rounded-lg shadow-sm text-center transition border font-bold text-lg ";
+                
+                // Dönem Butonu Tasarımı (Dolu ve Boş Durumlar)
+                let baseClass = "p-5 rounded-xl border-2 transition-all duration-200 flex flex-col items-center justify-center min-h-[120px] ";
+                
                 if (hasCourses) {
-                    styleClasses += "bg-white hover:bg-blue-50 cursor-pointer border-gray-200 hover:border-blue-300 text-slate-700";
+                    btn.className = baseClass + "bg-white border-blue-100 hover:border-blue-500 hover:shadow-lg cursor-pointer group";
                     btn.onclick = () => selectSemester(i);
+                    btn.innerHTML = `
+                        <span class="text-4xl font-black text-slate-200 group-hover:text-blue-500 transition-colors">${i}</span>
+                        <span class="text-sm font-semibold text-slate-600 group-hover:text-slate-800">. Yarıyıl</span>
+                        <span class="mt-2 text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full">Aktif</span>
+                    `;
                 } else {
-                    styleClasses += "bg-gray-100 text-gray-400 cursor-not-allowed border-transparent";
-                    btn.onclick = () => alert("Bu dönem henüz eklenmedi.");
+                    btn.className = baseClass + "bg-slate-50 border-transparent opacity-60 cursor-not-allowed grayscale";
+                    btn.onclick = () => alert("Bu dönem için içerik henüz hazırlanıyor.");
+                    btn.innerHTML = `
+                        <span class="text-4xl font-black text-slate-200">${i}</span>
+                        <span class="text-sm font-medium text-slate-400">. Yarıyıl</span>
+                        <span class="mt-2 text-xs bg-slate-200 text-slate-500 px-2 py-0.5 rounded-full">Hazırlanıyor</span>
+                    `;
                 }
-                btn.className = styleClasses;
-                btn.innerHTML = `<div class="text-3xl mb-2 opacity-80">${i}</div><div class="text-sm font-normal">. Yarıyıl</div>`;
                 grid.appendChild(btn);
             }
         }
 
+        // C. DÖNEM SEÇME VE DERSLERİ LİSTELEME
         function selectSemester(semesterNum) {
             currentSemester = semesterNum;
             const courses = curriculum[currentDeptId].semesters[semesterNum];
-            document.getElementById('step-semesters').classList.add('hidden');
-            document.getElementById('step-courses').classList.remove('hidden');
+
+            toggleView('step-courses');
             document.getElementById('course-header-text').innerText = `${curriculum[currentDeptId].title} ${semesterNum}. Yarıyıl`;
             updateBreadcrumb();
+
             const container = document.getElementById('courses-container');
             container.innerHTML = '';
-            if (courses.length === 0) {
-                container.innerHTML = '<div class="text-center p-8 text-gray-500">Ders bulunamadı.</div>';
+
+            // Güvenlik kontrolü
+            if (!courses || courses.length === 0) {
+                container.innerHTML = '<div class="text-center p-8 bg-yellow-50 rounded-lg text-yellow-700">Bu dönem için ders kaydı bulunamadı.</div>';
                 return;
             }
 
+            // Her bir ders için kart oluştur
             courses.forEach(course => {
                 const courseEl = document.createElement('div');
-                courseEl.className = "bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden";
+                courseEl.className = "bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden hover:shadow-md transition-shadow";
+                
+                // Ünite linklerini hazırla
                 let unitsHtml = '';
-                const suffix = course.fileSuffix || ""; 
+                const suffix = course.fileSuffix || ""; // _test ekini al
 
                 for(let u = 1; u <= course.units; u++) {
-                    // --- PATH (YOL) AYARLAMASI ---
-                    // GÜNCELLEME: "dersler" klasörü aradan kaldırıldı.
-                    // Yeni format: 1donem/KlasorAdi/uniteX.html
-                    
+                    // LINK OLUŞTURMA MANTIĞI:
+                    // 1donem/KlasorAdi/unite1_test.html
                     let folderPath = `${currentSemester}donem/${course.folder}`;
                     const linkPath = `${folderPath}/unite${u}${suffix}.html`;
                     
                     unitsHtml += `
-                        <a href="${linkPath}" class="block p-3 hover:bg-slate-50 border-b last:border-0 border-slate-100 flex items-center group transition">
-                            <span class="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center mr-3 text-sm font-bold group-hover:bg-blue-600 group-hover:text-white transition">
+                        <a href="${linkPath}" class="group flex items-center p-3 hover:bg-blue-50 border-b border-slate-100 last:border-0 transition-colors">
+                            <div class="w-8 h-8 rounded-lg bg-slate-100 text-slate-500 flex items-center justify-center mr-3 text-sm font-bold group-hover:bg-blue-600 group-hover:text-white transition-all">
                                 ${u}
-                            </span>
-                            <span class="text-slate-600 group-hover:text-blue-700 group-hover:translate-x-1 transition-transform duration-200">
-                                ${u}. Ünite (Test & Not)
-                            </span>
-                            <i class="fa-solid fa-chevron-right ml-auto text-slate-300 group-hover:text-blue-400 text-xs"></i>
+                            </div>
+                            <div class="flex-grow">
+                                <span class="text-slate-600 font-medium group-hover:text-blue-700 transition-colors">
+                                    ${u}. Ünite 
+                                </span>
+                                <span class="text-xs text-slate-400 ml-2">(Not & Test)</span>
+                            </div>
+                            <i class="fa-solid fa-chevron-right text-slate-300 text-xs group-hover:text-blue-500 group-hover:translate-x-1 transition-transform"></i>
                         </a>
                     `;
                 }
 
+                // Ders Akordeon Yapısı
                 courseEl.innerHTML = `
-                    <button class="accordion-header w-full text-left p-5 bg-white hover:bg-gray-50 flex justify-between items-center outline-none" onclick="toggleAccordion(this)">
-                        <div class="flex items-center gap-3">
-                            <i class="fa-solid fa-book text-blue-500"></i>
+                    <button class="w-full text-left p-5 bg-white hover:bg-slate-50 flex justify-between items-center outline-none transition-colors" onclick="toggleAccordion(this)">
+                        <div class="flex items-center gap-4">
+                            <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600">
+                                <i class="fa-solid fa-book"></i>
+                            </div>
                             <span class="font-bold text-slate-700 text-lg">${course.name}</span>
                         </div>
-                        <i class="fa-solid fa-plus text-slate-400 transition-transform duration-300"></i>
+                        <div class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-400 transition-transform duration-300 icon-rotate">
+                            <i class="fa-solid fa-plus"></i>
+                        </div>
                     </button>
-                    <div class="accordion-content bg-slate-50/50">
-                        <div class="p-2">${unitsHtml}</div>
+                    <div class="accordion-content bg-white border-t border-slate-100">
+                        <div class="p-2 grid grid-cols-1 md:grid-cols-2 gap-x-4">
+                            ${unitsHtml}
+                        </div>
                     </div>
                 `;
                 container.appendChild(courseEl);
             });
         }
 
+        // D. AKORDEON AÇ/KAPA
         function toggleAccordion(button) {
             const content = button.nextElementSibling;
-            const icon = button.querySelector('.fa-plus') || button.querySelector('.fa-minus');
+            const iconContainer = button.querySelector('.icon-rotate');
+            const icon = iconContainer.querySelector('i');
+
             if (content.style.maxHeight) {
+                // Kapat
                 content.style.maxHeight = null;
                 content.classList.remove('active');
-                icon.className = "fa-solid fa-plus text-slate-400 transition-transform duration-300";
+                iconContainer.classList.remove('bg-blue-100', 'text-blue-600');
+                iconContainer.style.transform = "rotate(0deg)";
+                icon.classList.remove('fa-minus');
+                icon.classList.add('fa-plus');
             } else {
+                // Aç
                 content.style.maxHeight = content.scrollHeight + "px";
                 content.classList.add('active');
-                icon.className = "fa-solid fa-minus text-slate-400 transition-transform duration-300";
-                icon.style.transform = "rotate(180deg)";
+                iconContainer.classList.add('bg-blue-100', 'text-blue-600'); // Aktif renk
+                iconContainer.style.transform = "rotate(180deg)";
+                icon.classList.remove('fa-plus');
+                icon.classList.add('fa-minus');
             }
+        }
+
+        // E. YARDIMCI FONKSİYONLAR (Gezinti vb.)
+        
+        // Görünüm Değiştirici (Sayfalar arası geçiş efekti)
+        function toggleView(targetId) {
+            // Tüm sayfaları gizle
+            ['step-departments', 'step-semesters', 'step-courses'].forEach(id => {
+                document.getElementById(id).classList.add('hidden');
+            });
+            // Hedef sayfayı göster
+            const target = document.getElementById(targetId);
+            target.classList.remove('hidden');
+            
+            // Sayfanın en üstüne kaydır (UX için önemli)
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         function goHome() {
             currentDeptId = null; currentSemester = null;
-            document.getElementById('step-courses').classList.add('hidden');
-            document.getElementById('step-semesters').classList.add('hidden');
-            document.getElementById('step-departments').classList.remove('hidden');
+            toggleView('step-departments');
             updateBreadcrumb();
         }
 
         function goBackToSemesters() {
             currentSemester = null;
-            document.getElementById('step-courses').classList.add('hidden');
-            document.getElementById('step-semesters').classList.remove('hidden');
+            toggleView('step-semesters');
             updateBreadcrumb();
         }
 
+        // Breadcrumb (Navigasyon Yolu) Güncelleyici
         function updateBreadcrumb() {
             const deptText = document.getElementById('bc-dept');
             const semText = document.getElementById('bc-sem');
+            const sep1 = document.getElementById('bc-dept-separator');
+            const sep2 = document.getElementById('bc-sem-separator');
+
+            // Bölüm seçili mi?
             if (currentDeptId) {
-                document.getElementById('bc-dept-separator').classList.remove('hidden');
                 deptText.classList.remove('hidden');
+                sep1.classList.remove('hidden');
                 deptText.innerText = curriculum[currentDeptId].title;
                 deptText.onclick = goBackToSemesters;
+                deptText.classList.add('cursor-pointer', 'hover:text-blue-600');
             } else {
-                document.getElementById('bc-dept-separator').classList.add('hidden');
                 deptText.classList.add('hidden');
+                sep1.classList.add('hidden');
             }
+
+            // Dönem seçili mi?
             if (currentSemester) {
-                document.getElementById('bc-sem-separator').classList.remove('hidden');
                 semText.classList.remove('hidden');
+                sep2.classList.remove('hidden');
                 semText.innerText = currentSemester + ". Yarıyıl";
             } else {
-                document.getElementById('bc-sem-separator').classList.add('hidden');
                 semText.classList.add('hidden');
+                sep2.classList.add('hidden');
             }
         }
     </script>
