@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sosyoloji - 2. Ünite: Sosyolojik Araştırma Yöntem ve Teknikleri</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f3e5f5; color: #333; margin: 0; padding: 20px; }
+        .container { max-width: 900px; margin: 0 auto; background: #fff; padding: 40px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        h1 { text-align: center; color: #673ab7; border-bottom: 2px solid #9575cd; padding-bottom: 10px; margin-bottom: 30px; }
+        
+        /* İlerleme Çubuğu */
+        .progress-container { background-color: #d1c4e9; border-radius: 10px; margin-bottom: 20px; height: 10px; overflow: hidden; }
+        .progress-bar { height: 100%; background-color: #673ab7; width: 0%; transition: width 0.3s; }
+        .progress-text { text-align: right; font-size: 0.9em; color: #512da8; margin-bottom: 15px; }
+
+        /* Soru Alanı */
+        .question-block { display: none; animation: fadeIn 0.5s; }
+        .question-block.active { display: block; }
+        .question-text { font-weight: 600; font-size: 1.25em; margin-bottom: 20px; color: #4527a0; }
+        
+        /* Seçenekler */
+        .options { display: flex; flex-direction: column; gap: 10px; }
+        .option-label { 
+            display: flex; align-items: center; padding: 12px 15px; border: 2px solid #e0e0e0; 
+            border-radius: 8px; cursor: pointer; transition: all 0.2s; background: #fff;
+        }
+        .option-label:hover { background-color: #ede7f6; border-color: #b39ddb; }
+        .option-label.selected { border-color: #673ab7; background-color: #d1c4e9; }
+        .option-label input { margin-right: 15px; transform: scale(1.2); }
+        
+        /* Cevap Göster Stilleri */
+        .option-label.correct-highlight { border-color: #27ae60; background-color: #d5f5e3; color: #1e8449; font-weight: bold; }
+        .option-label.wrong-highlight { border-color: #e74c3c; background-color: #fadbd8; }
+
+        /* Butonlar */
+        .controls { margin-top: 30px; display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
+        button { border: none; padding: 12px 24px; border-radius: 6px; cursor: pointer; font-size: 16px; font-weight: 600; transition: background 0.2s; }
+        .nav-btn { background-color: #673ab7; color: white; }
+        .nav-btn:hover { background-color: #512da8; }
+        .nav-btn:disabled { background-color: #bdc3c7; cursor: not-allowed; }
+        
+        .show-answer-btn { background-color: #f39c12; color: white; }
+        .show-answer-btn:hover { background-color: #e67e22; }
+        
+        .finish-btn { background-color: #27ae60; color: white; display: none; }
+        .finish-btn:hover { background-color: #219150; }
+
+        /* Sonuç Ekranı */
+        #result-screen { display: none; }
+        .score-card { text-align: center; background: #f8f9fa; padding: 20px; border-radius: 10px; margin-bottom: 30px; }
+        .score-circle { 
+            width: 120px; height: 120px; border-radius: 50%; background: #673ab7; color: white; 
+            display: flex; align-items: center; justify-content: center; font-size: 2em; font-weight: bold; 
+            margin: 0 auto 15px; 
+        }
+        
+        .review-table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 0.95em; }
+        .review-table th, .review-table td { padding: 12px; border: 1px solid #ddd; text-align: left; }
+        .review-table th { background-color: #4527a0; color: white; }
+        .review-table tr:nth-child(even) { background-color: #f2f2f2; }
+        .status-correct { color: #27ae60; font-weight: bold; }
+        .status-wrong { color: #c0392b; font-weight: bold; }
+        .status-empty { color: #f39c12; font-weight: bold; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div id="quiz-screen">
+        <h1>2. Ünite: Sosyolojik Araştırma Yöntem ve Teknikleri</h1>
+        
+        <div class="progress-text" id="progress-text">Soru 1 / 50</div>
+        <div class="progress-container">
+            <div class="progress-bar" id="progress-bar"></div>
+        </div>
+        
+        <div id="quiz-container">
+            <!-- Sorular buraya JS ile gelecek -->
+        </div>
+
+        <div class="controls">
+            <div>
+                <button class="nav-btn" id="prevBtn" onclick="prevQuestion()" disabled>&#8592; Önceki</button>
+            </div>
+            <div>
+                <button class="show-answer-btn" onclick="showCurrentAnswer()">👁️ Cevabı Göster</button>
+            </div>
+            <div>
+                <button class="nav-btn" id="nextBtn" onclick="nextQuestion()">Sonraki &#8594;</button>
+                <button class="finish-btn" id="finishBtn" onclick="finishQuiz()">Testi Bitir &#10004;</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="result-screen">
+        <h1>Değerlendirme Sonucu</h1>
+        <div class="score-card">
+            <div class="score-circle" id="score-circle">0</div>
+            <h3>Toplam Puan</h3>
+            <p id="score-details"></p>
+        </div>
+        
+        <h3>Detaylı Soru Analizi</h3>
+        <table class="review-table">
+            <thead>
+                <tr>
+                    <th style="width: 5%">No</th>
+                    <th style="width: 45%">Soru</th>
+                    <th style="width: 20%">Senin Cevabın</th>
+                    <th style="width: 20%">Doğru Cevap</th>
+                    <th style="width: 10%">Durum</th>
+                </tr>
+            </thead>
+            <tbody id="review-body">
+                <!-- Sonuç satırları buraya gelecek -->
+            </tbody>
+        </table>
+        <div style="text-align: center; margin-top: 30px;">
+            <button class="nav-btn" onclick="location.reload()">Testi Tekrar Çöz</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // 2. Ünite Konuları: Bilimsel Yöntem, Nicel ve Nitel Araştırmalar, Veri Toplama Teknikleri, Hipotez, Değişkenler, Örneklem, Etik
+    const questions = [
+        { q: "Bilimsel araştırma sürecinin genellikle ilk aşaması nedir?", o: ["Veri toplama", "Rapor yazma", "Sorunun (Problemin) Tanımlanması", "Analiz", "Örneklem seçimi"], a: 2 },
+        { q: "Doğruluğu bir araştırma ile sınanmak üzere öne sürülen, değişkenler arasındaki ilişkiye dair geçici ifadeye ne denir?", o: ["Teori", "Yasa", "Hipotez (Denence)", "Varsayım", "Önerme"], a: 2 },
+        { q: "Bir araştırmada neden-sonuç ilişkisinde 'neden' durumunda olan ve araştırmacı tarafından manipüle edilebilen değişkene ne denir?", o: ["Bağımlı Değişken", "Bağımsız Değişken", "Kontrol Değişkeni", "Ara Değişken", "Sürekli Değişken"], a: 1 },
+        { q: "Bağımsız değişkendeki değişime bağlı olarak değişen, 'sonuç' niteliğindeki değişkene ne denir?", o: ["Bağımsız Değişken", "Kontrol Değişkeni", "Bağımlı Değişken", "Kategorik Değişken", "Sabit Değişken"], a: 2 },
+        { q: "Sosyolojide sayısal verilere, istatistiksel analizlere ve genellemelere dayanan araştırma yaklaşımı hangisidir?", o: ["Nitel Araştırma", "Nicel (Kantitatif) Araştırma", "Etnografik Araştırma", "Fenomenolojik Araştırma", "Yorumlayıcı Araştırma"], a: 1 },
+        { q: "Sosyal olguların anlamını, sürecini ve bağlamını derinlemesine anlamaya çalışan, sözel verilere dayalı yaklaşım hangisidir?", o: ["Nicel Araştırma", "Nitel (Kalitatif) Araştırma", "Deneysel Araştırma", "İstatistiksel Araştırma", "Pozitivist Araştırma"], a: 1 },
+        { q: "Araştırma evreninin tamamına ulaşmanın zor olduğu durumlarda, evreni temsil etmesi için seçilen daha küçük gruba ne denir?", o: ["Grup", "Kitle", "Örneklem", "Denek", "Popülasyon"], a: 2 },
+        { q: "Bir ölçme aracının ölçmek istediği özelliği doğru ve hatasız bir şekilde ölçebilme derecesine ne denir?", o: ["Güvenilirlik", "Geçerlilik", "Tutarlılık", "Nesnellik", "Genellenebilirlik"], a: 1 },
+        { q: "Bir ölçme aracının farklı zamanlarda aynı sonuçları vermesi, yani tutarlı olması özelliğine ne denir?", o: ["Geçerlilik", "Güvenilirlik", "Doğruluk", "Hassasiyet", "Temsiliyet"], a: 1 },
+        { q: "Geniş kitlelerin duygu, düşünce ve tutumlarını ölçmek için standart soru formları kullanılarak yapılan veri toplama tekniği hangisidir?", o: ["Gözlem", "Mülakat", "Anket (Survey)", "Deney", "Monografi"], a: 2 },
+        { q: "Araştırmacının incelediği grubun içine girerek, onlarla birlikte yaşayarak ve etkinliklerine katılarak yaptığı gözlem türü hangisidir?", o: ["Yapılandırılmış Gözlem", "Katılımlı (İçeriden) Gözlem", "Dışarıdan Gözlem", "Laboratuvar Gözlemi", "Dolaylı Gözlem"], a: 1 },
+        { q: "Yüz yüze görüşerek, derinlemesine bilgi toplamak amacıyla yapılan veri toplama tekniği hangisidir?", o: ["Anket", "Gözlem", "Mülakat (Görüşme)", "İçerik Analizi", "Sosyometri"], a: 2 },
+        { q: "Bir toplumsal birimi (aile, köy, sendika vb.) her yönüyle derinlemesine inceleyen araştırma tekniğine ne denir?", o: ["Anket", "Monografi", "İstatistik", "Deney", "Panel"], a: 1 },
+        { q: "Grup içi ilişkileri, sevgi, nefret, liderlik gibi dinamikleri ölçmek için Moreno tarafından geliştirilen teknik hangisidir?", o: ["Psikodrama", "Sosyometri", "Etnografi", "Biyografi", "Anket"], a: 1 },
+        { q: "Le Play tarafından geliştirilen ve özellikle aile bütçeleri üzerine yoğunlaşan monografi tekniği hangi alanda öncüdür?", o: ["Siyaset Sosyolojisi", "Kır Sosyolojisi / Aile Araştırmaları", "Eğitim Sosyolojisi", "Din Sosyolojisi", "Sanat Sosyolojisi"], a: 1 },
+        { q: "Mevcut istatistikler, raporlar, günlükler veya mektuplar gibi daha önce toplanmış verilerin analiz edilmesine ne denir?", o: ["Birincil Veri Analizi", "İkincil Veri Analizi / Belge Tarama", "Saha Araştırması", "Deney", "Gözlem"], a: 1 },
+        { q: "İki değişken arasında bir ilişki olduğunu, biri artarken diğerinin de arttığını veya azaldığını gösteren istatistiksel kavrama ne denir?", o: ["Nedensellik", "Korelasyon (Bağıntı)", "Geçerlilik", "Hipotez", "Varyans"], a: 1 },
+        { q: "Bir değişken artarken diğeri de artıyorsa (Örn: Eğitim seviyesi ve gelir) bu ne tür bir korelasyondur?", o: ["Negatif Korelasyon", "Nötr Korelasyon", "Pozitif Korelasyon", "Sahte Korelasyon", "Ters Korelasyon"], a: 2 },
+        { q: "Bir değişken artarken diğeri azalıyorsa (Örn: Enflasyon ve alım gücü) bu ne tür bir korelasyondur?", o: ["Pozitif Korelasyon", "Negatif Korelasyon", "Sıfır Korelasyon", "Doğrusal Korelasyon", "Tam Korelasyon"], a: 1 },
+        { q: "'Korelasyon, ...... anlamına gelmez.' Boşluğa ne gelmelidir?", o: ["İlişki", "Bağlantı", "Nedensellik (Sebep-Sonuç)", "Ölçüm", "Analiz"], a: 2 },
+        { q: "Sosyolojik araştırmalarda, katılımcıların zarar görmemesi, gizliliklerinin korunması ve gönüllü katılımlarının sağlanması hangi ilke kapsamındadır?", o: ["Bilimsellik", "Etik İlkeler", "Nesnellik", "Genellik", "Tutarlılık"], a: 1 },
+        { q: "İnsanların gözlendiklerini bildiklerinde davranışlarını değiştirmeleri etkisine ne ad verilir?", o: ["Plasebo Etkisi", "Hawthorne Etkisi", "Kelebek Etkisi", "Pygmalion Etkisi", "Halo Etkisi"], a: 1 },
+        { q: "Weber'in sosyolojik yöntem anlayışında, sosyal eylemi aktörün gözünden anlamaya çalışmaya ne denir?", o: ["Açıklama", "Verstehen (Anlayıcı/Yorumlayıcı Yaklaşım)", "Pozitivizm", "Deney", "İstatistik"], a: 1 },
+        { q: "Pozitivist yaklaşıma göre sosyoloji, yöntem olarak hangisini örnek almalıdır?", o: ["Tarih", "Edebiyat", "Doğa Bilimleri (Fizik, Kimya)", "Felsefe", "Teoloji"], a: 2 },
+        { q: "Bir araştırmada elde edilen sonuçların, örneklemden evrene yayılabilme özelliğine ne denir?", o: ["Genellenebilirlik", "Güvenilirlik", "Geçerlilik", "Öznellik", "Tutarlılık"], a: 0 },
+        { q: "Özelden genele, parçadan bütüne giderek akıl yürütme yöntemine ne denir?", o: ["Tümdengelim (Dedüksiyon)", "Tümevarım (İndüksiyon)", "Analoji", "Sentez", "Diyalektik"], a: 1 },
+        { q: "Genelden özele, bütünden parçaya giderek akıl yürütme yöntemine ne denir?", o: ["Tümevarım", "Tümdengelim (Dedüksiyon)", "Analoji", "Betimleme", "Kıyas"], a: 1 },
+        { q: "Araştırma öncesinde, soru formunun işleyip işlemediğini test etmek için küçük bir grupla yapılan ön çalışmaya ne denir?", o: ["Ana Çalışma", "Pilot Çalışma (Ön Test)", "Son Test", "Panel", "Boylamsal Çalışma"], a: 1 },
+        { q: "Belirli bir kültürün yaşam biçimini, inançlarını ve değerlerini o kültürün içinden tasvir etmeye çalışan nitel araştırma türü hangisidir?", o: ["Etnografi", "Anket", "Deney", "İstatistik", "Sosyometri"], a: 0 },
+        { q: "Sosyolojik araştırmanın 'değerden bağımsız' (objektif) olması gerektiğini savunan, ancak konu seçiminde değerlerin rol oynayabileceğini belirten düşünür kimdir?", o: ["Marx", "Weber", "Comte", "Durkheim", "Spencer"], a: 1 },
+        { q: "Ankette cevap seçeneklerinin önceden belirlendiği (Evet/Hayır/Katılıyorum vb.) soru tipi hangisidir?", o: ["Açık uçlu soru", "Kapalı uçlu soru", "Yarı yapılandırılmış soru", "Projektif soru", "Dolaylı soru"], a: 1 },
+        { q: "Katılımcının cevabını kendi cümleleriyle ifade etmesine olanak tanıyan soru tipi hangisidir?", o: ["Kapalı uçlu soru", "Açık uçlu soru", "Çoktan seçmeli soru", "Derecelendirme sorusu", "Likert tipi soru"], a: 1 },
+        { q: "Evrendeki her birimin örnekleme seçilme şansının eşit olduğu örnekleme türü hangisidir?", o: ["Amaçlı örnekleme", "Basit Tesadüfi (Rastgele) Örnekleme", "Kota örneklemesi", "Kartopu örneklemesi", "Gelişigüzel örnekleme"], a: 1 },
+        { q: "Ulaşılması zor gruplara (örn. evsizler) ulaşmak için, bir katılımcıdan diğerine yönlendirme yoluyla gidilen örnekleme türü hangisidir?", o: ["Rastgele örnekleme", "Kartopu Örnekleme", "Tabakalı örnekleme", "Sistemli örnekleme", "Küme örneklemesi"], a: 1 },
+        { q: "Bir durumun ne olduğunu ortaya koyan, 'Nedir?' sorusuna cevap arayan araştırma türü hangisidir?", o: ["Açıklayıcı Araştırma", "Betimsel (Tasvir Edici) Araştırma", "Keşfedici Araştırma", "Deneysel Araştırma", "Tarihsel Araştırma"], a: 1 },
+        { q: "Olayların nedenlerini ve nasıllarını ortaya koymaya çalışan, 'Neden?' sorusuna cevap arayan araştırma türü hangisidir?", o: ["Betimsel Araştırma", "Açıklayıcı Araştırma", "Keşfedici Araştırma", "Pilot Araştırma", "Kesitsel Araştırma"], a: 1 },
+        { q: "Az bilinen bir konuda, daha kapsamlı bir araştırma yapmadan önce ön bilgi toplamak için yapılan araştırma türü hangisidir?", o: ["Betimsel Araştırma", "Açıklayıcı Araştırma", "Keşfedici (Exploratory) Araştırma", "Panel Araştırma", "Nedensel Araştırma"], a: 2 },
+        { q: "Aynı konunun farklı yöntemlerle (örneğin hem anket hem mülakat) incelenerek sonuçların sağlamasının yapılmasına ne denir?", o: ["Çeşitleme (Triangülasyon)", "Tekrar", "Genelleme", "Örnekleme", "Raporlama"], a: 0 },
+        { q: "Bir araştırmada katılımcıların kimliklerinin saklı tutulması etik ilkesi nedir?", o: ["Onam", "Gizlilik / Anonimlik", "Dürüstlük", "Nesnellik", "Açıklık"], a: 1 },
+        { q: "Saha araştırması (Field Research) genellikle nerede yapılır?", o: ["Laboratuvarda", "Kütüphanede", "Olayların gerçekleştiği doğal ortamda", "İnternette", "Sınıfta"], a: 2 },
+        { q: "Durkheim'ın 'İntihar' çalışması, hangi tür verilerin kullanımına klasik bir örnektir?", o: ["Mülakat verileri", "Resmi istatistikler / İkincil veriler", "Gözlem notları", "Anket sonuçları", "Deney sonuçları"], a: 1 },
+        { q: "Feminist metodoloji, geleneksel sosyolojik yöntemlere hangi eleştiriyi getirir?", o: ["Çok pahalı oldukları", "Erkek merkezli (androasentrik) oldukları ve kadın deneyimini göz ardı ettikleri", "Çok yavaş oldukları", "Matematiği az kullandıkları", "Tarihe önem vermedikleri"], a: 1 },
+        { q: "Bir veri setindeki en sık tekrarlanan değere ne denir?", o: ["Medyan (Ortanca)", "Mod (Tepe Değer)", "Aritmetik Ortalama", "Standart Sapma", "Varyans"], a: 1 },
+        { q: "Bir veri setindeki değerlerin küçükten büyüğe sıralandığında tam ortada kalan değere ne denir?", o: ["Mod", "Medyan (Ortanca)", "Ortalama", "Aralık", "Sapma"], a: 1 },
+        { q: "Nitel araştırmalarda kullanılan 'Odak Grup Görüşmesi' genellikle kaç kişiyle yapılır?", o: ["1-2 kişi", "6-12 kişi", "50-100 kişi", "1000+ kişi", "Sadece araştırmacı"], a: 1 },
+        { q: "Bilimsel bir çalışmada kullanılan kaynakların gösterilmesi neden önemlidir?", o: ["Sayfa sayısını artırmak için", "Bilimsel etik ve akademik dürüstlük için (İntihali önlemek)", "Okuyucuyu sıkmak için", "Yazarı övmek için", "Maliyeti düşürmek için"], a: 1 },
+        { q: "Postmodern yaklaşım, bilimsel bilginin niteliği hakkında ne düşünür?", o: ["Kesin ve mutlak doğrudur", "Nesnel ve evrenseldir", "Öznel, göreceli ve iktidar ilişkileriyle şekillenmiş bir anlatıdır", "Tanrısaldır", "Değişmezdir"], a: 2 },
+        { q: "Sosyal bilimlerde 'paradigma' ne anlama gelir?", o: ["Bir araştırma tekniği", "Bir veri türü", "Belirli bir dönemde bilim topluluğunca kabul edilen genel bakış açısı / model", "Bir istatistik programı", "Bir anket sorusu"], a: 2 },
+        { q: "Bir hipotezin doğrulanması onu neye dönüştürebilir?", o: ["Kanuna", "Teoriye / Kurama (desteklenen bir açıklama modeli)", "Soruna", "Yönteme", "Deneye"], a: 1 },
+        { q: "Araştırmacının kendi değer yargılarını araştırmaya karıştırmaması ilkesi nedir?", o: ["Öznellik", "Nesnellik (Objektiflik)", "Tutarlılık", "Geçerlilik", "Güvenilirlik"], a: 1 }
+    ];
+
+    let currentQuestion = 0;
+    let userAnswers = new Array(questions.length).fill(null);
+
+    function loadQuestion() {
+        const container = document.getElementById('quiz-container');
+        container.innerHTML = '';
+
+        const q = questions[currentQuestion];
+        
+        let html = `
+            <div class="question-block active">
+                <div class="question-text">${currentQuestion + 1}. ${q.q}</div>
+                <div class="options">
+        `;
+
+        q.o.forEach((opt, index) => {
+            const isSelected = userAnswers[currentQuestion] === index ? 'selected' : '';
+            const isChecked = userAnswers[currentQuestion] === index ? 'checked' : '';
+            html += `
+                <label class="option-label ${isSelected}" id="opt-${index}">
+                    <input type="radio" name="q${currentQuestion}" value="${index}" onclick="selectAnswer(${index})" ${isChecked}>
+                    ${String.fromCharCode(65 + index)}) ${opt}
+                </label>
+            `;
+        });
+
+        html += `</div></div>`;
+        container.innerHTML = html;
+
+        // Progress Bar
+        const progressPercent = ((currentQuestion + 1) / questions.length) * 100;
+        document.getElementById('progress-bar').style.width = progressPercent + '%';
+        document.getElementById('progress-text').innerText = `Soru ${currentQuestion + 1} / ${questions.length}`;
+        
+        // Buton Yönetimi
+        document.getElementById('prevBtn').disabled = currentQuestion === 0;
+        
+        if (currentQuestion === questions.length - 1) {
+            document.getElementById('nextBtn').style.display = 'none';
+            document.getElementById('finishBtn').style.display = 'inline-block';
+        } else {
+            document.getElementById('nextBtn').style.display = 'inline-block';
+            document.getElementById('finishBtn').style.display = 'none';
+        }
+    }
+
+    function selectAnswer(index) {
+        userAnswers[currentQuestion] = index;
+        const labels = document.querySelectorAll('.option-label');
+        labels.forEach(label => label.classList.remove('selected'));
+        document.getElementById(`opt-${index}`).classList.add('selected');
+    }
+
+    function showCurrentAnswer() {
+        const correctIndex = questions[currentQuestion].a;
+        const correctLabel = document.getElementById(`opt-${correctIndex}`);
+        if(correctLabel) correctLabel.classList.add('correct-highlight');
+        
+        if (userAnswers[currentQuestion] !== null && userAnswers[currentQuestion] !== correctIndex) {
+            document.getElementById(`opt-${userAnswers[currentQuestion]}`).classList.add('wrong-highlight');
+        }
+    }
+
+    function nextQuestion() {
+        if (currentQuestion < questions.length - 1) {
+            currentQuestion++;
+            loadQuestion();
+        }
+    }
+
+    function prevQuestion() {
+        if (currentQuestion > 0) {
+            currentQuestion--;
+            loadQuestion();
+        }
+    }
+
+    function finishQuiz() {
+        let correctCount = 0;
+        let wrongCount = 0;
+        let emptyCount = 0;
+        let reviewHtml = '';
+
+        questions.forEach((q, index) => {
+            const userAnswer = userAnswers[index];
+            const isCorrect = userAnswer === q.a;
+            
+            let statusText = '';
+            let statusClass = '';
+
+            if (userAnswer === null) {
+                emptyCount++;
+                statusText = 'Boş';
+                statusClass = 'status-empty';
+            } else if (isCorrect) {
+                correctCount++;
+                statusText = 'Doğru';
+                statusClass = 'status-correct';
+            } else {
+                wrongCount++;
+                statusText = 'Yanlış';
+                statusClass = 'status-wrong';
+            }
+
+            reviewHtml += `
+                <tr>
+                    <td>${index + 1}</td>
+                    <td>${q.q}</td>
+                    <td>${userAnswer !== null ? String.fromCharCode(65 + userAnswer) + ') ' + q.o[userAnswer] : '-'}</td>
+                    <td>${String.fromCharCode(65 + q.a)}) ${q.o[q.a]}</td>
+                    <td class="${statusClass}">${statusText}</td>
+                </tr>
+            `;
+        });
+
+        document.getElementById('quiz-screen').style.display = 'none';
+        document.getElementById('result-screen').style.display = 'block';
+
+        // Puanlama: Her soru 2 puan (100/50)
+        const score = Math.round((correctCount / questions.length) * 100);
+        
+        document.getElementById('score-circle').innerText = score;
+        document.getElementById('score-details').innerHTML = `
+            <strong>Doğru:</strong> ${correctCount} | 
+            <strong>Yanlış:</strong> ${wrongCount} | 
+            <strong>Boş:</strong> ${emptyCount}
+        `;
+        
+        document.getElementById('review-body').innerHTML = reviewHtml;
+    }
+
+    // Uygulamayı başlat
+    loadQuestion();
+</script>
+
+</body>
+</html>

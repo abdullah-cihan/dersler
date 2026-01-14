@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sosyal Bilimlerde Temel Kavramlar - 4. Ünite: Aile ve Toplumsal Cinsiyet</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f3e5f5; color: #4a148c; margin: 0; padding: 20px; }
+        .container { max-width: 900px; margin: 0 auto; background: #fff; padding: 40px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); position: relative; }
+        h1 { text-align: center; color: #6a1b9a; border-bottom: 2px solid #ab47bc; padding-bottom: 15px; margin-bottom: 30px; font-size: 24px; }
+        
+        /* Home Button */
+        .home-btn {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background-color: #7b1fa2;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 14px;
+            transition: background 0.2s;
+        }
+        .home-btn:hover { background-color: #4a148c; }
+
+        /* İlerleme Çubuğu */
+        .progress-container { background-color: #e1bee7; border-radius: 10px; margin-bottom: 20px; height: 12px; overflow: hidden; }
+        .progress-bar { height: 100%; background-color: #8e24aa; width: 0%; transition: width 0.3s; }
+        .progress-text { text-align: right; font-size: 0.9em; color: #6a1b9a; margin-bottom: 15px; font-weight: bold; }
+
+        /* Soru Alanı */
+        .question-block { display: none; animation: fadeIn 0.4s; }
+        .question-block.active { display: block; }
+        .question-text { font-weight: 700; font-size: 1.2em; margin-bottom: 25px; color: #38006b; line-height: 1.4; }
+        
+        /* Seçenekler */
+        .options { display: flex; flex-direction: column; gap: 12px; }
+        .option-label { 
+            display: flex; align-items: center; padding: 15px 20px; border: 2px solid #e1bee7; 
+            border-radius: 8px; cursor: pointer; transition: all 0.2s; background: #fff; font-size: 1em;
+        }
+        .option-label:hover { background-color: #f3e5f5; border-color: #ba68c8; }
+        .option-label.selected { border-color: #8e24aa; background-color: #f3e5f5; }
+        .option-label input { margin-right: 15px; transform: scale(1.2); cursor: pointer; }
+        
+        /* Cevap Göster Stilleri */
+        .option-label.correct-highlight { border-color: #2e7d32; background-color: #c8e6c9; color: #1b5e20; font-weight: bold; }
+        .option-label.wrong-highlight { border-color: #c62828; background-color: #ffcdd2; color: #b71c1c; }
+
+        /* Açıklama Kutusu */
+        .explanation-box {
+            margin-top: 25px;
+            padding: 20px;
+            background-color: #f3e5f5;
+            border-left: 5px solid #8e24aa;
+            border-radius: 4px;
+            color: #4a148c;
+            display: none;
+            font-size: 0.95em;
+            line-height: 1.6;
+        }
+
+        /* Butonlar */
+        .controls { margin-top: 35px; display: flex; justify-content: space-between; align-items: center; gap: 15px; flex-wrap: wrap; }
+        button { border: none; padding: 12px 28px; border-radius: 6px; cursor: pointer; font-size: 16px; font-weight: 600; transition: transform 0.1s, background 0.2s; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        button:active { transform: translateY(1px); }
+        
+        .nav-btn { background-color: #7b1fa2; color: white; }
+        .nav-btn:hover { background-color: #4a148c; }
+        .nav-btn:disabled { background-color: #e1bee7; cursor: not-allowed; box-shadow: none; }
+        
+        .show-answer-btn { background-color: #e65100; color: white; }
+        .show-answer-btn:hover { background-color: #bf360c; }
+        
+        .finish-btn { background-color: #2e7d32; color: white; display: none; }
+        .finish-btn:hover { background-color: #1b5e20; }
+
+        /* Sonuç Ekranı */
+        #result-screen { display: none; }
+        .score-card { text-align: center; background: #f3e5f5; padding: 30px; border-radius: 12px; margin-bottom: 30px; border: 1px solid #ce93d8; }
+        .score-circle { 
+            width: 140px; height: 140px; border-radius: 50%; background: #8e24aa; color: white; 
+            display: flex; align-items: center; justify-content: center; font-size: 2.5em; font-weight: bold; 
+            margin: 0 auto 20px; box-shadow: 0 4px 10px rgba(142, 36, 170, 0.4);
+        }
+        
+        .review-table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 0.9em; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        .review-table th, .review-table td { padding: 15px; border: 1px solid #e1bee7; text-align: left; }
+        .review-table th { background-color: #6a1b9a; color: white; font-weight: 600; }
+        .review-table tr:nth-child(even) { background-color: #f3e5f5; }
+        .review-table tr:hover { background-color: #e1bee7; }
+        .status-correct { color: #2e7d32; font-weight: bold; }
+        .status-wrong { color: #c62828; font-weight: bold; }
+        .status-empty { color: #f57f17; font-weight: bold; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        /* Responsive adjustments */
+        @media (max-width: 600px) {
+            .container { padding: 20px; }
+            .option-label { padding: 10px 15px; }
+            .question-text { font-size: 1.1em; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <button class="home-btn" onclick="if(confirm('Testi yeniden başlatmak istediğinize emin misiniz?')) location.reload();">⌂ Testi Yenile</button>
+    
+    <div id="quiz-screen">
+        <h1>4. Ünite: Aile, Ataerkillik ve Toplumsal Cinsiyet</h1>
+        
+        <div class="progress-text" id="progress-text">Soru 1 / 50</div>
+        <div class="progress-container">
+            <div class="progress-bar" id="progress-bar"></div>
+        </div>
+        
+        <div id="quiz-container">
+            <!-- Sorular buraya JS ile gelecek -->
+        </div>
+
+        <!-- Açıklama Alanı -->
+        <div id="explanation-area" class="explanation-box"></div>
+
+        <div class="controls">
+            <div>
+                <button class="nav-btn" id="prevBtn" onclick="prevQuestion()" disabled>&#8592; Önceki</button>
+            </div>
+            <div>
+                <button class="show-answer-btn" onclick="showCurrentAnswer()">👁️ Cevabı Göster</button>
+            </div>
+            <div>
+                <button class="nav-btn" id="nextBtn" onclick="nextQuestion()">Sonraki &#8594;</button>
+                <button class="finish-btn" id="finishBtn" onclick="finishQuiz()">Testi Bitir &#10004;</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="result-screen">
+        <h1>Değerlendirme Sonucu</h1>
+        <div class="score-card">
+            <div class="score-circle" id="score-circle">0</div>
+            <h3>Başarı Puanı</h3>
+            <p id="score-details" style="font-size: 1.1em; color: #555;"></p>
+        </div>
+        
+        <h3>Detaylı Soru Analizi</h3>
+        <div style="overflow-x: auto;">
+            <table class="review-table">
+                <thead>
+                    <tr>
+                        <th style="width: 5%">No</th>
+                        <th style="width: 45%">Soru</th>
+                        <th style="width: 20%">Senin Cevabın</th>
+                        <th style="width: 20%">Doğru Cevap</th>
+                        <th style="width: 10%">Durum</th>
+                    </tr>
+                </thead>
+                <tbody id="review-body">
+                    <!-- Sonuç satırları buraya gelecek -->
+                </tbody>
+            </table>
+        </div>
+        <div style="text-align: center; margin-top: 30px;">
+            <button class="nav-btn" onclick="location.reload()">Testi Tekrar Çöz</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // 50 Soruluk AÖF Tarzı Soru Havuzu - 4. Ünite: Aile, Ataerkillik ve Toplumsal Cinsiyet
+    const questions = [
+        // Aile ve Aileye Yaklaşımlar
+        { q: "Sosyolojide ailenin en yaygın kabul gören tanımı aşağıdakilerden hangisidir?", o: ["Sadece kan bağı olan insanların birliği", "Sadece aynı evde yaşayan insanların birliği", "Aralarında kan bağı, evlilik ya da evlat edinme bağı bulunan, aynı haneyi paylaşan ve ekonomik işbirliği yapan grup", "Sadece resmi nikahlı çiftler", "Çocuk sahibi olan çiftler"], a: 2, exp: "Aile; evlilik, kan bağı veya evlat edinme ile birbirine bağlı, genellikle aynı hanede yaşayan ve ekonomik/sosyal işlevleri paylaşan gruptur." },
+        { q: "Fonksiyonalist (İşlevselci) yaklaşıma göre ailenin temel işlevlerinden biri nedir?", o: ["Kadınları sömürmek", "Özel mülkiyeti korumak", "Toplumun devamlılığı için çocukların sosyalleşmesini sağlamak ve yetişkinlerin kişiliğini stabilize etmek", "Sınıf çatışması yaratmak", "Ataerkilliği güçlendirmek"], a: 2, exp: "Talcott Parsons'a göre aile, çocukların birincil sosyalleşmesini sağlar ve yetişkinlerin duygusal dengesini (kişilik stabilizasyonu) korur." },
+        { q: "Çatışma Kuramı'na (özellikle Marksist bakışa) göre aile kurumu neye hizmet eder?", o: ["Toplumsal uyuma", "Bireylerin mutluluğuna", "Kapitalist sisteme; özel mülkiyetin miras yoluyla aktarılmasına ve işgücünün yeniden üretimine", "Dini değerlere", "Kadın haklarına"], a: 2, exp: "Engels'e göre çekirdek aile, özel mülkiyetin babadan oğula geçmesini garanti altına almak için ortaya çıkmıştır." },
+        { q: "Feminist yaklaşıma göre aile içindeki en temel sorun nedir?", o: ["Çocukların eğitimi", "Ekonomik yetersizlik", "Kadının emeğinin (ev işi, bakım) karşılıksız sömürülmesi ve ataerkil iktidar ilişkileri", "Boşanma oranları", "Akrabalık ilişkileri"], a: 2, exp: "Feministler, aileyi 'altruizm' (fedakarlık) yeri olarak değil, kadın emeğinin sömürüldüğü ataerkil bir alan olarak eleştirir." },
+        
+        // Aile Biçimleri ve Evlilik Türleri
+        { q: "Anne, baba ve evlenmemiş çocuklardan oluşan, modern sanayi toplumlarında en yaygın olan aile tipi hangisidir?", o: ["Geniş Aile", "Çekirdek (Nükleer) Aile", "Tek Ebeveynli Aile", "Klan", "Poligamik Aile"], a: 1, exp: "Sanayileşme ve kentleşme ile birlikte geniş aileden, daha hareketli ve küçük olan çekirdek aileye geçiş olmuştur." },
+        { q: "Üç veya daha fazla kuşağın (büyükanne, dede, ebeveynler, çocuklar) bir arada yaşadığı aile tipine ne ad verilir?", o: ["Çekirdek Aile", "Geniş Aile", "Parçalanmış Aile", "Modern Aile", "Yeniden Kurulmuş Aile"], a: 1, exp: "Geleneksel tarım toplumlarında yaygın olan, akrabalık bağlarının güçlü olduğu aile tipidir." },
+        { q: "Bir erkeğin aynı anda birden fazla kadınla evli olmasına ne ad verilir?", o: ["Monogami", "Poliandri", "Polijini", "Endogami", "Egzogami"], a: 2, exp: "Poligami (çok eşlilik) genel terimdir; erkeğin çok eşliliğine 'Polijini', kadının çok eşliliğine 'Poliandri' denir." },
+        { q: "Evlenen çiftin, erkeğin ailesinin yanına veya yakınına yerleşmesine ne ad verilir?", o: ["Matrilokal", "Patrilokal", "Neolokal", "Bilokal", "Avunkulokal"], a: 1, exp: "Patrilokalite (baba yanı), ataerkil toplumlarda yaygındır. Neolokalite ise çiftin ayrı eve çıkmasıdır." },
+        { q: "Boşanmış kişilerin, yanlarında çocuklarını da getirerek yeni bir evlilik yapmasıyla oluşan aile tipine ne denir?", o: ["Geniş Aile", "Üvey / Yeniden Kurulmuş (Reconstituted) Aile", "Çekirdek Aile", "Geleneksel Aile", "Sanal Aile"], a: 1, exp: "Bu aile tipi, modern toplumlarda boşanma oranlarının artmasıyla yaygınlaşmıştır." },
+        
+        // Toplumsal Cinsiyet (Gender) vs Biyolojik Cinsiyet (Sex)
+        { q: "'Toplumsal Cinsiyet' (Gender) kavramı neyi ifade eder?", o: ["Biyolojik farklılıkları", "Kadın ve erkek arasındaki hormonal farkları", "Toplumun kadınlık ve erkeklik rollerine yüklediği kültürel ve sosyal anlamları", "Doğuştan gelen özellikleri", "Genetik yapıyı"], a: 2, exp: "Biyolojik cinsiyet (sex) doğuştan gelirken, toplumsal cinsiyet (gender) sonradan öğrenilen, kültürel olarak inşa edilen rollerdir." },
+        { q: "Simone de Beauvoir'ın ünlü sözü 'Kadın doğulmaz, kadın olunur' neyi vurgular?", o: ["Kadınlığın biyolojik olduğunu", "Kadınlığın doğuştan üstün olduğunu", "Kadınlık rollerinin toplumsal ve kültürel süreçlerle sonradan inşa edildiğini", "Kadın olmanın imkansız olduğunu", "Cinsiyetin önemsiz olduğunu"], a: 2, exp: "Bu söz, cinsiyetin biyolojik bir kader değil, toplumsal bir inşa süreci olduğunu (Toplumsal Cinsiyet) anlatır." },
+        { q: "Biyolojik cinsiyetin temel belirleyicisi nedir?", o: ["Kıyafetler", "Saç uzunluğu", "Kromozomlar, hormonlar ve üreme organları", "Meslekler", "Davranışlar"], a: 2, exp: "Biyolojik cinsiyet, bedensel ve fizyolojik özelliklere (XX/XY kromozomları vb.) dayanır." },
+        
+        // Cinsiyetin İnşası ve Sosyalleşme
+        { q: "Toplumsallaşma sürecinde cinsiyet rollerinin öğrenilmesinde etkili olan araçlara (ajanlara) ne denir?", o: ["Genetik kodlar", "Toplumsallaşma Ajanları (Aile, Okul, Akran Grubu, Medya)", "Hormonlar", "Yedek parça", "Bürokrasi"], a: 1, exp: "Çocuklar, aileden başlayarak oyuncaklar, okul kitapları ve medya aracılığıyla 'kız gibi' veya 'erkek gibi' davranmayı öğrenirler." },
+        { q: "Ann Oakley'e göre ailede cinsiyet rollerinin öğrenilmesi hangi yolla gerçekleşir?", o: ["Genetik aktarımla", "Manipülasyon, Kanalize etme, Sözel hitaplar ve Farklı etkinlikler yoluyla", "Okulda ders alarak", "Doğal içgüdülerle", "Rüyalarla"], a: 1, exp: "Oakley, ebeveynlerin kız ve erkek çocuklara farklı oyuncaklar vererek (kanalize etme) veya farklı sıfatlarla severek rolleri öğrettiğini belirtir." },
+        { q: "Ders kitaplarında doktorun erkek, hemşirenin kadın olarak resmedilmesi neye örnektir?", o: ["Biyolojik gerçeğe", "Cinsiyet kalıpyargılarının (stereotiplerin) yeniden üretilmesine", "Eşitliğe", "Tesadüfe", "Bilimsel veriye"], a: 1, exp: "Bu tür temsiller, mesleklerin cinsiyetle özdeşleştirilmesine ve kalıpyargıların pekişmesine neden olur." },
+        
+        // Cinsiyet Rolleri ve Kalıpyargılar
+        { q: "Aşağıdakilerden hangisi geleneksel 'Erkeklik' rolüyle ilişkilendirilen özelliklerden biri DEĞİLDİR?", o: ["Güçlü olmak", "Duygusal olmak", "Rasyonel olmak", "Kamusal alanda var olmak", "Rekabetçi olmak"], a: 1, exp: "Geleneksel erkeklik kurgusunda duygusallık, ağlamak veya zayıflık göstermek genellikle dışlanır; bunlar 'kadınsı' özellikler sayılır." },
+        { q: "Toplumda baskın kabul edilen, diğer erkeklikleri ve kadınları tahakküm altına alan ideal erkeklik formuna ne denir?", o: ["Alternatif Erkeklik", "Hegemonik Erkeklik", "Pasif Erkeklik", "Biyolojik Erkeklik", "Eşitlikçi Erkeklik"], a: 1, exp: "R.W. Connell'ın kavramıyla hegemonik erkeklik, gücü ve otoriteyi elinde tutan, kültürel olarak yüceltilen erkeklik modelidir." },
+        { q: "Kadınların 'özel alan' (ev), erkeklerin 'kamusal alan' (iş/siyaset) ile özdeşleştirilmesi neyi ifade eder?", o: ["Cinsiyete dayalı mekan ayrışmasını ve rol dağılımını", "Doğal iş bölümünü", "Biyolojik zorunluluğu", "Modernleşmeyi", "Eşitliği"], a: 0, exp: "Sanayi devrimiyle birlikte ev ve iş yeri ayrışmış, kadın eve (yeniden üretim), erkek işe (üretim) hapsedilmiştir." },
+        
+        // Ataerkillik (Patriarka)
+        { q: "'Ataerkillik' (Patriarka) kavramının en genel tanımı nedir?", o: ["Babanın çocukları sevmesi", "Erkeklerin kadınlar üzerinde egemenlik kurduğu, onları ezdiği ve sömürdüğü toplumsal sistem", "Kadınların yönetimi", "Eşitlikçi toplum", "Sadece aile içi şiddet"], a: 1, exp: "Ataerkillik, sadece ailede değil, devletten ekonomiye tüm toplumsal kurumlarda erkeğin üstünlüğüne dayalı bir iktidar sistemidir." },
+        { q: "Sylvia Walby'e göre ataerkillik sadece tek bir yapıdan ibaret değildir. Aşağıdakilerden hangisi Walby'nin saydığı 6 ataerkil yapıdan biri DEĞİLDİR?", o: ["Hanehalkı üretimi", "Ücretli çalışma", "Devlet", "Şiddet", "Futbol takımları"], a: 4, exp: "Walby; Hanehalkı, Ücretli İş, Devlet, Şiddet, Cinsellik ve Kültür olmak üzere 6 alanda ataerkilliğin işlediğini söyler." },
+        { q: "Ataerkil pazarlık (Deniz Kandiyoti) kavramı neyi anlatır?", o: ["Kadınların pazarda alışveriş yapmasını", "Kadınların ataerkil sistem içinde hayatta kalmak ve güvenlik sağlamak için sistemin kurallarına uyum gösterme stratejilerini", "Erkeklerin pazarlığını", "Fiyat indirimini", "Boşanma davasını"], a: 1, exp: "Kadınlar bazen baskıya açıkça direnmek yerine, itaat ederek sistemin sunduğu korumadan (örn: oğlunun üzerinden statü kazanmak) yararlanmayı seçebilirler." },
+        
+        // Cinsiyete Dayalı İş Bölümü ve Eşitsizlik
+        { q: "Kadınların iş hayatında belirli bir seviyeden sonra yükselmelerini engelleyen, görünmez bariyerlere ne ad verilir?", o: ["Cam Tavan (Glass Ceiling)", "Yürüyen Merdiven", "Beton Duvar", "Demir Kafes", "Altın Kafes"], a: 0, exp: "Cam tavan; liyakat sahibi kadınların, sadece kadın oldukları için üst yönetim kademelerine çıkamamalarını ifade eden görünmez engellerdir." },
+        { q: "Kadınların hem evde karşılıksız ev işlerini yapması hem de dışarıda ücretli bir işte çalışması durumuna ne ad verilir?", o: ["Tek Vardiya", "Çifte Mesai / İkinci Vardiya (Second Shift)", "Gönüllü Çalışma", "Yarı Zamanlı Çalışma", "Hobiler"], a: 1, exp: "Arlie Hochschild'in kavramıyla, çalışan kadınlar işten eve geldiklerinde dinlenemez, ev işleri ve çocuk bakımıyla 'ikinci vardiya'ya başlarlar." },
+        { q: "İş piyasasında kadınların genellikle düşük ücretli, güvencesiz ve 'kadın işi' (hemşirelik, öğretmenlik vb.) olarak görülen sektörlerde yoğunlaşmasına ne denir?", o: ["Dikey Ayrışma", "Yatay Ayrışma / Mesleki Ayrışma", "Pozitif Ayrımcılık", "Kariyer Planlaması", "Tesadüf"], a: 1, exp: "Yatay ayrışma, kadınların ve erkeklerin farklı meslek gruplarında kümelenmesidir." },
+        { q: "Erkeklerin, kadınların yoğun olduğu mesleklerde (örn: hemşirelik) çalışırken, kadınlara göre daha hızlı yükselmeleri ve avantajlı olmaları durumuna ne denir?", o: ["Cam Tavan", "Cam Asansör (Glass Escalator)", "Düşük Ücret", "Mobbing", "Ayrımcılık"], a: 1, exp: "Cam tavanın tersine, erkekler 'kadın mesleklerinde' bile görünmez bir asansörle yukarı taşınırlar." },
+        { q: "Aynı işi yapmalarına rağmen kadınların erkeklerden daha az ücret alması ne tür bir eşitsizliktir?", o: ["Biyolojik eşitsizlik", "Ücret Eşitsizliği / Cinsiyete Dayalı Ücret Farkı", "Doğal eşitsizlik", "Eğitim farkı", "Yaş farkı"], a: 1, exp: "Küresel çapta kadınlar, aynı iş için erkeklere göre daha az kazanmaktadır (Gender Pay Gap)." },
+
+        // Şiddet ve Ayrımcılık
+        { q: "Kadına yönelik şiddetin temel kaynağı feminist teoriye göre nedir?", o: ["Erkeklerin biyolojik yapısı", "Kadınların kışkırtması", "Alkol ve madde kullanımı", "Ataerkil güç ilişkileri ve erkeğin kadın üzerindeki denetim kurma arzusu", "Psikolojik hastalıklar"], a: 3, exp: "Şiddet, münferit bir öfke patlaması değil, ataerkil sistemin kadınları itaat altına almak için kullandığı bir araçtır." },
+        { q: "Aşağıdakilerden hangisi kadına yönelik şiddet türlerinden biri DEĞİLDİR?", o: ["Fiziksel Şiddet", "Psikolojik/Duygusal Şiddet", "Ekonomik Şiddet", "Cinsel Şiddet", "Kişisel Gelişim"], a: 4, exp: "Şiddet sadece dayak değildir; aşağılama (psikolojik), parayı vermeme (ekonomik) veya zorla ilişki (cinsel) de şiddettir." },
+        { q: "Namus cinayetleri sosyolojik olarak nasıl açıklanır?", o: ["Bireysel cinnet", "Kıskançlık", "Kadın bedeni ve cinselliği üzerindeki toplumsal/erkek denetiminin en uç noktası", "Dini bir gereklilik", "Aşk"], a: 2, exp: "Namus, kadının değil ailenin/erkeğin mülkü olarak görülür ve bu mülke zarar geldiği düşünüldüğünde şiddet meşrulaştırılır." },
+        
+        // Diğer Kavramlar ve Toplumsal Değişim
+        { q: "Modern toplumlarda boşanma oranlarının artmasının nedenlerinden biri hangisidir?", o: ["Kadınların ekonomik bağımsızlık kazanması", "İnsanların artık sevmemesi", "Evliliğin yasaklanması", "Nüfusun azalması", "Dinin güçlenmesi"], a: 0, exp: "Kadınların eğitim ve iş hayatına katılımı, mutsuz evlilikleri sürdürme zorunluluğunu azaltmıştır." },
+        { q: "Bir toplumda kadınların eğitim, sağlık ve siyasete katılım oranlarının erkeklerden düşük olması neyi gösterir?", o: ["Toplumsal Cinsiyet Eşitliğini", "Toplumsal Cinsiyet Eşitsizliğini", "Doğal Seleksiyonu", "Kadınların isteksizliğini", "Kaderi"], a: 1, exp: "Bu göstergeler (GEM - Toplumsal Cinsiyet Güçlendirme Ölçüsü), eşitsizliğin somut kanıtlarıdır." },
+        { q: "Kitle iletişim araçlarında (reklamlar, diziler) kadınların genellikle ev hanımı veya cinsel obje olarak sunulması neye örnektir?", o: ["Gerçekçiliğe", "Cinsiyetçiliğe ve stereotiplerin yeniden üretimine", "Sanata", "Özgürlüğe", "Eşitliğe"], a: 1, exp: "Medya, cinsiyetçi kalıpları en çok yeniden üreten ve pekiştiren alanlardan biridir." },
+        { q: "Endogami ne demektir?", o: ["Grup dışından evlilik", "Grup içinden (akraba, kabile, din vb.) evlilik", "Çok eşlilik", "Tek eşlilik", "Boşanma"], a: 1, exp: "Endogami, kanı veya malı grup içinde tutmak için yapılan (örn: kuzen evliliği) evlilik türüdür." },
+        { q: "Levirat ne tür bir evlilik geleneğidir?", o: ["Kadının ölen kocasının kardeşiyle (kayınbirader) evlendirilmesi", "Erkeğin ölen karısının kardeşiyle (baldız) evlendirilmesi", "Kuzen evliliği", "Kaçarak evlilik", "Anlaşmalı evlilik"], a: 0, exp: "Sororat ise erkeğin ölen karısının kız kardeşiyle evlenmesidir. Amaç malın ve çocukların ailede kalmasıdır." },
+        { q: "Eşitlikçi (Egaliter) aile yapısı neyi ifade eder?", o: ["Babanın sözünün geçtiği", "Annenin sözünün geçtiği", "Karar alma yetkisinin ve sorumlulukların kadın ve erkek arasında eşit paylaşıldığı yapı", "Çocukların yönettiği yapı", "Devletin yönettiği yapı"], a: 2, exp: "Modern toplumlarda idealize edilen, güç ve otoritenin paylaşıldığı aile modelidir." },
+        
+        // Pekiştirme Soruları
+        { q: "Kız çocuklarına pembe, erkek çocuklarına mavi kıyafet giydirilmesi neyin başlangıcıdır?", o: ["Biyolojik gelişimin", "Toplumsal cinsiyet sosyalleşmesinin", "Zeka gelişiminin", "Okul hayatının", "Hiçbir şeyin"], a: 1, exp: "Renk kodları bile toplumun cinsiyetlere yüklediği ilk kültürel işaretlerdir." },
+        { q: "Anthony Giddens'a göre 'Plastik Cinsellik' ne demektir?", o: ["Estetik ameliyat", "Cinselliğin üremeden ayrılarak, haz ve kimlik inşası için özgürce yaşanabilir hale gelmesi", "Sahte cinsellik", "Robotlarla cinsellik", "Cinsiyetsizlik"], a: 1, exp: "Doğum kontrol yöntemleri sayesinde cinsellik, üreme zorunluluğundan kopmuş ve ilişki merkezli hale gelmiştir." },
+        { q: "Ataerkil temettü (Patriarchal Dividend) nedir?", o: ["Borsada hisse", "Tüm erkeklerin, ataerkil sistemden (baskıcı olmasalar bile) dolaylı olarak sağladıkları çıkar ve avantajlar", "Kadınların kazancı", "Devlet yardımı", "Emeklilik ikramiyesi"], a: 1, exp: "Connell'a göre, hegemonik erkekliğe uymayan erkekler bile, kadınların ezilmesinden doğan genel avantajlardan (daha yüksek maaş vb.) yararlanırlar." },
+        { q: "Kadınların siyasal temsilde eksik olması (parlamentoda az kadın olması) neyin sonucudur?", o: ["Kadınların siyasetten anlamamasının", "Siyasetin 'erkek işi' olarak kodlanmasının ve yapısal engellerin", "Kadınların istememesinin", "Yasaların yasaklamasının", "Nüfusun az olmasının"], a: 1, exp: "Siyaset, kamusal alanın zirvesi olarak tarihsel olarak erkeklere ait görülmüş ve kadınlar dışlanmıştır." },
+        { q: "Aile içi şiddetin en çok kime yöneldiği istatistiksel bir gerçektir?", o: ["Erkeklere", "Kadınlara ve çocuklara", "Komşulara", "Patronlara", "Polislere"], a: 1, exp: "Dünya genelinde aile içi şiddet mağdurlarının büyük çoğunluğu kadınlardır." },
+        { q: "Matriarka (Anaerkillik) tarihte yaygın bir sistem midir?", o: ["Evet, her yerde vardır", "Hayır, antropolojik bulgulara göre ataerkillik kadar yaygın ve sistematik bir 'kadın egemenliği' dönemi kanıtlanamamıştır", "Sadece Avrupa'da vardır", "Gelecekte olacaktır", "Hayvanlarda vardır"], a: 1, exp: "Matrilineal (ana soylu) toplumlar vardır ama kadınların erkekleri yönettiği Matriarka (Anaerkillik) tartışmalıdır." },
+        { q: "Cinsiyetçilik (Sexism) nedir?", o: ["Cinsiyet değiştirmek", "Bir cinsiyetin (genellikle erkeğin) diğerinden üstün olduğuna dair ideoloji ve önyargılar", "Cinsiyet eşitliği", "Cinselliği sevmek", "Biyoloji bilimi"], a: 1, exp: "Irkçılık gibi, cinsiyetçilik de bir grubu aşağılayarak diğerinin iktidarını meşrulaştırır." },
+        { q: "Heteronormativite ne demektir?", o: ["Herkesin heteroseksüel (karşı cinsten hoşlanan) olduğunun varsayılması ve bunun tek 'normal' kabul edilmesi", "Herkesin eşcinsel olması", "Cinsiyetsizlik", "Karışık evlilik", "Çok eşlilik"], a: 0, exp: "Bu norm, farklı cinsel yönelimleri dışlar ve görünmez kılar." },
+        { q: "Sanayileşme öncesi ailede üretim ve tüketim nasıldı?", o: ["Ayrışmıştı", "Aile hem üretim hem tüketim birimiydi (Hane ekonomisi)", "Sadece tüketim birimiydi", "Fabrikada yapılırdı", "Devlet yapardı"], a: 1, exp: "Tarlada veya atölyede tüm aile birlikte çalışırdı; ev ve iş yeri ayrışmamıştı." },
+        { q: "Modern toplumda ailenin 'duygusal' işlevi neden artmıştır?", o: ["İnsanlar daha duygusal olduğu için", "Kamusal alandaki (iş dünyası) rekabet ve soğukluktan kaçıp sığınılacak bir 'liman' arandığı için", "Televizyon izlendiği için", "Evler büyüdüğü için", "Yemekler lezzetli olduğu için"], a: 1, exp: "Aile, modern bireyin kimlik bulduğu ve duygusal tatmin sağladığı neredeyse tek alan haline gelmiştir." },
+        { q: "Türkiye'de Cumhuriyet döneminde kadın hakları konusunda atılan en önemli adım nedir?", o: ["Tanzimat Fermanı", "Medeni Kanun'un (1926) kabulü ve seçme/seçilme hakkının verilmesi (1934)", "Sened-i İttifak", "1980 Darbesi", "Avrupa Birliği süreci"], a: 1, exp: "Medeni Kanun ile çok eşlilik yasaklanmış, resmi nikah ve mirasta eşitlik gelmiş; siyasi haklarla vatandaşlık statüsü kazanılmıştır." },
+        { q: "'Görünmeyen Emek' kavramı neyi anlatır?", o: ["Kaçak işçilik", "Hayaletler", "Kadınların ev içinde yaptığı, maaşı olmayan ve 'iş'ten sayılmayan yemek, temizlik, bakım hizmetleri", "Casusluk", "Gece çalışması"], a: 2, exp: "Bu emek, kapitalist sistemin devamı için hayati olsa da (işgücünü besler, dinlendirir) ekonomik karşılığı yoktur." },
+        { q: "Liberal Feminizm çözüm olarak neyi önerir?", o: ["Devrimi", "Erkekleri yok etmeyi", "Yasal reformlar, eğitim ve fırsat eşitliği ile kadınların kamusal alana katılımını", "Aileyi yıkmayı", "Köye dönmeyi"], a: 2, exp: "Sistemi tamamen yıkmak yerine, mevcut sistem içindeki yasal engelleri kaldırarak eşitliği savunur." },
+        { q: "Radikal Feminizm sorunun kaynağını nerede görür?", o: ["Yasalarda", "Eğitimsizlikte", "Doğrudan Ataerkillik sisteminde ve erkeklerin kadın bedeni/emeği üzerindeki denetiminde", "Kapitalizmde", "Dinde"], a: 2, exp: "Onlara göre ataerkillik en temel eşitsizlik biçimidir ve özel alan (aile) politiktir." },
+        { q: "Sosyalist Feminizm neyi savunur?", o: ["Kadınların sorununun hem kapitalizm (sınıf) hem de ataerkillik (cinsiyet) kaynaklı olduğunu", "Sadece sınıf sorununu", "Sadece cinsiyet sorununu", "Zengin olmayı", "Devletçi ekonomiyi"], a: 0, exp: "Kadının kurtuluşu için hem kapitalizmin hem de ataerkilliğin yıkılması gerektiğini düşünürler." }
+    ];
+
+    let currentQuestion = 0;
+    let userAnswers = new Array(questions.length).fill(null);
+
+    function loadQuestion() {
+        const container = document.getElementById('quiz-container');
+        const explanationArea = document.getElementById('explanation-area');
+        
+        container.innerHTML = '';
+        explanationArea.style.display = 'none';
+
+        const q = questions[currentQuestion];
+        
+        let html = `
+            <div class="question-block active">
+                <div class="question-text">${currentQuestion + 1}. ${q.q}</div>
+                <div class="options">
+        `;
+
+        q.o.forEach((opt, index) => {
+            const isSelected = userAnswers[currentQuestion] === index ? 'selected' : '';
+            const isChecked = userAnswers[currentQuestion] === index ? 'checked' : '';
+            html += `
+                <label class="option-label ${isSelected}" id="opt-${index}">
+                    <input type="radio" name="q${currentQuestion}" value="${index}" onclick="selectAnswer(${index})" ${isChecked}>
+                    ${String.fromCharCode(65 + index)}) ${opt}
+                </label>
+            `;
+        });
+
+        html += `</div></div>`;
+        container.innerHTML = html;
+
+        // Progress Bar
+        const progressPercent = ((currentQuestion + 1) / questions.length) * 100;
+        document.getElementById('progress-bar').style.width = progressPercent + '%';
+        document.getElementById('progress-text').innerText = `Soru ${currentQuestion + 1} / ${questions.length}`;
+        
+        // Buton Yönetimi
+        document.getElementById('prevBtn').disabled = currentQuestion === 0;
+        
+        if (currentQuestion === questions.length - 1) {
+            document.getElementById('nextBtn').style.display = 'none';
+            document.getElementById('finishBtn').style.display = 'inline-block';
+        } else {
+            document.getElementById('nextBtn').style.display = 'inline-block';
+            document.getElementById('finishBtn').style.display = 'none';
+        }
+    }
+
+    function selectAnswer(index) {
+        userAnswers[currentQuestion] = index;
+        const labels = document.querySelectorAll('.option-label');
+        labels.forEach(label => label.classList.remove('selected'));
+        document.getElementById(`opt-${index}`).classList.add('selected');
+    }
+
+    function showCurrentAnswer() {
+        const q = questions[currentQuestion];
+        const correctIndex = q.a;
+        const correctLabel = document.getElementById(`opt-${correctIndex}`);
+        const explanationArea = document.getElementById('explanation-area');
+
+        if(correctLabel) correctLabel.classList.add('correct-highlight');
+        
+        if (userAnswers[currentQuestion] !== null && userAnswers[currentQuestion] !== correctIndex) {
+            document.getElementById(`opt-${userAnswers[currentQuestion]}`).classList.add('wrong-highlight');
+        }
+
+        explanationArea.innerHTML = `<strong>Açıklama:</strong> ${q.exp}`;
+        explanationArea.style.display = 'block';
+    }
+
+    function nextQuestion() {
+        if (currentQuestion < questions.length - 1) {
+            currentQuestion++;
+            loadQuestion();
+        }
+    }
+
+    function prevQuestion() {
+        if (currentQuestion > 0) {
+            currentQuestion--;
+            loadQuestion();
+        }
+    }
+
+    function finishQuiz() {
+        let correctCount = 0;
+        let wrongCount = 0;
+        let emptyCount = 0;
+        let reviewHtml = '';
+
+        questions.forEach((q, index) => {
+            const userAnswer = userAnswers[index];
+            const isCorrect = userAnswer === q.a;
+            
+            let statusText = '';
+            let statusClass = '';
+
+            if (userAnswer === null) {
+                emptyCount++;
+                statusText = 'Boş';
+                statusClass = 'status-empty';
+            } else if (isCorrect) {
+                correctCount++;
+                statusText = 'Doğru';
+                statusClass = 'status-correct';
+            } else {
+                wrongCount++;
+                statusText = 'Yanlış';
+                statusClass = 'status-wrong';
+            }
+
+            reviewHtml += `
+                <tr>
+                    <td>${index + 1}</td>
+                    <td>${q.q}</td>
+                    <td>${userAnswer !== null ? String.fromCharCode(65 + userAnswer) + ') ' + q.o[userAnswer] : '-'}</td>
+                    <td>${String.fromCharCode(65 + q.a)}) ${q.o[q.a]}</td>
+                    <td class="${statusClass}">${statusText}</td>
+                </tr>
+            `;
+        });
+
+        document.getElementById('quiz-screen').style.display = 'none';
+        document.getElementById('result-screen').style.display = 'block';
+
+        const score = Math.round((correctCount / questions.length) * 100);
+        
+        document.getElementById('score-circle').innerText = score;
+        document.getElementById('score-details').innerHTML = `
+            <strong>Doğru:</strong> ${correctCount} &nbsp;|&nbsp; 
+            <strong>Yanlış:</strong> ${wrongCount} &nbsp;|&nbsp; 
+            <strong>Boş:</strong> ${emptyCount}
+        `;
+        
+        document.getElementById('review-body').innerHTML = reviewHtml;
+    }
+
+    // Uygulamayı başlat
+    loadQuestion();
+</script>
+
+</body>
+</html>

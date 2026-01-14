@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Psikoloji - 3. Ünite: Duyum ve Algı</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #fdf2e9; color: #333; margin: 0; padding: 20px; }
+        .container { max-width: 900px; margin: 0 auto; background: #fff; padding: 40px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        h1 { text-align: center; color: #d35400; border-bottom: 2px solid #e67e22; padding-bottom: 10px; margin-bottom: 30px; }
+        
+        /* İlerleme Çubuğu */
+        .progress-container { background-color: #fae5d3; border-radius: 10px; margin-bottom: 20px; height: 10px; overflow: hidden; }
+        .progress-bar { height: 100%; background-color: #d35400; width: 0%; transition: width 0.3s; }
+        .progress-text { text-align: right; font-size: 0.9em; color: #a04000; margin-bottom: 15px; }
+
+        /* Soru Alanı */
+        .question-block { display: none; animation: fadeIn 0.5s; }
+        .question-block.active { display: block; }
+        .question-text { font-weight: 600; font-size: 1.25em; margin-bottom: 20px; color: #6e2c00; }
+        
+        /* Seçenekler */
+        .options { display: flex; flex-direction: column; gap: 10px; }
+        .option-label { 
+            display: flex; align-items: center; padding: 12px 15px; border: 2px solid #e0e0e0; 
+            border-radius: 8px; cursor: pointer; transition: all 0.2s; background: #fff;
+        }
+        .option-label:hover { background-color: #fef5e7; border-color: #f5cba7; }
+        .option-label.selected { border-color: #d35400; background-color: #fae5d3; }
+        .option-label input { margin-right: 15px; transform: scale(1.2); }
+        
+        /* Cevap Göster Stilleri */
+        .option-label.correct-highlight { border-color: #27ae60; background-color: #d5f5e3; color: #1e8449; font-weight: bold; }
+        .option-label.wrong-highlight { border-color: #e74c3c; background-color: #fadbd8; }
+
+        /* Butonlar */
+        .controls { margin-top: 30px; display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
+        button { border: none; padding: 12px 24px; border-radius: 6px; cursor: pointer; font-size: 16px; font-weight: 600; transition: background 0.2s; }
+        .nav-btn { background-color: #d35400; color: white; }
+        .nav-btn:hover { background-color: #a04000; }
+        .nav-btn:disabled { background-color: #bdc3c7; cursor: not-allowed; }
+        
+        .show-answer-btn { background-color: #f39c12; color: white; }
+        .show-answer-btn:hover { background-color: #e67e22; }
+        
+        .finish-btn { background-color: #27ae60; color: white; display: none; }
+        .finish-btn:hover { background-color: #219150; }
+
+        /* Sonuç Ekranı */
+        #result-screen { display: none; }
+        .score-card { text-align: center; background: #f8f9fa; padding: 20px; border-radius: 10px; margin-bottom: 30px; }
+        .score-circle { 
+            width: 120px; height: 120px; border-radius: 50%; background: #d35400; color: white; 
+            display: flex; align-items: center; justify-content: center; font-size: 2em; font-weight: bold; 
+            margin: 0 auto 15px; 
+        }
+        
+        .review-table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 0.95em; }
+        .review-table th, .review-table td { padding: 12px; border: 1px solid #ddd; text-align: left; }
+        .review-table th { background-color: #6e2c00; color: white; }
+        .review-table tr:nth-child(even) { background-color: #f2f2f2; }
+        .status-correct { color: #27ae60; font-weight: bold; }
+        .status-wrong { color: #c0392b; font-weight: bold; }
+        .status-empty { color: #f39c12; font-weight: bold; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div id="quiz-screen">
+        <h1>3. Ünite: Duyum ve Algı</h1>
+        
+        <div class="progress-text" id="progress-text">Soru 1 / 50</div>
+        <div class="progress-container">
+            <div class="progress-bar" id="progress-bar"></div>
+        </div>
+        
+        <div id="quiz-container">
+            <!-- Sorular buraya JS ile gelecek -->
+        </div>
+
+        <div class="controls">
+            <div>
+                <button class="nav-btn" id="prevBtn" onclick="prevQuestion()" disabled>&#8592; Önceki</button>
+            </div>
+            <div>
+                <button class="show-answer-btn" onclick="showCurrentAnswer()">👁️ Cevabı Göster</button>
+            </div>
+            <div>
+                <button class="nav-btn" id="nextBtn" onclick="nextQuestion()">Sonraki &#8594;</button>
+                <button class="finish-btn" id="finishBtn" onclick="finishQuiz()">Testi Bitir &#10004;</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="result-screen">
+        <h1>Değerlendirme Sonucu</h1>
+        <div class="score-card">
+            <div class="score-circle" id="score-circle">0</div>
+            <h3>Toplam Puan</h3>
+            <p id="score-details"></p>
+        </div>
+        
+        <h3>Detaylı Soru Analizi</h3>
+        <table class="review-table">
+            <thead>
+                <tr>
+                    <th style="width: 5%">No</th>
+                    <th style="width: 45%">Soru</th>
+                    <th style="width: 20%">Senin Cevabın</th>
+                    <th style="width: 20%">Doğru Cevap</th>
+                    <th style="width: 10%">Durum</th>
+                </tr>
+            </thead>
+            <tbody id="review-body">
+                <!-- Sonuç satırları buraya gelecek -->
+            </tbody>
+        </table>
+        <div style="text-align: center; margin-top: 30px;">
+            <button class="nav-btn" onclick="location.reload()">Testi Tekrar Çöz</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // 3. Ünite Konuları: Duyum, Algı, Eşikler, Görme, İşitme, Diğer Duyular, Gestalt İlkeleri, Algısal Süreçler
+    const questions = [
+        { q: "Çevresel enerjinin (ışık, ses vb.) duyu organlarındaki alıcılar tarafından sinirsel sinyallere dönüştürülüp beyne iletilmesi sürecine ne denir?", o: ["Algı", "Duyum (Sensation)", "Dikkat", "Biliş", "Adaptasyon"], a: 1 },
+        { q: "Beyne ulaşan duyusal bilgilerin seçilmesi, organize edilmesi, yorumlanması ve anlamlandırılması sürecine ne denir?", o: ["Duyum", "Refleks", "Algı (Perception)", "İçgüdü", "Transdüksiyon"], a: 2 },
+        { q: "Fiziksel enerjinin (örneğin ışık dalgalarının) sinir akımına dönüştürülmesi işlemine ne ad verilir?", o: ["Transdüksiyon (Dönüştürme)", "Adaptasyon", "İlüzyon", "Halüsinasyon", "Korelasyon"], a: 0 },
+        { q: "Bir uyarıcının fark edilebilmesi için gereken en düşük enerji miktarına ne denir?", o: ["Fark Eşiği", "Mutlak Eşik", "Duyusal Uyum", "Algısal Kurulum", "Bilinç Eşiği"], a: 1 },
+        { q: "İki uyarıcı arasındaki farkı ayırt edebilmek için gereken en küçük değişim miktarına ne denir?", o: ["Mutlak Eşik", "Fark Eşiği (JND)", "Subliminal Eşik", "Duyusal Eşik", "Adaptasyon"], a: 1 },
+        { q: "Ernst Weber'in yasasına göre, fark eşiği nasıldır?", o: ["Sabit bir miktardır", "Rastgeledir", "Uyarıcının şiddetiyle orantılı sabit bir orandır", "Kişiden kişiye değişmez", "Sadece ses için geçerlidir"], a: 2 },
+        { q: "Sürekli ve değişmeyen bir uyarıcıya maruz kalındığında (örneğin koku) duyu organlarının tepkisinin azalmasına ne denir?", o: ["Duyusal Yoksunluk", "Duyusal Uyum (Adaptasyon)", "Algısal Değişmezlik", "Dikkat Dağınıklığı", "Yorgunluk"], a: 1 },
+        { q: "Gözün en dış tabakası olan ve ışığın göze girdiği şeffaf koruyucu tabaka hangisidir?", o: ["Retina", "İris", "Kornea", "Lens", "Fovea"], a: 2 },
+        { q: "Göze giren ışık miktarını ayarlayan, gözbebeğinin (pupil) büyüklüğünü kontrol eden renkli kas tabakası hangisidir?", o: ["Kornea", "İris", "Retina", "Lens", "Sklera"], a: 1 },
+        { q: "Gözün arka kısmında bulunan, ışığa duyarlı alıcı hücrelerin (fotoreseptörlerin) yer aldığı tabaka hangisidir?", o: ["Lens", "Kornea", "Retina", "İris", "Göz Siniri"], a: 2 },
+        { q: "Retinada bulunan, loş ışıkta görmeyi sağlayan ancak renkleri algılamayan reseptörler hangisidir?", o: ["Koniler", "Çubuklar (Rodlar)", "Bipolar hücreler", "Ganglion hücreleri", "Fovea"], a: 1 },
+        { q: "Retinada bulunan, renkli görmeyi ve detayları algılamayı sağlayan, yoğun olarak foveada bulunan reseptörler hangisidir?", o: ["Çubuklar", "Koniler", "Kornea", "İris", "Miyelin"], a: 1 },
+        { q: "Göz sinirinin gözden çıktığı noktada fotoreseptör bulunmadığı için oluşan bölgeye ne ad verilir?", o: ["Sarı Nokta", "Kör Nokta", "Fovea", "Odak Noktası", "Pupil"], a: 1 },
+        { q: "Renk görmeyi açıklayan 'Trichromatic' (Üç Renk) teorisine göre gözde hangi üç renge duyarlı koni tipleri vardır?", o: ["Kırmızı, Yeşil, Mavi", "Sarı, Mavi, Yeşil", "Siyah, Beyaz, Gri", "Kırmızı, Sarı, Mavi", "Mor, Turuncu, Yeşil"], a: 0 },
+        { q: "Ses dalgalarının frekansı (sıklığı) sesin hangi özelliğini belirler?", o: ["Gürültü", "Şiddet (Genlik)", "Perde (Tizlik/Peslik)", "Tını", "Hız"], a: 2 },
+        { q: "Ses dalgalarının genliği (yüksekliği) sesin hangi özelliğini belirler?", o: ["Perde", "Ses Şiddeti (Gürlük)", "Renk", "Frekans", "Ton"], a: 1 },
+        { q: "İç kulakta bulunan, salyangoz şeklindeki ve işitme reseptörlerini barındıran sıvı dolu yapı hangisidir?", o: ["Kulak Zarı", "Çekiç-Örs-Üzengi", "Koklea (Salyangoz)", "Östaki Borusu", "Yarım Daire Kanalları"], a: 2 },
+        { q: "Koku duyusu (olfaksiyon) beyinde hangi sistemle doğrudan bağlantılıdır, bu yüzden hafıza ve duygularla yakından ilişkilidir?", o: ["Motor Korteks", "Limbik Sistem", "Beyincik", "Oksipital Lob", "Beyin Sapı"], a: 1 },
+        { q: "Tat duyusu (gustasyon) kaç temel tattan oluşur?", o: ["3 (Tatlı, Tuzlu, Ekşi)", "4 (Tatlı, Tuzlu, Ekşi, Acı)", "5 (Tatlı, Tuzlu, Ekşi, Acı, Umami)", "7", "Sınırsız"], a: 2 },
+        { q: "Vücudun dengesini ve başın konumunu algılamamızı sağlayan duyu sistemi hangisidir?", o: ["Kinestetik Duyu", "Vestibüler Duyu", "Dokunma Duyusu", "Görme Duyusu", "İşitme Duyusu"], a: 1 },
+        { q: "Vücut parçalarının (kol, bacak vb.) birbirine göre konumunu ve hareketini algılamamızı sağlayan duyu hangisidir?", o: ["Vestibüler Duyu", "Kinestetik Duyu", "Olfaksiyon", "Gustasyon", "Vizyon"], a: 1 },
+        { q: "Acı algısının omurilikteki bir 'kapı' mekanizması tarafından kontrol edildiğini savunan teori hangisidir?", o: ["Frekans Teorisi", "Yer Teorisi", "Kapı Kontrol Teorisi", "Karşıt Süreçler Teorisi", "Trichromatic Teori"], a: 2 },
+        { q: "Gestalt psikolojisinin algı ile ilgili temel ilkesi nedir?", o: ["Algı parçaların toplamına eşittir", "Bütün, parçaların toplamından farklı ve fazladır", "Algı sadece duyumlardan ibarettir", "Algı doğuştan gelmez", "Algı tamamen rastgeledir"], a: 1 },
+        { q: "Gestalt ilkelerinden 'Şekil-Zemin' ilişkisi neyi ifade eder?", o: ["Nesnelerin birbirine yakınlığını", "Nesnelerin benzerliğini", "Dikkatin odaklandığı nesne (şekil) ve arka plan (zemin) ayrımını", "Boşlukların doldurulmasını", "Hareket algısını"], a: 2 },
+        { q: "Birbirine yakın olan nesnelerin bir grup olarak algılanması hangi Gestalt ilkesidir?", o: ["Benzerlik", "Yakınlık", "Süreklilik", "Tamamlama", "Ortak Kader"], a: 1 },
+        { q: "Eksik kısımları zihinsel olarak doldurarak nesneleri bütün olarak algılama eğilimine ne denir?", o: ["Yakınlık", "Benzerlik", "Tamamlama (Closure)", "Süreklilik", "Şekil-Zemin"], a: 2 },
+        { q: "Nesnelerin konumu, ışık veya bakış açısı değişse bile onları aynı (boyut, şekil, renk) olarak algılamaya ne denir?", o: ["Algısal Değişmezlik", "Algısal Yanılma", "Duyusal Uyum", "Algısal Kurulum", "Seçici Dikkat"], a: 0 },
+        { q: "Uzaklaşan bir arabanın retinanızdaki görüntüsü küçülmesine rağmen, arabanın küçüldüğünü düşünmemeniz neye örnektir?", o: ["Şekil Değişmezliği", "Renk Değişmezliği", "Büyüklük Değişmezliği", "Parlaklık Değişmezliği", "Konum Değişmezliği"], a: 2 },
+        { q: "Derinlik ve mesafeyi algılamak için her iki gözün birlikte kullanılmasına dayanan ipuçlarına ne denir?", o: ["Monoküler İpuçları", "Binoküler İpuçları", "Gestalt İpuçları", "Piktoryal İpuçları", "Doğrusal İpuçları"], a: 1 },
+        { q: "İki gözün retinadaki görüntülerinin birbirinden hafifçe farklı olması ve beynin bu farkı derinlik algısına dönüştürmesine ne denir?", o: ["Konverjans", "Retinal Disparite (Binoküler Fark)", "Lineer Perspektif", "Örtüşme", "Akomodasyon"], a: 1 },
+        { q: "Tek gözle de algılanabilen derinlik ipuçlarına (örneğin ressamların kullandığı) ne denir?", o: ["Binoküler İpuçları", "Monoküler İpuçları", "Fizyolojik İpuçları", "İşitsel İpuçları", "Dokunsal İpuçları"], a: 1 },
+        { q: "Tren raylarının uzakta birleşiyormuş gibi görünmesi hangi monoküler derinlik ipucudur?", o: ["Örtüşme", "Gölgeleme", "Lineer (Doğrusal) Perspektif", "Doku Gradyanı", "Hareket Paralaksı"], a: 2 },
+        { q: "Hareket halindeki bir araçtayken, yakındaki nesnelerin hızlı, uzaktaki nesnelerin yavaş geçiyor gibi görünmesi nedir?", o: ["Hareket Paralaksı", "Phi Fenomeni", "Stroboskopik Hareket", "İlüzyon", "Konverjans"], a: 0 },
+        { q: "Hızlıca yanıp sönen durağan ışıkların hareket ediyormuş gibi algılanması (örneğin neon tabelalar) nedir?", o: ["Hareket Paralaksı", "Phi Fenomeni", "Otokinetik Etki", "İndüklenmiş Hareket", "Gerçek Hareket"], a: 1 },
+        { q: "Algıyı etkileyen, bireyin ne göreceğini veya hissedeceğini şekillendiren beklenti ve deneyimlere ne denir?", o: ["Algısal Kurulum (Perceptual Set)", "Duyusal Uyum", "Duyum Eşiği", "Seçici Dikkat", "Bilinçaltı"], a: 0 },
+        { q: "Dış dünyadaki fiziksel gerçeklikle uyuşmayan, yanlış algılamalara ne denir?", o: ["Halüsinasyon", "İlüzyon (Yanılsama)", "Sanrı", "Duyum", "Refleks"], a: 1 },
+        { q: "Uyarıcı olmadan bir şey algılamaya (örneğin ses duymak) ne denir?", o: ["İlüzyon", "Halüsinasyon", "Algı", "Duyum", "Hayal"], a: 1 },
+        { q: "Müller-Lyer ilüzyonu genellikle hangi algısal özellikle açıklanır?", o: ["Renk algısı", "Derinlik ve perspektif algısı (Köşe algısı)", "Hareket algısı", "Ses algısı", "Tat algısı"], a: 1 },
+        { q: "Duyusal verilerin parçalardan bütüne doğru işlenmesine (veri temelli) ne denir?", o: ["Top-down (Yukarıdan aşağıya) işleme", "Bottom-up (Aşağıdan yukarıya) işleme", "Paralel işleme", "Seri işleme", "Gestalt işleme"], a: 1 },
+        { q: "Algının beklentiler, bilgiler ve kavramlar tarafından yönlendirilmesine (bütünden parçaya) ne denir?", o: ["Bottom-up işleme", "Top-down (Yukarıdan aşağıya) işleme", "Duyusal işleme", "Transdüksiyon", "Refleks"], a: 1 },
+        { q: "Belirli bir uyarana odaklanıp diğerlerini göz ardı etme yeteneğine ne denir?", o: ["Bölünmüş Dikkat", "Seçici Dikkat", "Sürdürülen Dikkat", "Duyusal Uyum", "Fark Eşiği"], a: 1 },
+        { q: "Kalabalık bir partide sadece konuştuğunuz kişinin sesini duyup diğer gürültüleri filtreleyebilmeniz neye örnektir?", o: ["Kokteyl Partisi Etkisi", "Stroop Etkisi", "Plasebo Etkisi", "Müller-Lyer Etkisi", "Doppler Etkisi"], a: 0 },
+        { q: "Bir duyunun uyarılmasının başka bir duyuyu tetiklemesi (örneğin sesleri renkli görmek) durumuna ne denir?", o: ["Sinestesi", "Amnezi", "Afazi", "Agnosi", "Anestezi"], a: 0 },
+        { q: "Fiziksel uyarıcılar ile bunların yarattığı psikolojik deneyimler arasındaki ilişkiyi inceleyen alana ne denir?", o: ["Psikofizik", "Nöropsikoloji", "Klinik Psikoloji", "Sosyal Psikoloji", "Gelişim Psikolojisi"], a: 0 },
+        { q: "Bilinçli farkındalık eşiğinin altında kalan uyarıcılara ne ad verilir?", o: ["Supraliminal", "Subliminal (Eşikaltı)", "Mutlak", "Fark", "JND"], a: 1 },
+        { q: "Görsel bilgiyi işleyen beyin lobu hangisidir?", o: ["Temporal Lob", "Parietal Lob", "Oksipital Lob", "Frontal Lob", "Limbik Sistem"], a: 2 },
+        { q: "İşitsel bilgiyi işleyen beyin lobu hangisidir?", o: ["Oksipital Lob", "Temporal Lob", "Parietal Lob", "Frontal Lob", "Beyincik"], a: 1 },
+        { q: "Somatosensoryel korteks (dokunma duyusu) hangi lobda bulunur?", o: ["Frontal Lob", "Parietal Lob", "Temporal Lob", "Oksipital Lob", "Beyin Sapı"], a: 1 },
+        { q: "Duyusal yoksunluk deneyleri, beynin normal çalışması için neye ihtiyacı olduğunu göstermiştir?", o: ["Sessizliğe", "Karanlığa", "Değişen duyusal uyarılara", "Uykuya", "Yemeğe"], a: 2 },
+        { q: "Ames Odası ilüzyonu, beynin hangi varsayımını kullanarak bizi yanıltır?", o: ["Odanın kare/dikdörtgen olduğu varsayımı", "Odanın yuvarlak olduğu varsayımı", "Odanın karanlık olduğu varsayımı", "İnsanların aynı boyda olduğu varsayımı", "Yerçekimi olmadığı varsayımı"], a: 0 }
+    ];
+
+    let currentQuestion = 0;
+    let userAnswers = new Array(questions.length).fill(null);
+
+    function loadQuestion() {
+        const container = document.getElementById('quiz-container');
+        container.innerHTML = '';
+
+        const q = questions[currentQuestion];
+        
+        let html = `
+            <div class="question-block active">
+                <div class="question-text">${currentQuestion + 1}. ${q.q}</div>
+                <div class="options">
+        `;
+
+        q.o.forEach((opt, index) => {
+            const isSelected = userAnswers[currentQuestion] === index ? 'selected' : '';
+            const isChecked = userAnswers[currentQuestion] === index ? 'checked' : '';
+            html += `
+                <label class="option-label ${isSelected}" id="opt-${index}">
+                    <input type="radio" name="q${currentQuestion}" value="${index}" onclick="selectAnswer(${index})" ${isChecked}>
+                    ${String.fromCharCode(65 + index)}) ${opt}
+                </label>
+            `;
+        });
+
+        html += `</div></div>`;
+        container.innerHTML = html;
+
+        // Progress Bar
+        const progressPercent = ((currentQuestion + 1) / questions.length) * 100;
+        document.getElementById('progress-bar').style.width = progressPercent + '%';
+        document.getElementById('progress-text').innerText = `Soru ${currentQuestion + 1} / ${questions.length}`;
+        
+        // Buton Yönetimi
+        document.getElementById('prevBtn').disabled = currentQuestion === 0;
+        
+        if (currentQuestion === questions.length - 1) {
+            document.getElementById('nextBtn').style.display = 'none';
+            document.getElementById('finishBtn').style.display = 'inline-block';
+        } else {
+            document.getElementById('nextBtn').style.display = 'inline-block';
+            document.getElementById('finishBtn').style.display = 'none';
+        }
+    }
+
+    function selectAnswer(index) {
+        userAnswers[currentQuestion] = index;
+        const labels = document.querySelectorAll('.option-label');
+        labels.forEach(label => label.classList.remove('selected'));
+        document.getElementById(`opt-${index}`).classList.add('selected');
+    }
+
+    function showCurrentAnswer() {
+        const correctIndex = questions[currentQuestion].a;
+        const correctLabel = document.getElementById(`opt-${correctIndex}`);
+        if(correctLabel) correctLabel.classList.add('correct-highlight');
+        
+        if (userAnswers[currentQuestion] !== null && userAnswers[currentQuestion] !== correctIndex) {
+            document.getElementById(`opt-${userAnswers[currentQuestion]}`).classList.add('wrong-highlight');
+        }
+    }
+
+    function nextQuestion() {
+        if (currentQuestion < questions.length - 1) {
+            currentQuestion++;
+            loadQuestion();
+        }
+    }
+
+    function prevQuestion() {
+        if (currentQuestion > 0) {
+            currentQuestion--;
+            loadQuestion();
+        }
+    }
+
+    function finishQuiz() {
+        let correctCount = 0;
+        let wrongCount = 0;
+        let emptyCount = 0;
+        let reviewHtml = '';
+
+        questions.forEach((q, index) => {
+            const userAnswer = userAnswers[index];
+            const isCorrect = userAnswer === q.a;
+            
+            let statusText = '';
+            let statusClass = '';
+
+            if (userAnswer === null) {
+                emptyCount++;
+                statusText = 'Boş';
+                statusClass = 'status-empty';
+            } else if (isCorrect) {
+                correctCount++;
+                statusText = 'Doğru';
+                statusClass = 'status-correct';
+            } else {
+                wrongCount++;
+                statusText = 'Yanlış';
+                statusClass = 'status-wrong';
+            }
+
+            reviewHtml += `
+                <tr>
+                    <td>${index + 1}</td>
+                    <td>${q.q}</td>
+                    <td>${userAnswer !== null ? String.fromCharCode(65 + userAnswer) + ') ' + q.o[userAnswer] : '-'}</td>
+                    <td>${String.fromCharCode(65 + q.a)}) ${q.o[q.a]}</td>
+                    <td class="${statusClass}">${statusText}</td>
+                </tr>
+            `;
+        });
+
+        document.getElementById('quiz-screen').style.display = 'none';
+        document.getElementById('result-screen').style.display = 'block';
+
+        // Puanlama: Her soru 2 puan (100/50)
+        const score = Math.round((correctCount / questions.length) * 100);
+        
+        document.getElementById('score-circle').innerText = score;
+        document.getElementById('score-details').innerHTML = `
+            <strong>Doğru:</strong> ${correctCount} | 
+            <strong>Yanlış:</strong> ${wrongCount} | 
+            <strong>Boş:</strong> ${emptyCount}
+        `;
+        
+        document.getElementById('review-body').innerHTML = reviewHtml;
+    }
+
+    // Uygulamayı başlat
+    loadQuestion();
+</script>
+
+</body>
+</html>

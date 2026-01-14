@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Psikoloji - 7. Ünite: Gelişim Psikolojisi</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #e0f2f1; color: #333; margin: 0; padding: 20px; }
+        .container { max-width: 900px; margin: 0 auto; background: #fff; padding: 40px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        h1 { text-align: center; color: #00796b; border-bottom: 2px solid #009688; padding-bottom: 10px; margin-bottom: 30px; }
+        
+        /* İlerleme Çubuğu */
+        .progress-container { background-color: #b2dfdb; border-radius: 10px; margin-bottom: 20px; height: 10px; overflow: hidden; }
+        .progress-bar { height: 100%; background-color: #00796b; width: 0%; transition: width 0.3s; }
+        .progress-text { text-align: right; font-size: 0.9em; color: #004d40; margin-bottom: 15px; }
+
+        /* Soru Alanı */
+        .question-block { display: none; animation: fadeIn 0.5s; }
+        .question-block.active { display: block; }
+        .question-text { font-weight: 600; font-size: 1.25em; margin-bottom: 20px; color: #004d40; }
+        
+        /* Seçenekler */
+        .options { display: flex; flex-direction: column; gap: 10px; }
+        .option-label { 
+            display: flex; align-items: center; padding: 12px 15px; border: 2px solid #e0e0e0; 
+            border-radius: 8px; cursor: pointer; transition: all 0.2s; background: #fff;
+        }
+        .option-label:hover { background-color: #e0f2f1; border-color: #80cbc4; }
+        .option-label.selected { border-color: #00796b; background-color: #b2dfdb; }
+        .option-label input { margin-right: 15px; transform: scale(1.2); }
+        
+        /* Cevap Göster Stilleri */
+        .option-label.correct-highlight { border-color: #27ae60; background-color: #d5f5e3; color: #1e8449; font-weight: bold; }
+        .option-label.wrong-highlight { border-color: #e74c3c; background-color: #fadbd8; }
+
+        /* Butonlar */
+        .controls { margin-top: 30px; display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
+        button { border: none; padding: 12px 24px; border-radius: 6px; cursor: pointer; font-size: 16px; font-weight: 600; transition: background 0.2s; }
+        .nav-btn { background-color: #00796b; color: white; }
+        .nav-btn:hover { background-color: #004d40; }
+        .nav-btn:disabled { background-color: #bdc3c7; cursor: not-allowed; }
+        
+        .show-answer-btn { background-color: #f39c12; color: white; }
+        .show-answer-btn:hover { background-color: #e67e22; }
+        
+        .finish-btn { background-color: #27ae60; color: white; display: none; }
+        .finish-btn:hover { background-color: #219150; }
+
+        /* Sonuç Ekranı */
+        #result-screen { display: none; }
+        .score-card { text-align: center; background: #f8f9fa; padding: 20px; border-radius: 10px; margin-bottom: 30px; }
+        .score-circle { 
+            width: 120px; height: 120px; border-radius: 50%; background: #00796b; color: white; 
+            display: flex; align-items: center; justify-content: center; font-size: 2em; font-weight: bold; 
+            margin: 0 auto 15px; 
+        }
+        
+        .review-table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 0.95em; }
+        .review-table th, .review-table td { padding: 12px; border: 1px solid #ddd; text-align: left; }
+        .review-table th { background-color: #004d40; color: white; }
+        .review-table tr:nth-child(even) { background-color: #f2f2f2; }
+        .status-correct { color: #27ae60; font-weight: bold; }
+        .status-wrong { color: #c0392b; font-weight: bold; }
+        .status-empty { color: #f39c12; font-weight: bold; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div id="quiz-screen">
+        <h1>7. Ünite: Gelişim Psikolojisi</h1>
+        
+        <div class="progress-text" id="progress-text">Soru 1 / 50</div>
+        <div class="progress-container">
+            <div class="progress-bar" id="progress-bar"></div>
+        </div>
+        
+        <div id="quiz-container">
+            <!-- Sorular buraya JS ile gelecek -->
+        </div>
+
+        <div class="controls">
+            <div>
+                <button class="nav-btn" id="prevBtn" onclick="prevQuestion()" disabled>&#8592; Önceki</button>
+            </div>
+            <div>
+                <button class="show-answer-btn" onclick="showCurrentAnswer()">👁️ Cevabı Göster</button>
+            </div>
+            <div>
+                <button class="nav-btn" id="nextBtn" onclick="nextQuestion()">Sonraki &#8594;</button>
+                <button class="finish-btn" id="finishBtn" onclick="finishQuiz()">Testi Bitir &#10004;</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="result-screen">
+        <h1>Değerlendirme Sonucu</h1>
+        <div class="score-card">
+            <div class="score-circle" id="score-circle">0</div>
+            <h3>Toplam Puan</h3>
+            <p id="score-details"></p>
+        </div>
+        
+        <h3>Detaylı Soru Analizi</h3>
+        <table class="review-table">
+            <thead>
+                <tr>
+                    <th style="width: 5%">No</th>
+                    <th style="width: 45%">Soru</th>
+                    <th style="width: 20%">Senin Cevabın</th>
+                    <th style="width: 20%">Doğru Cevap</th>
+                    <th style="width: 10%">Durum</th>
+                </tr>
+            </thead>
+            <tbody id="review-body">
+                <!-- Sonuç satırları buraya gelecek -->
+            </tbody>
+        </table>
+        <div style="text-align: center; margin-top: 30px;">
+            <button class="nav-btn" onclick="location.reload()">Testi Tekrar Çöz</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // 7. Ünite Konuları: Gelişim Psikolojisi Temel Kavramlar, Fiziksel Gelişim, Bilişsel Gelişim (Piaget, Vygotsky), Psiko-sosyal Gelişim (Erikson), Ahlak Gelişimi (Kohlberg), Bağlanma
+    const questions = [
+        { q: "Döllenmeden ölüme kadar organizmada meydana gelen düzenli ve uyumlu değişimler sürecine ne denir?", o: ["Büyüme", "Gelişme", "Gelişim", "Olgunlaşma", "Öğrenme"], a: 2 },
+        { q: "Organizma üzerindeki genetik mirasın (doğa) ve çevresel faktörlerin (yetiştirme) etkisini tartışan temel gelişim sorunu hangisidir?", o: ["Süreklilik vs Süreksizlik", "Kalıtım vs Çevre", "Aktiflik vs Pasiflik", "Kritik Dönemler", "Evrensellik"], a: 1 },
+        { q: "Organizmanın belli biyolojik işlevleri yerine getirebilecek bedensel büyüklüğe ve fizyolojik güce ulaşmasına (örneğin parmak kaslarının kalemi tutabilecek hale gelmesi) ne denir?", o: ["Büyüme", "Hazırbulunuşluk", "Olgunlaşma", "Öğrenme", "Gelişme"], a: 2 },
+        { q: "Organizmada belirli bir özelliğin kazanılması için çevresel uyarıcıların en etkili olduğu ve öğrenmenin en hızlı gerçekleştiği zaman aralığına ne denir?", o: ["Duyusal Dönem", "Kritik Dönem", "İşlem Öncesi Dönem", "Gizil Dönem", "Ergenlik"], a: 1 },
+        { q: "Aynı dönemde doğup büyüyen, benzer tarihsel ve toplumsal olaylardan (örneğin savaş, teknoloji devrimi) etkilenen bireylerin ortak özellik göstermesine ne denir?", o: ["Kuşak (Kohort) Etkisi", "Yaş Etkisi", "Olgunlaşma Etkisi", "Bireysel Farklılık", "Genetik Etki"], a: 0 },
+        { q: "Farklı yaş gruplarındaki bireylerin aynı anda incelenerek karşılaştırıldığı araştırma yöntemi hangisidir?", o: ["Boylamsal Yöntem", "Kesitsel Yöntem", "Sırasal Yöntem", "Vaka Çalışması", "Deney"], a: 1 },
+        { q: "Aynı bireylerin uzun yıllar boyunca belirli aralıklarla incelendiği araştırma yöntemi hangisidir?", o: ["Kesitsel Yöntem", "Boylamsal (İzleme) Yöntem", "Sırasal Yöntem", "Gözlem", "Anket"], a: 1 },
+        { q: "Doğum öncesi gelişimde, döllenmeden sonraki ilk iki haftayı kapsayan, zigotun hızla bölünüp rahme yerleştiği evre hangisidir?", o: ["Fetüs Evresi", "Embriyo Evresi", "Germinal (Dölüt) Evre", "Bebeklik", "Yenidoğan"], a: 2 },
+        { q: "Doğum öncesi gelişimde, hayati organların ve sistemlerin oluştuğu, dış etkilere en hassas olunan (2-8. haftalar) evre hangisidir?", o: ["Germinal Evre", "Fetüs Evresi", "Embriyo Evresi", "Kritik Evre", "Zigot Evresi"], a: 2 },
+        { q: "Anne karnındaki bebeğin gelişimine zarar veren dış faktörlere (alkol, sigara, radyasyon, virüsler vb.) ne ad verilir?", o: ["Patojen", "Teratojen", "Kanserojen", "Mutajen", "Antijen"], a: 1 },
+        { q: "Yeni doğan bir bebeğin yanağına dokunulduğunda başını o yöne çevirip emme hareketi yapması hangi reflekstir?", o: ["Moro Refleksi", "Babinski Refleksi", "Arama ve Emme Refleksi", "Yakalama Refleksi", "Adımlama Refleksi"], a: 2 },
+        { q: "Jean Piaget'ye göre, bireyin dünyayı anlamak için zihninde oluşturduğu bilgi kalıplarına ne denir?", o: ["İmge", "Kavram", "Şema", "Senaryo", "Algı"], a: 2 },
+        { q: "Piaget'ye göre, yeni karşılaşılan bir durumun mevcut şemalarla açıklanmasına (örneğin atı gören çocuğun ona 'büyük köpek' demesi) ne denir?", o: ["Uyumsama (Akodomasyon)", "Özümleme (Asimilasyon)", "Dengeleme", "Örgütleme", "Uyum"], a: 1 },
+        { q: "Mevcut şemaların yeni bilgiyi açıklamakta yetersiz kaldığında şemanın değiştirilmesi veya yeni şema oluşturulmasına (örneğin atın köpek olmadığını anlayıp 'at' şeması açmak) ne denir?", o: ["Özümleme", "Uyumsama (Düzenleme)", "Dengeleme", "Korunum", "Tersine Çevrilebilirlik"], a: 1 },
+        { q: "Piaget'nin Bilişsel Gelişim Kuramı'na göre, 0-2 yaş arasını kapsayan ve bebeğin dünyayı duyuları ve hareketleriyle tanıdığı dönem hangisidir?", o: ["İşlem Öncesi Dönem", "Somut İşlemler Dönemi", "Duyusal-Motor (Sensori-Motor) Dönem", "Soyut İşlemler Dönemi", "Fallik Dönem"], a: 2 },
+        { q: "Duyusal-Motor dönemin en önemli kazanımı olan, nesnenin görüş alanından çıksa bile var olmaya devam ettiğinin anlaşılmasına ne denir?", o: ["Nesne Sürekliliği", "Korunum", "Benmerkezcilik", "Animizm", "Yapaycılık"], a: 0 },
+        { q: "Piaget'ye göre, çocuğun dili kullanmaya başladığı ancak henüz mantıksal işlemleri yapamadığı, benmerkezci düşüncenin hakim olduğu (2-7 yaş) dönem hangisidir?", o: ["Duyusal-Motor Dönem", "İşlem Öncesi Dönem", "Somut İşlemler Dönemi", "Soyut İşlemler Dönemi", "Latent Dönem"], a: 1 },
+        { q: "Çocuğun cansız nesnelere canlılık özellikleri yüklemesine (örneğin 'oyuncağım üşüdü') ne denir?", o: ["Yapaycılık", "Animizm (Canlıcılık)", "Benmerkezcilik", "Korunum", "Tersine Çevrilebilirlik"], a: 1 },
+        { q: "Çocuğun dünyayı sadece kendi bakış açısından görmesi, başkalarının farklı bir bakış açısı olabileceğini anlayamamasına ne denir?", o: ["Empati", "Benmerkezcilik (Egosantrizm)", "Özel Konuşma", "Taklit", "Nesne Sürekliliği"], a: 1 },
+        { q: "Piaget'ye göre, 7-11 yaş arasını kapsayan ve çocuğun mantıksal düşünmeye başladığı, 'korunum' ilkesini kazandığı dönem hangisidir?", o: ["İşlem Öncesi Dönem", "Somut İşlemler Dönemi", "Soyut İşlemler Dönemi", "Duyusal-Motor Dönem", "Genital Dönem"], a: 1 },
+        { q: "Bir nesnenin şekli değişse bile (örneğin suyun ince bardağa dökülmesi) miktarının aynı kaldığının anlaşılmasına ne denir?", o: ["Nesne Sürekliliği", "Korunum İlkesi", "Tersine Çevrilebilirlik", "Odaklanma", "Sınıflama"], a: 1 },
+        { q: "Piaget'ye göre, 12 yaş ve sonrasını kapsayan, hipotetik, soyut ve göreceli düşünmenin geliştiği dönem hangisidir?", o: ["Somut İşlemler Dönemi", "Soyut (Formel) İşlemler Dönemi", "İşlem Öncesi Dönem", "Duyusal-Motor Dönem", "Yetişkinlik Dönemi"], a: 1 },
+        { q: "Lev Vygotsky'ye göre, çocuğun tek başına yapamadığı ama bir yetişkin rehberliğinde yapabildiği görevler arasındaki farka ne denir?", o: ["Bilişsel Gelişim Alanı", "Yakınsal Gelişim Alanı (ZPD)", "Potansiyel Alan", "Öğrenme Alanı", "Zeka Alanı"], a: 1 },
+        { q: "Vygotsky'nin kuramında, çocuğa öğrenme sürecinde verilen ve yetkinlik kazandıkça azaltılan desteğe ne denir?", o: ["Yapı İskelesi (Scaffolding)", "Pekiştirme", "Ceza", "Model Olma", "Koşullanma"], a: 0 },
+        { q: "Bebek ile bakım vereni arasında kurulan güçlü duygusal bağa ne denir?", o: ["Sevgi", "Bağlanma (Attachment)", "İmprinting", "Özdeşim", "Empati"], a: 1 },
+        { q: "Harry Harlow'un maymunlarla yaptığı deney, bağlanmada neyin beslenmeden daha önemli olduğunu göstermiştir?", o: ["Sıcaklık ve Temas Konforu", "Süt", "Oyun", "Ceza", "Uyku"], a: 0 },
+        { q: "Mary Ainsworth'un 'Yabancı Ortam Deneyi' ile sınıflandırdığı, annesi gidince üzülen ama dönünce kolayca sakinleşen çocukların bağlanma stili nedir?", o: ["Güvensiz-Kaçıngan", "Güvensiz-Kaygılı/Dirençli", "Güvenli Bağlanma", "Dağınık Bağlanma", "Bağımlı Bağlanma"], a: 2 },
+        { q: "Erik Erikson'un Psiko-sosyal Gelişim Kuramı'na göre, bebeklik dönemindeki (0-1 yaş) temel çatışma nedir?", o: ["Özerkliğe karşı Kuşku/Utanç", "Temel Güvene karşı Güvensizlik", "Girişimciliğe karşı Suçluluk", "Kimlik Kazanımına karşı Rol Karmaşası", "Üretkenliğe karşı Durgunluk"], a: 1 },
+        { q: "Erikson'a göre, ergenlik döneminin (12-18 yaş) temel krizi nedir?", o: ["Başarıya karşı Aşağılık Duygusu", "Kimlik Kazanımına karşı Rol Karmaşası", "Yakınlığa karşı Yalıtılmışlık", "Özerkliğe karşı Utanç", "Bütünlüğe karşı Umutsuzluk"], a: 1 },
+        { q: "Ergenlerin herkesin kendilerini izlediğini ve yargıladığını düşünmelerine ne ad verilir?", o: ["Kişisel Efsane", "Hayali Seyirci (Imaginary Audience)", "Benmerkezcilik", "Empati", "Narsisizm"], a: 1 },
+        { q: "Ergenlerin kendi deneyimlerinin, duygularının ve düşüncelerinin eşsiz olduğuna, kimsenin onları anlamadığına ve kendilerine bir şey olmayacağına inanmalarına ne denir?", o: ["Hayali Seyirci", "Kişisel Efsane (Personal Fable)", "Kimlik Bunalımı", "Rol Karmaşası", "Büyüklük Sanrısı"], a: 1 },
+        { q: "James Marcia'nın kimlik statülerine göre, bireyin hiçbir arayışa girmeden ailesinin veya çevresinin değerlerini aynen kabul etmesine ne denir?", o: ["Başarılı Kimlik", "Moratoryum", "İpotekli (Erken Bağlanmış) Kimlik", "Dağınık Kimlik", "Ters Kimlik"], a: 2 },
+        { q: "Marcia'ya göre, bireyin aktif bir arayış içinde olduğu ancak henüz bir karara varamadığı (krizde olduğu) kimlik statüsü hangisidir?", o: ["İpotekli Kimlik", "Moratoryum (Askıya Alma)", "Dağınık Kimlik", "Başarılı Kimlik", "Gölgeli Kimlik"], a: 1 },
+        { q: "Lawrence Kohlberg'in Ahlak Gelişimi Kuramı'na göre, ahlaki yargıların ödül ve cezaya göre belirlendiği düzey hangisidir?", o: ["Geleneksel Düzey", "Gelenek Öncesi Düzey", "Gelenek Sonrası Düzey", "Özerk Dönem", "Dışa Bağımlı Dönem"], a: 1 },
+        { q: "Kohlberg'e göre, 'iyi çocuk olma', toplumsal kurallara uyma ve düzeni korumanın önemli olduğu düzey hangisidir?", o: ["Gelenek Öncesi", "Geleneksel Düzey", "Gelenek Sonrası", "Evrensel Ahlak", "Çıkarcı Düzey"], a: 1 },
+        { q: "Kohlberg'e göre, evrensel ahlak ilkelerinin, adaletin ve insan haklarının yasaların üzerinde tutulduğu en üst düzey hangisidir?", o: ["Gelenek Sonrası Düzey", "Geleneksel Düzey", "Gelenek Öncesi Düzey", "Kanun ve Düzen", "Saf Çıkarcı"], a: 0 },
+        { q: "Erikson'a göre genç yetişkinlik döneminin (20-40 yaş) temel çatışması nedir?", o: ["Kimliğe karşı Rol Karmaşası", "Yakınlığa karşı Yalıtılmışlık (İzolasyon)", "Üretkenliğe karşı Durgunluk", "Benlik Bütünlüğüne karşı Umutsuzluk", "Girişimciliğe karşı Suçluluk"], a: 1 },
+        { q: "Erikson'a göre orta yetişkinlik döneminde bireyin gelecek nesillere rehberlik etme, üretme ve topluma katkı sağlama isteğine ne denir?", o: ["Durgunluk", "Üretkenlik (Generativity)", "Bütünlük", "Yakınlık", "Özerklik"], a: 1 },
+        { q: "Yaşlılık döneminde, geçmişe bakıp hayatını anlamlı bulma ve ölümü kabullenme durumu Erikson'a göre hangi başarımdır?", o: ["Umutsuzluk", "Benlik Bütünlüğü", "Üretkenlik", "Yalıtılmışlık", "Bilgelik"], a: 1 },
+        { q: "Yaşlanmayla birlikte genellikle azalan, yeni problemleri çözme ve hız gerektiren zeka türü hangisidir?", o: ["Kristalize Zeka", "Akıcı (Fluid) Zeka", "Duygusal Zeka", "Sözel Zeka", "Sosyal Zeka"], a: 1 },
+        { q: "Yaşlanmayla birlikte artmaya devam eden veya korunan, deneyime ve bilgi birikimine dayalı zeka türü hangisidir?", o: ["Akıcı Zeka", "Kristalize Zeka", "Mantıksal Zeka", "Görsel Zeka", "İşitsel Zeka"], a: 1 },
+        { q: "Elisabeth Kübler-Ross'un yas sürecinde tanımladığı 5 aşamanın ilki nedir?", o: ["Öfke", "Pazarlık", "İnkar", "Depresyon", "Kabullenme"], a: 2 },
+        { q: "Diana Baumrind'e göre, hem sıcak/ilgi gösteren hem de kurallar koyup sınır çizen en sağlıklı ebeveynlik tarzı hangisidir?", o: ["Otoriter (Baskıcı)", "İzin Verici (Müsamahakar)", "Demokratik / Yetkili (Authoritative)", "İhmalkar", "Koruyucu"], a: 2 },
+        { q: "Çocuğa karşı soğuk, katı kuralları olan ve itaat bekleyen ebeveynlik tarzı hangisidir?", o: ["Yetkili", "Otoriter (Authoritarian)", "İzin Verici", "İhmalkar", "Demokratik"], a: 1 },
+        { q: "Bebeklerin doğuştan getirdikleri, çevreye verdikleri duygusal tepki biçimi ve davranış tarzına (kişiliğin biyolojik temeli) ne denir?", o: ["Karakter", "Mizaç (Huy)", "Kişilik", "Benlik", "Tutum"], a: 1 },
+        { q: "Vygotsky'ye göre çocukların kendi kendilerine sesli düşünerek yaptıkları ve bilişsel gelişimi destekleyen konuşmaya ne denir?", o: ["Benmerkezci Konuşma", "Özel Konuşma (Inner Speech)", "Sosyal Konuşma", "Telgrafik Konuşma", "Agulama"], a: 1 },
+        { q: "Bebeklerin belirsiz bir durumda (örneğin yabancı biriyle karşılaşınca) ne yapacaklarına karar vermek için annelerinin yüz ifadesine bakmalarına ne denir?", o: ["Taklit", "Sosyal Referanslama", "Yabancı Kaygısı", "Bağlanma", "Özdeşim"], a: 1 },
+        { q: "Erkeklerin X ve Y, dişilerin X ve X kromozomu taşıması gelişimin hangi boyutunu belirler?", o: ["Biyolojik Cinsiyet", "Toplumsal Cinsiyet", "Cinsel Yönelim", "Kişilik", "Zeka"], a: 0 },
+        { q: "Gelişimin 'baştan ayağa' (sefalokaudal) ilkesi neyi ifade eder?", o: ["Önce ayakların geliştiğini", "Önce başın ve beyin yapılarının, sonra gövde ve bacakların kontrolünün kazanıldığını", "Gelişimin rastgele olduğunu", "Önce ellerin kullanıldığını", "Gelişimin dıştan içe olduğunu"], a: 1 },
+        { q: "Noam Chomsky, dil gelişiminin büyük oranda neye dayandığını savunmuştur?", o: ["Taklit ve pekiştirmeye", "Biyolojik altyapıya (Dil Edinim Aygıtı - LAD)", "Sosyal etkileşime", "Zeka seviyesine", "Eğitime"], a: 1 }
+    ];
+
+    let currentQuestion = 0;
+    let userAnswers = new Array(questions.length).fill(null);
+
+    function loadQuestion() {
+        const container = document.getElementById('quiz-container');
+        container.innerHTML = '';
+
+        const q = questions[currentQuestion];
+        
+        let html = `
+            <div class="question-block active">
+                <div class="question-text">${currentQuestion + 1}. ${q.q}</div>
+                <div class="options">
+        `;
+
+        q.o.forEach((opt, index) => {
+            const isSelected = userAnswers[currentQuestion] === index ? 'selected' : '';
+            const isChecked = userAnswers[currentQuestion] === index ? 'checked' : '';
+            html += `
+                <label class="option-label ${isSelected}" id="opt-${index}">
+                    <input type="radio" name="q${currentQuestion}" value="${index}" onclick="selectAnswer(${index})" ${isChecked}>
+                    ${String.fromCharCode(65 + index)}) ${opt}
+                </label>
+            `;
+        });
+
+        html += `</div></div>`;
+        container.innerHTML = html;
+
+        // Progress Bar
+        const progressPercent = ((currentQuestion + 1) / questions.length) * 100;
+        document.getElementById('progress-bar').style.width = progressPercent + '%';
+        document.getElementById('progress-text').innerText = `Soru ${currentQuestion + 1} / ${questions.length}`;
+        
+        // Buton Yönetimi
+        document.getElementById('prevBtn').disabled = currentQuestion === 0;
+        
+        if (currentQuestion === questions.length - 1) {
+            document.getElementById('nextBtn').style.display = 'none';
+            document.getElementById('finishBtn').style.display = 'inline-block';
+        } else {
+            document.getElementById('nextBtn').style.display = 'inline-block';
+            document.getElementById('finishBtn').style.display = 'none';
+        }
+    }
+
+    function selectAnswer(index) {
+        userAnswers[currentQuestion] = index;
+        const labels = document.querySelectorAll('.option-label');
+        labels.forEach(label => label.classList.remove('selected'));
+        document.getElementById(`opt-${index}`).classList.add('selected');
+    }
+
+    function showCurrentAnswer() {
+        const correctIndex = questions[currentQuestion].a;
+        const correctLabel = document.getElementById(`opt-${correctIndex}`);
+        if(correctLabel) correctLabel.classList.add('correct-highlight');
+        
+        if (userAnswers[currentQuestion] !== null && userAnswers[currentQuestion] !== correctIndex) {
+            document.getElementById(`opt-${userAnswers[currentQuestion]}`).classList.add('wrong-highlight');
+        }
+    }
+
+    function nextQuestion() {
+        if (currentQuestion < questions.length - 1) {
+            currentQuestion++;
+            loadQuestion();
+        }
+    }
+
+    function prevQuestion() {
+        if (currentQuestion > 0) {
+            currentQuestion--;
+            loadQuestion();
+        }
+    }
+
+    function finishQuiz() {
+        let correctCount = 0;
+        let wrongCount = 0;
+        let emptyCount = 0;
+        let reviewHtml = '';
+
+        questions.forEach((q, index) => {
+            const userAnswer = userAnswers[index];
+            const isCorrect = userAnswer === q.a;
+            
+            let statusText = '';
+            let statusClass = '';
+
+            if (userAnswer === null) {
+                emptyCount++;
+                statusText = 'Boş';
+                statusClass = 'status-empty';
+            } else if (isCorrect) {
+                correctCount++;
+                statusText = 'Doğru';
+                statusClass = 'status-correct';
+            } else {
+                wrongCount++;
+                statusText = 'Yanlış';
+                statusClass = 'status-wrong';
+            }
+
+            reviewHtml += `
+                <tr>
+                    <td>${index + 1}</td>
+                    <td>${q.q}</td>
+                    <td>${userAnswer !== null ? String.fromCharCode(65 + userAnswer) + ') ' + q.o[userAnswer] : '-'}</td>
+                    <td>${String.fromCharCode(65 + q.a)}) ${q.o[q.a]}</td>
+                    <td class="${statusClass}">${statusText}</td>
+                </tr>
+            `;
+        });
+
+        document.getElementById('quiz-screen').style.display = 'none';
+        document.getElementById('result-screen').style.display = 'block';
+
+        // Puanlama: Her soru 2 puan (100/50)
+        const score = Math.round((correctCount / questions.length) * 100);
+        
+        document.getElementById('score-circle').innerText = score;
+        document.getElementById('score-details').innerHTML = `
+            <strong>Doğru:</strong> ${correctCount} | 
+            <strong>Yanlış:</strong> ${wrongCount} | 
+            <strong>Boş:</strong> ${emptyCount}
+        `;
+        
+        document.getElementById('review-body').innerHTML = reviewHtml;
+    }
+
+    // Uygulamayı başlat
+    loadQuestion();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sosyoloji - 4. Ünite: Toplumsallaşma (Sosyalleşme)</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #e3f2fd; color: #333; margin: 0; padding: 20px; }
+        .container { max-width: 900px; margin: 0 auto; background: #fff; padding: 40px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        h1 { text-align: center; color: #1565c0; border-bottom: 2px solid #1976d2; padding-bottom: 10px; margin-bottom: 30px; }
+        
+        /* İlerleme Çubuğu */
+        .progress-container { background-color: #bbdefb; border-radius: 10px; margin-bottom: 20px; height: 10px; overflow: hidden; }
+        .progress-bar { height: 100%; background-color: #1565c0; width: 0%; transition: width 0.3s; }
+        .progress-text { text-align: right; font-size: 0.9em; color: #0d47a1; margin-bottom: 15px; }
+
+        /* Soru Alanı */
+        .question-block { display: none; animation: fadeIn 0.5s; }
+        .question-block.active { display: block; }
+        .question-text { font-weight: 600; font-size: 1.25em; margin-bottom: 20px; color: #0d47a1; }
+        
+        /* Seçenekler */
+        .options { display: flex; flex-direction: column; gap: 10px; }
+        .option-label { 
+            display: flex; align-items: center; padding: 12px 15px; border: 2px solid #e0e0e0; 
+            border-radius: 8px; cursor: pointer; transition: all 0.2s; background: #fff;
+        }
+        .option-label:hover { background-color: #e3f2fd; border-color: #90caf9; }
+        .option-label.selected { border-color: #1565c0; background-color: #bbdefb; }
+        .option-label input { margin-right: 15px; transform: scale(1.2); }
+        
+        /* Cevap Göster Stilleri */
+        .option-label.correct-highlight { border-color: #27ae60; background-color: #d5f5e3; color: #1e8449; font-weight: bold; }
+        .option-label.wrong-highlight { border-color: #e74c3c; background-color: #fadbd8; }
+
+        /* Butonlar */
+        .controls { margin-top: 30px; display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
+        button { border: none; padding: 12px 24px; border-radius: 6px; cursor: pointer; font-size: 16px; font-weight: 600; transition: background 0.2s; }
+        .nav-btn { background-color: #1565c0; color: white; }
+        .nav-btn:hover { background-color: #0d47a1; }
+        .nav-btn:disabled { background-color: #bdc3c7; cursor: not-allowed; }
+        
+        .show-answer-btn { background-color: #f39c12; color: white; }
+        .show-answer-btn:hover { background-color: #e67e22; }
+        
+        .finish-btn { background-color: #27ae60; color: white; display: none; }
+        .finish-btn:hover { background-color: #219150; }
+
+        /* Sonuç Ekranı */
+        #result-screen { display: none; }
+        .score-card { text-align: center; background: #f8f9fa; padding: 20px; border-radius: 10px; margin-bottom: 30px; }
+        .score-circle { 
+            width: 120px; height: 120px; border-radius: 50%; background: #1565c0; color: white; 
+            display: flex; align-items: center; justify-content: center; font-size: 2em; font-weight: bold; 
+            margin: 0 auto 15px; 
+        }
+        
+        .review-table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 0.95em; }
+        .review-table th, .review-table td { padding: 12px; border: 1px solid #ddd; text-align: left; }
+        .review-table th { background-color: #0d47a1; color: white; }
+        .review-table tr:nth-child(even) { background-color: #f2f2f2; }
+        .status-correct { color: #27ae60; font-weight: bold; }
+        .status-wrong { color: #c0392b; font-weight: bold; }
+        .status-empty { color: #f39c12; font-weight: bold; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div id="quiz-screen">
+        <h1>4. Ünite: Toplumsallaşma (Sosyalleşme)</h1>
+        
+        <div class="progress-text" id="progress-text">Soru 1 / 50</div>
+        <div class="progress-container">
+            <div class="progress-bar" id="progress-bar"></div>
+        </div>
+        
+        <div id="quiz-container">
+            <!-- Sorular buraya JS ile gelecek -->
+        </div>
+
+        <div class="controls">
+            <div>
+                <button class="nav-btn" id="prevBtn" onclick="prevQuestion()" disabled>&#8592; Önceki</button>
+            </div>
+            <div>
+                <button class="show-answer-btn" onclick="showCurrentAnswer()">👁️ Cevabı Göster</button>
+            </div>
+            <div>
+                <button class="nav-btn" id="nextBtn" onclick="nextQuestion()">Sonraki &#8594;</button>
+                <button class="finish-btn" id="finishBtn" onclick="finishQuiz()">Testi Bitir &#10004;</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="result-screen">
+        <h1>Değerlendirme Sonucu</h1>
+        <div class="score-card">
+            <div class="score-circle" id="score-circle">0</div>
+            <h3>Toplam Puan</h3>
+            <p id="score-details"></p>
+        </div>
+        
+        <h3>Detaylı Soru Analizi</h3>
+        <table class="review-table">
+            <thead>
+                <tr>
+                    <th style="width: 5%">No</th>
+                    <th style="width: 45%">Soru</th>
+                    <th style="width: 20%">Senin Cevabın</th>
+                    <th style="width: 20%">Doğru Cevap</th>
+                    <th style="width: 10%">Durum</th>
+                </tr>
+            </thead>
+            <tbody id="review-body">
+                <!-- Sonuç satırları buraya gelecek -->
+            </tbody>
+        </table>
+        <div style="text-align: center; margin-top: 30px;">
+            <button class="nav-btn" onclick="location.reload()">Testi Tekrar Çöz</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // 4. Ünite Konuları: Toplumsallaşma (Sosyalleşme) Tanımı, Benlik Gelişimi, Aracı Kurumlar, Yaşam Boyu Sosyalleşme, Yeniden Sosyalleşme
+    const questions = [
+        { q: "Bireyin toplumun kültürel değerlerini, normlarını ve rollerini öğrenerek o toplumun işlevsel bir üyesi haline gelme sürecine ne denir?", o: ["Büyüme", "Kültürleşme", "Sosyalleşme (Toplumsallaşma)", "Olgunlaşma", "Eğitim"], a: 2 },
+        { q: "Sosyalleşme süreci ne zaman başlar ve ne zaman biter?", o: ["Okula başlayınca başlar, mezun olunca biter", "Doğumla başlar, ölümle biter (Yaşam boyu sürer)", "Ergenlikte başlar, yetişkinlikte biter", "Doğumla başlar, 18 yaşında biter", "İşe başlayınca başlar, emeklilikte biter"], a: 1 },
+        { q: "Charles Horton Cooley'nin 'Ayna Benlik' (Looking-glass self) kuramına göre benliğimiz nasıl oluşur?", o: ["Genetik mirasımızla", "Kendi kendimize düşünerek", "Başkalarının bize nasıl tepki verdiğine dair algılarımızla (Başkalarının gözünden kendimizi görerek)", "Okul başarımızla", "Dini inançlarımızla"], a: 2 },
+        { q: "George Herbert Mead'e göre, bireyin toplumun genel beklenti ve normlarını içselleştirerek oluşturduğu benlik parçasına ne denir?", o: ["Ben (I)", "Beni/Bana (Me)", "Genelleştirilmiş Öteki", "Önemli Öteki", "Ego"], a: 2 },
+        { q: "Mead'e göre benliğin yaratıcı, spontane ve dürtüsel yönüne ne ad verilir?", o: ["Me (Beni)", "I (Ben)", "Süperego", "İd", "Persona"], a: 1 },
+        { q: "Mead'e göre benliğin toplumsallaşmış, kurallara uyan ve 'Başkaları ne der?' diye düşünen yönüne ne ad verilir?", o: ["I (Ben)", "Me (Beni/Bana)", "İd", "Libido", "Gölge"], a: 1 },
+        { q: "Sigmund Freud'a göre kişiliğin biyolojik, dürtüsel ve haz ilkesine göre çalışan bölümü hangisidir?", o: ["Ego", "Süperego", "İd (Alt Benlik)", "Bilinç", "Benlik"], a: 2 },
+        { q: "Freud'a göre kişiliğin ahlaki değerleri, vicdanı ve toplumsal kuralları temsil eden bölümü hangisidir?", o: ["İd", "Ego", "Süperego (Üst Benlik)", "Bilinçdışı", "Libido"], a: 2 },
+        { q: "Freud'a göre İd ile Süperego arasında dengeyi sağlayan ve gerçeklik ilkesine göre çalışan yönetici bölüm hangisidir?", o: ["Ego (Benlik)", "İd", "Süperego", "Bilinçaltı", "Dürtü"], a: 0 },
+        { q: "Jean Piaget'nin Bilişsel Gelişim Kuramı'na göre, çocuğun soyut düşünebildiği ve varsayımlar kurabildiği evre hangisidir?", o: ["Duyusal Motor", "İşlem Öncesi", "Somut İşlemler", "Soyut (Formel) İşlemler", "Ahlaki Gelişim"], a: 3 },
+        { q: "Sosyalleşmenin en temel ve ilk gerçekleştiği kurum (birincil sosyalleşme aracı) hangisidir?", o: ["Okul", "Aile", "Arkadaş Grubu", "Medya", "İşyeri"], a: 1 },
+        { q: "Okulun sosyalleşmedeki 'gizli müfredat' (hidden curriculum) işlevi neyi ifade eder?", o: ["Matematik derslerini", "Resmi ders programını", "İtaat, disiplin, zaman yönetimi gibi resmi olmayan toplumsal kuralların öğretilmesini", "Sınav sorularını", "Öğretmen maaşlarını"], a: 2 },
+        { q: "Ergenlik döneminde ailenin etkisinin azalıp en etkili hale gelen sosyalleşme aracı hangisidir?", o: ["Okul", "Akran / Arkadaş Grubu", "Din", "Devlet", "Komşular"], a: 1 },
+        { q: "Kitle iletişim araçlarının (Medya) sosyalleşmedeki rolü nedir?", o: ["Rolü yoktur", "Sadece haber verir", "Rol modeller sunar, değerleri ve yaşam tarzlarını yayarak bireyleri etkiler", "Sadece eğlendirir", "Sadece ürün satar"], a: 2 },
+        { q: "Bireyin gelecekte üstleneceği bir rolü (örneğin ebeveynlik veya meslek) şimdiden öğrenmeye ve hazırlanmaya başlamasına ne denir?", o: ["Yeniden Sosyalleşme", "Tersine Sosyalleşme", "Öncel (Anticipatory) Sosyalleşme", "Birincil Sosyalleşme", "İkincil Sosyalleşme"], a: 2 },
+        { q: "Bireyin geçmişteki davranış kalıplarını ve kimliğini terk edip, tamamen yeni bir yaşam tarzını ve değerleri öğrenmesi sürecine ne denir?", o: ["Öncel Sosyalleşme", "Yeniden Sosyalleşme (Resocialization)", "Birincil Sosyalleşme", "Gelişimsel Sosyalleşme", "Tersine Sosyalleşme"], a: 1 },
+        { q: "Yeniden sosyalleşmenin en yoğun yaşandığı, bireylerin dış dünyadan izole edilip sıkı kurallarla yönetildiği kurumlara (hapishane, akıl hastanesi, kışla) ne ad verilir?", o: ["Total (Toplam) Kurumlar", "Örgün Eğitim Kurumları", "Sivil Toplum Örgütleri", "Serbest Bölgeler", "Özel Şirketler"], a: 0 },
+        { q: "Çocuğun (özellikle teknoloji konusunda) ebeveynlerine veya yaşlılara yeni şeyler öğretmesi sürecine ne denir?", o: ["Yeniden Sosyalleşme", "Tersine Sosyalleşme", "Öncel Sosyalleşme", "Geleneksel Sosyalleşme", "Pasif Sosyalleşme"], a: 1 },
+        { q: "Erik Erikson'un psikososyal gelişim kuramına göre, bebeklik dönemindeki temel güven duygusu nasıl kazanılır?", o: ["Oyunla", "Bakım verenin tutarlı ve sevgi dolu ilgisiyle", "Cezayla", "Yalnız bırakılarak", "Okulla"], a: 1 },
+        { q: "Bireyin toplum içinde üstlendiği pozisyona 'statü', bu pozisyonun gerektirdiği davranışlara ne denir?", o: ["Rol", "Norm", "Değer", "Kural", "Yetki"], a: 0 },
+        { q: "Sosyalleşme süreci başarısız olursa (örneğin 'Vahşi Çocuk' vakaları) ne olur?", o: ["Birey daha özgür olur", "Birey insani özelliklerini (dil, düşünce, empati) geliştiremez", "Birey daha zeki olur", "Hiçbir şey olmaz", "Birey doğayla bütünleşir"], a: 1 },
+        { q: "Toplumsal cinsiyet sosyalleşmesi (Gender Socialization) nedir?", o: ["Biyolojik cinsiyeti öğrenmek", "Toplumun kadın ve erkekten beklediği rol ve davranış kalıplarını öğrenmek", "Cinsel eğitim almak", "Evlenmek", "Çocuk sahibi olmak"], a: 1 },
+        { q: "Bourdieu'ya göre ailenin çocuğa kazandırdığı dil, görgü, zevk ve kültürel birikime ne denir?", o: ["Ekonomik Sermaye", "Kültürel Sermaye", "Sosyal Sermaye", "Siyasi Sermaye", "İnsan Sermayesi"], a: 1 },
+        { q: "Sosyalleşme sürecinde 'ödül ve ceza' mekanizması hangi öğrenme kuramıyla ilişkilidir?", o: ["Sosyal Öğrenme", "Davranışçılık (Edimsel Koşullanma)", "Bilişsel Gelişim", "Psikanaliz", "Hümanizm"], a: 1 },
+        { q: "Bandura'nın Sosyal Öğrenme Kuramı'na göre çocuklar en çok nasıl öğrenir?", o: ["Sadece kitap okuyarak", "Gözlemleyerek ve model alarak (Taklit)", "Sadece ceza alarak", "Sadece ödül alarak", "Hiçbir şey yapmayarak"], a: 1 },
+        { q: "Çalışma hayatı ve meslek grupları hangi sosyalleşme türünün önemli bir parçasıdır?", o: ["Birincil Sosyalleşme", "İkincil Sosyalleşme", "Bebeklik Sosyalleşmesi", "Tersine Sosyalleşme", "Ailevi Sosyalleşme"], a: 1 },
+        { q: "Emeklilik döneminde bireyin yaşadığı rol kaybı ve yeni yaşamına uyum süreci hangi kavrama örnektir?", o: ["İlk Sosyalleşme", "Yaşam Boyu Sosyalleşme / Yaşlılıkta Sosyalleşme", "Tersine Sosyalleşme", "Çocukluk Sosyalleşmesi", "Mesleki Sosyalleşme"], a: 1 },
+        { q: "Birincil sosyalleşme nerede gerçekleşir?", o: ["Okulda", "İşyerinde", "Ailede (Çocuklukta)", "Orduda", "Medyada"], a: 2 },
+        { q: "Mead'e göre çocuğun başkalarının rollerini taklit ederek oyun oynadığı aşama hangisidir?", o: ["Oyun Aşaması (Play Stage)", "Oyun Aşaması (Game Stage)", "Hazırlık Aşaması", "Yetişkinlik", "Yaşlılık"], a: 0 },
+        { q: "Mead'e göre çocuğun birden fazla kişinin rolünü aynı anda kavradığı ve kurallı oyunları anladığı aşama hangisidir?", o: ["Play Stage", "Game Stage (Kurallı Oyun Aşaması)", "Taklit Aşaması", "Bebeklik", "Ergenlik"], a: 1 },
+        { q: "Sosyobiyoloji yaklaşımı insan davranışlarını nasıl açıklar?", o: ["Kültürle", "Eğitimle", "Genetik ve evrimsel kökenlerle", "Ekonomiyle", "Dinle"], a: 2 },
+        { q: "Harry Harlow'un maymun deneyleri sosyalleşmede neyin önemini kanıtlamıştır?", o: ["Sadece beslenmenin", "Fiziksel temas, sıcaklık ve güven duygusunun (Anne sevgisi)", "Otoritenin", "Cezanın", "Yalnızlığın"], a: 1 },
+        { q: "Toplumsal kontrol mekanizmaları ne işe yarar?", o: ["Bireyleri cezalandırmaya", "Toplumsal düzeni sağlamak için bireylerin normlara uymasını sağlamaya", "Devleti zengin etmeye", "Okulları kapatmaya", "Aileleri bölmeye"], a: 1 },
+        { q: "İkincil sosyalleşme ne zaman gerçekleşir?", o: ["Bebeklikte", "Çocukluktan sonra, okul, iş, evlilik gibi yeni kurumlara girildiğinde", "Sadece yaşlılıkta", "Anne karnında", "Hiçbir zaman"], a: 1 },
+        { q: "Akran grubu (arkadaş çevresi) sosyalleşmede neden önemlidir?", o: ["Otorite figürü olmadan eşit ilişkiler kurmayı öğrettiği için", "Ders çalıştırdığı için", "Para verdiği için", "Ceza verdiği için", "Yemek verdiği için"], a: 0 },
+        { q: "Goffman'ın 'Dramaturji' yaklaşımına göre sosyal etkileşim neye benzer?", o: ["Bir savaşa", "Bir tiyatro oyununa (Sahne önü ve sahne arkası)", "Bir fabrikaya", "Bir okula", "Bir hastaneye"], a: 1 },
+        { q: "Bireyin içinde bulunduğu grup veya toplumun değerlerine aykırı davranmasına ne denir?", o: ["Uyum", "Sapma (Deviance)", "Sosyalleşme", "Entegrasyon", "Kültürleşme"], a: 1 },
+        { q: "Etnometodoloji yaklaşımı neyi inceler?", o: ["Büyük kurumları", "İnsanların günlük yaşamı nasıl anlamlandırdığını ve 'olağan' kıldığını", "Tarihi olayları", "Ekonomik verileri", "Siyasi partileri"], a: 1 },
+        { q: "Toplumsal statülerin ve rollerin kuşaktan kuşağa aktarılmasına ne denir?", o: ["Toplumsal Değişme", "Toplumsal Yeniden Üretim", "Toplumsal Hareketlilik", "Toplumsal Çatışma", "Toplumsal Sapma"], a: 1 },
+        { q: "Freud'a göre medeniyetin bedeli nedir?", o: ["Zenginlik", "Mutluluk", "İd'in (dürtülerin) bastırılması ve huzursuzluk", "Özgürlük", "Barış"], a: 2 },
+        { q: "Aşağıdakilerden hangisi bir 'Total Kurum' örneği değildir?", o: ["Hapishane", "Akıl Hastanesi", "Yatılı Okul", "Kışla", "Alışveriş Merkezi"], a: 4 },
+        { q: "Çocuğun cinsiyetine uygun davranışları öğrenmesi ve benimsemesi sürecine ne denir?", o: ["Cinsel Kimlik Gelişimi", "Cinsel Yönelim", "Biyolojik Cinsiyet", "Fiziksel Gelişim", "Zihinsel Gelişim"], a: 0 },
+        { q: "Sosyalleşme süreci bireye ne kazandırır?", o: ["Sadece meslek", "Sadece para", "Kimlik, kişilik ve toplumsal üyelik", "Sadece diploma", "Sadece arkadaş"], a: 2 },
+        { q: "İşlevselci yaklaşıma göre sosyalleşmenin temel amacı nedir?", o: ["Bireyi özgürleştirmek", "Toplumsal düzenin devamı için ortak değerlerin aktarılması", "Sınıf çatışması yaratmak", "Devleti yıkmak", "Bireyi zengin etmek"], a: 1 },
+        { q: "Çatışma kuramına göre sosyalleşmenin temel işlevi nedir?", o: ["Toplumsal uyum", "Egemen sınıfın ideolojisinin aktarılması ve eşitsizliğin sürdürülmesi", "Bireysel gelişim", "Kültürel zenginlik", "Demokrasi"], a: 1 },
+        { q: "Gilligan'ın ahlak gelişimi eleştirisi kime yöneliktir ve neyi savunur?", o: ["Piaget'ye; çocukların zeki olduğunu", "Kohlberg'e; ahlak gelişiminde kadınların (bakım/sorumluluk) erkeklerden (adalet/hak) farklı bir sesi olduğunu", "Freud'a; cinselliğin önemsiz olduğunu", "Erikson'a; yaşlılığın önemsiz olduğunu", "Mead'e; oyunun gereksiz olduğunu"], a: 1 },
+        { q: "Dijitalleşme ile birlikte ortaya çıkan 'Siber Sosyalleşme' nerede gerçekleşir?", o: ["Okulda", "Sokakta", "İnternet ve sosyal medya ortamlarında", "Ailede", "İşyerinde"], a: 2 },
+        { q: "Bir kişinin işini kaybetmesi sonucu yaşadığı depresyon ve kimlik bunalımı, sosyalleşmenin hangi yönünü gösterir?", o: ["Biyolojik yönünü", "Mesleki rolün kimlik üzerindeki etkisini", "Eğitimin önemini", "Ailenin önemini", "Arkadaşların önemini"], a: 1 },
+        { q: "Sosyalleşme sadece çocuklukta mı olur?", o: ["Evet, 7 yaşında biter", "Hayır, yaşam boyu devam eden bir süreçtir", "Sadece ergenlikte olur", "Sadece okulda olur", "Sadece yaşlılıkta olur"], a: 1 },
+        { q: "Modern toplumlarda yaşam süresinin uzamasıyla ortaya çıkan yeni sosyalleşme evresi hangisidir?", o: ["Çocukluk", "Ergenlik", "Üçüncü Yaş / Aktif Yaşlanma", "Bebeklik", "Gençlik"], a: 2 }
+    ];
+
+    let currentQuestion = 0;
+    let userAnswers = new Array(questions.length).fill(null);
+
+    function loadQuestion() {
+        const container = document.getElementById('quiz-container');
+        container.innerHTML = '';
+
+        const q = questions[currentQuestion];
+        
+        let html = `
+            <div class="question-block active">
+                <div class="question-text">${currentQuestion + 1}. ${q.q}</div>
+                <div class="options">
+        `;
+
+        q.o.forEach((opt, index) => {
+            const isSelected = userAnswers[currentQuestion] === index ? 'selected' : '';
+            const isChecked = userAnswers[currentQuestion] === index ? 'checked' : '';
+            html += `
+                <label class="option-label ${isSelected}" id="opt-${index}">
+                    <input type="radio" name="q${currentQuestion}" value="${index}" onclick="selectAnswer(${index})" ${isChecked}>
+                    ${String.fromCharCode(65 + index)}) ${opt}
+                </label>
+            `;
+        });
+
+        html += `</div></div>`;
+        container.innerHTML = html;
+
+        // Progress Bar
+        const progressPercent = ((currentQuestion + 1) / questions.length) * 100;
+        document.getElementById('progress-bar').style.width = progressPercent + '%';
+        document.getElementById('progress-text').innerText = `Soru ${currentQuestion + 1} / ${questions.length}`;
+        
+        // Buton Yönetimi
+        document.getElementById('prevBtn').disabled = currentQuestion === 0;
+        
+        if (currentQuestion === questions.length - 1) {
+            document.getElementById('nextBtn').style.display = 'none';
+            document.getElementById('finishBtn').style.display = 'inline-block';
+        } else {
+            document.getElementById('nextBtn').style.display = 'inline-block';
+            document.getElementById('finishBtn').style.display = 'none';
+        }
+    }
+
+    function selectAnswer(index) {
+        userAnswers[currentQuestion] = index;
+        const labels = document.querySelectorAll('.option-label');
+        labels.forEach(label => label.classList.remove('selected'));
+        document.getElementById(`opt-${index}`).classList.add('selected');
+    }
+
+    function showCurrentAnswer() {
+        const correctIndex = questions[currentQuestion].a;
+        const correctLabel = document.getElementById(`opt-${correctIndex}`);
+        if(correctLabel) correctLabel.classList.add('correct-highlight');
+        
+        if (userAnswers[currentQuestion] !== null && userAnswers[currentQuestion] !== correctIndex) {
+            document.getElementById(`opt-${userAnswers[currentQuestion]}`).classList.add('wrong-highlight');
+        }
+    }
+
+    function nextQuestion() {
+        if (currentQuestion < questions.length - 1) {
+            currentQuestion++;
+            loadQuestion();
+        }
+    }
+
+    function prevQuestion() {
+        if (currentQuestion > 0) {
+            currentQuestion--;
+            loadQuestion();
+        }
+    }
+
+    function finishQuiz() {
+        let correctCount = 0;
+        let wrongCount = 0;
+        let emptyCount = 0;
+        let reviewHtml = '';
+
+        questions.forEach((q, index) => {
+            const userAnswer = userAnswers[index];
+            const isCorrect = userAnswer === q.a;
+            
+            let statusText = '';
+            let statusClass = '';
+
+            if (userAnswer === null) {
+                emptyCount++;
+                statusText = 'Boş';
+                statusClass = 'status-empty';
+            } else if (isCorrect) {
+                correctCount++;
+                statusText = 'Doğru';
+                statusClass = 'status-correct';
+            } else {
+                wrongCount++;
+                statusText = 'Yanlış';
+                statusClass = 'status-wrong';
+            }
+
+            reviewHtml += `
+                <tr>
+                    <td>${index + 1}</td>
+                    <td>${q.q}</td>
+                    <td>${userAnswer !== null ? String.fromCharCode(65 + userAnswer) + ') ' + q.o[userAnswer] : '-'}</td>
+                    <td>${String.fromCharCode(65 + q.a)}) ${q.o[q.a]}</td>
+                    <td class="${statusClass}">${statusText}</td>
+                </tr>
+            `;
+        });
+
+        document.getElementById('quiz-screen').style.display = 'none';
+        document.getElementById('result-screen').style.display = 'block';
+
+        // Puanlama: Her soru 2 puan (100/50)
+        const score = Math.round((correctCount / questions.length) * 100);
+        
+        document.getElementById('score-circle').innerText = score;
+        document.getElementById('score-details').innerHTML = `
+            <strong>Doğru:</strong> ${correctCount} | 
+            <strong>Yanlış:</strong> ${wrongCount} | 
+            <strong>Boş:</strong> ${emptyCount}
+        `;
+        
+        document.getElementById('review-body').innerHTML = reviewHtml;
+    }
+
+    // Uygulamayı başlat
+    loadQuestion();
+</script>
+
+</body>
+</html>

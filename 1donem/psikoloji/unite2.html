@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Psikoloji - 2. Ünite: Davranışın Biyolojik Temelleri</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #e9f7ef; color: #333; margin: 0; padding: 20px; }
+        .container { max-width: 900px; margin: 0 auto; background: #fff; padding: 40px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        h1 { text-align: center; color: #1e8449; border-bottom: 2px solid #2ecc71; padding-bottom: 10px; margin-bottom: 30px; }
+        
+        /* İlerleme Çubuğu */
+        .progress-container { background-color: #d5f5e3; border-radius: 10px; margin-bottom: 20px; height: 10px; overflow: hidden; }
+        .progress-bar { height: 100%; background-color: #1e8449; width: 0%; transition: width 0.3s; }
+        .progress-text { text-align: right; font-size: 0.9em; color: #27ae60; margin-bottom: 15px; }
+
+        /* Soru Alanı */
+        .question-block { display: none; animation: fadeIn 0.5s; }
+        .question-block.active { display: block; }
+        .question-text { font-weight: 600; font-size: 1.25em; margin-bottom: 20px; color: #145a32; }
+        
+        /* Seçenekler */
+        .options { display: flex; flex-direction: column; gap: 10px; }
+        .option-label { 
+            display: flex; align-items: center; padding: 12px 15px; border: 2px solid #e0e0e0; 
+            border-radius: 8px; cursor: pointer; transition: all 0.2s; background: #fff;
+        }
+        .option-label:hover { background-color: #eafaf1; border-color: #abebc6; }
+        .option-label.selected { border-color: #1e8449; background-color: #d4efdf; }
+        .option-label input { margin-right: 15px; transform: scale(1.2); }
+        
+        /* Cevap Göster Stilleri */
+        .option-label.correct-highlight { border-color: #27ae60; background-color: #d5f5e3; color: #1e8449; font-weight: bold; }
+        .option-label.wrong-highlight { border-color: #e74c3c; background-color: #fadbd8; }
+
+        /* Butonlar */
+        .controls { margin-top: 30px; display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
+        button { border: none; padding: 12px 24px; border-radius: 6px; cursor: pointer; font-size: 16px; font-weight: 600; transition: background 0.2s; }
+        .nav-btn { background-color: #1e8449; color: white; }
+        .nav-btn:hover { background-color: #145a32; }
+        .nav-btn:disabled { background-color: #bdc3c7; cursor: not-allowed; }
+        
+        .show-answer-btn { background-color: #f39c12; color: white; }
+        .show-answer-btn:hover { background-color: #d35400; }
+        
+        .finish-btn { background-color: #27ae60; color: white; display: none; }
+        .finish-btn:hover { background-color: #219150; }
+
+        /* Sonuç Ekranı */
+        #result-screen { display: none; }
+        .score-card { text-align: center; background: #f8f9fa; padding: 20px; border-radius: 10px; margin-bottom: 30px; }
+        .score-circle { 
+            width: 120px; height: 120px; border-radius: 50%; background: #1e8449; color: white; 
+            display: flex; align-items: center; justify-content: center; font-size: 2em; font-weight: bold; 
+            margin: 0 auto 15px; 
+        }
+        
+        .review-table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 0.95em; }
+        .review-table th, .review-table td { padding: 12px; border: 1px solid #ddd; text-align: left; }
+        .review-table th { background-color: #145a32; color: white; }
+        .review-table tr:nth-child(even) { background-color: #f2f2f2; }
+        .status-correct { color: #27ae60; font-weight: bold; }
+        .status-wrong { color: #c0392b; font-weight: bold; }
+        .status-empty { color: #f39c12; font-weight: bold; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div id="quiz-screen">
+        <h1>2. Ünite: Davranışın Biyolojik Temelleri</h1>
+        
+        <div class="progress-text" id="progress-text">Soru 1 / 50</div>
+        <div class="progress-container">
+            <div class="progress-bar" id="progress-bar"></div>
+        </div>
+        
+        <div id="quiz-container">
+            <!-- Sorular buraya JS ile gelecek -->
+        </div>
+
+        <div class="controls">
+            <div>
+                <button class="nav-btn" id="prevBtn" onclick="prevQuestion()" disabled>&#8592; Önceki</button>
+            </div>
+            <div>
+                <button class="show-answer-btn" onclick="showCurrentAnswer()">👁️ Cevabı Göster</button>
+            </div>
+            <div>
+                <button class="nav-btn" id="nextBtn" onclick="nextQuestion()">Sonraki &#8594;</button>
+                <button class="finish-btn" id="finishBtn" onclick="finishQuiz()">Testi Bitir &#10004;</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="result-screen">
+        <h1>Değerlendirme Sonucu</h1>
+        <div class="score-card">
+            <div class="score-circle" id="score-circle">0</div>
+            <h3>Toplam Puan</h3>
+            <p id="score-details"></p>
+        </div>
+        
+        <h3>Detaylı Soru Analizi</h3>
+        <table class="review-table">
+            <thead>
+                <tr>
+                    <th style="width: 5%">No</th>
+                    <th style="width: 45%">Soru</th>
+                    <th style="width: 20%">Senin Cevabın</th>
+                    <th style="width: 20%">Doğru Cevap</th>
+                    <th style="width: 10%">Durum</th>
+                </tr>
+            </thead>
+            <tbody id="review-body">
+                <!-- Sonuç satırları buraya gelecek -->
+            </tbody>
+        </table>
+        <div style="text-align: center; margin-top: 30px;">
+            <button class="nav-btn" onclick="location.reload()">Testi Tekrar Çöz</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // 2. Ünite Konuları: Nöronlar, Sinir Sistemi (MSS, ÇSS), Beyin Bölümleri, Endokrin Sistem, Genetik
+    const questions = [
+        { q: "Sinir sisteminin en temel yapı taşı olan ve bilgi iletimini sağlayan hücrelere ne ad verilir?", o: ["Nöron", "Glia", "Hormon", "Enzim", "Kromozom"], a: 0 },
+        { q: "Bir nöronda bilgiyi (uyarıları) diğer hücrelerden alıp hücre gövdesine ileten dal benzeri uzantılara ne denir?", o: ["Akson", "Dendrit", "Miyelin", "Sinaps", "Terminal buton"], a: 1 },
+        { q: "Bir nöronda bilgiyi hücre gövdesinden alıp diğer nöronlara veya kaslara ileten uzun uzantı hangisidir?", o: ["Dendrit", "Soma", "Akson", "Çekirdek", "Reseptör"], a: 2 },
+        { q: "Bazı aksonların etrafını saran, yalıtımı sağlayan ve iletimi hızlandıran yağlı maddeye ne ad verilir?", o: ["Hücre Zarı", "Miyelin Kılıfı", "Sinaptik Boşluk", "Dendrit", "Glia"], a: 1 },
+        { q: "İki nöron arasındaki iletişim noktasına veya boşluğa ne ad verilir?", o: ["Akson", "Sinaps", "Dendrit", "Soma", "Miyelin"], a: 1 },
+        { q: "Sinaptik boşlukta nöronlar arası iletişimi sağlayan kimyasal maddelere genel olarak ne ad verilir?", o: ["Hormon", "Nörotransmitter", "Enzim", "Protein", "Vitamin"], a: 1 },
+        { q: "Öğrenme, hafıza ve kas hareketi ile ilişkili olan, eksikliğinde Alzheimer hastalığı görülen nörotransmitter hangisidir?", o: ["Dopamin", "Serotonin", "Asetilkolin (ACh)", "GABA", "Endorfin"], a: 2 },
+        { q: "Haz, ödül mekanizması ve gönüllü hareketlerle ilişkili olan, fazlalığı Şizofreni, eksikliği Parkinson ile ilişkilendirilen nörotransmitter hangisidir?", o: ["Serotonin", "Dopamin", "Norepinefrin", "Glutamat", "Asetilkolin"], a: 1 },
+        { q: "Ruh hali, uyku ve iştah düzenlemesinde rol oynayan, eksikliğinde depresyon görülen nörotransmitter hangisidir?", o: ["Dopamin", "GABA", "Serotonin", "Asetilkolin", "Endorfin"], a: 2 },
+        { q: "Beynin doğal ağrı kesicisi olarak bilinen ve haz duygusu yaratan nörotransmitter grubu hangisidir?", o: ["Endorfinler", "Adrenalin", "İnsülin", "Kortizol", "Melatonin"], a: 0 },
+        { q: "Sinir sistemi temel olarak hangi iki ana bölüme ayrılır?", o: ["Beyin ve Omurilik", "Merkezi Sinir Sistemi (MSS) ve Çevresel Sinir Sistemi (ÇSS)", "Somatik ve Otonom", "Sempatik ve Parasempatik", "Ön beyin ve Arka beyin"], a: 1 },
+        { q: "Merkezi Sinir Sistemi (MSS) hangi yapılardan oluşur?", o: ["Beyin ve Omurilik", "Beyin ve Sinirler", "Kalp ve Damarlar", "Göz ve Kulak", "Sadece Beyin"], a: 0 },
+        { q: "İstemli kas hareketlerini (yürümek, yazı yazmak gibi) kontrol eden sinir sistemi bölümü hangisidir?", o: ["Otonom Sinir Sistemi", "Somatik Sinir Sistemi", "Sempatik Sistem", "Parasempatik Sistem", "Endokrin Sistem"], a: 1 },
+        { q: "Kalp atışı, sindirim, nefes alma gibi istemsiz (otomatik) işlevleri düzenleyen sistem hangisidir?", o: ["Somatik Sinir Sistemi", "Otonom Sinir Sistemi", "Merkezi Sinir Sistemi", "Korteks", "Limbik Sistem"], a: 1 },
+        { q: "Vücudu tehlike anında 'savaş ya da kaç' tepkisine hazırlayan, enerji harcamayı sağlayan sistem hangisidir?", o: ["Parasempatik Sistem", "Sempatik Sinir Sistemi", "Somatik Sistem", "Merkezi Sistem", "İmmün Sistem"], a: 1 },
+        { q: "Tehlike geçtikten sonra vücudu sakinleştiren, enerjiyi koruyan ve 'dinlen ve sindir' işlevini yürüten sistem hangisidir?", o: ["Sempatik Sistem", "Parasempatik Sinir Sistemi", "Somatik Sistem", "Limbik Sistem", "Endokrin Sistem"], a: 1 },
+        { q: "Beynin evrimsel olarak en eski bölümü olan; nefes alma, kalp atışı gibi hayati fonksiyonları yöneten yapı hangisidir?", o: ["Ön Beyin", "Limbik Sistem", "Beyin Sapı (Medulla)", "Serebral Korteks", "Korpus Kallosum"], a: 2 },
+        { q: "Denge, koordinasyon ve ince motor hareketlerden (örneğin iğneye iplik geçirmek) sorumlu beyin yapısı hangisidir?", o: ["Talamus", "Hipotalamus", "Beyincik (Cerebellum)", "Amigdala", "Hipokampus"], a: 2 },
+        { q: "Koku hariç tüm duyusal bilgilerin toplanıp beynin ilgili bölgelerine dağıtıldığı 'istasyon' görevi gören yapı hangisidir?", o: ["Hipotalamus", "Talamus", "Beyincik", "Medulla", "Pons"], a: 1 },
+        { q: "Açlık, susuzluk, vücut sıcaklığı ve cinsel dürtüleri düzenleyen, homeostaziyi (iç denge) sağlayan yapı hangisidir?", o: ["Talamus", "Hipotalamus", "Beyincik", "Hipokampus", "Omurilik"], a: 1 },
+        { q: "Yeni anıların oluşumunda ve hafızada kritik rol oynayan Limbik Sistem yapısı hangisidir?", o: ["Amigdala", "Hipotalamus", "Hipokampus", "Talamus", "Pons"], a: 2 },
+        { q: "Korku ve saldırganlık gibi güçlü duyguların işlenmesinde rol oynayan badem şeklindeki yapı hangisidir?", o: ["Hipokampus", "Amigdala", "Beyincik", "Medulla", "Korteks"], a: 1 },
+        { q: "Beynin en dış katmanı olan, üst düzey zihinsel süreçlerin (düşünme, planlama, dil) gerçekleştiği kıvrımlı yapı nedir?", o: ["Beyin Sapı", "Limbik Sistem", "Serebral Korteks", "Talamus", "Hipotalamus"], a: 2 },
+        { q: "Beynin sağ ve sol yarımkürelerini birbirine bağlayan ve bilgi akışını sağlayan lif demetine ne ad verilir?", o: ["Miyelin", "Sinaps", "Korpus Kallosum (Corpus Callosum)", "Beyincik", "Akson"], a: 2 },
+        { q: "Beynin ön kısmında bulunan; planlama, karar verme, kişilik ve motor hareketlerden sorumlu lob hangisidir?", o: ["Parietal Lob", "Oksipital Lob", "Frontal (Alın) Lobu", "Temporal Lob", "Limbik Lob"], a: 2 },
+        { q: "Beynin üst-arka kısmında bulunan; dokunma, basınç, sıcaklık ve acı gibi duyusal bilgileri işleyen lob hangisidir?", o: ["Frontal Lob", "Parietal (Çeper) Lob", "Oksipital Lob", "Temporal Lob", "Beyincik"], a: 1 },
+        { q: "Beynin en arka kısmında bulunan ve görme duyusuyla (görsel korteks) ilgili olan lob hangisidir?", o: ["Oksipital (Art Kafa) Lobu", "Frontal Lob", "Parietal Lob", "Temporal Lob", "Talamus"], a: 0 },
+        { q: "Beynin yan kısımlarında (şakaklarda) bulunan; işitme, dil ve hafıza ile ilgili olan lob hangisidir?", o: ["Oksipital Lob", "Parietal Lob", "Temporal (Şakak) Lobu", "Frontal Lob", "Motor Korteks"], a: 2 },
+        { q: "Beynin sol frontal lobunda bulunan ve konuşma üretiminden (motor konuşma) sorumlu olan alan hangisidir?", o: ["Wernicke Alanı", "Broca Alanı", "Görme Alanı", "Duyusal Alan", "Limbik Alan"], a: 1 },
+        { q: "Beynin sol temporal lobunda bulunan ve konuşulanı anlama (dilsel kavrama) işlevinden sorumlu olan alan hangisidir?", o: ["Broca Alanı", "Wernicke Alanı", "Motor Korteks", "Somatosensoryel Korteks", "Görsel Korteks"], a: 1 },
+        { q: "Vücudun kimyasal iletişim sistemi olan ve kan dolaşımına hormon salgılayan sisteme ne ad verilir?", o: ["Sinir Sistemi", "Endokrin Sistem", "Sindirim Sistemi", "Solunum Sistemi", "Bağışıklık Sistemi"], a: 1 },
+        { q: "Endokrin sistemin 'orkestra şefi' olarak bilinen ve diğer bezleri yöneten temel bez hangisidir?", o: ["Tiroid Bezi", "Böbrek Üstü Bezi", "Hipofiz Bezi", "Pankreas", "Yumurtalık"], a: 2 },
+        { q: "Hipofiz bezi beynin hangi bölümü tarafından doğrudan kontrol edilir?", o: ["Talamus", "Hipotalamus", "Beyincik", "Amigdala", "Korteks"], a: 1 },
+        { q: "Stres durumunda 'adrenalin' (epinefrin) salgılayarak vücudu harekete geçiren bez hangisidir?", o: ["Tiroid Bezi", "Böbrek Üstü (Adrenal) Bezler", "Pankreas", "Hipofiz", "Testisler"], a: 1 },
+        { q: "Metabolizma hızını düzenleyen tiroksin hormonunu salgılayan bez hangisidir?", o: ["Tiroid Bezi", "Hipofiz Bezi", "Pankreas", "Böbrek Üstü Bezi", "Epifiz Bezi"], a: 0 },
+        { q: "Kan şekeri seviyesini (insülin yoluyla) düzenleyen organ hangisidir?", o: ["Karaciğer", "Pankreas", "Dalak", "Mide", "Böbrek"], a: 1 },
+        { q: "Uyku-uyanıklık döngüsünü düzenleyen 'melatonin' hormonunu salgılayan bez hangisidir?", o: ["Hipofiz", "Tiroid", "Epifiz Bezi (Pineal Bez)", "Adrenal Bez", "Pankreas"], a: 2 },
+        { q: "Sinir sisteminin esnekliği, yani beynin deneyimler sonucunda kendini yeniden yapılandırma ve iyileştirme yeteneğine ne denir?", o: ["Nörogenez", "Nöroplastisite (Beyin Plastisitesi)", "Lateralizasyon", "Lobotomi", "Sinaptik Budama"], a: 1 },
+        { q: "Yetişkinlikte bile yeni nöronların oluşabildiği sürece ne ad verilir?", o: ["Nöroplastisite", "Nörogenez", "Miyelinleşme", "Apoptoz", "Sinaptogenez"], a: 1 },
+        { q: "Genellikle beynin sol yarımküresi hangi işlevlerde daha baskındır?", o: ["Yüz tanıma", "Müzik", "Dil, mantık ve matematiksel işlemler", "Duygusal tonlama", "Mekansal beceriler"], a: 2 },
+        { q: "Genellikle beynin sağ yarımküresi hangi işlevlerde daha baskındır?", o: ["Dil bilgisi", "Matematik", "Mekansal algı, yüz tanıma, müzik ve duygusal ifadeler", "Konuşma üretimi", "Analitik düşünme"], a: 2 },
+        { q: "Bölünmüş beyin (Split-brain) hastaları üzerinde yapılan çalışmalar, hangi yapının kesilmesi sonucu ortaya çıkar?", o: ["Beyincik", "Korpus Kallosum", "Hipokampus", "Beyin sapı", "Talamus"], a: 1 },
+        { q: "Genetik yapının çevre ile etkileşimi sonucu ortaya çıkan gözlemlenebilir özelliklere (dış görünüş, davranış vb.) ne denir?", o: ["Genotip", "Fenotip", "Kromozom", "DNA", "Mutasyon"], a: 1 },
+        { q: "Bir canlının sahip olduğu genetik mirasın tamamına (genetik kod) ne denir?", o: ["Fenotip", "Genotip", "Karyotip", "DNA", "Hücre"], a: 1 },
+        { q: "İkiz çalışmaları genellikle neyi araştırmak için kullanılır?", o: ["İkizlerin telepati yeteneğini", "Kalıtım (Doğa) ve Çevre (Yetiştirme) etkisini", "Doğum oranlarını", "Ebeveyn tutumlarını", "Okul başarısını"], a: 1 },
+        { q: "Beyindeki elektriksel aktiviteyi kafa derisine yerleştirilen elektrotlarla ölçen cihaz hangisidir?", o: ["MRI", "fMRI", "EEG (Elektroensefalogram)", "PET", "CT"], a: 2 },
+        { q: "Beynin ayrıntılı görüntülerini manyetik alan ve radyo dalgaları kullanarak oluşturan yöntem hangisidir?", o: ["EEG", "MRI (Manyetik Rezonans Görüntüleme)", "PET", "X-Ray", "Termal Kamera"], a: 1 },
+        { q: "Beynin hangi bölgesinin aktif olduğunu kan akışındaki oksijen seviyesini izleyerek gösteren (işlevsel) yöntem hangisidir?", o: ["CT", "MRI", "fMRI (Fonksiyonel MRI)", "EEG", "Ultrason"], a: 2 },
+        { q: "Phineas Gage vakası, beynin hangi bölgesinin kişilik ve dürtü kontrolü üzerindeki etkisini göstermiştir?", o: ["Oksipital Lob", "Frontal Lob", "Temporal Lob", "Beyincik", "Beyin Sapı"], a: 1 },
+        { q: "Refleksler (örneğin elin yanınca çekilmesi) genellikle beyne ulaşmadan nerede yönetilir?", o: ["Omurilik", "Talamus", "Hipotalamus", "Korteks", "Beyincik"], a: 0 }
+    ];
+
+    let currentQuestion = 0;
+    let userAnswers = new Array(questions.length).fill(null);
+
+    function loadQuestion() {
+        const container = document.getElementById('quiz-container');
+        container.innerHTML = '';
+
+        const q = questions[currentQuestion];
+        
+        let html = `
+            <div class="question-block active">
+                <div class="question-text">${currentQuestion + 1}. ${q.q}</div>
+                <div class="options">
+        `;
+
+        q.o.forEach((opt, index) => {
+            const isSelected = userAnswers[currentQuestion] === index ? 'selected' : '';
+            const isChecked = userAnswers[currentQuestion] === index ? 'checked' : '';
+            html += `
+                <label class="option-label ${isSelected}" id="opt-${index}">
+                    <input type="radio" name="q${currentQuestion}" value="${index}" onclick="selectAnswer(${index})" ${isChecked}>
+                    ${String.fromCharCode(65 + index)}) ${opt}
+                </label>
+            `;
+        });
+
+        html += `</div></div>`;
+        container.innerHTML = html;
+
+        // Progress Bar
+        const progressPercent = ((currentQuestion + 1) / questions.length) * 100;
+        document.getElementById('progress-bar').style.width = progressPercent + '%';
+        document.getElementById('progress-text').innerText = `Soru ${currentQuestion + 1} / ${questions.length}`;
+        
+        // Buton Yönetimi
+        document.getElementById('prevBtn').disabled = currentQuestion === 0;
+        
+        if (currentQuestion === questions.length - 1) {
+            document.getElementById('nextBtn').style.display = 'none';
+            document.getElementById('finishBtn').style.display = 'inline-block';
+        } else {
+            document.getElementById('nextBtn').style.display = 'inline-block';
+            document.getElementById('finishBtn').style.display = 'none';
+        }
+    }
+
+    function selectAnswer(index) {
+        userAnswers[currentQuestion] = index;
+        const labels = document.querySelectorAll('.option-label');
+        labels.forEach(label => label.classList.remove('selected'));
+        document.getElementById(`opt-${index}`).classList.add('selected');
+    }
+
+    function showCurrentAnswer() {
+        const correctIndex = questions[currentQuestion].a;
+        const correctLabel = document.getElementById(`opt-${correctIndex}`);
+        if(correctLabel) correctLabel.classList.add('correct-highlight');
+        
+        if (userAnswers[currentQuestion] !== null && userAnswers[currentQuestion] !== correctIndex) {
+            document.getElementById(`opt-${userAnswers[currentQuestion]}`).classList.add('wrong-highlight');
+        }
+    }
+
+    function nextQuestion() {
+        if (currentQuestion < questions.length - 1) {
+            currentQuestion++;
+            loadQuestion();
+        }
+    }
+
+    function prevQuestion() {
+        if (currentQuestion > 0) {
+            currentQuestion--;
+            loadQuestion();
+        }
+    }
+
+    function finishQuiz() {
+        let correctCount = 0;
+        let wrongCount = 0;
+        let emptyCount = 0;
+        let reviewHtml = '';
+
+        questions.forEach((q, index) => {
+            const userAnswer = userAnswers[index];
+            const isCorrect = userAnswer === q.a;
+            
+            let statusText = '';
+            let statusClass = '';
+
+            if (userAnswer === null) {
+                emptyCount++;
+                statusText = 'Boş';
+                statusClass = 'status-empty';
+            } else if (isCorrect) {
+                correctCount++;
+                statusText = 'Doğru';
+                statusClass = 'status-correct';
+            } else {
+                wrongCount++;
+                statusText = 'Yanlış';
+                statusClass = 'status-wrong';
+            }
+
+            reviewHtml += `
+                <tr>
+                    <td>${index + 1}</td>
+                    <td>${q.q}</td>
+                    <td>${userAnswer !== null ? String.fromCharCode(65 + userAnswer) + ') ' + q.o[userAnswer] : '-'}</td>
+                    <td>${String.fromCharCode(65 + q.a)}) ${q.o[q.a]}</td>
+                    <td class="${statusClass}">${statusText}</td>
+                </tr>
+            `;
+        });
+
+        document.getElementById('quiz-screen').style.display = 'none';
+        document.getElementById('result-screen').style.display = 'block';
+
+        // Puanlama: Her soru 2 puan (100/50)
+        const score = Math.round((correctCount / questions.length) * 100);
+        
+        document.getElementById('score-circle').innerText = score;
+        document.getElementById('score-details').innerHTML = `
+            <strong>Doğru:</strong> ${correctCount} | 
+            <strong>Yanlış:</strong> ${wrongCount} | 
+            <strong>Boş:</strong> ${emptyCount}
+        `;
+        
+        document.getElementById('review-body').innerHTML = reviewHtml;
+    }
+
+    // Uygulamayı başlat
+    loadQuestion();
+</script>
+
+</body>
+</html>

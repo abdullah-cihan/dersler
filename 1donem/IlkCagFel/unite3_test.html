@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>İlk Çağ Felsefesi - 3. Ünite: Herakleitos ve Elea Okulu</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #ebf5fb; color: #333; margin: 0; padding: 20px; }
+        .container { max-width: 900px; margin: 0 auto; background: #fff; padding: 40px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        h1 { text-align: center; color: #1f618d; border-bottom: 2px solid #2980b9; padding-bottom: 10px; margin-bottom: 30px; }
+        
+        /* İlerleme Çubuğu */
+        .progress-container { background-color: #d4e6f1; border-radius: 10px; margin-bottom: 20px; height: 10px; overflow: hidden; }
+        .progress-bar { height: 100%; background-color: #1f618d; width: 0%; transition: width 0.3s; }
+        .progress-text { text-align: right; font-size: 0.9em; color: #546e7a; margin-bottom: 15px; }
+
+        /* Soru Alanı */
+        .question-block { display: none; animation: fadeIn 0.5s; }
+        .question-block.active { display: block; }
+        .question-text { font-weight: 600; font-size: 1.25em; margin-bottom: 20px; color: #2c3e50; }
+        
+        /* Seçenekler */
+        .options { display: flex; flex-direction: column; gap: 10px; }
+        .option-label { 
+            display: flex; align-items: center; padding: 12px 15px; border: 2px solid #e0e0e0; 
+            border-radius: 8px; cursor: pointer; transition: all 0.2s; background: #fff;
+        }
+        .option-label:hover { background-color: #eaf2f8; border-color: #a9cce3; }
+        .option-label.selected { border-color: #1f618d; background-color: #d6eaf8; }
+        .option-label input { margin-right: 15px; transform: scale(1.2); }
+        
+        /* Cevap Göster Stilleri */
+        .option-label.correct-highlight { border-color: #27ae60; background-color: #d5f5e3; color: #1e8449; font-weight: bold; }
+        .option-label.wrong-highlight { border-color: #e74c3c; background-color: #fadbd8; }
+
+        /* Butonlar */
+        .controls { margin-top: 30px; display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
+        button { border: none; padding: 12px 24px; border-radius: 6px; cursor: pointer; font-size: 16px; font-weight: 600; transition: background 0.2s; }
+        .nav-btn { background-color: #1f618d; color: white; }
+        .nav-btn:hover { background-color: #154360; }
+        .nav-btn:disabled { background-color: #bdc3c7; cursor: not-allowed; }
+        
+        .show-answer-btn { background-color: #f39c12; color: white; }
+        .show-answer-btn:hover { background-color: #d35400; }
+        
+        .finish-btn { background-color: #27ae60; color: white; display: none; }
+        .finish-btn:hover { background-color: #219150; }
+
+        /* Sonuç Ekranı */
+        #result-screen { display: none; }
+        .score-card { text-align: center; background: #f8f9fa; padding: 20px; border-radius: 10px; margin-bottom: 30px; }
+        .score-circle { 
+            width: 120px; height: 120px; border-radius: 50%; background: #1f618d; color: white; 
+            display: flex; align-items: center; justify-content: center; font-size: 2em; font-weight: bold; 
+            margin: 0 auto 15px; 
+        }
+        
+        .review-table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 0.95em; }
+        .review-table th, .review-table td { padding: 12px; border: 1px solid #ddd; text-align: left; }
+        .review-table th { background-color: #34495e; color: white; }
+        .review-table tr:nth-child(even) { background-color: #f2f2f2; }
+        .status-correct { color: #27ae60; font-weight: bold; }
+        .status-wrong { color: #c0392b; font-weight: bold; }
+        .status-empty { color: #f39c12; font-weight: bold; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div id="quiz-screen">
+        <h1>3. Ünite: Herakleitos ve Elea Okulu</h1>
+        
+        <div class="progress-text" id="progress-text">Soru 1 / 50</div>
+        <div class="progress-container">
+            <div class="progress-bar" id="progress-bar"></div>
+        </div>
+        
+        <div id="quiz-container">
+            <!-- Sorular buraya JS ile gelecek -->
+        </div>
+
+        <div class="controls">
+            <div>
+                <button class="nav-btn" id="prevBtn" onclick="prevQuestion()" disabled>&#8592; Önceki</button>
+            </div>
+            <div>
+                <button class="show-answer-btn" onclick="showCurrentAnswer()">👁️ Cevabı Göster</button>
+            </div>
+            <div>
+                <button class="nav-btn" id="nextBtn" onclick="nextQuestion()">Sonraki &#8594;</button>
+                <button class="finish-btn" id="finishBtn" onclick="finishQuiz()">Testi Bitir &#10004;</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="result-screen">
+        <h1>Değerlendirme Sonucu</h1>
+        <div class="score-card">
+            <div class="score-circle" id="score-circle">0</div>
+            <h3>Toplam Puan</h3>
+            <p id="score-details"></p>
+        </div>
+        
+        <h3>Detaylı Soru Analizi</h3>
+        <table class="review-table">
+            <thead>
+                <tr>
+                    <th style="width: 5%">No</th>
+                    <th style="width: 45%">Soru</th>
+                    <th style="width: 20%">Senin Cevabın</th>
+                    <th style="width: 20%">Doğru Cevap</th>
+                    <th style="width: 10%">Durum</th>
+                </tr>
+            </thead>
+            <tbody id="review-body">
+                <!-- Sonuç satırları buraya gelecek -->
+            </tbody>
+        </table>
+        <div style="text-align: center; margin-top: 30px;">
+            <button class="nav-btn" onclick="location.reload()">Testi Tekrar Çöz</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // 3. Ünite Konuları: Herakleitos (Oluş Felsefesi), Elea Okulu (Ksenophanes, Parmenides, Zenon, Melissos - Varlık Felsefesi)
+    const questions = [
+        { q: "Herakleitos'a göre evrenin ana maddesi (arkhe) nedir?", o: ["Su", "Ateş", "Hava", "Toprak", "Atom"], a: 1 },
+        { q: "'Aynı nehirde iki kez yıkanılmaz' sözü kime aittir?", o: ["Parmenides", "Zenon", "Herakleitos", "Thales", "Platon"], a: 2 },
+        { q: "Herakleitos'un felsefesinde 'değişmeyen tek şey' nedir?", o: ["Madde", "Değişimin kendisi (Yasa/Logos)", "Tanrılar", "Gök cisimleri", "İnsan ruhu"], a: 1 },
+        { q: "Parmenides'e göre 'Varlık' nasıldır?", o: ["Değişken ve çoktur", "Yaratılmıştır", "Bir, ezeli, ebedi, bölünemez ve değişmezdir", "Sıvıdır", "Boşluktan ibarettir"], a: 2 },
+        { q: "Elea Okulu'nun kurucusu (veya öncüsü) olarak kabul edilen ve çok tanrıcılığı eleştiren filozof kimdir?", o: ["Ksenophanes", "Herakleitos", "Demokritos", "Sokrates", "Aristoteles"], a: 0 },
+        { q: "Zenon'un geliştirdiği ve hareketin imkansızlığını kanıtlamaya çalıştığı mantıksal argümanlara ne ad verilir?", o: ["Sofizm", "Paradoks", "Analoji", "Metafor", "Mitos"], a: 1 },
+        { q: "Aşağıdakilerden hangisi Zenon'un ünlü paradokslarından biridir?", o: ["Gemi Paradoksu", "Yalancı Paradoksu", "Aşil ve Kaplumbağa Paradoksu", "İkizler Paradoksu", "Berber Paradoksu"], a: 2 },
+        { q: "Herakleitos'a göre evrendeki düzeni sağlayan ilke nedir?", o: ["Kaos", "Logos (Akıl/Ölçü/Yasa)", "Şans", "Sevgi", "Nefret"], a: 1 },
+        { q: "Parmenides'in ünlü şiirinin adı nedir?", o: ["Devlet", "Doğa Üzerine (Peri Physeos)", "Oluş ve Bozuluş", "Metafizik", "Savunma"], a: 1 },
+        { q: "Parmenides'e göre düşünmek ile ...... aynı şeydir. Boşluğa ne gelmelidir?", o: ["Hissetmek", "Konuşmak", "Olmak (Var olmak)", "Yok olmak", "Hareket etmek"], a: 2 },
+        { q: "Herakleitos'un lakabı nedir?", o: ["Gülen Filozof", "Karanlık Filozof (Skoteinos)", "Bilge", "Deli", "Gezgin"], a: 1 },
+        { q: "Herakleitos'a göre 'Savaş' (Polemos) her şeyin nesidir?", o: ["Sonudur", "Düşmanıdır", "Babası ve kralıdır", "Yıkımıdır", "Anlamsızlığıdır"], a: 2 },
+        { q: "Parmenides'e göre 'yokluk' (var olmayan) hakkında ne söylenebilir?", o: ["Düşünülemez ve ifade edilemez", "Varlığın kaynağıdır", "Karanlıktır", "Boşluktur", "Gelecektir"], a: 0 },
+        { q: "Zenon'un paradokslarının temel amacı nedir?", o: ["Hareketin ve çokluğun gerçek olduğunu kanıtlamak", "Hocası Parmenides'in 'Varlık birdir ve hareket yoktur' görüşünü savunmak", "Matematiği geliştirmek", "Spor müsabakalarını analiz etmek", "Zamanın sonsuzluğunu göstermek"], a: 1 },
+        { q: "Herakleitos'a göre evrendeki oluş neyin sonucudur?", o: ["Barışın", "Zıtların çatışmasının ve birliğinin", "Tesadüflerin", "Tanrıların iradesinin", "Durgunluğun"], a: 1 },
+        { q: "Ksenophanes'in tanrı anlayışı nasıldır?", o: ["İnsan biçimli (Antropomorfik) tanrılar", "Tek, değişmez, hareketsiz ve insan biçiminde olmayan bir Tanrı", "Tanrı yoktur", "Hayvan biçimli tanrılar", "Sadece Güneş tanrısı"], a: 1 },
+        { q: "Herakleitos hangi şehirde yaşamıştır?", o: ["Milet", "Atina", "Efes (Ephesos)", "Elea", "Sparta"], a: 2 },
+        { q: "Elea Okulu hangi bölgededir?", o: ["İyonya (Batı Anadolu)", "Güney İtalya", "Trakya", "Mora Yarımadası", "Girit"], a: 1 },
+        { q: "Parmenides'e göre değişim ve hareket nedir?", o: ["Gerçektir", "Duyusal bir yanılsamadır (Sanı/Doxa)", "Zorunludur", "Tanrısaldır", "Mutluluktur"], a: 1 },
+        { q: "Zenon'un 'Ok' paradoksuna göre, havada uçan bir ok aslında nasıldır?", o: ["Çok hızlıdır", "Durmaktadır (Her anda belli bir yerdedir)", "Geri gitmektedir", "Görünmezdir", "Yoktur"], a: 1 },
+        { q: "Melissos, Parmenides'in varlık anlayışına hangi özelliği eklemiştir?", o: ["Sonluluk", "Sonsuzluk (Mekan ve Zaman bakımından)", "Hareket", "Renk", "Ağırlık"], a: 1 },
+        { q: "Herakleitos'a göre 'İnen yol ile çıkan yol' nasıldır?", o: ["Bir ve aynıdır", "Tamamen farklıdır", "Kesişmezler", "Sonsuzdur", "Paraleldir"], a: 0 },
+        { q: "Parmenides'e göre bilginin iki yolu nedir?", o: ["Deney ve Gözlem", "Hakikat Yolu (Aletheia) ve Sanı Yolu (Doxa)", "İman ve İnkar", "Teori ve Pratik", "Duyum ve Sezgi"], a: 1 },
+        { q: "Herakleitos halk yığınlarını neden eleştirir?", o: ["Fakir oldukları için", "Uyur-gezer gibi yaşadıkları ve Logos'u anlamadıkları için", "Çok konuştukları için", "Savaşmadıkları için", "Tembel oldukları için"], a: 1 },
+        { q: "Zenon felsefe tarihinde hangi yöntemin kurucusu (veya öncüsü) sayılır?", o: ["Diyalektik", "Empirizm", "Materyalizm", "İdealizm", "Pozitivizm"], a: 0 },
+        { q: "Ksenophanes'e göre 'Atların elleri olsaydı tanrılarını kime benzetirlerdi'?", o: ["İnsanlara", "Atlara", "Kuşlara", "Ağaçlara", "Güneşe"], a: 1 },
+        { q: "Herakleitos'un felsefesi genellikle hangi kavramla özetlenir?", o: ["Varlık", "Oluş (Panta Rhei - Her şey akar)", "Hiçlik", "Birlik", "Durgunluk"], a: 1 },
+        { q: "Parmenides'e göre 'Hiçten ...... doğar'. Boşluğa ne gelmelidir?", o: ["Her şey", "Varlık", "Hiç", "Tanrı", "Evren"], a: 2 },
+        { q: "Elealıların felsefesi daha sonra hangi filozof üzerinde büyük etki yaratmıştır?", o: ["Herakleitos", "Platon", "Thales", "Epiküros", "Diyojen"], a: 1 },
+        { q: "Herakleitos'a göre çokluk (çoğul şeyler) ile birlik (Tek Olan) arasındaki ilişki nasıldır?", o: ["İlişki yoktur", "Çokluk Birlikten çıkar ve Birliğe döner", "Sadece çokluk vardır", "Sadece birlik vardır", "Bilinemez"], a: 1 },
+        { q: "Parmenides'e göre Varlık yaratılmış mıdır?", o: ["Evet, Tanrı tarafından yaratılmıştır", "Hayır, yaratılmamış ve yok olmayacaktır", "Kendini yaratmıştır", "Kaostan çıkmıştır", "Zamanla oluşmuştur"], a: 1 },
+        { q: "Zenon'un 'Stadyum' paradoksu neyi göstermeye çalışır?", o: ["Sporun faydasını", "Hareketin göreceliğini ve çelişkisini", "Zamanın mutlaklığını", "Mekanın sonsuzluğunu", "Hızın önemini"], a: 1 },
+        { q: "Herakleitos'a göre 'Güneş her gün ......'. Boşluğa ne gelmelidir?", o: ["Aynıdır", "Yenidir", "Eskidir", "Büyür", "Küçülür"], a: 1 },
+        { q: "Ksenophanes, gökkuşağını nasıl açıklamıştır?", o: ["Tanrıça İris'tir", "Renkli bir buluttur (Doğal bir olaydır)", "Tanrının işaretidir", "Büyüdür", "Hayal ürünüdür"], a: 1 },
+        { q: "Parmenides'e göre Varlık'ın şekli nasıldır?", o: ["Üçgen", "Kare", "Mükemmel bir Küre", "Düz", "Şekilsiz"], a: 2 },
+        { q: "Herakleitos'a göre 'Uyanıkken ...... bir dünyadayızdır, uyurken ise herkes kendi dünyasına döner'.", o: ["Ortak", "Farklı", "Rüya gibi", "Karanlık", "Yalnız"], a: 0 },
+        { q: "Parmenides hangi filozofun (veya okulun) görüşlerine, özellikle değişim fikrine karşı çıkmıştır?", o: ["Herakleitos", "Platon", "Sokrates", "Aristoteles", "Descartes"], a: 0 },
+        { q: "Aristoteles, Zenon'u neyin mucidi olarak adlandırır?", o: ["Mantık", "Diyalektik", "Fizik", "Etik", "Retorik"], a: 1 },
+        { q: "Herakleitos'a göre evrenin düzeni nasıldır?", o: ["Rastgeledir", "Ölçülü ve yasalıdır (Logos)", "Sürekli bozulur", "Sabittir", "Bilinemez"], a: 1 },
+        { q: "Parmenides varlığı algılamak için neye güvenmemiz gerektiğini söyler?", o: ["Gözlere", "Kulaklara", "Akla (Logos)", "Duygulara", "Geleneklere"], a: 2 },
+        { q: "Ksenophanes'in eleştirdiği ünlü şairler kimlerdir?", o: ["Homeros ve Hesiodos", "Sappho ve Pindaros", "Sophokles ve Euripides", "Aiskhylos ve Aristophanes", "Platon ve Sokrates"], a: 0 },
+        { q: "Herakleitos'a göre ateşin dönüşümleri nelerdir?", o: ["Ateş -> Su -> Toprak ve tersi", "Ateş -> Hava -> Boşluk", "Ateş -> Işık -> Karanlık", "Ateş -> Ruh -> Tanrı", "Değişmez"], a: 0 },
+        { q: "Parmenides'in 'Varlık' tanımı mantığın hangi temel ilkesinin temelini atmıştır?", o: ["Yeter sebep ilkesi", "Özdeşlik ilkesi (A, A'dır)", "Nedensellik ilkesi", "Değişim ilkesi", "Görecelik ilkesi"], a: 1 },
+        { q: "Herakleitos'a göre 'Karakter insanın ...... dır'.", o: ["Kaderi (Daimon)", "Zayıflığı", "Düşmanı", "Zenginliği", "Hapishanesi"], a: 0 },
+        { q: "Elea Okulu felsefesi genel olarak nasıl adlandırılır?", o: ["Monizm (Tekçilik)", "Plüralizm (Çokçuluk)", "Atomculuk", "Sofizm", "Septisizm"], a: 0 },
+        { q: "Zenon'a göre 'Mekan' varsa, o mekanın da bir mekanda olması gerekir. Bu neye yol açar?", o: ["Sonsuza gidişe (Regressio ad infinitum)", "Mekanın sınırlılığına", "Boşluğun varlığına", "Hareketin ispatına", "Varlığın yokluğuna"], a: 0 },
+        { q: "Herakleitos varlığı nasıl tanımlar?", o: ["Durağan bir töz", "Sürekli bir süreç / oluş", "Maddi olmayan bir ruh", "Sayı", "Atom"], a: 1 },
+        { q: "Parmenides'e göre 'Düşünülemeyen şey ......'.", o: ["Yoktur", "Vardır", "Tanrıdır", "Gizemdir", "Gelecektir"], a: 0 },
+        { q: "Herakleitos'un felsefesi daha sonra hangi Helenistik okul tarafından benimsenmiştir?", o: ["Stoacılar", "Epikürosçular", "Kynikler", "Şüpheciler", "Platoncular"], a: 0 },
+        { q: "Elealıların 'Varlık' anlayışı, duyusal dünyanın (görünüşlerin) ne olduğunu iddia eder?", o: ["Tek gerçek olduğunu", "Yanıltıcı bir görünüş olduğunu", "Tanrısal olduğunu", "Bilimin konusu olduğunu", "Mutluluk kaynağı olduğunu"], a: 1 }
+    ];
+
+    let currentQuestion = 0;
+    let userAnswers = new Array(questions.length).fill(null);
+
+    function loadQuestion() {
+        const container = document.getElementById('quiz-container');
+        container.innerHTML = '';
+
+        const q = questions[currentQuestion];
+        
+        let html = `
+            <div class="question-block active">
+                <div class="question-text">${currentQuestion + 1}. ${q.q}</div>
+                <div class="options">
+        `;
+
+        q.o.forEach((opt, index) => {
+            const isSelected = userAnswers[currentQuestion] === index ? 'selected' : '';
+            const isChecked = userAnswers[currentQuestion] === index ? 'checked' : '';
+            html += `
+                <label class="option-label ${isSelected}" id="opt-${index}">
+                    <input type="radio" name="q${currentQuestion}" value="${index}" onclick="selectAnswer(${index})" ${isChecked}>
+                    ${String.fromCharCode(65 + index)}) ${opt}
+                </label>
+            `;
+        });
+
+        html += `</div></div>`;
+        container.innerHTML = html;
+
+        // Progress Bar
+        const progressPercent = ((currentQuestion + 1) / questions.length) * 100;
+        document.getElementById('progress-bar').style.width = progressPercent + '%';
+        document.getElementById('progress-text').innerText = `Soru ${currentQuestion + 1} / ${questions.length}`;
+        
+        // Buton Yönetimi
+        document.getElementById('prevBtn').disabled = currentQuestion === 0;
+        
+        if (currentQuestion === questions.length - 1) {
+            document.getElementById('nextBtn').style.display = 'none';
+            document.getElementById('finishBtn').style.display = 'inline-block';
+        } else {
+            document.getElementById('nextBtn').style.display = 'inline-block';
+            document.getElementById('finishBtn').style.display = 'none';
+        }
+    }
+
+    function selectAnswer(index) {
+        userAnswers[currentQuestion] = index;
+        const labels = document.querySelectorAll('.option-label');
+        labels.forEach(label => label.classList.remove('selected'));
+        document.getElementById(`opt-${index}`).classList.add('selected');
+    }
+
+    function showCurrentAnswer() {
+        const correctIndex = questions[currentQuestion].a;
+        const correctLabel = document.getElementById(`opt-${correctIndex}`);
+        if(correctLabel) correctLabel.classList.add('correct-highlight');
+        
+        if (userAnswers[currentQuestion] !== null && userAnswers[currentQuestion] !== correctIndex) {
+            document.getElementById(`opt-${userAnswers[currentQuestion]}`).classList.add('wrong-highlight');
+        }
+    }
+
+    function nextQuestion() {
+        if (currentQuestion < questions.length - 1) {
+            currentQuestion++;
+            loadQuestion();
+        }
+    }
+
+    function prevQuestion() {
+        if (currentQuestion > 0) {
+            currentQuestion--;
+            loadQuestion();
+        }
+    }
+
+    function finishQuiz() {
+        let correctCount = 0;
+        let wrongCount = 0;
+        let emptyCount = 0;
+        let reviewHtml = '';
+
+        questions.forEach((q, index) => {
+            const userAnswer = userAnswers[index];
+            const isCorrect = userAnswer === q.a;
+            
+            let statusText = '';
+            let statusClass = '';
+
+            if (userAnswer === null) {
+                emptyCount++;
+                statusText = 'Boş';
+                statusClass = 'status-empty';
+            } else if (isCorrect) {
+                correctCount++;
+                statusText = 'Doğru';
+                statusClass = 'status-correct';
+            } else {
+                wrongCount++;
+                statusText = 'Yanlış';
+                statusClass = 'status-wrong';
+            }
+
+            reviewHtml += `
+                <tr>
+                    <td>${index + 1}</td>
+                    <td>${q.q}</td>
+                    <td>${userAnswer !== null ? String.fromCharCode(65 + userAnswer) + ') ' + q.o[userAnswer] : '-'}</td>
+                    <td>${String.fromCharCode(65 + q.a)}) ${q.o[q.a]}</td>
+                    <td class="${statusClass}">${statusText}</td>
+                </tr>
+            `;
+        });
+
+        document.getElementById('quiz-screen').style.display = 'none';
+        document.getElementById('result-screen').style.display = 'block';
+
+        // Puanlama: Her soru 2 puan (100/50)
+        const score = Math.round((correctCount / questions.length) * 100);
+        
+        document.getElementById('score-circle').innerText = score;
+        document.getElementById('score-details').innerHTML = `
+            <strong>Doğru:</strong> ${correctCount} | 
+            <strong>Yanlış:</strong> ${wrongCount} | 
+            <strong>Boş:</strong> ${emptyCount}
+        `;
+        
+        document.getElementById('review-body').innerHTML = reviewHtml;
+    }
+
+    // Uygulamayı başlat
+    loadQuestion();
+</script>
+
+</body>
+</html>

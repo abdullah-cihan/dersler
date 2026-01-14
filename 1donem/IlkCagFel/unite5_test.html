@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>İlk Çağ Felsefesi - 5. Ünite: Sokrates ve Küçük Sokratesçi Okullar</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f6f7; color: #333; margin: 0; padding: 20px; }
+        .container { max-width: 900px; margin: 0 auto; background: #fff; padding: 40px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        h1 { text-align: center; color: #2c3e50; border-bottom: 2px solid #34495e; padding-bottom: 10px; margin-bottom: 30px; }
+        
+        /* İlerleme Çubuğu */
+        .progress-container { background-color: #ecf0f1; border-radius: 10px; margin-bottom: 20px; height: 10px; overflow: hidden; }
+        .progress-bar { height: 100%; background-color: #2980b9; width: 0%; transition: width 0.3s; }
+        .progress-text { text-align: right; font-size: 0.9em; color: #7f8c8d; margin-bottom: 15px; }
+
+        /* Soru Alanı */
+        .question-block { display: none; animation: fadeIn 0.5s; }
+        .question-block.active { display: block; }
+        .question-text { font-weight: 600; font-size: 1.25em; margin-bottom: 20px; color: #2c3e50; }
+        
+        /* Seçenekler */
+        .options { display: flex; flex-direction: column; gap: 10px; }
+        .option-label { 
+            display: flex; align-items: center; padding: 12px 15px; border: 2px solid #e0e0e0; 
+            border-radius: 8px; cursor: pointer; transition: all 0.2s; background: #fff;
+        }
+        .option-label:hover { background-color: #f0f8ff; border-color: #bdc3c7; }
+        .option-label.selected { border-color: #2980b9; background-color: #eaf2f8; }
+        .option-label input { margin-right: 15px; transform: scale(1.2); }
+        
+        /* Cevap Göster Stilleri */
+        .option-label.correct-highlight { border-color: #27ae60; background-color: #d5f5e3; color: #1e8449; font-weight: bold; }
+        .option-label.wrong-highlight { border-color: #e74c3c; background-color: #fadbd8; }
+
+        /* Butonlar */
+        .controls { margin-top: 30px; display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
+        button { border: none; padding: 12px 24px; border-radius: 6px; cursor: pointer; font-size: 16px; font-weight: 600; transition: background 0.2s; }
+        .nav-btn { background-color: #2980b9; color: white; }
+        .nav-btn:hover { background-color: #1a5276; }
+        .nav-btn:disabled { background-color: #bdc3c7; cursor: not-allowed; }
+        
+        .show-answer-btn { background-color: #f39c12; color: white; }
+        .show-answer-btn:hover { background-color: #d35400; }
+        
+        .finish-btn { background-color: #27ae60; color: white; display: none; }
+        .finish-btn:hover { background-color: #219150; }
+
+        /* Sonuç Ekranı */
+        #result-screen { display: none; }
+        .score-card { text-align: center; background: #f8f9fa; padding: 20px; border-radius: 10px; margin-bottom: 30px; }
+        .score-circle { 
+            width: 120px; height: 120px; border-radius: 50%; background: #2980b9; color: white; 
+            display: flex; align-items: center; justify-content: center; font-size: 2em; font-weight: bold; 
+            margin: 0 auto 15px; 
+        }
+        
+        .review-table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 0.95em; }
+        .review-table th, .review-table td { padding: 12px; border: 1px solid #ddd; text-align: left; }
+        .review-table th { background-color: #34495e; color: white; }
+        .review-table tr:nth-child(even) { background-color: #f2f2f2; }
+        .status-correct { color: #27ae60; font-weight: bold; }
+        .status-wrong { color: #c0392b; font-weight: bold; }
+        .status-empty { color: #f39c12; font-weight: bold; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div id="quiz-screen">
+        <h1>5. Ünite: Sokrates ve Küçük Sokratesçi Okullar</h1>
+        
+        <div class="progress-text" id="progress-text">Soru 1 / 50</div>
+        <div class="progress-container">
+            <div class="progress-bar" id="progress-bar"></div>
+        </div>
+        
+        <div id="quiz-container">
+            <!-- Sorular buraya JS ile gelecek -->
+        </div>
+
+        <div class="controls">
+            <div>
+                <button class="nav-btn" id="prevBtn" onclick="prevQuestion()" disabled>&#8592; Önceki</button>
+            </div>
+            <div>
+                <button class="show-answer-btn" onclick="showCurrentAnswer()">👁️ Cevabı Göster</button>
+            </div>
+            <div>
+                <button class="nav-btn" id="nextBtn" onclick="nextQuestion()">Sonraki &#8594;</button>
+                <button class="finish-btn" id="finishBtn" onclick="finishQuiz()">Testi Bitir &#10004;</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="result-screen">
+        <h1>Değerlendirme Sonucu</h1>
+        <div class="score-card">
+            <div class="score-circle" id="score-circle">0</div>
+            <h3>Toplam Puan</h3>
+            <p id="score-details"></p>
+        </div>
+        
+        <h3>Detaylı Soru Analizi</h3>
+        <table class="review-table">
+            <thead>
+                <tr>
+                    <th style="width: 5%">No</th>
+                    <th style="width: 45%">Soru</th>
+                    <th style="width: 20%">Senin Cevabın</th>
+                    <th style="width: 20%">Doğru Cevap</th>
+                    <th style="width: 10%">Durum</th>
+                </tr>
+            </thead>
+            <tbody id="review-body">
+                <!-- Sonuç satırları buraya gelecek -->
+            </tbody>
+        </table>
+        <div style="text-align: center; margin-top: 30px;">
+            <button class="nav-btn" onclick="location.reload()">Testi Tekrar Çöz</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // 5. Ünite Konuları: Sokrates'in hayatı, yöntemi (Maiotik, İroni), Savunması, Ahlak görüşü, Küçük Sokratesçi Okullar (Kynikler, Kyreneliler, Megaralılar, Elis-Eretria)
+    const questions = [
+        { q: "Sokrates'in felsefi yönteminin iki temel aşaması aşağıdakilerden hangisidir?", o: ["Tez - Antitez", "Tümevarım - Tümdengelim", "İroni (Alay) - Maiotik (Doğurtma)", "Gözlem - Deney", "Şüphe - Yargı"], a: 2 },
+        { q: "'Sorgulanmamış hayat yaşanmaya değmez' sözü kime aittir?", o: ["Platon", "Sokrates", "Aristoteles", "Herakleitos", "Thales"], a: 1 },
+        { q: "Sokrates'e göre erdem (arete) aşağıdakilerden hangisi ile özdeştir?", o: ["Cesaret", "Zenginlik", "Şöhret", "Bilgi", "Haz"], a: 3 },
+        { q: "Sokrates'in yazılı bir eser bırakmamasının temel nedeni aşağıdakilerden hangisidir?", o: ["Yazmayı bilmemesi", "Zamanının olmaması", "Felsefeyi canlı bir diyalog (tartışma) olarak görmesi", "Yöneticilerden korkması", "Kağıdın pahalı olması"], a: 2 },
+        { q: "Sokrates'in annesinin mesleğinden (ebelik) esinlenerek 'zihinde var olan doğruları gün yüzüne çıkarma' sanatına verdiği ad nedir?", o: ["Retorik", "Diyalektik", "Maiotik", "Sofistik", "Mantık"], a: 2 },
+        { q: "Aşağıdakilerden hangisi 'Küçük Sokratesçi Okullar'dan biri değildir?", o: ["Kynikler Okulu", "Kyrene Okulu", "Megara Okulu", "Elis-Eretria Okulu", "Peripatetik Okul"], a: 4 },
+        { q: "Mutluluğu 'haz' (hedone) ile özdeşleştiren ve hazzı yaşamın amacı sayan Sokratesçi okul hangisidir?", o: ["Kynik Okulu", "Kyrene Okulu", "Megara Okulu", "Stoacılar", "Platoncular"], a: 1 },
+        { q: "Kendisine ne istediğini soran Büyük İskender'e 'Gölge etme başka ihsan istemem' diyen Kynik filozof kimdir?", o: ["Diogenes", "Antisthenes", "Aristippos", "Eukleides", "Phaidon"], a: 0 },
+        { q: "Sokrates'in Atina mahkemesinde suçlanma gerekçelerinden biri aşağıdakilerden hangisidir?", o: ["Vergi kaçırmak", "Şehrin tanrılarına inanmamak ve gençleri yoldan çıkarmak", "Devlet sırlarını açıklamak", "Savaştan kaçmak", "Yabancılarla işbirliği yapmak"], a: 1 },
+        { q: "Megara Okulu'nun kurucusu olan ve 'Varlık birdir, değişmez' diyen Elea öğretisini Sokratesçi ahlakla birleştiren filozof kimdir?", o: ["Aristippos", "Antisthenes", "Eukleides", "Phaidon", "Diogenes"], a: 2 },
+        { q: "Sokrates'in 'Bildiğim tek şey, ............' sözündeki boşluğa ne gelmelidir?", o: ["...her şeyin değiştiğidir.", "...hiçbir şey bilmediğimdir.", "...insanın ölçü olduğudur.", "...suyun ilk neden olduğudur.", "...evrenin sonsuz olduğudur."], a: 1 },
+        { q: "Kynik Okulu'nun (Kinizm) temel savı nedir?", o: ["Maksimum hazza ulaşmak", "Doğaya uygun, sade ve ihtiyaçsız yaşamak", "Mantık oyunlarıyla tartışmayı kazanmak", "Siyasal iktidarı ele geçirmek", "Bilimsel bilgi üretmek"], a: 1 },
+        { q: "Sokrates'in yönteminde, karşısındaki kişinin bildiğini sandığı şeylerin yanlışlığını gösterdiği 'alay' veya 'bilmezlikten gelme' aşamasına ne ad verilir?", o: ["İroni", "Metafor", "Analoji", "Sentez", "Tümevarım"], a: 0 },
+        { q: "Sokrates'e göre, hiç kimse bilerek ............ işlemez. Cümlesindeki boşluk nasıl tamamlanmalıdır?", o: ["...iyilik", "...kötülük", "...ticaret", "...siyaset", "...adalet"], a: 1 },
+        { q: "Sokrates'in içindeki tanrısal sesi veya vicdanı ifade etmek için kullandığı kavram hangisidir?", o: ["Logos", "Arkhe", "Daimonion", "Apeiron", "Nous"], a: 2 },
+        { q: "Sokrates'in babası Sophroniskos'un mesleği neydi ve bu Sokrates'in felsefesini nasıl etkilemiş olabilir?", o: ["Ressam", "Müzisyen", "Heykeltıraş (Şekil verme metaforu)", "Tüccar", "Siyasetçi"], a: 2 },
+        { q: "Sokrates'in öğretilerini doğrudan yazılı hale getirmemesi nedeniyle, onun hakkındaki bilgilerimiz için başvurduğumuz kaynaklara felsefe tarihinde ne ad verilir?", o: ["Sokratik Problem", "Sokratik Yöntem", "Sokratik İroni", "Diyalektik Sorun", "Sofist Sorunu"], a: 0 },
+        { q: "Delphoi tapınağının girişinde yazan ve Sokrates'in felsefesinin temeli sayılan söz nedir?", o: ["Her şey akar", "Kendini Bil", "Su en güzeldir", "Ölçülü ol", "Haz peşinde koş"], a: 1 },
+        { q: "Sokrates'i Sofistlerden ayıran en temel özelliklerden biri aşağıdakilerden hangisidir?", o: ["Ders karşılığında para almaması", "Güzel konuşmaya önem vermesi", "Siyasete girmesi", "Yazılı eser vermesi", "Gezgin olması"], a: 0 },
+        { q: "Kynik okulunun kurucusu kabul edilen ve Sokrates'in 'dayanıklılığını' örnek alan filozof kimdir?", o: ["Diogenes", "Aristippos", "Antisthenes", "Platon", "Ksenophon"], a: 2 },
+        { q: "Kyrene Okulu'na göre yaşamın amacı olan 'haz' nasıl bir hazdır?", o: ["Sürekli ve zihinsel haz", "Geçmişin hatırasından doğan haz", "Gelecek umudundan doğan haz", "Şimdiki andaki bedensel haz", "Erdemli olmanın verdiği haz"], a: 3 },
+        { q: "Sokrates'in ölümüne hükmedilen davanın savcılarından biri olan ve 'zanaatkarları/politikacıları' temsil eden kişi kimdir?", o: ["Meletus", "Anytus", "Lycon", "Kriton", "Alkibiades"], a: 1 },
+        { q: "Sokrates'in savunmasında kendisini Atina halkına benzettiği hayvan hangisidir?", o: ["At sineği", "Kartal", "Baykuş", "Aslan", "Karınca"], a: 0 },
+        { q: "Aşağıdakilerden hangisi Sokrates'in ahlak görüşü olan 'Entelektüalizm'i ifade eder?", o: ["Doğru bilgi doğru eylemi doğurur", "Ahlak görelidir", "İnsan her şeyin ölçüsüdür", "Önemli olan niyettir", "Haz veren şey iyidir"], a: 0 },
+        { q: "Sokrates'in 'tümevarım' (epagoge) yönteminin amacı nedir?", o: ["Tekil örneklerden genel bir tanıma ulaşmak", "Genel yasalardan tekil olayları açıklamak", "Karşı tarafı ikna etmek", "Duyguları harekete geçirmek", "Mitolojik açıklama yapmak"], a: 0 },
+        { q: "Elis-Eretria okulunu kuran ve Platon'un diyaloglarından birine de adını veren filozof kimdir?", o: ["Phaidon", "Menedemos", "Stilpo", "Krates", "Zenon"], a: 0 },
+        { q: "Megara Okulu filozofu Eubulides'in meşhur paradoksu hangisidir?", o: ["Aşil ve Kaplumbağa", "Yalancı Paradoksu", "Ok Paradoksu", "İkizler Paradoksu", "Gemi Paradoksu"], a: 1 },
+        { q: "Kyniklerin, hiçbir devlete veya topluma bağlı olmama durumunu ifade eden ve 'Dünya Yurttaşlığı' anlamına gelen kavram nedir?", o: ["Polis", "Kozmopolit", "Demokrasi", "Oligarşi", "Monarşi"], a: 1 },
+        { q: "Sokrates'e göre ruhun (psyche) en önemli özelliği nedir?", o: ["Ölümlü olması", "Maddi olması", "İnsanın ahlaki ve entelektüel kişiliği olması", "Bedenin hapishanesi olması", "Duyguların merkezi olması"], a: 2 },
+        { q: "Sokrates idam cezasına çarptırıldıktan sonra hapishaneden kaçmasını öneren dostu kimdir?", o: ["Platon", "Kriton", "Phaidon", "Apollodoros", "Ksenophon"], a: 1 },
+        { q: "Sokrates hangi yıl idam edilmiştir?", o: ["MÖ 399", "MÖ 499", "MÖ 322", "MÖ 585", "MÖ 427"], a: 0 },
+        { q: "Sokrates'in 'Daimonion'u ona ne söylerdi?", o: ["Ne yapması gerektiğini", "Gelecekte ne olacağını", "Ne yapmaması gerektiğini (yasaklayıcı)", "Başkalarının ne düşündüğünü", "Hangi tanrıya kurban keseceğini"], a: 2 },
+        { q: "Kyrene Okulu filozofu Hegesias'ın lakabı nedir ve neden böyle anılır?", o: ["Mutluluk hocası", "Ölüm ikna edicisi (Yaşamın acı dolu olduğunu savunduğu için)", "Haz düşkünü", "Köpek", "Bilge"], a: 1 },
+        { q: "Sokrates'in yönteminde tanımlara ulaşmak için kullandığı 'Nedir?' sorusunun felsefi amacı nedir?", o: ["Kelime oyunu yapmak", "Kavramların özünü (mahiyetini) ortaya koymak", "Zaman kazanmak", "Bilgisini göstermek", "Konuyu değiştirmek"], a: 1 },
+        { q: "Kynik filozof Diogenes'in gündüz vakti elinde fenerle dolaşırken ne aradığı söylenir?", o: ["Para", "Yiyecek", "Dürüst bir adam (İnsan)", "Kaybettiği yüzüğü", "Evinin yolu"], a: 2 },
+        { q: "Sokrates'in, Atina'daki gençleri etkilemesi ve onlara soru sorması hangi komedya yazarının 'Bulutlar' eserinde alaya alınmıştır?", o: ["Aristophanes", "Sophokles", "Euripides", "Aiskhylos", "Homeros"], a: 0 },
+        { q: "Antisthenes'e göre erdemin öğrenilmesi için ne gereklidir ve yeterlidir?", o: ["Çok kitap okumak", "Sözcüklerin incelenmesi ve kavramların analizi", "Matematik bilmek", "Müzik eğitimi", "Seyahat etmek"], a: 1 },
+        { q: "Kyrene Okulu'nun haz anlayışında, hazzın niteliği mi yoksa şiddeti mi önemlidir?", o: ["Nitelik", "Süreklilik", "Şiddet ve yoğunluk", "Manevilik", "Toplumsallık"], a: 2 },
+        { q: "Sokrates'e göre kötülüğün kaynağı nedir?", o: ["Kötü niyet", "Şeytan", "Bilgisizlik (Cehalet)", "Kader", "Toplum"], a: 2 },
+        { q: "Küçük Sokratesçi okullardan hangisi daha sonra Stoacılık akımına zemin hazırlamıştır?", o: ["Kyrene Okulu", "Kynik Okulu", "Elis Okulu", "Abdera Okulu", "Milet Okulu"], a: 1 },
+        { q: "Sokrates'in baldıran zehrini içmeden önceki son sözleri kime ve ne hakkındaydı?", o: ["Platon'a, devlet hakkında", "Kriton'a, Asklepios'a bir horoz borcu hakkında", "Eşine, çocukları hakkında", "Yargıçlara, pişmanlığı hakkında", "Tanrılara, af dileme hakkında"], a: 1 },
+        { q: "Megara Okulu'nun mantık alanındaki çalışmaları, özellikle hangi kavram üzerine yoğunlaşmıştır?", o: ["Olasılık", "Diyalektik ve Eristik (Tartışma sanatı)", "Retorik", "Etik", "Estetik"], a: 1 },
+        { q: "Diogenes'in 'Senin paranın üzerindeki turaları bozacağım' sözü ne anlama gelir?", o: ["Sahte para basacağı", "Mevcut toplumsal değerleri ve gelenekleri altüst edeceği", "Zengin olacağı", "Bankacı olacağı", "Siyasi darbe yapacağı"], a: 1 },
+        { q: "Sokrates'in savunmasında kendisini suçlayan diğer iki kişi kimdir? (Anytus dışında)", o: ["Meletus ve Lycon", "Platon ve Ksenophon", "Gorgias ve Protagoras", "Perikles ve Aspasia", "Thrasymachus ve Kallikles"], a: 0 },
+        { q: "Kyniklerin yaşam tarzında 'askesis' (idman/çile) ne anlama gelir?", o: ["Spor yapmak", "Bedensel ve ruhsal arzuları terbiye etmek", "Savaşa hazırlanmak", "Oruç tutmak", "Kitap okumak"], a: 1 },
+        { q: "Kyrene okulu kurucusu Aristippos, Sokrates'in hangi yönünü temel almıştır?", o: ["Ahlaki sertliğini", "Diyalektik yöntemini", "Yaşama sanatını ve neşesini", "Vatanseverliğini", "Dindarlığını"], a: 2 },
+        { q: "Sokrates'e göre yasalar ve devlet otoritesi karşısındaki tutum ne olmalıdır?", o: ["Hoşuna gitmeyen yasaya uyulmamalıdır", "Her durumda isyan edilmelidir", "Yasalara, haksız yere cezalandırılsan bile uyulmalıdır", "Yasalar önemsizdir", "Güçlü olan haklıdır"], a: 2 },
+        { q: "Megaralı Stilpo'nun ahlak anlayışında en yüksek iyi nedir?", o: ["Haz", "Duygusuzluk (Apatheia) ve ruh sükuneti", "Zenginlik", "Şan ve şeref", "Arkadaşlık"], a: 1 },
+        { q: "Elis-Eretria okulunun kurucusu Phaidon aslen neydi?", o: ["Bir prens", "Bir köle (Sokrates tarafından özgürleştirildi)", "Bir tüccar", "Bir asker", "Bir rahip"], a: 1 },
+        { q: "Sokrates felsefesinde 'ruh'un (psyche) terbiyesi ne ile mümkündür?", o: ["Sporla", "Müzikle", "Bilgi ve erdemle", "Beslenmeyle", "İbadetle"], a: 2 }
+    ];
+
+    let currentQuestion = 0;
+    let userAnswers = new Array(questions.length).fill(null);
+
+    function loadQuestion() {
+        const container = document.getElementById('quiz-container');
+        container.innerHTML = '';
+
+        const q = questions[currentQuestion];
+        
+        let html = `
+            <div class="question-block active">
+                <div class="question-text">${currentQuestion + 1}. ${q.q}</div>
+                <div class="options">
+        `;
+
+        q.o.forEach((opt, index) => {
+            const isSelected = userAnswers[currentQuestion] === index ? 'selected' : '';
+            const isChecked = userAnswers[currentQuestion] === index ? 'checked' : '';
+            html += `
+                <label class="option-label ${isSelected}" id="opt-${index}">
+                    <input type="radio" name="q${currentQuestion}" value="${index}" onclick="selectAnswer(${index})" ${isChecked}>
+                    ${String.fromCharCode(65 + index)}) ${opt}
+                </label>
+            `;
+        });
+
+        html += `</div></div>`;
+        container.innerHTML = html;
+
+        // Progress Bar
+        const progressPercent = ((currentQuestion + 1) / questions.length) * 100;
+        document.getElementById('progress-bar').style.width = progressPercent + '%';
+        document.getElementById('progress-text').innerText = `Soru ${currentQuestion + 1} / ${questions.length}`;
+        
+        // Buton Yönetimi
+        document.getElementById('prevBtn').disabled = currentQuestion === 0;
+        
+        if (currentQuestion === questions.length - 1) {
+            document.getElementById('nextBtn').style.display = 'none';
+            document.getElementById('finishBtn').style.display = 'inline-block';
+        } else {
+            document.getElementById('nextBtn').style.display = 'inline-block';
+            document.getElementById('finishBtn').style.display = 'none';
+        }
+    }
+
+    function selectAnswer(index) {
+        userAnswers[currentQuestion] = index;
+        const labels = document.querySelectorAll('.option-label');
+        labels.forEach(label => label.classList.remove('selected'));
+        document.getElementById(`opt-${index}`).classList.add('selected');
+    }
+
+    function showCurrentAnswer() {
+        const correctIndex = questions[currentQuestion].a;
+        const correctLabel = document.getElementById(`opt-${correctIndex}`);
+        if(correctLabel) correctLabel.classList.add('correct-highlight');
+        
+        if (userAnswers[currentQuestion] !== null && userAnswers[currentQuestion] !== correctIndex) {
+            document.getElementById(`opt-${userAnswers[currentQuestion]}`).classList.add('wrong-highlight');
+        }
+    }
+
+    function nextQuestion() {
+        if (currentQuestion < questions.length - 1) {
+            currentQuestion++;
+            loadQuestion();
+        }
+    }
+
+    function prevQuestion() {
+        if (currentQuestion > 0) {
+            currentQuestion--;
+            loadQuestion();
+        }
+    }
+
+    function finishQuiz() {
+        let correctCount = 0;
+        let wrongCount = 0;
+        let emptyCount = 0;
+        let reviewHtml = '';
+
+        questions.forEach((q, index) => {
+            const userAnswer = userAnswers[index];
+            const isCorrect = userAnswer === q.a;
+            
+            let statusText = '';
+            let statusClass = '';
+
+            if (userAnswer === null) {
+                emptyCount++;
+                statusText = 'Boş';
+                statusClass = 'status-empty';
+            } else if (isCorrect) {
+                correctCount++;
+                statusText = 'Doğru';
+                statusClass = 'status-correct';
+            } else {
+                wrongCount++;
+                statusText = 'Yanlış';
+                statusClass = 'status-wrong';
+            }
+
+            reviewHtml += `
+                <tr>
+                    <td>${index + 1}</td>
+                    <td>${q.q}</td>
+                    <td>${userAnswer !== null ? String.fromCharCode(65 + userAnswer) + ') ' + q.o[userAnswer] : '-'}</td>
+                    <td>${String.fromCharCode(65 + q.a)}) ${q.o[q.a]}</td>
+                    <td class="${statusClass}">${statusText}</td>
+                </tr>
+            `;
+        });
+
+        document.getElementById('quiz-screen').style.display = 'none';
+        document.getElementById('result-screen').style.display = 'block';
+
+        // Puanlama: Her soru 2 puan (100/50)
+        const score = Math.round((correctCount / questions.length) * 100);
+        
+        document.getElementById('score-circle').innerText = score;
+        document.getElementById('score-details').innerHTML = `
+            <strong>Doğru:</strong> ${correctCount} | 
+            <strong>Yanlış:</strong> ${wrongCount} | 
+            <strong>Boş:</strong> ${emptyCount}
+        `;
+        
+        document.getElementById('review-body').innerHTML = reviewHtml;
+    }
+
+    // Uygulamayı başlat
+    loadQuestion();
+</script>
+
+</body>
+</html>

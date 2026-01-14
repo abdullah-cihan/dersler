@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sosyoloji - 8. Ünite: Din ve Eğitim</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #e8f5e9; color: #333; margin: 0; padding: 20px; }
+        .container { max-width: 900px; margin: 0 auto; background: #fff; padding: 40px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        h1 { text-align: center; color: #2e7d32; border-bottom: 2px solid #388e3c; padding-bottom: 10px; margin-bottom: 30px; }
+        
+        /* İlerleme Çubuğu */
+        .progress-container { background-color: #c8e6c9; border-radius: 10px; margin-bottom: 20px; height: 10px; overflow: hidden; }
+        .progress-bar { height: 100%; background-color: #2e7d32; width: 0%; transition: width 0.3s; }
+        .progress-text { text-align: right; font-size: 0.9em; color: #1b5e20; margin-bottom: 15px; }
+
+        /* Soru Alanı */
+        .question-block { display: none; animation: fadeIn 0.5s; }
+        .question-block.active { display: block; }
+        .question-text { font-weight: 600; font-size: 1.25em; margin-bottom: 20px; color: #1b5e20; }
+        
+        /* Seçenekler */
+        .options { display: flex; flex-direction: column; gap: 10px; }
+        .option-label { 
+            display: flex; align-items: center; padding: 12px 15px; border: 2px solid #e0e0e0; 
+            border-radius: 8px; cursor: pointer; transition: all 0.2s; background: #fff;
+        }
+        .option-label:hover { background-color: #e8f5e9; border-color: #a5d6a7; }
+        .option-label.selected { border-color: #2e7d32; background-color: #c8e6c9; }
+        .option-label input { margin-right: 15px; transform: scale(1.2); }
+        
+        /* Cevap Göster Stilleri */
+        .option-label.correct-highlight { border-color: #27ae60; background-color: #d5f5e3; color: #1e8449; font-weight: bold; }
+        .option-label.wrong-highlight { border-color: #e74c3c; background-color: #fadbd8; }
+
+        /* Butonlar */
+        .controls { margin-top: 30px; display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
+        button { border: none; padding: 12px 24px; border-radius: 6px; cursor: pointer; font-size: 16px; font-weight: 600; transition: background 0.2s; }
+        .nav-btn { background-color: #2e7d32; color: white; }
+        .nav-btn:hover { background-color: #1b5e20; }
+        .nav-btn:disabled { background-color: #bdc3c7; cursor: not-allowed; }
+        
+        .show-answer-btn { background-color: #f39c12; color: white; }
+        .show-answer-btn:hover { background-color: #e67e22; }
+        
+        .finish-btn { background-color: #27ae60; color: white; display: none; }
+        .finish-btn:hover { background-color: #219150; }
+
+        /* Sonuç Ekranı */
+        #result-screen { display: none; }
+        .score-card { text-align: center; background: #f8f9fa; padding: 20px; border-radius: 10px; margin-bottom: 30px; }
+        .score-circle { 
+            width: 120px; height: 120px; border-radius: 50%; background: #2e7d32; color: white; 
+            display: flex; align-items: center; justify-content: center; font-size: 2em; font-weight: bold; 
+            margin: 0 auto 15px; 
+        }
+        
+        .review-table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 0.95em; }
+        .review-table th, .review-table td { padding: 12px; border: 1px solid #ddd; text-align: left; }
+        .review-table th { background-color: #1b5e20; color: white; }
+        .review-table tr:nth-child(even) { background-color: #f2f2f2; }
+        .status-correct { color: #27ae60; font-weight: bold; }
+        .status-wrong { color: #c0392b; font-weight: bold; }
+        .status-empty { color: #f39c12; font-weight: bold; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div id="quiz-screen">
+        <h1>8. Ünite: Din ve Eğitim</h1>
+        
+        <div class="progress-text" id="progress-text">Soru 1 / 50</div>
+        <div class="progress-container">
+            <div class="progress-bar" id="progress-bar"></div>
+        </div>
+        
+        <div id="quiz-container">
+            <!-- Sorular buraya JS ile gelecek -->
+        </div>
+
+        <div class="controls">
+            <div>
+                <button class="nav-btn" id="prevBtn" onclick="prevQuestion()" disabled>&#8592; Önceki</button>
+            </div>
+            <div>
+                <button class="show-answer-btn" onclick="showCurrentAnswer()">👁️ Cevabı Göster</button>
+            </div>
+            <div>
+                <button class="nav-btn" id="nextBtn" onclick="nextQuestion()">Sonraki &#8594;</button>
+                <button class="finish-btn" id="finishBtn" onclick="finishQuiz()">Testi Bitir &#10004;</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="result-screen">
+        <h1>Değerlendirme Sonucu</h1>
+        <div class="score-card">
+            <div class="score-circle" id="score-circle">0</div>
+            <h3>Toplam Puan</h3>
+            <p id="score-details"></p>
+        </div>
+        
+        <h3>Detaylı Soru Analizi</h3>
+        <table class="review-table">
+            <thead>
+                <tr>
+                    <th style="width: 5%">No</th>
+                    <th style="width: 45%">Soru</th>
+                    <th style="width: 20%">Senin Cevabın</th>
+                    <th style="width: 20%">Doğru Cevap</th>
+                    <th style="width: 10%">Durum</th>
+                </tr>
+            </thead>
+            <tbody id="review-body">
+                <!-- Sonuç satırları buraya gelecek -->
+            </tbody>
+        </table>
+        <div style="text-align: center; margin-top: 30px;">
+            <button class="nav-btn" onclick="location.reload()">Testi Tekrar Çöz</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // 8. Ünite Konuları: Din Sosyolojisi (Tanım, İşlevler, Kutsal-Dindışı, Laikleşme, Dini Örgütlenmeler), Eğitim Sosyolojisi (İşlevler, Eşitsizlik, Gizli Müfredat)
+    const questions = [
+        { q: "Sosyolojide din kurumu nasıl ele alınır?", o: ["Tanrının varlığını kanıtlamaya çalışarak", "Hangi dinin doğru olduğunu tartışarak", "Dinin toplumsal kökenlerini, işlevlerini ve toplumsal etkilerini inceleyerek", "Dini metinleri yorumlayarak", "İbadet şekillerini öğreterek"], a: 2 },
+        { q: "Emile Durkheim'a göre dinin en temel ayrımı nedir?", o: ["İyi ve Kötü", "Cennet ve Cehennem", "Kutsal (Sacred) ve Dindışı (Profane)", "Tanrı ve İnsan", "Ruh ve Beden"], a: 2 },
+        { q: "Durkheim'a göre dinin temel işlevi nedir?", o: ["Bireysel kurtuluş", "Toplumsal dayanışma ve bütünleşmeyi sağlamak", "Bilimsel bilgi üretmek", "Savaş çıkarmak", "Ekonomiyi yönetmek"], a: 1 },
+        { q: "Karl Marx'a göre din nedir?", o: ["Toplumun çimentosudur", "Halkın afyonudur (Ezilenlerin sığınağı ve uyuşturucusu)", "Bireysel bir tercihtir", "Ahlakın kaynağıdır", "Kutsal bir gerçekliktir"], a: 1 },
+        { q: "Marx'a göre din, egemen sınıf tarafından ne amaçla kullanılır?", o: ["Eşitliği sağlamak için", "Mevcut sömürü düzenini ve eşitsizliği meşrulaştırmak için", "Bilimi geliştirmek için", "Sanatı desteklemek için", "Demokrasiyi yaymak için"], a: 1 },
+        { q: "Max Weber, 'Protestan Ahlakı ve Kapitalizmin Ruhu' adlı eserinde neyi savunmuştur?", o: ["Dinin ekonomiyi engellediğini", "Dini inançların (Kalvinizm) ekonomik değişimi ve kapitalizmin doğuşunu tetikleyebileceğini", "Dinin sadece fakirler için olduğunu", "Katolikliğin ticareti geliştirdiğini", "Dinin yok olacağını"], a: 1 },
+        { q: "Weber'e göre modern dünyada dinin toplumsal hayattaki etkisinin azalması sürecine ne denir?", o: ["Laikleşme / Sekülerleşme", "Kutsallaşma", "Radikalleşme", "Bütünleşme", "Yabancılaşma"], a: 0 },
+        { q: "Resmi devlet dini olan, toplumun tamamını kapsayan ve devletle iç içe geçmiş dini örgütlenmeye ne denir?", o: ["Tarikat", "Mezhep", "Kilise (Ecclesia)", "Kült", "Cemaat"], a: 2 },
+        { q: "Ana akım dinden kopan, daha küçük, daha az bürokratik ve üyelerinin sıkı bağlarla bağlı olduğu dini gruba ne denir?", o: ["Kilise", "Mezhep (Sect)", "Devlet Dini", "Evrensel Din", "Resmi Din"], a: 1 },
+        { q: "Genellikle yerleşik dinlere karşı olan, karizmatik bir lider etrafında toplanan ve yeni bir dini mesaj getiren küçük gruba ne denir?", o: ["Mezhep", "Kült", "Kilise", "Cemaat", "Diyanet"], a: 1 },
+        { q: "Totemizm kavramını inceleyerek dinin kökenini topluma dayandıran sosyolog kimdir?", o: ["Weber", "Marx", "Durkheim", "Comte", "Parsons"], a: 2 },
+        { q: "Toplumun bilgi, beceri ve değerlerinin kuşaktan kuşağa sistematik olarak aktarıldığı kuruma ne denir?", o: ["Aile", "Siyaset", "Eğitim", "Ekonomi", "Hukuk"], a: 2 },
+        { q: "Okulda planlı, programlı ve profesyonel kişilerce verilen eğitime ne denir?", o: ["Yaygın Eğitim", "Örgün (Resmi) Eğitim", "Hizmet İçi Eğitim", "Sargın Eğitim", "Halk Eğitimi"], a: 1 },
+        { q: "İşlevselci yaklaşıma göre eğitimin 'açık' (manifest) işlevlerinden biri nedir?", o: ["Çocuk bakıcılığı yapmak", "Eş seçimi sağlamak", "Bilgi ve beceri kazandırmak, toplumsallaştırmak", "İşsizliği gizlemek", "Suç oranını artırmak"], a: 2 },
+        { q: "Aşağıdakilerden hangisi eğitimin 'gizil' (latent) işlevlerinden biridir?", o: ["Okuma yazma öğretmek", "Meslek edindirmek", "Eş seçimi için uygun ortam sağlamak (Çöpçatanlık)", "Kültürel değerleri aktarmak", "Yenilikçiliği teşvik etmek"], a: 2 },
+        { q: "Çatışma kuramına göre eğitim sisteminin temel amacı nedir?", o: ["Fırsat eşitliği sağlamak", "Yetenekleri geliştirmek", "Mevcut sınıf eşitsizliklerini yeniden üretmek ve egemen ideolojiyi aşılamak", "Toplumsal hareketliliği artırmak", "Demokrasiyi güçlendirmek"], a: 2 },
+        { q: "Okulda resmi müfredatta yazılı olmayan ancak öğrencilere disiplin, itaat ve hiyerarşi gibi değerlerin öğretildiği sürece ne denir?", o: ["Açık Müfredat", "Gizli Müfredat (Hidden Curriculum)", "Ekstra Müfredat", "Resmi Müfredat", "Temel Müfredat"], a: 1 },
+        { q: "Pierre Bourdieu'ya göre, üst sınıf çocuklarının okul başarısının yüksek olmasının nedeni nedir?", o: ["Daha zeki olmaları", "Aileden getirdikleri 'Kültürel Sermaye'nin okul kültürüyle uyumlu olması", "Daha çok çalışmaları", "Şanslı olmaları", "Öğretmenlerin onları sevmesi"], a: 1 },
+        { q: "Diplomanın, kişinin becerisinden çok toplumsal statü ve ayrıcalık elde etmek için kullanılması durumuna ne denir?", o: ["Eğitim Enflasyonu", "Diploma Hastalığı (Credentialism)", "Liyakat", "Fırsat Eşitliği", "Mesleki Eğitim"], a: 1 },
+        { q: "Eğitimde fırsat eşitliği ne demektir?", o: ["Herkesin aynı notu alması", "Herkesin üniversiteye gitmesi", "Her bireyin yeteneklerine göre eğitim imkanlarına erişimde eşit şansa sahip olması", "Zenginlerin daha iyi eğitim alması", "Sınavların kaldırılması"], a: 2 },
+        { q: "Kendini gerçekleştiren kehanet (Pygmalion Etkisi) eğitimde nasıl görülür?", o: ["Öğretmenin öğrenciden beklentisinin, öğrencinin başarısını etkilemesi (Beklenti yüksekse başarı artar)", "Öğrencinin geleceği görmesi", "Sınav sorularının tahmin edilmesi", "Okulun kapanması", "Müfredatın değişmesi"], a: 0 },
+        { q: "Modern toplumlarda eğitimin laikleşmesi ne anlama gelir?", o: ["Dinin yasaklanması", "Eğitimin dini kurumlardan alınıp devlet kontrolüne ve bilimsel esaslara dayandırılması", "Sadece din eğitimi verilmesi", "Kiliselerin kapatılması", "Ahlak dersinin kaldırılması"], a: 1 },
+        { q: "İşlevselcilere göre eğitim, yetenekli bireyleri seçip önemli pozisyonlara yerleştirerek neyi sağlar?", o: ["Sömürüyü", "Liyakati (Meritokrasi)", "Kayirmacılığı", "Kaosu", "Cehaleti"], a: 1 },
+        { q: "Ivan Illich'in 'Okulsuz Toplum' tezi neyi savunur?", o: ["Okulların sayısının artırılmasını", "Zorunlu ve kurumsal okul sisteminin kaldırılıp, daha esnek öğrenme ağlarının kurulmasını", "Eğitimin tamamen yasaklanmasını", "Sadece zenginlerin okumasını", "İnternetin kapatılmasını"], a: 1 },
+        { q: "Dinin toplumsal değişmeye etkisi konusunda Weber ve Marx'ın görüşleri nasıldır?", o: ["İkisi de dinin değişimi engellediğini söyler", "Marx dinin değişimi engellediğini (tutucu), Weber ise bazen değişimi tetikleyebileceğini (devrimci) söyler", "İkisi de dinin değişimi hızlandırdığını söyler", "İkisi de dinle ilgilenmez", "Tam tersidir"], a: 1 },
+        { q: "Fundamentalizm (Kökten Dincilik) modern dünyada neye bir tepki olarak yükselmiştir?", o: ["Dinin güçlenmesine", "Sekülerleşmeye ve modernitenin getirdiği belirsizliklere", "Teknolojinin gelişmesine", "Barışa", "Eğitime"], a: 1 },
+        { q: "Durkheim'a göre dini ritüellerin (ayinlerin) işlevi nedir?", o: ["Tanrıyı memnun etmek", "Topluluğun birliğini ve ortak duygularını (Kolektif Coşku) güçlendirmek", "Zaman geçirmek", "Para toplamak", "Eğlenmek"], a: 1 },
+        { q: "Eğitim seviyesi ile gelir düzeyi arasındaki ilişki genellikle nasıldır?", o: ["Ters orantılıdır", "İlişki yoktur", "Pozitif yönde ilişkilidir (Eğitim arttıkça gelir artma eğilimindedir)", "Eğitim geliri düşürür", "Gelir eğitimi düşürür"], a: 2 },
+        { q: "Bowles ve Gintis'e göre okullar öğrencileri neye hazırlar?", o: ["Demokrasiye", "Kapitalist işgücü piyasasındaki itaatkar rollere", "Özgürlüğe", "Yaratıcılığa", "Liderliğe"], a: 1 },
+        { q: "Modern eğitim sisteminin en önemli özelliklerinden biri nedir?", o: ["Zorunlu ve kitlesel olması", "Sadece soylulara açık olması", "Dini temelli olması", "Ücretli olması", "Sözlü olması"], a: 0 },
+        { q: "Sekülerleşme tezi neyi iddia eder?", o: ["Dinin öneminin artacağını", "Modernleşmeyle birlikte dinin toplumsal ve bireysel hayattaki otoritesinin azalacağını", "Herkesin ateist olacağını", "Yeni dinlerin çıkacağını", "Devletin din ile yönetileceğini"], a: 1 },
+        { q: "Kültürleşme ile eğitim arasındaki fark nedir?", o: ["Fark yoktur", "Kültürleşme yaşam boyu süren doğal bir süreçken, eğitim planlı ve kurumsal bir süreçtir", "Eğitim sadece okulda olmaz", "Kültürleşme sadece okulda olur", "Eğitim daha önemlidir"], a: 1 },
+        { q: "Bir öğrencinin ailesinin sosyo-ekonomik düzeyi, okul başarısını etkiler mi?", o: ["Hayır, okul herkesi eşitler", "Evet, en önemli belirleyicilerden biridir (Kaynaklara erişim, dil gelişimi vb.)", "Sadece zekası etkiler", "Sadece öğretmen etkiler", "Bilinmiyor"], a: 1 },
+        { q: "Basil Bernstein'a göre alt sınıf çocukları ile orta sınıf çocukları arasındaki dil farkı (kısıtlı kod vs. gelişmiş kod) neye yol açar?", o: ["İletişim kopukluğuna", "Alt sınıf çocuklarının okulda başarısız olmasına", "Daha iyi anlaşmalarına", "Öğretmenin işini kolaylaştırmasına", "Hiçbir şeye"], a: 1 },
+        { q: "Paulo Freire'nin 'Ezilenlerin Pedagojisi'nde eleştirdiği eğitim modeli hangisidir?", o: ["Problem tanımlayıcı model", "Bankacı Eğitim Modeli (Öğrenciyi bilgi depolanacak boş bir kap gibi gören)", "Demokratik model", "Özgürlükçü model", "Yapılandırmacı model"], a: 1 },
+        { q: "Totemizmde 'Totem' neyi simgeler?", o: ["Sadece bir hayvanı", "Doğayı", "Hem klanın kendisini (toplumu) hem de kutsalı", "Düşmanları", "Yiyecekleri"], a: 2 },
+        { q: "Monoteizm ne demektir?", o: ["Çok tanrıcılık", "Tek tanrıcılık", "Tanrıtanımazlık", "Doğa tapıncı", "Ruhlara inanma"], a: 1 },
+        { q: "Politeizm ne demektir?", o: ["Tek tanrıcılık", "Çok tanrıcılık", "Dinsizlik", "Peygambersizlik", "Kitapsızlık"], a: 1 },
+        { q: "Animzm ne demektir?", o: ["Tek tanrı inancı", "Canlıcılık (Doğadaki nesnelerin ruhu olduğuna inanma)", "Hayvanlara tapma", "Atalara tapma", "Büyücülük"], a: 1 },
+        { q: "Weber'e göre bürokratikleşme ve rasyonelleşme, eğitimin hangi yönünü ön plana çıkarmıştır?", o: ["Ahlaki eğitimi", "Uzmanlaşmayı ve diplomalı meslek adamı yetiştirmeyi", "Sanat eğitimini", "Spor eğitimini", "Dini eğitimi"], a: 1 },
+        { q: "Eğitimin toplumsal hareketlilikteki rolü nedir?", o: ["Hareketliliği engeller", "Dikey hareketlilik için en önemli araçlardan biridir (Sosyal asansör)", "Sadece yatay hareketlilik sağlar", "Sınıfları ortadan kaldırır", "Zenginleri fakirleştirir"], a: 1 },
+        { q: "Agnostisizm ne demektir?", o: ["Tanrının varlığını reddetmek", "Tanrının varlığının veya yokluğunun bilinemeyeceğini savunmak (Bilinemezcilik)", "Çok tanrıya inanmak", "Dini yaymak", "Kiliseye gitmek"], a: 1 },
+        { q: "Ateizm ne demektir?", o: ["Tanrının varlığını kabul etmek", "Tanrının varlığını reddetmek (Tanrıtanımazlık)", "Bilinemezcilik", "Doğaya tapmak", "Şeytana tapmak"], a: 1 },
+        { q: "Deizm ne demektir?", o: ["Tanrıyı reddetmek", "Bir Yaratıcıya inanmak ancak dinleri ve peygamberleri reddetmek", "Çok tanrıya inanmak", "Puta tapmak", "Ateizmdir"], a: 1 },
+        { q: "Türkiye'de Cumhuriyet dönemi eğitim politikalarının temel amacı neydi?", o: ["Dini eğitimi yaygınlaştırmak", "Ulus-devlet inşası, modernleşme ve laikleşme", "Osmanlıyı canlandırmak", "Yabancı dil öğretmek", "Okulları kapatmak"], a: 1 },
+        { q: "Eğitimde 'cinsiyetçilik' nasıl ortaya çıkar?", o: ["Kız ve erkeklere eşit davranarak", "Ders kitaplarında ve öğretmen tutumlarında geleneksel cinsiyet rollerinin pekiştirilmesiyle", "Karma eğitimle", "Okul formalarıyla", "Sınavlarla"], a: 1 },
+        { q: "Din sosyolojisi, inançların doğruluğu veya yanlışlığıyla ilgilenir mi?", o: ["Evet, en önemli konusudur", "Hayır, inançları birer sosyal olgu olarak inceler ve yargılamaz", "Sadece yanlış inançları inceler", "Sadece tek tanrılı dinleri inceler", "Din adamlarını yargılar"], a: 1 },
+        { q: "Ritüellerin (ibadetlerin) tekrar edilmesi toplulukta neyi sağlar?", o: ["Sıkıntıyı", "Bireyselliği", "Grup kimliğini ve bağlılığını", "Ayrışmayı", "Unutkanlığı"], a: 2 },
+        { q: "Eğitimin 'kültürel mirası aktarma' işlevi neyi ifade eder?", o: ["Miras hukukunu öğretmeyi", "Geçmiş kuşakların bilgi, değer ve geleneklerini yeni kuşaklara öğretmeyi", "Para kazandırmayı", "Tarihi değiştirmeyi", "Müzeleri gezmeyi"], a: 1 },
+        { q: "Postmodernizme göre eğitim nasıl olmalıdır?", o: ["Tek tip ve merkezi", "Standartlaştırılmış", "Farklılıklara açık, esnek ve yaşam boyu süren", "Otoriter", "Sadece mesleki"], a: 2 }
+    ];
+
+    let currentQuestion = 0;
+    let userAnswers = new Array(questions.length).fill(null);
+
+    function loadQuestion() {
+        const container = document.getElementById('quiz-container');
+        container.innerHTML = '';
+
+        const q = questions[currentQuestion];
+        
+        let html = `
+            <div class="question-block active">
+                <div class="question-text">${currentQuestion + 1}. ${q.q}</div>
+                <div class="options">
+        `;
+
+        q.o.forEach((opt, index) => {
+            const isSelected = userAnswers[currentQuestion] === index ? 'selected' : '';
+            const isChecked = userAnswers[currentQuestion] === index ? 'checked' : '';
+            html += `
+                <label class="option-label ${isSelected}" id="opt-${index}">
+                    <input type="radio" name="q${currentQuestion}" value="${index}" onclick="selectAnswer(${index})" ${isChecked}>
+                    ${String.fromCharCode(65 + index)}) ${opt}
+                </label>
+            `;
+        });
+
+        html += `</div></div>`;
+        container.innerHTML = html;
+
+        // Progress Bar
+        const progressPercent = ((currentQuestion + 1) / questions.length) * 100;
+        document.getElementById('progress-bar').style.width = progressPercent + '%';
+        document.getElementById('progress-text').innerText = `Soru ${currentQuestion + 1} / ${questions.length}`;
+        
+        // Buton Yönetimi
+        document.getElementById('prevBtn').disabled = currentQuestion === 0;
+        
+        if (currentQuestion === questions.length - 1) {
+            document.getElementById('nextBtn').style.display = 'none';
+            document.getElementById('finishBtn').style.display = 'inline-block';
+        } else {
+            document.getElementById('nextBtn').style.display = 'inline-block';
+            document.getElementById('finishBtn').style.display = 'none';
+        }
+    }
+
+    function selectAnswer(index) {
+        userAnswers[currentQuestion] = index;
+        const labels = document.querySelectorAll('.option-label');
+        labels.forEach(label => label.classList.remove('selected'));
+        document.getElementById(`opt-${index}`).classList.add('selected');
+    }
+
+    function showCurrentAnswer() {
+        const correctIndex = questions[currentQuestion].a;
+        const correctLabel = document.getElementById(`opt-${correctIndex}`);
+        if(correctLabel) correctLabel.classList.add('correct-highlight');
+        
+        if (userAnswers[currentQuestion] !== null && userAnswers[currentQuestion] !== correctIndex) {
+            document.getElementById(`opt-${userAnswers[currentQuestion]}`).classList.add('wrong-highlight');
+        }
+    }
+
+    function nextQuestion() {
+        if (currentQuestion < questions.length - 1) {
+            currentQuestion++;
+            loadQuestion();
+        }
+    }
+
+    function prevQuestion() {
+        if (currentQuestion > 0) {
+            currentQuestion--;
+            loadQuestion();
+        }
+    }
+
+    function finishQuiz() {
+        let correctCount = 0;
+        let wrongCount = 0;
+        let emptyCount = 0;
+        let reviewHtml = '';
+
+        questions.forEach((q, index) => {
+            const userAnswer = userAnswers[index];
+            const isCorrect = userAnswer === q.a;
+            
+            let statusText = '';
+            let statusClass = '';
+
+            if (userAnswer === null) {
+                emptyCount++;
+                statusText = 'Boş';
+                statusClass = 'status-empty';
+            } else if (isCorrect) {
+                correctCount++;
+                statusText = 'Doğru';
+                statusClass = 'status-correct';
+            } else {
+                wrongCount++;
+                statusText = 'Yanlış';
+                statusClass = 'status-wrong';
+            }
+
+            reviewHtml += `
+                <tr>
+                    <td>${index + 1}</td>
+                    <td>${q.q}</td>
+                    <td>${userAnswer !== null ? String.fromCharCode(65 + userAnswer) + ') ' + q.o[userAnswer] : '-'}</td>
+                    <td>${String.fromCharCode(65 + q.a)}) ${q.o[q.a]}</td>
+                    <td class="${statusClass}">${statusText}</td>
+                </tr>
+            `;
+        });
+
+        document.getElementById('quiz-screen').style.display = 'none';
+        document.getElementById('result-screen').style.display = 'block';
+
+        // Puanlama: Her soru 2 puan (100/50)
+        const score = Math.round((correctCount / questions.length) * 100);
+        
+        document.getElementById('score-circle').innerText = score;
+        document.getElementById('score-details').innerHTML = `
+            <strong>Doğru:</strong> ${correctCount} | 
+            <strong>Yanlış:</strong> ${wrongCount} | 
+            <strong>Boş:</strong> ${emptyCount}
+        `;
+        
+        document.getElementById('review-body').innerHTML = reviewHtml;
+    }
+
+    // Uygulamayı başlat
+    loadQuestion();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Psikoloji - 5. Ünite: Bellek ve Bilişsel Süreçler</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4ecf7; color: #333; margin: 0; padding: 20px; }
+        .container { max-width: 900px; margin: 0 auto; background: #fff; padding: 40px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        h1 { text-align: center; color: #8e44ad; border-bottom: 2px solid #9b59b6; padding-bottom: 10px; margin-bottom: 30px; }
+        
+        /* İlerleme Çubuğu */
+        .progress-container { background-color: #e8daef; border-radius: 10px; margin-bottom: 20px; height: 10px; overflow: hidden; }
+        .progress-bar { height: 100%; background-color: #8e44ad; width: 0%; transition: width 0.3s; }
+        .progress-text { text-align: right; font-size: 0.9em; color: #6c3483; margin-bottom: 15px; }
+
+        /* Soru Alanı */
+        .question-block { display: none; animation: fadeIn 0.5s; }
+        .question-block.active { display: block; }
+        .question-text { font-weight: 600; font-size: 1.25em; margin-bottom: 20px; color: #512e5f; }
+        
+        /* Seçenekler */
+        .options { display: flex; flex-direction: column; gap: 10px; }
+        .option-label { 
+            display: flex; align-items: center; padding: 12px 15px; border: 2px solid #e0e0e0; 
+            border-radius: 8px; cursor: pointer; transition: all 0.2s; background: #fff;
+        }
+        .option-label:hover { background-color: #f5eef8; border-color: #d2b4de; }
+        .option-label.selected { border-color: #8e44ad; background-color: #e8daef; }
+        .option-label input { margin-right: 15px; transform: scale(1.2); }
+        
+        /* Cevap Göster Stilleri */
+        .option-label.correct-highlight { border-color: #27ae60; background-color: #d5f5e3; color: #1e8449; font-weight: bold; }
+        .option-label.wrong-highlight { border-color: #e74c3c; background-color: #fadbd8; }
+
+        /* Butonlar */
+        .controls { margin-top: 30px; display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
+        button { border: none; padding: 12px 24px; border-radius: 6px; cursor: pointer; font-size: 16px; font-weight: 600; transition: background 0.2s; }
+        .nav-btn { background-color: #8e44ad; color: white; }
+        .nav-btn:hover { background-color: #71368a; }
+        .nav-btn:disabled { background-color: #bdc3c7; cursor: not-allowed; }
+        
+        .show-answer-btn { background-color: #f39c12; color: white; }
+        .show-answer-btn:hover { background-color: #e67e22; }
+        
+        .finish-btn { background-color: #27ae60; color: white; display: none; }
+        .finish-btn:hover { background-color: #219150; }
+
+        /* Sonuç Ekranı */
+        #result-screen { display: none; }
+        .score-card { text-align: center; background: #f8f9fa; padding: 20px; border-radius: 10px; margin-bottom: 30px; }
+        .score-circle { 
+            width: 120px; height: 120px; border-radius: 50%; background: #8e44ad; color: white; 
+            display: flex; align-items: center; justify-content: center; font-size: 2em; font-weight: bold; 
+            margin: 0 auto 15px; 
+        }
+        
+        .review-table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 0.95em; }
+        .review-table th, .review-table td { padding: 12px; border: 1px solid #ddd; text-align: left; }
+        .review-table th { background-color: #4a235a; color: white; }
+        .review-table tr:nth-child(even) { background-color: #f2f2f2; }
+        .status-correct { color: #27ae60; font-weight: bold; }
+        .status-wrong { color: #c0392b; font-weight: bold; }
+        .status-empty { color: #f39c12; font-weight: bold; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div id="quiz-screen">
+        <h1>5. Ünite: Bellek ve Bilişsel Süreçler</h1>
+        
+        <div class="progress-text" id="progress-text">Soru 1 / 50</div>
+        <div class="progress-container">
+            <div class="progress-bar" id="progress-bar"></div>
+        </div>
+        
+        <div id="quiz-container">
+            <!-- Sorular buraya JS ile gelecek -->
+        </div>
+
+        <div class="controls">
+            <div>
+                <button class="nav-btn" id="prevBtn" onclick="prevQuestion()" disabled>&#8592; Önceki</button>
+            </div>
+            <div>
+                <button class="show-answer-btn" onclick="showCurrentAnswer()">👁️ Cevabı Göster</button>
+            </div>
+            <div>
+                <button class="nav-btn" id="nextBtn" onclick="nextQuestion()">Sonraki &#8594;</button>
+                <button class="finish-btn" id="finishBtn" onclick="finishQuiz()">Testi Bitir &#10004;</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="result-screen">
+        <h1>Değerlendirme Sonucu</h1>
+        <div class="score-card">
+            <div class="score-circle" id="score-circle">0</div>
+            <h3>Toplam Puan</h3>
+            <p id="score-details"></p>
+        </div>
+        
+        <h3>Detaylı Soru Analizi</h3>
+        <table class="review-table">
+            <thead>
+                <tr>
+                    <th style="width: 5%">No</th>
+                    <th style="width: 45%">Soru</th>
+                    <th style="width: 20%">Senin Cevabın</th>
+                    <th style="width: 20%">Doğru Cevap</th>
+                    <th style="width: 10%">Durum</th>
+                </tr>
+            </thead>
+            <tbody id="review-body">
+                <!-- Sonuç satırları buraya gelecek -->
+            </tbody>
+        </table>
+        <div style="text-align: center; margin-top: 30px;">
+            <button class="nav-btn" onclick="location.reload()">Testi Tekrar Çöz</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // 5. Ünite Konuları: Bellek (Kodlama, Depolama, Geri Çağırma), Bellek Türleri (Duyusal, KSB, USB), Unutma, Düşünme, Dil
+    const questions = [
+        { q: "Öğrenilen bilgilerin zaman içinde saklanması ve ihtiyaç duyulduğunda geri çağrılması sürecine ne denir?", o: ["Algı", "Bellek (Hafıza)", "Düşünme", "Zeka", "Öğrenme"], a: 1 },
+        { q: "Bellek oluşumunun üç temel aşaması sırasıyla hangisidir?", o: ["Depolama - Geri Çağırma - Kodlama", "Kodlama - Depolama - Geri Çağırma", "Geri Çağırma - Depolama - Kodlama", "Algılama - Unutma - Hatırlama", "Duyum - Algı - Tepki"], a: 1 },
+        { q: "Dış dünyadan gelen bilginin zihne ilk girdiği ve işlendiği aşama hangisidir?", o: ["Depolama", "Geri Çağırma", "Kodlama (Encoding)", "Unutma", "Pekiştirme"], a: 2 },
+        { q: "Bilginin bellekte kalıcı olarak yerleşmesi sürecine ne denir?", o: ["Kodlama", "Geri Çağırma", "Depolama", "Silme", "Hatırlama"], a: 2 },
+        { q: "Atkinson ve Shiffrin'in 'Çoklu Bellek Modeli'ne göre bellek türleri sırasıyla hangileridir?", o: ["Duyusal Bellek - Kısa Süreli Bellek - Uzun Süreli Bellek", "Kısa Süreli Bellek - Duyusal Bellek - Uzun Süreli Bellek", "Anısal Bellek - Anlamsal Bellek - İşlemsel Bellek", "Bilinçli Bellek - Bilinçdışı Bellek", "Görsel Bellek - İşitsel Bellek"], a: 0 },
+        { q: "Çevreden gelen uyarıcıların (görüntü, ses vb.) çok kısa bir süre (yarım saniye ile 3-4 saniye) tutulduğu bellek türü hangisidir?", o: ["Kısa Süreli Bellek", "Uzun Süreli Bellek", "Duyusal Bellek", "Çalışma Belleği", "Epizodik Bellek"], a: 2 },
+        { q: "Görsel uyarıcıların anlık olarak tutulduğu duyusal belleğe ne denir?", o: ["Ekoik Bellek", "İkonik Bellek", "Haptik Bellek", "Semantik Bellek", "Prosedürel Bellek"], a: 1 },
+        { q: "İşitsel uyarıcıların anlık olarak tutulduğu duyusal belleğe ne denir?", o: ["İkonik Bellek", "Ekoik Bellek", "Görsel Bellek", "Mekansal Bellek", "Kısa Süreli Bellek"], a: 1 },
+        { q: "George Miller'a göre Kısa Süreli Belleğin (KSB) kapasitesi ('Sihirli Sayı') kaçtır?", o: ["Sınırsızdır", "7 ± 2 birim (5 ile 9 arası)", "3 ± 1 birim", "100 birim", "Sadece 1 birim"], a: 1 },
+        { q: "Kısa süreli belleğin kapasitesini artırmak için bilgilerin gruplandırılmasına ne ad verilir?", o: ["Kodlama", "Gruplama (Chunking)", "Tekrar", "çağrışım", "Ezberleme"], a: 1 },
+        { q: "Bilginin kısa süreli bellekte kalma süresini artırmak için yapılan zihinsel tekrara ne denir?", o: ["Bakım Tekrarı (Maintenance Rehearsal)", "Kodlama", "Depolama", "Geri Getirme", "Unutma"], a: 0 },
+        { q: "Kısa süreli belleğin, bilgiyi sadece tutmakla kalmayıp aktif olarak işlediği (problem çözme vb.) haline ne denir?", o: ["Duyusal Bellek", "Çalışma Belleği (Working Memory)", "Uzun Süreli Bellek", "Örtük Bellek", "Flaş Bellek"], a: 1 },
+        { q: "Kapasitesi ve saklama süresi sınırsız olduğu düşünülen bellek türü hangisidir?", o: ["Duyusal Bellek", "Kısa Süreli Bellek", "Uzun Süreli Bellek (USB)", "Çalışma Belleği", "İkonik Bellek"], a: 2 },
+        { q: "Bilinçli olarak hatırladığımız ve ifade edebildiğimiz (örneğin 'Türkiye'nin başkenti neresidir?') bellek türüne ne denir?", o: ["Örtük (İmplicit) Bellek", "Açık (Explicit) / Bildirimsel Bellek", "İşlemsel Bellek", "Duyusal Bellek", "Kısa Süreli Bellek"], a: 1 },
+        { q: "Kişisel deneyimlerimizi ve olayları (örneğin 'geçen yaz tatili') saklayan açık bellek türü hangisidir?", o: ["Anlamsal (Semantik) Bellek", "Anısal (Epizodik) Bellek", "İşlemsel Bellek", "Örtük Bellek", "Duyusal Bellek"], a: 1 },
+        { q: "Genel bilgileri, kavramları ve gerçekleri (örneğin 'su 100 derecede kaynar') saklayan açık bellek türü hangisidir?", o: ["Anısal (Epizodik) Bellek", "Anlamsal (Semantik) Bellek", "İşlemsel Bellek", "Duyusal Bellek", "Otobiyografik Bellek"], a: 1 },
+        { q: "Bilinçli bir çaba gerektirmeden hatırlanan, becerileri ve alışkanlıkları (örneğin 'bisiklet sürmek') içeren bellek türü hangisidir?", o: ["Açık Bellek", "Örtük (İmplicit) / İşlemsel (Prosedürel) Bellek", "Anısal Bellek", "Anlamsal Bellek", "Kısa Süreli Bellek"], a: 1 },
+        { q: "Beyinde yeni açık (explicit) anıların oluşumunda kritik rol oynayan 'denizatı' şeklindeki yapı hangisidir?", o: ["Amigdala", "Hipokampus", "Beyincik", "Talamus", "Hipotalamus"], a: 1 },
+        { q: "Korku gibi duygusal anıların işlenmesinde ve depolanmasında rol oynayan beyin yapısı hangisidir?", o: ["Hipokampus", "Beyincik", "Amigdala", "Korteks", "Medulla"], a: 2 },
+        { q: "Motor becerilerin (işlemsel bellek) öğrenilmesinde ve saklanmasında rol oynayan beyin yapısı hangisidir?", o: ["Hipokampus", "Beyincik (Cerebellum)", "Amigdala", "Ön Beyin", "Talamus"], a: 1 },
+        { q: "Çok şaşırtıcı veya duygusal olayların (örneğin 17 Ağustos depremi) fotoğraf karesi gibi net hatırlanmasına ne denir?", o: ["Flaş Bellek (Flashbulb Memory)", "Bastırma", "Amnezi", "Sahte Anı", "Duyusal Bellek"], a: 0 },
+        { q: "Hermann Ebbinghaus'un 'Unutma Eğrisi'ne göre, öğrenilen bilgilerin çoğu ne zaman unutulur?", o: ["Öğrenmeden hemen sonraki ilk saatlerde hızla", "Zamanla yavaş yavaş", "Sadece yaşlılıkta", "Hiçbir zaman", "Uykuda"], a: 0 },
+        { q: "Yeni öğrenilen bilgilerin, eski bilgilerin hatırlanmasını zorlaştırmasına ne denir? (Örn: Yeni telefon numarasını öğrenince eskisini unutmak)", o: ["İleriye Ket Vurma", "Geriye Ket Vurma (Retroactive Interference)", "Bastırma", "Sönme", "Kodlama Hatası"], a: 1 },
+        { q: "Eski bilgilerin, yeni öğrenilen bilgilerin hatırlanmasını zorlaştırmasına ne denir? (Örn: Eski şifrenin sürekli akla gelmesi)", o: ["Geriye Ket Vurma", "İleriye Ket Vurma (Proactive Interference)", "Unutma", "Amnezi", "Kodlama"], a: 1 },
+        { q: "Travma veya beyin hasarı öncesindeki olayları hatırlayamama durumuna ne denir?", o: ["İleriye Dönük Amnezi", "Geriye Dönük (Retrograd) Amnezi", "Çocukluk Amnezisi", "Flaş Bellek", "Bastırma"], a: 1 },
+        { q: "Beyin hasarı sonrasında yeni anı oluşturamama durumuna (H.M. vakası) ne denir?", o: ["Geriye Dönük Amnezi", "İleriye Dönük (Anterograd) Amnezi", "Geçici Amnezi", "Psikolojik Amnezi", "Füg"], a: 1 },
+        { q: "Bilginin bellekte olmasına rağmen o an erişilememesi durumuna (Dilimin ucunda fenomeni) ne denir?", o: ["Depolama Hatası", "Kodlama Hatası", "Geri Getirme (Çağırma) Hatası", "Silinme", "Bozulma"], a: 2 },
+        { q: "Bilgiyi öğrendiğimiz fiziksel ortamda (bağlam) daha iyi hatırlamamıza ne denir?", o: ["Duruma Bağlı Bellek", "Bağlama (Ortama) Bağlı Bellek", "Duyguya Bağlı Bellek", "Flaş Bellek", "Örtük Bellek"], a: 1 },
+        { q: "Üzgünken üzücü olayları, mutluyken mutlu olayları hatırlama eğilimine ne denir?", o: ["Bağlama Bağlı Bellek", "Duruma (Ruh Haline) Bağlı Bellek", "Flaş Bellek", "Bastırma", "Seçici Dikkat"], a: 1 },
+        { q: "Elizabeth Loftus'un çalışmaları, belleğin 'yapılandırıcı' olduğunu ve dışarıdan verilen yanlış bilgilerle değiştirilebileceğini göstermiştir. Buna ne denir?", o: ["Flaş Bellek Etkisi", "Yanlış Bilgi Etkisi (Misinformation Effect)", "Öncelik Etkisi", "Sonluk Etkisi", "Bozulma"], a: 1 },
+        { q: "Benzer özelliklere sahip nesne, olay veya fikirlerin zihinsel kategorilerine ne denir?", o: ["İmge", "Kavram (Concept)", "Prototip", "Algoritma", "Sezgi"], a: 1 },
+        { q: "Bir kavramı en iyi temsil eden örneğe ne denir? (Örn: Kuş denince akla serçe gelmesi, penguen gelmemesi)", o: ["Kavram", "Algoritma", "Prototip", "Şema", "Senaryo"], a: 2 },
+        { q: "Bir problemi çözmek için adım adım uygulanan ve kesin sonucu garanti eden yol hangisidir?", o: ["Sezgi", "Algoritma", "Kestirme Yol (Heuristic)", "Deneme-Yanılma", "İçgörü"], a: 1 },
+        { q: "Problemleri çözerken kullanılan, sonucu garanti etmeyen ama hızı artıran zihinsel kısa yollara ne denir?", o: ["Algoritma", "Sezgisel (Heuristic)", "Mantık", "Formül", "Tümdengelim"], a: 1 },
+        { q: "Bir nesneyi sadece geleneksel işleviyle düşünme, farklı kullanımlarını görememe engelini ifade eden kavram hangisidir?", o: ["Zihinsel Kurulum", "İşleve Takılma (Functional Fixedness)", "Onama Yanlılığı", "Geriye Ket Vurma", "Algısal Yanılma"], a: 1 },
+        { q: "Sadece kendi düşüncemizi destekleyen kanıtları arama ve çelişenleri görmezden gelme eğilimine ne denir?", o: ["Doğrulama (Onama) Yanlılığı", "Temsil Edilebilirlik Sezgiseli", "Bulunabilirlik Sezgiseli", "Aşırı Güven", "İnanç Direnci"], a: 0 },
+        { q: "Bir olayın olasılığını, akla en kolay gelen örneklere (örneğin uçak kazası haberleri) dayanarak tahmin etme hatasına ne denir?", o: ["Temsil Edilebilirlik Sezgiseli", "Bulunabilirlik (Availability) Sezgiseli", "Çapa Etkisi", "Çerçeveleme Etkisi", "Algoritma"], a: 1 },
+        { q: "Dildeki en küçük anlamsız ses birimine ne denir? (Örn: 'k', 'a')", o: ["Morfem", "Fonem (Sesbirim)", "Kelime", "Cümle", "Sentaks"], a: 1 },
+        { q: "Dilde anlam taşıyan en küçük birime ne denir? (Örn: 'gel', '-di')", o: ["Fonem", "Morfem (Biçimbirim)", "Harf", "Ses", "Gram"], a: 1 },
+        { q: "Kelimelerin anlamlı cümleler oluşturacak şekilde dizilmesini sağlayan kurallar bütününe ne denir?", o: ["Fonoloji", "Semantik", "Sentaks (Sözdizimi)", "Pragmatik", "Morfem"], a: 2 },
+        { q: "Noam Chomsky'ye göre, insanların doğuştan sahip olduğu dil öğrenme kapasitesine ne ad verilir?", o: ["Dil Edinim Aygıtı (LAD)", "Taklit", "Pekiştirme", "Boş Levha", "Zeka"], a: 0 },
+        { q: "Dilin düşünceyi belirlediğini veya etkilediğini savunan görüş (Whorf hipotezi) hangisidir?", o: ["Dilsel Görecelik / Belirlenimcilik", "Evrensel Dilbilgisi", "Davranışçı Dil Kuramı", "Bilişsel Dil Kuramı", "Sosyal Öğrenme"], a: 0 },
+        { q: "Bir listeyi ezberlerken sadece baştaki ve sondaki maddelerin daha iyi hatırlanması etkisine ne denir?", o: ["Seri Konum Etkisi (Serial Position Effect)", "Flaş Bellek", "Kodlama", "Unutma", "Ket Vurma"], a: 0 },
+        { q: "Hatırlama (Recall) ile Tanıma (Recognition) arasındaki fark nedir?", o: ["Tanıma daha zordur", "Hatırlamada ipucu olmadan bilgi çağrılır, tanımada seçenekler arasından seçilir", "Hatırlama testlerde kullanılır", "Tanıma klasik sınavlarda kullanılır", "Fark yoktur"], a: 1 },
+        { q: "Hafızayı güçlendirmek için kullanılan 'Mekan Metodu' (Loci) gibi tekniklere genel olarak ne ad verilir?", o: ["Algoritma", "Mnemonik (Bellek Destekleyici) Teknikler", "Hipnoz", "Meditasyon", "Psikanaliz"], a: 1 },
+        { q: "Wolfgang Köhler'in şempanzelerle yaptığı deneyde, hayvanın problemi bir süre düşündükten sonra aniden çözmesine ne denir?", o: ["Deneme-Yanılma", "Şartlanma", "İçgörüsel (Kavrayış Yoluyla) Öğrenme", "Ezberleme", "Taklit"], a: 2 },
+        { q: "Kısa süreli bellekteki bilgilerin anlamlı bütünler haline getirilerek (örneğin telefon numarasını parçalamak) kapasitenin artırılmasına ne denir?", o: ["Kodlama", "Gruplama (Chunking)", "Tekrar", "Unutma", "Algılama"], a: 1 },
+        { q: "Freud'a göre, kaygı verici anıların bilinçdışına itilerek unutulmasına ne denir?", o: ["Silinme", "Bozulma", "Bastırma (Repression)", "Karışma", "Yanlış Bilgi"], a: 2 },
+        { q: "Yaratıcı düşünmenin temel özelliklerinden biri olan, bir probleme tek bir doğru cevap yerine birçok farklı çözüm üretme becerisine ne denir?", o: ["Yakınsak Düşünme", "Iraksak (Divergent) Düşünme", "Mantıksal Düşünme", "Eleştirel Düşünme", "Somut Düşünme"], a: 1 },
+        { q: "Çocuğun dil gelişiminde, tek kelimelik cümleler kurduğu döneme ne ad verilir?", o: ["Agulama", "Babıldama", "Tek Sözcük (Morgem) Dönemi", "Telgrafik Konuşma", "Tam Cümle"], a: 2 }
+    ];
+
+    let currentQuestion = 0;
+    let userAnswers = new Array(questions.length).fill(null);
+
+    function loadQuestion() {
+        const container = document.getElementById('quiz-container');
+        container.innerHTML = '';
+
+        const q = questions[currentQuestion];
+        
+        let html = `
+            <div class="question-block active">
+                <div class="question-text">${currentQuestion + 1}. ${q.q}</div>
+                <div class="options">
+        `;
+
+        q.o.forEach((opt, index) => {
+            const isSelected = userAnswers[currentQuestion] === index ? 'selected' : '';
+            const isChecked = userAnswers[currentQuestion] === index ? 'checked' : '';
+            html += `
+                <label class="option-label ${isSelected}" id="opt-${index}">
+                    <input type="radio" name="q${currentQuestion}" value="${index}" onclick="selectAnswer(${index})" ${isChecked}>
+                    ${String.fromCharCode(65 + index)}) ${opt}
+                </label>
+            `;
+        });
+
+        html += `</div></div>`;
+        container.innerHTML = html;
+
+        // Progress Bar
+        const progressPercent = ((currentQuestion + 1) / questions.length) * 100;
+        document.getElementById('progress-bar').style.width = progressPercent + '%';
+        document.getElementById('progress-text').innerText = `Soru ${currentQuestion + 1} / ${questions.length}`;
+        
+        // Buton Yönetimi
+        document.getElementById('prevBtn').disabled = currentQuestion === 0;
+        
+        if (currentQuestion === questions.length - 1) {
+            document.getElementById('nextBtn').style.display = 'none';
+            document.getElementById('finishBtn').style.display = 'inline-block';
+        } else {
+            document.getElementById('nextBtn').style.display = 'inline-block';
+            document.getElementById('finishBtn').style.display = 'none';
+        }
+    }
+
+    function selectAnswer(index) {
+        userAnswers[currentQuestion] = index;
+        const labels = document.querySelectorAll('.option-label');
+        labels.forEach(label => label.classList.remove('selected'));
+        document.getElementById(`opt-${index}`).classList.add('selected');
+    }
+
+    function showCurrentAnswer() {
+        const correctIndex = questions[currentQuestion].a;
+        const correctLabel = document.getElementById(`opt-${correctIndex}`);
+        if(correctLabel) correctLabel.classList.add('correct-highlight');
+        
+        if (userAnswers[currentQuestion] !== null && userAnswers[currentQuestion] !== correctIndex) {
+            document.getElementById(`opt-${userAnswers[currentQuestion]}`).classList.add('wrong-highlight');
+        }
+    }
+
+    function nextQuestion() {
+        if (currentQuestion < questions.length - 1) {
+            currentQuestion++;
+            loadQuestion();
+        }
+    }
+
+    function prevQuestion() {
+        if (currentQuestion > 0) {
+            currentQuestion--;
+            loadQuestion();
+        }
+    }
+
+    function finishQuiz() {
+        let correctCount = 0;
+        let wrongCount = 0;
+        let emptyCount = 0;
+        let reviewHtml = '';
+
+        questions.forEach((q, index) => {
+            const userAnswer = userAnswers[index];
+            const isCorrect = userAnswer === q.a;
+            
+            let statusText = '';
+            let statusClass = '';
+
+            if (userAnswer === null) {
+                emptyCount++;
+                statusText = 'Boş';
+                statusClass = 'status-empty';
+            } else if (isCorrect) {
+                correctCount++;
+                statusText = 'Doğru';
+                statusClass = 'status-correct';
+            } else {
+                wrongCount++;
+                statusText = 'Yanlış';
+                statusClass = 'status-wrong';
+            }
+
+            reviewHtml += `
+                <tr>
+                    <td>${index + 1}</td>
+                    <td>${q.q}</td>
+                    <td>${userAnswer !== null ? String.fromCharCode(65 + userAnswer) + ') ' + q.o[userAnswer] : '-'}</td>
+                    <td>${String.fromCharCode(65 + q.a)}) ${q.o[q.a]}</td>
+                    <td class="${statusClass}">${statusText}</td>
+                </tr>
+            `;
+        });
+
+        document.getElementById('quiz-screen').style.display = 'none';
+        document.getElementById('result-screen').style.display = 'block';
+
+        // Puanlama: Her soru 2 puan (100/50)
+        const score = Math.round((correctCount / questions.length) * 100);
+        
+        document.getElementById('score-circle').innerText = score;
+        document.getElementById('score-details').innerHTML = `
+            <strong>Doğru:</strong> ${correctCount} | 
+            <strong>Yanlış:</strong> ${wrongCount} | 
+            <strong>Boş:</strong> ${emptyCount}
+        `;
+        
+        document.getElementById('review-body').innerHTML = reviewHtml;
+    }
+
+    // Uygulamayı başlat
+    loadQuestion();
+</script>
+
+</body>
+</html>

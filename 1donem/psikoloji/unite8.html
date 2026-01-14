@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Psikoloji - 8. Ünite: Sosyal Psikoloji</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #ebf5fb; color: #333; margin: 0; padding: 20px; }
+        .container { max-width: 900px; margin: 0 auto; background: #fff; padding: 40px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        h1 { text-align: center; color: #1a5276; border-bottom: 2px solid #2980b9; padding-bottom: 10px; margin-bottom: 30px; }
+        
+        /* İlerleme Çubuğu */
+        .progress-container { background-color: #d4e6f1; border-radius: 10px; margin-bottom: 20px; height: 10px; overflow: hidden; }
+        .progress-bar { height: 100%; background-color: #1a5276; width: 0%; transition: width 0.3s; }
+        .progress-text { text-align: right; font-size: 0.9em; color: #154360; margin-bottom: 15px; }
+
+        /* Soru Alanı */
+        .question-block { display: none; animation: fadeIn 0.5s; }
+        .question-block.active { display: block; }
+        .question-text { font-weight: 600; font-size: 1.25em; margin-bottom: 20px; color: #154360; }
+        
+        /* Seçenekler */
+        .options { display: flex; flex-direction: column; gap: 10px; }
+        .option-label { 
+            display: flex; align-items: center; padding: 12px 15px; border: 2px solid #e0e0e0; 
+            border-radius: 8px; cursor: pointer; transition: all 0.2s; background: #fff;
+        }
+        .option-label:hover { background-color: #eaf2f8; border-color: #a9cce3; }
+        .option-label.selected { border-color: #1a5276; background-color: #d4e6f1; }
+        .option-label input { margin-right: 15px; transform: scale(1.2); }
+        
+        /* Cevap Göster Stilleri */
+        .option-label.correct-highlight { border-color: #27ae60; background-color: #d5f5e3; color: #1e8449; font-weight: bold; }
+        .option-label.wrong-highlight { border-color: #e74c3c; background-color: #fadbd8; }
+
+        /* Butonlar */
+        .controls { margin-top: 30px; display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
+        button { border: none; padding: 12px 24px; border-radius: 6px; cursor: pointer; font-size: 16px; font-weight: 600; transition: background 0.2s; }
+        .nav-btn { background-color: #1a5276; color: white; }
+        .nav-btn:hover { background-color: #154360; }
+        .nav-btn:disabled { background-color: #bdc3c7; cursor: not-allowed; }
+        
+        .show-answer-btn { background-color: #f39c12; color: white; }
+        .show-answer-btn:hover { background-color: #e67e22; }
+        
+        .finish-btn { background-color: #27ae60; color: white; display: none; }
+        .finish-btn:hover { background-color: #219150; }
+
+        /* Sonuç Ekranı */
+        #result-screen { display: none; }
+        .score-card { text-align: center; background: #f8f9fa; padding: 20px; border-radius: 10px; margin-bottom: 30px; }
+        .score-circle { 
+            width: 120px; height: 120px; border-radius: 50%; background: #1a5276; color: white; 
+            display: flex; align-items: center; justify-content: center; font-size: 2em; font-weight: bold; 
+            margin: 0 auto 15px; 
+        }
+        
+        .review-table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 0.95em; }
+        .review-table th, .review-table td { padding: 12px; border: 1px solid #ddd; text-align: left; }
+        .review-table th { background-color: #154360; color: white; }
+        .review-table tr:nth-child(even) { background-color: #f2f2f2; }
+        .status-correct { color: #27ae60; font-weight: bold; }
+        .status-wrong { color: #c0392b; font-weight: bold; }
+        .status-empty { color: #f39c12; font-weight: bold; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div id="quiz-screen">
+        <h1>8. Ünite: Sosyal Psikoloji</h1>
+        
+        <div class="progress-text" id="progress-text">Soru 1 / 50</div>
+        <div class="progress-container">
+            <div class="progress-bar" id="progress-bar"></div>
+        </div>
+        
+        <div id="quiz-container">
+            <!-- Sorular buraya JS ile gelecek -->
+        </div>
+
+        <div class="controls">
+            <div>
+                <button class="nav-btn" id="prevBtn" onclick="prevQuestion()" disabled>&#8592; Önceki</button>
+            </div>
+            <div>
+                <button class="show-answer-btn" onclick="showCurrentAnswer()">👁️ Cevabı Göster</button>
+            </div>
+            <div>
+                <button class="nav-btn" id="nextBtn" onclick="nextQuestion()">Sonraki &#8594;</button>
+                <button class="finish-btn" id="finishBtn" onclick="finishQuiz()">Testi Bitir &#10004;</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="result-screen">
+        <h1>Değerlendirme Sonucu</h1>
+        <div class="score-card">
+            <div class="score-circle" id="score-circle">0</div>
+            <h3>Toplam Puan</h3>
+            <p id="score-details"></p>
+        </div>
+        
+        <h3>Detaylı Soru Analizi</h3>
+        <table class="review-table">
+            <thead>
+                <tr>
+                    <th style="width: 5%">No</th>
+                    <th style="width: 45%">Soru</th>
+                    <th style="width: 20%">Senin Cevabın</th>
+                    <th style="width: 20%">Doğru Cevap</th>
+                    <th style="width: 10%">Durum</th>
+                </tr>
+            </thead>
+            <tbody id="review-body">
+                <!-- Sonuç satırları buraya gelecek -->
+            </tbody>
+        </table>
+        <div style="text-align: center; margin-top: 30px;">
+            <button class="nav-btn" onclick="location.reload()">Testi Tekrar Çöz</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // 8. Ünite Konuları: Sosyal Psikoloji, Sosyal Biliş (Atıflar, Tutumlar), Sosyal Etki (Uyma, İtaat), Grup Davranışı, Önyargı, Saldırganlık, Yardım Etme
+    const questions = [
+        { q: "Bireylerin duygu, düşünce ve davranışlarının diğer insanlardan (gerçek veya hayali) nasıl etkilendiğini inceleyen bilim dalı hangisidir?", o: ["Klinik Psikoloji", "Gelişim Psikolojisi", "Sosyal Psikoloji", "Bilişsel Psikoloji", "Endüstri Psikolojisi"], a: 2 },
+        { q: "Başkalarının davranışlarının nedenlerini açıklama sürecine ne ad verilir?", o: ["Algılama", "Yükleme / Atıf (Attribution)", "Tutum", "Önyargı", "İtaat"], a: 1 },
+        { q: "Bir kişinin davranışını açıklarken, durumsal (dışsal) faktörleri göz ardı edip kişisel (içsel) özelliklere aşırı vurgu yapma hatasına ne denir?", o: ["Kendine Hizmet Eden Yanlılık", "Temel Atıf Hatası (Fundamental Attribution Error)", "Aktör-Gözlemci Yanlılığı", "Hale Etkisi", "Bilişsel Çelişki"], a: 1 },
+        { q: "Başarılarımızı kendi yeteneklerimize (içsel), başarısızlıklarımızı ise dış koşullara (şanssızlık, zorluk) bağlama eğilimine ne denir?", o: ["Temel Atıf Hatası", "Kendine Hizmet Eden Yanlılık (Self-Serving Bias)", "Adil Dünya İnancı", "Öğrenilmiş Çaresizlik", "Grup Düşüncesi"], a: 1 },
+        { q: "Bir nesneye, kişiye veya olaya yönelik, bilişsel, duygusal ve davranışsal bileşenleri olan değerlendirmelere ne denir?", o: ["Tutum (Attitude)", "Kalıpyargı", "İnanç", "Değer", "Norm"], a: 0 },
+        { q: "Tutumlarımızla davranışlarımız arasında bir tutarsızlık olduğunda hissettiğimiz rahatsızlık durumuna ne denir?", o: ["Sosyal Kaygı", "Bilişsel Çelişki (Cognitive Dissonance)", "Grup Baskısı", "Kimlik Bunalımı", "Rol Çatışması"], a: 1 },
+        { q: "Leon Festinger'e göre, bilişsel çelişki yaşayan bir birey bu rahatsızlığı gidermek için ne yapar?", o: ["Hiçbir şey yapmaz", "Genellikle tutumunu değiştirerek davranışıyla uyumlu hale getirir", "Daha çok çalışır", "Uykuya dalar", "Başkalarını suçlar"], a: 1 },
+        { q: "Bir kişinin veya grubun baskısı sonucu, bireyin davranışlarını veya düşüncelerini değiştirerek gruba uymasına ne denir?", o: ["İtaat", "Uyma (Konformite)", "Benimseme", "Özdeşleşme", "Sosyal Kolaylaştırma"], a: 1 },
+        { q: "Solomon Asch'in ünlü 'Çizgi Deneyi' neyi ölçmüştür?", o: ["Zekayı", "Grup baskısı altında uyma davranışını (Konformite)", "Otoriteye itaati", "Saldırganlığı", "Hafızayı"], a: 1 },
+        { q: "Otorite figürünün doğrudan emirlerine uyma davranışına ne denir?", o: ["Uyma", "İtaat (Obedience)", "Benimseme", "Sosyal Etki", "Liderlik"], a: 1 },
+        { q: "Stanley Milgram'ın ünlü 'Şok Deneyi', insanların hangi özelliğini ortaya koymuştur?", o: ["Merhametlerini", "Otoriteye itaat etme eğilimlerini (vicdanlarına ters düşse bile)", "Zekalarını", "Öğrenme hızlarını", "Hafızalarını"], a: 1 },
+        { q: "Philip Zimbardo'nun 'Stanford Hapishane Deneyi', insan davranışları üzerinde neyin etkisini göstermiştir?", o: ["Genetiğin", "Sosyal rollerin ve ortamın (durumun) gücünü", "Zekanın", "Eğitimin", "Beslenmenin"], a: 1 },
+        { q: "Başkalarının varlığında, iyi bildiğimiz veya basit işlerde performansımızın artmasına ne denir?", o: ["Sosyal Kaytarma", "Sosyal Hızlandırma / Kolaylaştırma (Social Facilitation)", "Sosyal Ketleme", "Grup Kutuplaşması", "Deindividüasyon"], a: 1 },
+        { q: "Grup halinde çalışırken, bireylerin tek başlarına çalıştıkları duruma göre daha az çaba harcamalarına ne denir?", o: ["Sosyal Hızlandırma", "Sosyal Kaytarma (Social Loafing)", "Grup Düşüncesi", "İtaat", "Rekabet"], a: 1 },
+        { q: "Kalabalık gruplar içinde bireyin kimlik duygusunu ve oto-kontrolünü kaybederek (anonimlik hissiyle) normalde yapmayacağı davranışları yapmasına ne denir?", o: ["Kimliksizleşme (Deindividuation)", "Sosyal Hızlandırma", "Grup Kutuplaşması", "Konformite", "Yabancılaşma"], a: 0 },
+        { q: "Grup tartışmaları sonucunda, grup üyelerinin görüşlerinin başlangıçtaki görüşlerinden daha uç (aşırı) noktalara kaymasına ne denir?", o: ["Grup Düşüncesi", "Grup Kutuplaşması", "Normalleşme", "Uyum", "Dengeleme"], a: 1 },
+        { q: "Grup uyumunu bozmamak adına, grubun gerçekçi olmayan kararlar alması ve eleştirel düşüncenin bastırılmasına ne denir?", o: ["Beyin Fırtınası", "Grup Düşüncesi (Groupthink)", "Sosyal Kaytarma", "Kutuplaşma", "İşbirliği"], a: 1 },
+        { q: "Bir gruba veya üyelerine karşı beslenen, genellikle olumsuz ve haksız tutuma ne denir?", o: ["Ayrımcılık", "Önyargı (Prejudice)", "Kalıpyargı", "Stereotip", "Düşmanlık"], a: 1 },
+        { q: "Önyargının davranışa dökülmüş haline (örneğin işe almamak, dışlamak) ne denir?", o: ["Önyargı", "Ayrımcılık (Discrimination)", "Kalıpyargı", "Tutum", "Atıf"], a: 1 },
+        { q: "Belirli bir grubun tüm üyelerinin aynı özelliklere sahip olduğuna dair genelleştirilmiş (genellikle yanlış) inançlara ne denir?", o: ["Önyargı", "Kalıpyargı / Stereotip", "Ayrımcılık", "Şema", "Atıf"], a: 1 },
+        { q: "Muzaffer Şerif'in 'Hırsızlar Mağarası' (Robbers Cave) deneyi, gruplar arası çatışmanın nasıl çözülebileceğini göstermiştir?", o: ["Grupları ayırarak", "Rekabet ettirerek", "Üst düzey hedefler (Ortak amaçlar) vererek", "Liderleri değiştirerek", "Cezalandırarak"], a: 2 },
+        { q: "Kişinin sadece aşina olduğu veya sık gördüğü uyarıcıları daha çok sevmesi eğilimine ne denir?", o: ["Hale Etkisi", "Maruz Kalma Etkisi (Mere Exposure Effect)", "Benzerlik İlkesi", "Yakınlık İlkesi", "Tamamlama İlkesi"], a: 1 },
+        { q: "Bir kişinin tek bir olumlu özelliğinden (örneğin fiziksel çekicilik) yola çıkarak, diğer özelliklerinin de (zeka, iyilik) olumlu olduğunu varsaymaya ne denir?", o: ["Hale (Halo) Etkisi", "Temel Atıf Hatası", "Önyargı", "Stereotip", "İlk İzlenim"], a: 0 },
+        { q: "Başkasına zarar verme amacı taşıyan her türlü davranışa ne denir?", o: ["Öfke", "Saldırganlık (Aggression)", "Rekabet", "Düşmanlık", "Assertiveness"], a: 1 },
+        { q: "Engellenmenin (amacına ulaşamamanın) saldırganlığa yol açtığını savunan görüş hangisidir?", o: ["Sosyal Öğrenme Kuramı", "Engellenme-Saldırganlık Hipotezi", "İçgüdü Kuramı", "Bilişsel Uyum", "Evrimsel Kuram"], a: 1 },
+        { q: "Karşılık beklemeden başkasına yardım etme davranışına ne denir?", o: ["Egoizm", "Diğerkamlık / Altruizm", "Empati", "Sempati", "Uyma"], a: 1 },
+        { q: "Acil bir durumda ortamda ne kadar çok kişi varsa, bireyin yardım etme ihtimalinin o kadar azalması fenomenine ne denir?", o: ["Sosyal Kaytarma", "Seyirci Etkisi (Bystander Effect)", "Grup Düşüncesi", "Sosyal Etki", "İtaat"], a: 1 },
+        { q: "Seyirci etkisinin temel nedenlerinden biri olan, 'başkaları yardım eder' düşüncesiyle kimsenin harekete geçmemesi durumuna ne denir?", o: ["Sorumluluğun Yayılması (Diffusion of Responsibility)", "Bilgisizlik", "Korku", "Bencillik", "Empati Yoksunluğu"], a: 0 },
+        { q: "İnsanların dünya adil bir yerdir, 'iyi insanların başına iyi, kötülerin başına kötü şeyler gelir' inancına ne denir?", o: ["Adil Dünya Fenomeni (Just-World Phenomenon)", "Kadercilik", "İyimserlik", "Atıf Hatası", "Bilişsel Çelişki"], a: 0 },
+        { q: "Bireyin kendi grubunu (İç grup) diğer gruplardan (Dış grup) üstün görme ve kayırma eğilimine ne denir?", o: ["Dış Grup Homojenliği", "İç Grup Yanlılığı (In-group Bias)", "Kalıpyargı", "Ayrımcılık", "Yansıtma"], a: 1 },
+        { q: "Dış gruptaki bireylerin birbirine çok benzediğini, kendi grubundakilerin ise çeşitli olduğunu düşünme eğilimine ne denir?", o: ["İç Grup Yanlılığı", "Dış Grup Homojenliği", "Stereotip", "Önyargı", "Atıf"], a: 1 },
+        { q: "Birinden küçük bir iyilik istendikten sonra, kabul edilince daha büyük bir iyilik istenmesi tekniğine ne denir?", o: ["Yüzüne Kapıyı Çarpma", "Kapıya Ayak Koyma (Foot-in-the-Door)", "Karşılıklılık", "Sıradışı İstek", "Düşük Top"], a: 1 },
+        { q: "Önce reddedileceği kesin olan büyük bir istekte bulunup, ardından asıl küçük isteği kabul ettirme tekniğine ne denir?", o: ["Kapıya Ayak Koyma", "Yüzüne Kapıyı Çarpma (Door-in-the-Face)", "Karşılıklılık", "İkna", "Pazarlık"], a: 1 },
+        { q: "Bize yapılan bir iyiliğe karşılık verme zorunluluğu hissetmemize dayanan sosyal norma ne denir?", o: ["Sosyal Sorumluluk Normu", "Karşılıklılık (Reciprocity) Normu", "Adalet Normu", "Eşitlik Normu", "İtaat Normu"], a: 1 },
+        { q: "Saldırganlığın gözlem ve taklit yoluyla öğrenildiğini (Bobo Doll deneyi ile) savunan kuramcı kimdir?", o: ["Freud", "Bandura", "Skinner", "Lorenz", "Pavlov"], a: 1 },
+        { q: "Gruplar arası çatışmanın temel nedenlerinden biri olan, sınırlı kaynaklar için yapılan rekabete ne denir?", o: ["Gerçekçi Çatışma Teorisi", "Sosyal Kimlik Teorisi", "Bilişsel Çelişki", "Engellenme", "Önyargı"], a: 0 },
+        { q: "Aşkın üç bileşenden (Yakınlık, Tutku, Bağlılık) oluştuğunu savunan Sternberg'in kuramı nedir?", o: ["Bağlanma Kuramı", "Üçgen Aşk Kuramı", "Sosyal Mübadele Kuramı", "Eşleşme Hipotezi", "Evrimsel Aşk"], a: 1 },
+        { q: "İnsanların kendilerine fiziksel çekicilik ve diğer özellikler bakımından denk olanları eş olarak seçme eğilimine ne denir?", o: ["Hale Etkisi", "Eşleşme (Matching) Hipotezi", "Benzerlik İlkesi", "Yakınlık İlkesi", "Tamamlama"], a: 1 },
+        { q: "Toplumsal kuralların belirsizleştiği veya yok olduğu durumlarda ortaya çıkan kuralsızlık hissine ne denir?", o: ["Anomi", "Depresyon", "Kaygı", "Panik", "Histeri"], a: 0 },
+        { q: "Bireyin kendi başarısızlıklarının suçunu masum bir hedefe (genellikle bir azınlık gruba) yöneltmesine ne denir?", o: ["Günah Keçisi (Scapegoat) Teorisi", "Yansıtma", "Temel Atıf Hatası", "Grup Düşüncesi", "Sosyal Kaytarma"], a: 0 },
+        { q: "Sosyal psikolojide, insanların davranışlarını, en az maliyetle en yüksek ödülü alacak şekilde düzenlediğini savunan teori hangisidir?", o: ["Sosyal Mübadele (Takas) Teorisi", "Bilişsel Uyum", "Sosyal Öğrenme", "Evrimsel Teori", "Psikanaliz"], a: 0 },
+        { q: "İkna sürecinde, kişinin mesajın içeriğinden çok konuşmacının çekiciliği veya uzmanlığı gibi yüzeysel özelliklere odaklanmasına ne denir?", o: ["Merkezi Yol", "Çevresel (Periferik) Yol", "Bilişsel Yol", "Duygusal Yol", "Mantıksal Yol"], a: 1 },
+        { q: "İkna sürecinde, kişinin argümanların gücüne ve mantığına odaklanarak derinlemesine düşünmesine ne denir?", o: ["Çevresel Yol", "Merkezi Yol", "Yüzeysel Yol", "Duygusal Yol", "Sosyal Yol"], a: 1 },
+        { q: "Toplumun 'Yardıma ihtiyacı olana yardım edilmelidir' şeklindeki beklentisine ne denir?", o: ["Karşılıklılık Normu", "Sosyal Sorumluluk Normu", "İtaat Normu", "Adalet Normu", "Eşitlik Normu"], a: 1 },
+        { q: "Bir grubun üyesi olmanın verdiği aidiyet hissi ve öz saygı kaynağına odaklanan teori hangisidir?", o: ["Gerçekçi Çatışma", "Sosyal Kimlik Teorisi", "Sosyal Öğrenme", "Bilişsel Çelişki", "Atıf Teorisi"], a: 1 },
+        { q: "Zimbardo'nun hapishane deneyinde gardiyanların acımasızlaşması neyin sonucudur?", o: ["Kişilik bozukluğunun", "Girdikleri sosyal rolün ve durumun gücünün", "Geçmiş travmaların", "Eğitimsizliğin", "Zeka düşüklüğünün"], a: 1 },
+        { q: "Asch'in deneyinde, katılımcıların bile bile yanlış cevap vermesinin sebebi nedir?", o: ["Gözlerinin bozuk olması", "Grubun onayını almak veya dışlanmamak (Normatif Sosyal Etki)", "Soruyu anlamamaları", "Deneyciye yardım etmek", "Renk körlüğü"], a: 1 },
+        { q: "Saldırganlığın doğuştan gelen bir içgüdü olduğunu savunan yaklaşım hangisidir?", o: ["Sosyal Öğrenme", "Psikanalitik / Etolojik Yaklaşım", "Bilişsel Yaklaşım", "Hümanistik Yaklaşım", "Davranışçı Yaklaşım"], a: 1 },
+        { q: "Bireyin kendi kültürünü merkeze alarak diğer kültürleri kendi standartlarına göre yargılamasına ne denir?", o: ["Etnosentrizm", "Relyativizm", "Hümanizm", "Evrensellik", "Kozmopolitizm"], a: 0 },
+        { q: "Sosyal psikolojinin kurucularından sayılan ve 'Alan Teorisi' (B=f(P,E) - Davranış, Kişi ve Çevrenin fonksiyonudur) ile tanınan psikolog kimdir?", o: ["Freud", "Kurt Lewin", "Skinner", "Piaget", "Watson"], a: 1 }
+    ];
+
+    let currentQuestion = 0;
+    let userAnswers = new Array(questions.length).fill(null);
+
+    function loadQuestion() {
+        const container = document.getElementById('quiz-container');
+        container.innerHTML = '';
+
+        const q = questions[currentQuestion];
+        
+        let html = `
+            <div class="question-block active">
+                <div class="question-text">${currentQuestion + 1}. ${q.q}</div>
+                <div class="options">
+        `;
+
+        q.o.forEach((opt, index) => {
+            const isSelected = userAnswers[currentQuestion] === index ? 'selected' : '';
+            const isChecked = userAnswers[currentQuestion] === index ? 'checked' : '';
+            html += `
+                <label class="option-label ${isSelected}" id="opt-${index}">
+                    <input type="radio" name="q${currentQuestion}" value="${index}" onclick="selectAnswer(${index})" ${isChecked}>
+                    ${String.fromCharCode(65 + index)}) ${opt}
+                </label>
+            `;
+        });
+
+        html += `</div></div>`;
+        container.innerHTML = html;
+
+        // Progress Bar
+        const progressPercent = ((currentQuestion + 1) / questions.length) * 100;
+        document.getElementById('progress-bar').style.width = progressPercent + '%';
+        document.getElementById('progress-text').innerText = `Soru ${currentQuestion + 1} / ${questions.length}`;
+        
+        // Buton Yönetimi
+        document.getElementById('prevBtn').disabled = currentQuestion === 0;
+        
+        if (currentQuestion === questions.length - 1) {
+            document.getElementById('nextBtn').style.display = 'none';
+            document.getElementById('finishBtn').style.display = 'inline-block';
+        } else {
+            document.getElementById('nextBtn').style.display = 'inline-block';
+            document.getElementById('finishBtn').style.display = 'none';
+        }
+    }
+
+    function selectAnswer(index) {
+        userAnswers[currentQuestion] = index;
+        const labels = document.querySelectorAll('.option-label');
+        labels.forEach(label => label.classList.remove('selected'));
+        document.getElementById(`opt-${index}`).classList.add('selected');
+    }
+
+    function showCurrentAnswer() {
+        const correctIndex = questions[currentQuestion].a;
+        const correctLabel = document.getElementById(`opt-${correctIndex}`);
+        if(correctLabel) correctLabel.classList.add('correct-highlight');
+        
+        if (userAnswers[currentQuestion] !== null && userAnswers[currentQuestion] !== correctIndex) {
+            document.getElementById(`opt-${userAnswers[currentQuestion]}`).classList.add('wrong-highlight');
+        }
+    }
+
+    function nextQuestion() {
+        if (currentQuestion < questions.length - 1) {
+            currentQuestion++;
+            loadQuestion();
+        }
+    }
+
+    function prevQuestion() {
+        if (currentQuestion > 0) {
+            currentQuestion--;
+            loadQuestion();
+        }
+    }
+
+    function finishQuiz() {
+        let correctCount = 0;
+        let wrongCount = 0;
+        let emptyCount = 0;
+        let reviewHtml = '';
+
+        questions.forEach((q, index) => {
+            const userAnswer = userAnswers[index];
+            const isCorrect = userAnswer === q.a;
+            
+            let statusText = '';
+            let statusClass = '';
+
+            if (userAnswer === null) {
+                emptyCount++;
+                statusText = 'Boş';
+                statusClass = 'status-empty';
+            } else if (isCorrect) {
+                correctCount++;
+                statusText = 'Doğru';
+                statusClass = 'status-correct';
+            } else {
+                wrongCount++;
+                statusText = 'Yanlış';
+                statusClass = 'status-wrong';
+            }
+
+            reviewHtml += `
+                <tr>
+                    <td>${index + 1}</td>
+                    <td>${q.q}</td>
+                    <td>${userAnswer !== null ? String.fromCharCode(65 + userAnswer) + ') ' + q.o[userAnswer] : '-'}</td>
+                    <td>${String.fromCharCode(65 + q.a)}) ${q.o[q.a]}</td>
+                    <td class="${statusClass}">${statusText}</td>
+                </tr>
+            `;
+        });
+
+        document.getElementById('quiz-screen').style.display = 'none';
+        document.getElementById('result-screen').style.display = 'block';
+
+        // Puanlama: Her soru 2 puan (100/50)
+        const score = Math.round((correctCount / questions.length) * 100);
+        
+        document.getElementById('score-circle').innerText = score;
+        document.getElementById('score-details').innerHTML = `
+            <strong>Doğru:</strong> ${correctCount} | 
+            <strong>Yanlış:</strong> ${wrongCount} | 
+            <strong>Boş:</strong> ${emptyCount}
+        `;
+        
+        document.getElementById('review-body').innerHTML = reviewHtml;
+    }
+
+    // Uygulamayı başlat
+    loadQuestion();
+</script>
+
+</body>
+</html>

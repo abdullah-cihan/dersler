@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sosyoloji - 3. Ünite: Kültür ve Toplum</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #e0f2f1; color: #333; margin: 0; padding: 20px; }
+        .container { max-width: 900px; margin: 0 auto; background: #fff; padding: 40px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        h1 { text-align: center; color: #00796b; border-bottom: 2px solid #004d40; padding-bottom: 10px; margin-bottom: 30px; }
+        
+        /* İlerleme Çubuğu */
+        .progress-container { background-color: #b2dfdb; border-radius: 10px; margin-bottom: 20px; height: 10px; overflow: hidden; }
+        .progress-bar { height: 100%; background-color: #00796b; width: 0%; transition: width 0.3s; }
+        .progress-text { text-align: right; font-size: 0.9em; color: #004d40; margin-bottom: 15px; }
+
+        /* Soru Alanı */
+        .question-block { display: none; animation: fadeIn 0.5s; }
+        .question-block.active { display: block; }
+        .question-text { font-weight: 600; font-size: 1.25em; margin-bottom: 20px; color: #00695c; }
+        
+        /* Seçenekler */
+        .options { display: flex; flex-direction: column; gap: 10px; }
+        .option-label { 
+            display: flex; align-items: center; padding: 12px 15px; border: 2px solid #e0e0e0; 
+            border-radius: 8px; cursor: pointer; transition: all 0.2s; background: #fff;
+        }
+        .option-label:hover { background-color: #e0f2f1; border-color: #80cbc4; }
+        .option-label.selected { border-color: #00796b; background-color: #b2dfdb; }
+        .option-label input { margin-right: 15px; transform: scale(1.2); }
+        
+        /* Cevap Göster Stilleri */
+        .option-label.correct-highlight { border-color: #27ae60; background-color: #d5f5e3; color: #1e8449; font-weight: bold; }
+        .option-label.wrong-highlight { border-color: #e74c3c; background-color: #fadbd8; }
+
+        /* Butonlar */
+        .controls { margin-top: 30px; display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
+        button { border: none; padding: 12px 24px; border-radius: 6px; cursor: pointer; font-size: 16px; font-weight: 600; transition: background 0.2s; }
+        .nav-btn { background-color: #00796b; color: white; }
+        .nav-btn:hover { background-color: #004d40; }
+        .nav-btn:disabled { background-color: #bdc3c7; cursor: not-allowed; }
+        
+        .show-answer-btn { background-color: #f39c12; color: white; }
+        .show-answer-btn:hover { background-color: #e67e22; }
+        
+        .finish-btn { background-color: #27ae60; color: white; display: none; }
+        .finish-btn:hover { background-color: #219150; }
+
+        /* Sonuç Ekranı */
+        #result-screen { display: none; }
+        .score-card { text-align: center; background: #f8f9fa; padding: 20px; border-radius: 10px; margin-bottom: 30px; }
+        .score-circle { 
+            width: 120px; height: 120px; border-radius: 50%; background: #00796b; color: white; 
+            display: flex; align-items: center; justify-content: center; font-size: 2em; font-weight: bold; 
+            margin: 0 auto 15px; 
+        }
+        
+        .review-table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 0.95em; }
+        .review-table th, .review-table td { padding: 12px; border: 1px solid #ddd; text-align: left; }
+        .review-table th { background-color: #004d40; color: white; }
+        .review-table tr:nth-child(even) { background-color: #f2f2f2; }
+        .status-correct { color: #27ae60; font-weight: bold; }
+        .status-wrong { color: #c0392b; font-weight: bold; }
+        .status-empty { color: #f39c12; font-weight: bold; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div id="quiz-screen">
+        <h1>3. Ünite: Kültür ve Toplum</h1>
+        
+        <div class="progress-text" id="progress-text">Soru 1 / 50</div>
+        <div class="progress-container">
+            <div class="progress-bar" id="progress-bar"></div>
+        </div>
+        
+        <div id="quiz-container">
+            <!-- Sorular buraya JS ile gelecek -->
+        </div>
+
+        <div class="controls">
+            <div>
+                <button class="nav-btn" id="prevBtn" onclick="prevQuestion()" disabled>&#8592; Önceki</button>
+            </div>
+            <div>
+                <button class="show-answer-btn" onclick="showCurrentAnswer()">👁️ Cevabı Göster</button>
+            </div>
+            <div>
+                <button class="nav-btn" id="nextBtn" onclick="nextQuestion()">Sonraki &#8594;</button>
+                <button class="finish-btn" id="finishBtn" onclick="finishQuiz()">Testi Bitir &#10004;</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="result-screen">
+        <h1>Değerlendirme Sonucu</h1>
+        <div class="score-card">
+            <div class="score-circle" id="score-circle">0</div>
+            <h3>Toplam Puan</h3>
+            <p id="score-details"></p>
+        </div>
+        
+        <h3>Detaylı Soru Analizi</h3>
+        <table class="review-table">
+            <thead>
+                <tr>
+                    <th style="width: 5%">No</th>
+                    <th style="width: 45%">Soru</th>
+                    <th style="width: 20%">Senin Cevabın</th>
+                    <th style="width: 20%">Doğru Cevap</th>
+                    <th style="width: 10%">Durum</th>
+                </tr>
+            </thead>
+            <tbody id="review-body">
+                <!-- Sonuç satırları buraya gelecek -->
+            </tbody>
+        </table>
+        <div style="text-align: center; margin-top: 30px;">
+            <button class="nav-btn" onclick="location.reload()">Testi Tekrar Çöz</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // 3. Ünite Konuları: Kültürün Tanımı, Maddi-Manevi Kültür, Normlar, Değerler, Kültürel Değişme, Kültürel Çeşitlilik, Kültürel Kavramlar
+    const questions = [
+        { q: "Kültürü 'İnsanın doğa üzerinde yarattığı her şey' veya 'Karmaşık bir bütün' olarak tanımlayan ünlü antropolog kimdir?", o: ["Emile Durkheim", "Edward Tylor", "Max Weber", "Karl Marx", "Auguste Comte"], a: 1 },
+        { q: "Aşağıdakilerden hangisi kültürün özelliklerinden biri değildir?", o: ["Öğrenilir", "Paylaşılır", "Genetik olarak aktarılır", "Değişebilir", "Bütünleşiktir"], a: 2 },
+        { q: "Kültürün teknoloji, mimari, araç-gereç gibi fiziksel ve somut unsurlarına ne ad verilir?", o: ["Manevi Kültür", "Maddi Kültür", "İdeal Kültür", "Popüler Kültür", "Yüksek Kültür"], a: 1 },
+        { q: "Kültürün inançlar, değerler, normlar, dil ve semboller gibi soyut unsurlarına ne ad verilir?", o: ["Maddi Kültür", "Manevi Kültür", "Teknoloji", "Altyapı", "Sermaye"], a: 1 },
+        { q: "Belirli bir anlam taşıyan ve aynı kültürü paylaşanlarca tanınan nesne, jest, ses veya görüntülere ne denir?", o: ["Değer", "Sembol", "Norm", "Yasa", "Tören"], a: 1 },
+        { q: "Kültürün kuşaktan kuşağa aktarılmasını sağlayan en önemli sembol sistemi hangisidir?", o: ["Sanat", "Dil", "Para", "Mimari", "Moda"], a: 1 },
+        { q: "Dilin düşünceyi ve gerçeklik algısını belirlediğini savunan hipotez (Sapir-Whorf) neyi iddia eder?", o: ["Dil sadece bir iletişim aracıdır", "İnsanlar dünyayı konuştukları dilin kavramlarıyla algılar ve düşünür", "Bütün diller aynı yapıdadır", "Dil düşünceden bağımsızdır", "Dili gramer kuralları belirler"], a: 1 },
+        { q: "Toplumda neyin doğru, iyi ve arzu edilir olduğuna dair paylaşılan genel standartlara ne denir?", o: ["Normlar", "Değerler", "Semboller", "Yasalar", "Teknikler"], a: 1 },
+        { q: "Değerlerin somutlaşmış hali olan ve belirli durumlarda nasıl davranılması gerektiğini belirleyen kurallara ne denir?", o: ["Değer", "Norm", "İnanç", "İdeoloji", "Bilgi"], a: 1 },
+        { q: "Toplumun günlük yaşamdaki nezaket kuralları, yeme-içme biçimleri gibi yaptırımı hafif olan normlarına ne denir?", o: ["Örf (Mores)", "Kanun", "Halk Yordamı (Folkways)", "Tabu", "Anayasa"], a: 2 },
+        { q: "Toplumun ahlaki açıdan büyük önem verdiği, ihlali durumunda sert tepki (dışlanma vb.) görülen normlara ne denir?", o: ["Halk Yordamı", "Moda", "Örf (Mores)", "Teknik kural", "Görgü kuralı"], a: 2 },
+        { q: "Devletin yetkili organlarınca konulan ve uyulması zorunlu olan, yaptırımı maddi (ceza, hapis) olan normlara ne denir?", o: ["Örf", "Adet", "Kanun (Yasa)", "Gelenek", "Ahlak"], a: 2 },
+        { q: "Toplumun olması gerektiğini savunduğu ve hedeflediği kültüre 'İdeal Kültür', pratikte yaşanan kültüre ne denir?", o: ["Yüksek Kültür", "Gerçek Kültür", "Alt Kültür", "Popüler Kültür", "Kitle Kültürü"], a: 1 },
+        { q: "Genel kültürün içinde yer alan ancak kendine özgü değer, norm ve yaşam tarzına sahip olan gruba ne denir? (Örn: Motosikletçiler)", o: ["Karşıt Kültür", "Alt Kültür", "Yüksek Kültür", "Baskın Kültür", "Kitle Kültürü"], a: 1 },
+        { q: "Mevcut toplumsal düzene ve hakim kültürel değerlere bilinçli olarak karşı çıkan ve onları reddeden gruba ne denir? (Örn: 68 Kuşağı Hippiler)", o: ["Alt Kültür", "Karşıt (Karşı) Kültür", "Popüler Kültür", "Elit Kültür", "Folk Kültür"], a: 1 },
+        { q: "Toplumun eğitimli ve seçkin kesiminin ürettiği ve tükettiği sanatsal/estetik ürünlere (opera, klasik müzik vb.) ne denir?", o: ["Popüler Kültür", "Yüksek Kültür", "Halk Kültürü", "Kitle Kültürü", "Alt Kültür"], a: 1 },
+        { q: "Geniş kitleler tarafından tüketilen, ticari amaçlı üretilen ve hızla değişen kültüre ne denir?", o: ["Yüksek Kültür", "Popüler Kültür", "Halk Kültürü", "Karşıt Kültür", "Geleneksel Kültür"], a: 1 },
+        { q: "Kişinin kendi kültürünü merkeze alarak diğer kültürleri kendi kültürünün standartlarına göre yargılamasına ne denir?", o: ["Kültürel Görelilik", "Etnosentrizm (Kültür Merkeziyetçiliği)", "Yabancılaşma", "Empati", "Hoşgörü"], a: 1 },
+        { q: "Her kültürün kendi bağlamı içinde değerlendirilmesi gerektiğini, 'doğru' veya 'yanlış' kültür olmadığını savunan yaklaşıma ne denir?", o: ["Etnosentrizm", "Kültürel Görelilik (Relyativizm)", "Irkçılık", "Evrensellik", "Dogmatizm"], a: 1 },
+        { q: "Kişinin kendi kültürünü aşağılayıp başka bir kültürü (genellikle Batı kültürünü) üstün görmesi ve ona hayranlık duymasına ne denir?", o: ["Etnosentrizm", "Xenocentrism (Yabancı Hayranlığı)", "Narsisizm", "Şovenizm", "Vatanseverlik"], a: 1 },
+        { q: "Bireyin alışkın olduğu kültürel ortamdan tamamen farklı bir ortama girdiğinde yaşadığı şaşkınlık ve uyum sorununa ne denir?", o: ["Kültür Şoku", "Kültürel Gecikme", "Asimilasyon", "Entegrasyon", "Difüzyon"], a: 0 },
+        { q: "William Ogburn'un ortaya attığı, maddi kültürün (teknoloji) manevi kültürden (değerler, hukuk) daha hızlı değişmesi sonucu oluşan uyumsuzluğa ne denir?", o: ["Kültür Şoku", "Kültürel Gecikme (Cultural Lag)", "Kültürel Yayılma", "Kültürel Yozlaşma", "Anomi"], a: 1 },
+        { q: "Kültürel öğelerin bir toplumdan diğerine geçmesi ve yayılması sürecine ne denir?", o: ["Kültürel Gecikme", "Kültürel Yayılma (Difüzyon)", "Buluş", "Keşif", "Asimilasyon"], a: 1 },
+        { q: "Bir toplumun başka bir toplumu kendi kültürü içinde eriterek yok etmesine ne denir?", o: ["Entegrasyon", "Asimilasyon", "Çokkültürlülük", "Kültürleşme", "Yayılma"], a: 1 },
+        { q: "Farklı kültürlerin bir arada, kendi kimliklerini koruyarak barış içinde yaşaması politikasına ne denir?", o: ["Asimilasyon", "Çokkültürlülük (Multiculturalism)", "Etnosentrizm", "Ayrımcılık", "Segregasyon"], a: 1 },
+        { q: "Bireyin içine doğduğu kültürün özelliklerini öğrenmesi ve benimsemesi sürecine (eğitim/yetiştirilme) ne denir?", o: ["Kültürleşme", "Kültürleme (Enculturation)", "Kültür Şoku", "Kültürel Yayılma", "Yabancılaşma"], a: 1 },
+        { q: "İki farklı kültürün karşılaşması sonucu her iki kültürde de meydana gelen değişim sürecine (karşılıklı etkileşim) ne denir?", o: ["Kültürleme", "Kültürleşme (Acculturation)", "Asimilasyon", "Zorla Kültürleme", "Yayılma"], a: 1 },
+        { q: "George Ritzer'in 'Toplumun McDonaldlaşması' kavramı neyi ifade eder?", o: ["Fast-food yemenin artmasını", "Toplumun verimlilik, hesaplanabilirlik ve denetim ilkelerine göre standartlaşmasını", "Sağlıksız beslenmeyi", "Amerikan hayranlığını", "Restoran sayısının artmasını"], a: 1 },
+        { q: "Kültürün toplumun ihtiyaçlarını karşılayarak düzeni sağladığını savunan teorik yaklaşım hangisidir?", o: ["Çatışma Teorisi", "Fonksiyonalizm (İşlevselcilik)", "Sembolik Etkileşimcilik", "Feminist Teori", "Postmodernizm"], a: 1 },
+        { q: "Kültürün egemen sınıfın çıkarlarına hizmet ettiğini ve eşitsizliği meşrulaştırdığını savunan yaklaşım hangisidir?", o: ["Fonksiyonalizm", "Çatışma Teorisi (Marksizm)", "Sembolik Etkileşimcilik", "Pozitivizm", "Evrimcilik"], a: 1 },
+        { q: "Pierre Bourdieu'nun 'Kültürel Sermaye' kavramı neyi ifade eder?", o: ["Bireyin bankadaki parasını", "Bireyin sahip olduğu eğitim, bilgi, görgü ve sanatsal zevk birikimini", "Şirketlerin değerini", "Ülkenin tarihi eserlerini", "Teknolojik aletleri"], a: 1 },
+        { q: "Frankfurt Okulu'nun (Adorno, Horkheimer) eleştirdiği, kitle iletişim araçlarıyla standartlaştırılmış ürünler sunan yapıya ne denir?", o: ["Kültür Endüstrisi", "Sanat Dünyası", "Halk Kültürü", "Yüksek Kültür", "Eğitim Sistemi"], a: 0 },
+        { q: "Tüketimin bir ihtiyaç gidermekten çok, statü ve kimlik göstergesi haline geldiği kültüre ne denir?", o: ["Üretim Kültürü", "Tüketim Kültürü", "Tasarruf Kültürü", "Geleneksel Kültür", "Sanayi Kültürü"], a: 1 },
+        { q: "Küresel kültür ürünlerinin yerel özelliklerle harmanlanarak sunulmasına (örn: McTurco) ne denir?", o: ["Globalleşme", "Küyerelleşme (Glocalization)", "Emperyalizm", "Asimilasyon", "Yozlaşma"], a: 1 },
+        { q: "Belirli bir davranışın toplumda kesinlikle yasaklanması ve güçlü bir şekilde kınanmasına ne denir? (Örn: Ensest)", o: ["Moda", "Tabu", "Halk Yordamı", "Kanun", "Etiket"], a: 1 },
+        { q: "Sosyobiyoloji yaklaşımı kültürü nasıl açıklar?", o: ["Tamamen öğrenmeyle", "Biyolojik ve genetik temellere dayandırarak (Doğal seçilim)", "Ekonomiyle", "Dinle", "Tesadüfle"], a: 1 },
+        { q: "Kültürel emperyalizm nedir?", o: ["Kültürlerin eşit etkileşimi", "Güçlü bir ülkenin kendi kültürünü diğer ülkelere (medya, ürünler vb. yoluyla) empoze etmesi", "Kültür turizmi", "Dil öğrenmek", "Sanat değişimi"], a: 1 },
+        { q: "Aşağıdakilerden hangisi kültürel değişimin kaynaklarından biri değildir?", o: ["Keşifler", "İcatlar", "Yayılma (Difüzyon)", "Fiziksel çevre değişimleri", "Değişmemek için direnmek"], a: 4 },
+        { q: "Postmodernizme göre kültür nasıldır?", o: ["Bütünlüklü ve tutarlıdır", "Parçalı, çoğulcu, eklektik ve belirsizdir", "Sadece gerçeği yansıtır", "Evrensel doğrulardan oluşur", "Değişmezdir"], a: 1 },
+        { q: "Sembolik etkileşimciler kültürü nasıl inceler?", o: ["Makro yapılar olarak", "Bireylerin günlük etkileşimlerinde ürettikleri ve anlamlandırdıkları bir süreç olarak", "Ekonomik sistem olarak", "Sınıf çatışması olarak", "Biyolojik bir zorunluluk olarak"], a: 1 },
+        { q: "Normlara uymayanlara uygulanan ödül veya ceza mekanizmasına ne denir?", o: ["Yaptırım (Müeyyide)", "Değer", "Statü", "Rol", "Eğitim"], a: 0 },
+        { q: "Bir öğretmenin öğrencisine 'Aferin' demesi ne tür bir yaptırımdır?", o: ["Resmi Olumsuz", "Resmi Olmayan (Enformel) Olumlu Yaptırım", "Resmi Olumlu", "Fiziksel Yaptırım", "Maddi Yaptırım"], a: 1 },
+        { q: "Mahkemenin bir kişiye hapis cezası vermesi ne tür bir yaptırımdır?", o: ["Resmi Olmayan Olumsuz", "Resmi (Formel) Olumsuz Yaptırım", "Manevi Yaptırım", "Ödül", "Kınama"], a: 1 },
+        { q: "Tüm toplumlarda bulunan ortak kültürel unsurlara (aile, dil, din, cenaze töreni vb.) ne denir?", o: ["Kültürel Görelilik", "Kültürel Evrenseller", "Alt Kültür", "Popüler Kültür", "Etnosentrizm"], a: 1 },
+        { q: "Teknoloji, kültürün hangi boyutunun en önemli parçasıdır?", o: ["Manevi Kültür", "Maddi Kültür", "İdeal Kültür", "Normatif Kültür", "Sembolik Kültür"], a: 1 },
+        { q: "Bir toplumda egemen olan ve gücü elinde bulunduran grubun kültürüne ne denir?", o: ["Alt Kültür", "Baskın (Egemen) Kültür", "Karşıt Kültür", "Azınlık Kültürü", "Popüler Kültür"], a: 1 },
+        { q: "Kültürün bütünleştirici işlevi neyi sağlar?", o: ["Çatışmayı", "Toplumsal dayanışmayı ve 'biz' duygusunu", "Ayrışmayı", "Yabancılaşmayı", "Bireyselliği"], a: 1 },
+        { q: "Bourdieu'ya göre 'Habitus' nedir?", o: ["Kıyafet", "Bireyin içine sindirdiği, düşünce ve davranışlarını yönlendiren yatkınlıklar sistemi", "Ev", "Alışkanlık", "Hobi"], a: 1 },
+        { q: "Aşağıdakilerden hangisi bir 'Halk Yordamı' (Folkway) örneğidir?", o: ["Vergi vermek", "Adam öldürmemek", "Tanıdık birine selam vermek veya el sıkışmak", "Hırsızlık yapmamak", "Kırmızı ışıkta durmak"], a: 2 },
+        { q: "Göstergebilim (Semiyotik) neyi inceler?", o: ["Yıldızları", "İşaretleri, sembolleri ve onların anlamlarını", "Sayıları", "Hastalıkları", "Nüfusu"], a: 1 }
+    ];
+
+    let currentQuestion = 0;
+    let userAnswers = new Array(questions.length).fill(null);
+
+    function loadQuestion() {
+        const container = document.getElementById('quiz-container');
+        container.innerHTML = '';
+
+        const q = questions[currentQuestion];
+        
+        let html = `
+            <div class="question-block active">
+                <div class="question-text">${currentQuestion + 1}. ${q.q}</div>
+                <div class="options">
+        `;
+
+        q.o.forEach((opt, index) => {
+            const isSelected = userAnswers[currentQuestion] === index ? 'selected' : '';
+            const isChecked = userAnswers[currentQuestion] === index ? 'checked' : '';
+            html += `
+                <label class="option-label ${isSelected}" id="opt-${index}">
+                    <input type="radio" name="q${currentQuestion}" value="${index}" onclick="selectAnswer(${index})" ${isChecked}>
+                    ${String.fromCharCode(65 + index)}) ${opt}
+                </label>
+            `;
+        });
+
+        html += `</div></div>`;
+        container.innerHTML = html;
+
+        // Progress Bar
+        const progressPercent = ((currentQuestion + 1) / questions.length) * 100;
+        document.getElementById('progress-bar').style.width = progressPercent + '%';
+        document.getElementById('progress-text').innerText = `Soru ${currentQuestion + 1} / ${questions.length}`;
+        
+        // Buton Yönetimi
+        document.getElementById('prevBtn').disabled = currentQuestion === 0;
+        
+        if (currentQuestion === questions.length - 1) {
+            document.getElementById('nextBtn').style.display = 'none';
+            document.getElementById('finishBtn').style.display = 'inline-block';
+        } else {
+            document.getElementById('nextBtn').style.display = 'inline-block';
+            document.getElementById('finishBtn').style.display = 'none';
+        }
+    }
+
+    function selectAnswer(index) {
+        userAnswers[currentQuestion] = index;
+        const labels = document.querySelectorAll('.option-label');
+        labels.forEach(label => label.classList.remove('selected'));
+        document.getElementById(`opt-${index}`).classList.add('selected');
+    }
+
+    function showCurrentAnswer() {
+        const correctIndex = questions[currentQuestion].a;
+        const correctLabel = document.getElementById(`opt-${correctIndex}`);
+        if(correctLabel) correctLabel.classList.add('correct-highlight');
+        
+        if (userAnswers[currentQuestion] !== null && userAnswers[currentQuestion] !== correctIndex) {
+            document.getElementById(`opt-${userAnswers[currentQuestion]}`).classList.add('wrong-highlight');
+        }
+    }
+
+    function nextQuestion() {
+        if (currentQuestion < questions.length - 1) {
+            currentQuestion++;
+            loadQuestion();
+        }
+    }
+
+    function prevQuestion() {
+        if (currentQuestion > 0) {
+            currentQuestion--;
+            loadQuestion();
+        }
+    }
+
+    function finishQuiz() {
+        let correctCount = 0;
+        let wrongCount = 0;
+        let emptyCount = 0;
+        let reviewHtml = '';
+
+        questions.forEach((q, index) => {
+            const userAnswer = userAnswers[index];
+            const isCorrect = userAnswer === q.a;
+            
+            let statusText = '';
+            let statusClass = '';
+
+            if (userAnswer === null) {
+                emptyCount++;
+                statusText = 'Boş';
+                statusClass = 'status-empty';
+            } else if (isCorrect) {
+                correctCount++;
+                statusText = 'Doğru';
+                statusClass = 'status-correct';
+            } else {
+                wrongCount++;
+                statusText = 'Yanlış';
+                statusClass = 'status-wrong';
+            }
+
+            reviewHtml += `
+                <tr>
+                    <td>${index + 1}</td>
+                    <td>${q.q}</td>
+                    <td>${userAnswer !== null ? String.fromCharCode(65 + userAnswer) + ') ' + q.o[userAnswer] : '-'}</td>
+                    <td>${String.fromCharCode(65 + q.a)}) ${q.o[q.a]}</td>
+                    <td class="${statusClass}">${statusText}</td>
+                </tr>
+            `;
+        });
+
+        document.getElementById('quiz-screen').style.display = 'none';
+        document.getElementById('result-screen').style.display = 'block';
+
+        // Puanlama: Her soru 2 puan (100/50)
+        const score = Math.round((correctCount / questions.length) * 100);
+        
+        document.getElementById('score-circle').innerText = score;
+        document.getElementById('score-details').innerHTML = `
+            <strong>Doğru:</strong> ${correctCount} | 
+            <strong>Yanlış:</strong> ${wrongCount} | 
+            <strong>Boş:</strong> ${emptyCount}
+        `;
+        
+        document.getElementById('review-body').innerHTML = reviewHtml;
+    }
+
+    // Uygulamayı başlat
+    loadQuestion();
+</script>
+
+</body>
+</html>

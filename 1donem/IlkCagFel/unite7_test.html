@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>İlk Çağ Felsefesi - 7. Ünite: Aristoteles</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f6f7; color: #333; margin: 0; padding: 20px; }
+        .container { max-width: 900px; margin: 0 auto; background: #fff; padding: 40px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        h1 { text-align: center; color: #27ae60; border-bottom: 2px solid #2ecc71; padding-bottom: 10px; margin-bottom: 30px; }
+        
+        /* İlerleme Çubuğu */
+        .progress-container { background-color: #ecf0f1; border-radius: 10px; margin-bottom: 20px; height: 10px; overflow: hidden; }
+        .progress-bar { height: 100%; background-color: #27ae60; width: 0%; transition: width 0.3s; }
+        .progress-text { text-align: right; font-size: 0.9em; color: #7f8c8d; margin-bottom: 15px; }
+
+        /* Soru Alanı */
+        .question-block { display: none; animation: fadeIn 0.5s; }
+        .question-block.active { display: block; }
+        .question-text { font-weight: 600; font-size: 1.25em; margin-bottom: 20px; color: #2c3e50; }
+        
+        /* Seçenekler */
+        .options { display: flex; flex-direction: column; gap: 10px; }
+        .option-label { 
+            display: flex; align-items: center; padding: 12px 15px; border: 2px solid #e0e0e0; 
+            border-radius: 8px; cursor: pointer; transition: all 0.2s; background: #fff;
+        }
+        .option-label:hover { background-color: #eafaf1; border-color: #abebc6; }
+        .option-label.selected { border-color: #27ae60; background-color: #d5f5e3; }
+        .option-label input { margin-right: 15px; transform: scale(1.2); }
+        
+        /* Cevap Göster Stilleri */
+        .option-label.correct-highlight { border-color: #27ae60; background-color: #d5f5e3; color: #1e8449; font-weight: bold; }
+        .option-label.wrong-highlight { border-color: #e74c3c; background-color: #fadbd8; }
+
+        /* Butonlar */
+        .controls { margin-top: 30px; display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
+        button { border: none; padding: 12px 24px; border-radius: 6px; cursor: pointer; font-size: 16px; font-weight: 600; transition: background 0.2s; }
+        .nav-btn { background-color: #27ae60; color: white; }
+        .nav-btn:hover { background-color: #1e8449; }
+        .nav-btn:disabled { background-color: #bdc3c7; cursor: not-allowed; }
+        
+        .show-answer-btn { background-color: #f39c12; color: white; }
+        .show-answer-btn:hover { background-color: #d35400; }
+        
+        .finish-btn { background-color: #2980b9; color: white; display: none; }
+        .finish-btn:hover { background-color: #1a5276; }
+
+        /* Sonuç Ekranı */
+        #result-screen { display: none; }
+        .score-card { text-align: center; background: #f8f9fa; padding: 20px; border-radius: 10px; margin-bottom: 30px; }
+        .score-circle { 
+            width: 120px; height: 120px; border-radius: 50%; background: #27ae60; color: white; 
+            display: flex; align-items: center; justify-content: center; font-size: 2em; font-weight: bold; 
+            margin: 0 auto 15px; 
+        }
+        
+        .review-table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 0.95em; }
+        .review-table th, .review-table td { padding: 12px; border: 1px solid #ddd; text-align: left; }
+        .review-table th { background-color: #34495e; color: white; }
+        .review-table tr:nth-child(even) { background-color: #f2f2f2; }
+        .status-correct { color: #27ae60; font-weight: bold; }
+        .status-wrong { color: #c0392b; font-weight: bold; }
+        .status-empty { color: #f39c12; font-weight: bold; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div id="quiz-screen">
+        <h1>7. Ünite: Aristoteles</h1>
+        
+        <div class="progress-text" id="progress-text">Soru 1 / 50</div>
+        <div class="progress-container">
+            <div class="progress-bar" id="progress-bar"></div>
+        </div>
+        
+        <div id="quiz-container">
+            <!-- Sorular buraya JS ile gelecek -->
+        </div>
+
+        <div class="controls">
+            <div>
+                <button class="nav-btn" id="prevBtn" onclick="prevQuestion()" disabled>&#8592; Önceki</button>
+            </div>
+            <div>
+                <button class="show-answer-btn" onclick="showCurrentAnswer()">👁️ Cevabı Göster</button>
+            </div>
+            <div>
+                <button class="nav-btn" id="nextBtn" onclick="nextQuestion()">Sonraki &#8594;</button>
+                <button class="finish-btn" id="finishBtn" onclick="finishQuiz()">Testi Bitir &#10004;</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="result-screen">
+        <h1>Değerlendirme Sonucu</h1>
+        <div class="score-card">
+            <div class="score-circle" id="score-circle">0</div>
+            <h3>Toplam Puan</h3>
+            <p id="score-details"></p>
+        </div>
+        
+        <h3>Detaylı Soru Analizi</h3>
+        <table class="review-table">
+            <thead>
+                <tr>
+                    <th style="width: 5%">No</th>
+                    <th style="width: 45%">Soru</th>
+                    <th style="width: 20%">Senin Cevabın</th>
+                    <th style="width: 20%">Doğru Cevap</th>
+                    <th style="width: 10%">Durum</th>
+                </tr>
+            </thead>
+            <tbody id="review-body">
+                <!-- Sonuç satırları buraya gelecek -->
+            </tbody>
+        </table>
+        <div style="text-align: center; margin-top: 30px;">
+            <button class="nav-btn" onclick="location.reload()">Testi Tekrar Çöz</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // 7. Ünite Konuları: Aristoteles'in Hayatı, Mantık (Organon), Bilimler Sınıflaması, Fizik (Dört Neden), Metafizik, Ahlak, Siyaset, Sanat
+    const questions = [
+        { q: "Aristoteles'in Atina'da kurduğu okulun adı nedir?", o: ["Akademia", "Lykeion (Lise)", "Stoa", "Bahçe", "Portiko"], a: 1 },
+        { q: "Aristoteles'e göre 'İlk Felsefa' olarak adlandırılan ve varlığı varlık olarak inceleyen disiplin hangisidir?", o: ["Fizik", "Mantık", "Metafizik", "Etik", "Politika"], a: 2 },
+        { q: "Aristoteles'in mantık üzerine yazdığı eserlerin tamamına ne ad verilir?", o: ["Politika", "Metafizik", "Organon (Alet)", "Poetika", "Retorik"], a: 2 },
+        { q: "Aristoteles'e göre bir şeyin varlığa gelmesi için gerekli olan dört neden (aitia) hangileridir?", o: ["Ateş, Su, Toprak, Hava", "Maddi, Formel, Fail, Ereksel", "Madde, Ruh, Akıl, Tanrı", "Tez, Antitez, Sentez, Sonuç", "Algı, Hafıza, Deney, Bilgi"], a: 1 },
+        { q: "Aristoteles'e göre 'Mermer' bir heykelin hangi nedenidir?", o: ["Fail Neden", "Formel Neden", "Maddi Neden", "Ereksel Neden", "Hareket Nedeni"], a: 2 },
+        { q: "Heykeltıraşın kendisi veya çekiç darbeleri heykelin hangi nedenidir?", o: ["Maddi Neden", "Fail (Hareket Ettirici) Neden", "Formel Neden", "Ereksel Neden", "İdeal Neden"], a: 1 },
+        { q: "Aristoteles'e göre evrendeki değişimi açıklayan temel kavram ikilisi hangisidir?", o: ["İdea - Fenomen", "Madde - Form (Hyle - Morphe)", "Potansiyel (Güç) - Aktüel (Fiil)", "Birlik - Çokluk", "Doğru - Yanlış"], a: 2 },
+        { q: "Aristoteles'e göre Tanrı'nın (İlk İlke) en temel özelliği nedir?", o: ["Yaratıcı olması", "Hareket eden hareket ettirici olması", "Hareket etmeyen hareket ettirici olması", "Merhametli olması", "Cisimsel olması"], a: 2 },
+        { q: "Aristoteles'e göre insanı diğer canlılardan ayıran temel özellik nedir?", o: ["Beslenme", "Üreme", "Hareket etme", "Düşünme / Akıl sahibi olma", "Hissetme"], a: 3 },
+        { q: "Aristoteles'in ahlak felsefesinin temel amacı olan 'Eudaimonia' ne anlama gelir?", o: ["Zenginlik", "Mutluluk / İyi olma hali", "Şöhret", "Ölümsüzlük", "Güç"], a: 1 },
+        { q: "Aristoteles'e göre erdem (arete) nedir?", o: ["Aşırılıklardan kaçınarak 'Altın Orta'yı bulmaktır", "Haz peşinde koşmaktır", "Hiçbir şey yapmamaktır", "Sadece bilgi sahibi olmaktır", "Duyguları tamamen yok etmektir"], a: 0 },
+        { q: "Korkaklık ile atılganlık arasındaki 'orta yol' erdemi hangisidir?", o: ["Cömertlik", "Adalet", "Cesaret", "Bilgelik", "Ölçülülük"], a: 2 },
+        { q: "Aristoteles'e göre insan doğası gereği nasıl bir varlıktır?", o: ["Yalnız yaşayan", "Tanrısal", "Zoon Politikon (Siyasal/Toplumsal Hayvan)", "Vahşi", "Gezgin"], a: 2 },
+        { q: "Aristoteles'e göre devletin (polis) oluşum amacı nedir?", o: ["Sadece güvenliği sağlamak", "Ticaret yapmak", "Yurttaşların iyi ve erdemli bir yaşam sürmesini sağlamak", "Savaşmak", "Vergi toplamak"], a: 2 },
+        { q: "Aristoteles yönetim biçimlerini sınıflandırırken hangi ölçütü kullanır?", o: ["Yöneticilerin zenginliği", "Yöneticilerin sayısı ve amacın (kamu yararı/kişisel çıkar) niteliği", "Askeri güç", "Coğrafi büyüklük", "Dini inanç"], a: 1 },
+        { q: "Aristoteles'e göre 'çoğunluğun kamu yararına yönetimi' olan iyi yönetim biçimi hangisidir?", o: ["Demokrasi", "Politeia (Cumhuriyet)", "Oligarşi", "Tiranlık", "Aristokrasi"], a: 1 },
+        { q: "Demokrasi, Aristoteles'e göre hangi yönetim biçiminin bozulmuş halidir?", o: ["Monarşi", "Aristokrasi", "Politeia", "Tiranlık", "Oligarşi"], a: 2 },
+        { q: "Aristoteles'in sanat anlayışında 'Katharsis' ne anlama gelir?", o: ["Taklit etme", "Ruhun tutkurlardan arınması / Temizlenme", "Eğlence", "Sanat eseri yaratma", "Boyama"], a: 1 },
+        { q: "Aristoteles, Platon'un İdealar kuramını neden eleştirir?", o: ["İdeaların, nesnelerin dışında ayrı bir dünyada bulunmasını mantıksız bulduğu için", "İdeaların sayısını az bulduğu için", "İdeaları göremediği için", "Sadece matematiği sevdiği için", "Platon'u sevmediği için"], a: 0 },
+        { q: "Aristoteles'e göre mantık bir bilim midir?", o: ["Evet, en yüce bilimdir", "Hayır, bilimlerin hazırlayıcısı ve aletidir (Organon)", "Sadece bir sanattır", "Fiziğin bir alt dalıdır", "Gereksizdir"], a: 1 },
+        { q: "Gelmiş geçmiş en büyük öğretmen kabul edildiği için Orta Çağ'da Aristoteles'e verilen unvan nedir?", o: ["Muallim-i Evvel (İlk Öğretmen)", "Muallim-i Sani", "Filozofların Kralı", "Büyük İskender'in Hocası", "Bilge"], a: 0 },
+        { q: "Aristoteles'in en ünlü öğrencisi olan Makedonya kralı kimdir?", o: ["Filip", "Büyük İskender", "Sezar", "Perikles", "Darius"], a: 1 },
+        { q: "Aristoteles bilimleri kaça ayırır?", o: ["İkiye: Fizik ve Metafizik", "Üçe: Teorik, Pratik ve Prodüktif (Yaratıcı)", "Dörde: Matematik, Fizik, Biyoloji, Kimya", "Sınıflandırma yapmaz", "Beşe: Mantık, Etik, Fizik, Siyaset, Sanat"], a: 1 },
+        { q: "Aşağıdakilerden hangisi 'Teorik Bilimler'den biridir?", o: ["Etik", "Politika", "Fizik / Matematik / İlk Felsefa", "Retorik", "Poetika"], a: 2 },
+        { q: "Aşağıdakilerden hangisi 'Pratik Bilimler'den biridir?", o: ["Matematik", "Fizik", "Etik / Politika", "Biyoloji", "Metafizik"], a: 2 },
+        { q: "Mantıktaki 'Kıyas' (Syllogism) yönteminin kurucusu kimdir?", o: ["Sokrates", "Platon", "Aristoteles", "Herakleitos", "Descartes"], a: 2 },
+        { q: "'Bütün insanlar ölümlüdür. Sokrates insandır. O halde Sokrates ölümlüdür.' çıkarımı neye örnektir?", o: ["Tümevarım", "Kıyas (Tümdengelim)", "Analoji", "Paradoks", "Sofizm"], a: 1 },
+        { q: "Aristoteles'e göre ruh (psyche) bedenden ayrı yaşayabilir mi?", o: ["Evet, ruh ölümsüzdür", "Hayır, ruh bedenin formudur ve bedenle birlikte yok olur (Etkin akıl hariç)", "Ruh başka bedenlere geçer", "Beden ruhu hapseder", "Ruh tanrısaldır"], a: 1 },
+        { q: "Aristoteles'e göre madde (hyle) nedir?", o: ["Şekil almış cisimdir", "Belirlenmemiş, form kazanma potansiyeli olan şeydir", "Gerçek varlıktır", "Ateştir", "Boşluktur"], a: 1 },
+        { q: "Bitkilerde bulunan ruh türü hangisidir?", o: ["Düşünen ruh", "Duyumsayan ruh", "Beslenen (Vejetatif) ruh", "Hareket eden ruh", "Ölümsüz ruh"], a: 2 },
+        { q: "Hayvanlarda bulunup bitkilerde bulunmayan ruh özelliği nedir?", o: ["Beslenme", "Büyüme", "Duyumsama ve yer değiştirme", "Düşünme", "Fotosentez"], a: 2 },
+        { q: "Aristoteles'e göre kölelik nasıldır?", o: ["Kesinlikle yasaklanmalıdır", "Doğaldır; bazı insanlar yönetmek bazıları yönetilmek için doğar", "Sadece savaş suçluları köle olabilir", "Ekonomik bir zorunluluktur", "Tanrısal bir cezadır"], a: 1 },
+        { q: "Orta yol (Mesotes) öğretisine göre 'Cimrilik' ile 'Savurganlık' arasındaki erdem nedir?", o: ["Cesaret", "Bilgelik", "Cömertlik", "Adalet", "Dostluk"], a: 2 },
+        { q: "Aristoteles'in oğlu için yazdığı ahlak kitabının adı nedir?", o: ["Eudemos'a Etik", "Nikomakhos'a Etik", "Magna Moralia", "Politika", "Ruh Üzerine"], a: 1 },
+        { q: "Aristoteles'e göre 'Trajedi'nin amacı nedir?", o: ["Güldürmek", "Korku ve acıma duyguları uyandırarak arınma (katharsis) sağlamak", "Tarihi öğretmek", "Siyaset yapmak", "Tanrıları övmek"], a: 1 },
+        { q: "Aristoteles'in okulundaki ders verme yöntemi nedeniyle onlara ne ad verilmiştir?", o: ["Akademisyenler", "Peripatetikler (Yürüyenler / Gezinenler)", "Stoacılar", "Sofistler", "Kynikler"], a: 1 },
+        { q: "Aristoteles'e göre en iyi yönetim biçimi (uygulanabilir olan) hangisidir?", o: ["İdeal Monarşi", "Aristokrasi", "Politeia (Orta sınıfın egemen olduğu anayasal yönetim)", "Demokrasi", "Oligarşi"], a: 2 },
+        { q: "Varlığın kategorilerinden en temeli ve diğerlerinin dayanağı olan kategori hangisidir?", o: ["Nitelik", "Nicelik", "Töz (Cevher)", "İlişki", "Zaman"], a: 2 },
+        { q: "Aristoteles'e göre gök cisimleri (Ay üstü evren) hangi elementten yapılmıştır?", o: ["Ateş", "Hava", "Su", "Toprak", "Esir (Ether / Aither)"], a: 4 },
+        { q: "Aristoteles'in fizik anlayışına göre evrenin merkezi neresidir?", o: ["Güneş", "Dünya (Yer-merkezli)", "Ay", "Mars", "Merkez yoktur"], a: 1 },
+        { q: "'Bütün'ün parçaların toplamından fazlası olduğu görüşü kime aittir?", o: ["Demokritos", "Platon", "Aristoteles", "Epiküros", "Thales"], a: 2 },
+        { q: "Aristoteles'e göre mutluluk (eudaimonia) anlık bir haz mıdır?", o: ["Evet, en yüksek hazdır", "Hayır, bir ömür boyu süren erdemli etkinliktir", "Mutluluk şanstır", "Mutluluk kaderdir", "Mutluluk imkansızdır"], a: 1 },
+        { q: "Aristoteles'in bilgi felsefesi hangi yönüyle Platon'dan ayrılır?", o: ["Bilginin doğuştan geldiğini reddeder, duyuların ve deneyimin önemini vurgular", "Bilginin imkansız olduğunu savunur", "Sadece matematiği bilgi sayar", "Mitleri bilgi sayar", "Hiçbir fark yoktur"], a: 0 },
+        { q: "Aristoteles'e göre sanat bir ............ dır. Boşluğa ne gelmelidir?", o: ["Yaratma", "Taklit (Mimesis)", "Oyun", "İbadet", "Bilim"], a: 1 },
+        { q: "Aristoteles'in 'Metafizik' adlı eserinin adı nereden gelmektedir?", o: ["Kendisi bu ismi vermiştir", "Konusu büyü olduğu için", "Andronikos'un eserleri tasnif ederken Fizik kitaplarından sonra (meta: sonra) yerleştirmesinden", "Tanrısal olduğu için", "Kaybolduğu için"], a: 2 },
+        { q: "Aristoteles'e göre 'Etkin Akıl'ın özelliği nedir?", o: ["Ölümlüdür", "Pasiftir", "Ölümsüz ve ebedidir", "Bedene bağımlıdır", "Hayvanlarda da vardır"], a: 2 },
+        { q: "Devletin en küçük yapı taşı Aristoteles'e göre nedir?", o: ["Birey", "Köy", "Aile", "Kabile", "Ordu"], a: 2 },
+        { q: "Aristoteles'e göre 'Form' (Morphe) nedir?", o: ["Maddenin dış görünüşüdür", "Maddenin özü ve onu o şey yapan ilkedir", "Boş bir kavramdır", "Tanrının kendisidir", "Sadece insan zihnindedir"], a: 1 },
+        { q: "Mantıkta, 'çelişmezlik ilkesi' neyi ifade eder?", o: ["Her şey doğrudur", "Bir şey aynı anda, aynı şartlarda hem kendisi hem de başkası olamaz", "Her şey zıddıyla vardır", "Doğru görecelidir", "Yanlış yoktur"], a: 1 },
+        { q: "Aristoteles hangi yıl ölmüştür?", o: ["MÖ 399", "MÖ 322", "MÖ 400", "MS 100", "MÖ 200"], a: 1 }
+    ];
+
+    let currentQuestion = 0;
+    let userAnswers = new Array(questions.length).fill(null);
+
+    function loadQuestion() {
+        const container = document.getElementById('quiz-container');
+        container.innerHTML = '';
+
+        const q = questions[currentQuestion];
+        
+        let html = `
+            <div class="question-block active">
+                <div class="question-text">${currentQuestion + 1}. ${q.q}</div>
+                <div class="options">
+        `;
+
+        q.o.forEach((opt, index) => {
+            const isSelected = userAnswers[currentQuestion] === index ? 'selected' : '';
+            const isChecked = userAnswers[currentQuestion] === index ? 'checked' : '';
+            html += `
+                <label class="option-label ${isSelected}" id="opt-${index}">
+                    <input type="radio" name="q${currentQuestion}" value="${index}" onclick="selectAnswer(${index})" ${isChecked}>
+                    ${String.fromCharCode(65 + index)}) ${opt}
+                </label>
+            `;
+        });
+
+        html += `</div></div>`;
+        container.innerHTML = html;
+
+        // Progress Bar
+        const progressPercent = ((currentQuestion + 1) / questions.length) * 100;
+        document.getElementById('progress-bar').style.width = progressPercent + '%';
+        document.getElementById('progress-text').innerText = `Soru ${currentQuestion + 1} / ${questions.length}`;
+        
+        // Buton Yönetimi
+        document.getElementById('prevBtn').disabled = currentQuestion === 0;
+        
+        if (currentQuestion === questions.length - 1) {
+            document.getElementById('nextBtn').style.display = 'none';
+            document.getElementById('finishBtn').style.display = 'inline-block';
+        } else {
+            document.getElementById('nextBtn').style.display = 'inline-block';
+            document.getElementById('finishBtn').style.display = 'none';
+        }
+    }
+
+    function selectAnswer(index) {
+        userAnswers[currentQuestion] = index;
+        const labels = document.querySelectorAll('.option-label');
+        labels.forEach(label => label.classList.remove('selected'));
+        document.getElementById(`opt-${index}`).classList.add('selected');
+    }
+
+    function showCurrentAnswer() {
+        const correctIndex = questions[currentQuestion].a;
+        const correctLabel = document.getElementById(`opt-${correctIndex}`);
+        if(correctLabel) correctLabel.classList.add('correct-highlight');
+        
+        if (userAnswers[currentQuestion] !== null && userAnswers[currentQuestion] !== correctIndex) {
+            document.getElementById(`opt-${userAnswers[currentQuestion]}`).classList.add('wrong-highlight');
+        }
+    }
+
+    function nextQuestion() {
+        if (currentQuestion < questions.length - 1) {
+            currentQuestion++;
+            loadQuestion();
+        }
+    }
+
+    function prevQuestion() {
+        if (currentQuestion > 0) {
+            currentQuestion--;
+            loadQuestion();
+        }
+    }
+
+    function finishQuiz() {
+        let correctCount = 0;
+        let wrongCount = 0;
+        let emptyCount = 0;
+        let reviewHtml = '';
+
+        questions.forEach((q, index) => {
+            const userAnswer = userAnswers[index];
+            const isCorrect = userAnswer === q.a;
+            
+            let statusText = '';
+            let statusClass = '';
+
+            if (userAnswer === null) {
+                emptyCount++;
+                statusText = 'Boş';
+                statusClass = 'status-empty';
+            } else if (isCorrect) {
+                correctCount++;
+                statusText = 'Doğru';
+                statusClass = 'status-correct';
+            } else {
+                wrongCount++;
+                statusText = 'Yanlış';
+                statusClass = 'status-wrong';
+            }
+
+            reviewHtml += `
+                <tr>
+                    <td>${index + 1}</td>
+                    <td>${q.q}</td>
+                    <td>${userAnswer !== null ? String.fromCharCode(65 + userAnswer) + ') ' + q.o[userAnswer] : '-'}</td>
+                    <td>${String.fromCharCode(65 + q.a)}) ${q.o[q.a]}</td>
+                    <td class="${statusClass}">${statusText}</td>
+                </tr>
+            `;
+        });
+
+        document.getElementById('quiz-screen').style.display = 'none';
+        document.getElementById('result-screen').style.display = 'block';
+
+        // Puanlama: Her soru 2 puan (100/50)
+        const score = Math.round((correctCount / questions.length) * 100);
+        
+        document.getElementById('score-circle').innerText = score;
+        document.getElementById('score-details').innerHTML = `
+            <strong>Doğru:</strong> ${correctCount} | 
+            <strong>Yanlış:</strong> ${wrongCount} | 
+            <strong>Boş:</strong> ${emptyCount}
+        `;
+        
+        document.getElementById('review-body').innerHTML = reviewHtml;
+    }
+
+    // Uygulamayı başlat
+    loadQuestion();
+</script>
+
+</body>
+</html>

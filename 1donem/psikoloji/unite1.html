@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Psikoloji - 1. Ünite: Psikolojinin Doğası ve Temel Kavramlar</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #eaf2f8; color: #333; margin: 0; padding: 20px; }
+        .container { max-width: 900px; margin: 0 auto; background: #fff; padding: 40px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        h1 { text-align: center; color: #2980b9; border-bottom: 2px solid #3498db; padding-bottom: 10px; margin-bottom: 30px; }
+        
+        /* İlerleme Çubuğu */
+        .progress-container { background-color: #d4e6f1; border-radius: 10px; margin-bottom: 20px; height: 10px; overflow: hidden; }
+        .progress-bar { height: 100%; background-color: #2980b9; width: 0%; transition: width 0.3s; }
+        .progress-text { text-align: right; font-size: 0.9em; color: #546e7a; margin-bottom: 15px; }
+
+        /* Soru Alanı */
+        .question-block { display: none; animation: fadeIn 0.5s; }
+        .question-block.active { display: block; }
+        .question-text { font-weight: 600; font-size: 1.25em; margin-bottom: 20px; color: #2c3e50; }
+        
+        /* Seçenekler */
+        .options { display: flex; flex-direction: column; gap: 10px; }
+        .option-label { 
+            display: flex; align-items: center; padding: 12px 15px; border: 2px solid #e0e0e0; 
+            border-radius: 8px; cursor: pointer; transition: all 0.2s; background: #fff;
+        }
+        .option-label:hover { background-color: #d6eaf8; border-color: #85c1e9; }
+        .option-label.selected { border-color: #2980b9; background-color: #d4e6f1; }
+        .option-label input { margin-right: 15px; transform: scale(1.2); }
+        
+        /* Cevap Göster Stilleri */
+        .option-label.correct-highlight { border-color: #27ae60; background-color: #d5f5e3; color: #1e8449; font-weight: bold; }
+        .option-label.wrong-highlight { border-color: #e74c3c; background-color: #fadbd8; }
+
+        /* Butonlar */
+        .controls { margin-top: 30px; display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
+        button { border: none; padding: 12px 24px; border-radius: 6px; cursor: pointer; font-size: 16px; font-weight: 600; transition: background 0.2s; }
+        .nav-btn { background-color: #2980b9; color: white; }
+        .nav-btn:hover { background-color: #1a5276; }
+        .nav-btn:disabled { background-color: #bdc3c7; cursor: not-allowed; }
+        
+        .show-answer-btn { background-color: #f39c12; color: white; }
+        .show-answer-btn:hover { background-color: #d35400; }
+        
+        .finish-btn { background-color: #27ae60; color: white; display: none; }
+        .finish-btn:hover { background-color: #219150; }
+
+        /* Sonuç Ekranı */
+        #result-screen { display: none; }
+        .score-card { text-align: center; background: #f8f9fa; padding: 20px; border-radius: 10px; margin-bottom: 30px; }
+        .score-circle { 
+            width: 120px; height: 120px; border-radius: 50%; background: #2980b9; color: white; 
+            display: flex; align-items: center; justify-content: center; font-size: 2em; font-weight: bold; 
+            margin: 0 auto 15px; 
+        }
+        
+        .review-table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 0.95em; }
+        .review-table th, .review-table td { padding: 12px; border: 1px solid #ddd; text-align: left; }
+        .review-table th { background-color: #34495e; color: white; }
+        .review-table tr:nth-child(even) { background-color: #f2f2f2; }
+        .status-correct { color: #27ae60; font-weight: bold; }
+        .status-wrong { color: #c0392b; font-weight: bold; }
+        .status-empty { color: #f39c12; font-weight: bold; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div id="quiz-screen">
+        <h1>1. Ünite: Psikolojinin Doğası ve Temel Kavramlar</h1>
+        
+        <div class="progress-text" id="progress-text">Soru 1 / 50</div>
+        <div class="progress-container">
+            <div class="progress-bar" id="progress-bar"></div>
+        </div>
+        
+        <div id="quiz-container">
+            <!-- Sorular buraya JS ile gelecek -->
+        </div>
+
+        <div class="controls">
+            <div>
+                <button class="nav-btn" id="prevBtn" onclick="prevQuestion()" disabled>&#8592; Önceki</button>
+            </div>
+            <div>
+                <button class="show-answer-btn" onclick="showCurrentAnswer()">👁️ Cevabı Göster</button>
+            </div>
+            <div>
+                <button class="nav-btn" id="nextBtn" onclick="nextQuestion()">Sonraki &#8594;</button>
+                <button class="finish-btn" id="finishBtn" onclick="finishQuiz()">Testi Bitir &#10004;</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="result-screen">
+        <h1>Değerlendirme Sonucu</h1>
+        <div class="score-card">
+            <div class="score-circle" id="score-circle">0</div>
+            <h3>Toplam Puan</h3>
+            <p id="score-details"></p>
+        </div>
+        
+        <h3>Detaylı Soru Analizi</h3>
+        <table class="review-table">
+            <thead>
+                <tr>
+                    <th style="width: 5%">No</th>
+                    <th style="width: 45%">Soru</th>
+                    <th style="width: 20%">Senin Cevabın</th>
+                    <th style="width: 20%">Doğru Cevap</th>
+                    <th style="width: 10%">Durum</th>
+                </tr>
+            </thead>
+            <tbody id="review-body">
+                <!-- Sonuç satırları buraya gelecek -->
+            </tbody>
+        </table>
+        <div style="text-align: center; margin-top: 30px;">
+            <button class="nav-btn" onclick="location.reload()">Testi Tekrar Çöz</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // 1. Ünite Konuları: Psikolojinin Tanımı, Tarihçesi (Yapısalcılık, İşlevselcilik vb.), Yaklaşımlar, Araştırma Yöntemleri, Alt Dallar
+    const questions = [
+        { q: "Psikoloji (Psychology) kelimesinin kökeni olan 'Psyche' ve 'Logos' ne anlama gelir?", o: ["Zihin - Beden", "Ruh/Nefes - Bilgi/Bilim", "Davranış - Yöntem", "Beyin - Sinir", "İnsan - Toplum"], a: 1 },
+        { q: "Psikolojinin modern bilimsel tanımı aşağıdakilerden hangisidir?", o: ["İnsan ruhunu inceleyen daldır", "Sadece zihinsel süreçleri inceleyen bilimdir", "Davranışları ve zihinsel süreçleri bilimsel yöntemlerle inceleyen bilim dalıdır", "Beyin hastalıklarını inceleyen tıp dalıdır", "Toplumsal olayları inceleyen bilimdir"], a: 2 },
+        { q: "Psikolojinin bağımsız bir bilim dalı olarak kurulduğu tarih ve kurucusu kimdir?", o: ["1900 - Sigmund Freud", "1879 - Wilhelm Wundt", "1890 - William James", "1913 - John Watson", "1950 - Carl Rogers"], a: 1 },
+        { q: "Wilhelm Wundt'un Leipzig Üniversitesi'nde kurduğu laboratuvar neden önemlidir?", o: ["İlk tıp laboratuvarı olduğu için", "Psikolojiyi felsefeden ayırıp deneysel bir bilim haline getirdiği için", "Hayvanlar üzerinde deney yaptığı için", "Sadece çocukları incelediği için", "Rüyaları yorumladığı için"], a: 1 },
+        { q: "Wundt'un öncülük ettiği ve zihni, onu oluşturan en temel öğelere (duyumlar, algılar) ayırarak incelemeyi amaçlayan ekol hangisidir?", o: ["Davranışçılık", "Yapısalcılık (Strüktüralizm)", "İşlevselcilik", "Gestalt", "Psikanaliz"], a: 1 },
+        { q: "Yapısalcıların zihni incelemek için kullandıkları temel yöntem nedir?", o: ["Gözlem", "Deney", "İçe Bakış (Introspection)", "Anket", "Vaka İncelemesi"], a: 2 },
+        { q: "Zihnin yapısından çok, ne işe yaradığına ve organizmanın çevreye uyumuna odaklanan, William James'in temsil ettiği ekol hangisidir?", o: ["Yapısalcılık", "İşlevselcilik (Fonksiyonalizm)", "Davranışçılık", "Hümanizm", "Bilişselcilik"], a: 1 },
+        { q: "John B. Watson'ın kurduğu ve psikolojinin sadece gözlemlenebilir ve ölçülebilir davranışları incelemesi gerektiğini savunan ekol hangisidir?", o: ["Psikanaliz", "Gestalt", "Davranışçılık (Behaviorism)", "Yapısalcılık", "Bilişselcilik"], a: 2 },
+        { q: "Davranışçılara göre davranışı belirleyen temel faktör nedir?", o: ["Genetik miras", "Bilinçdışı dürtüler", "Çevre ve öğrenme (Uyarıcı-Tepki)", "Özgür irade", "Düşünce yapısı"], a: 2 },
+        { q: "'Bütün, kendisini oluşturan parçaların toplamından farklı ve fazladır' ilkesini savunan psikoloji ekolü hangisidir?", o: ["Davranışçılık", "Yapısalcılık", "Gestalt Psikolojisi", "Psikanaliz", "İşlevselcilik"], a: 2 },
+        { q: "Bilinçdışı süreçlerin, cinsellik ve saldırganlık dürtülerinin davranışı yönlendirdiğini savunan yaklaşım hangisidir?", o: ["Hümanistik", "Bilişsel", "Psikodinamik / Psikanalitik", "Biyolojik", "Evrimsel"], a: 2 },
+        { q: "Psikanalitik kuramın kurucusu kimdir?", o: ["Carl Jung", "Sigmund Freud", "Alfred Adler", "Erik Erikson", "B.F. Skinner"], a: 1 },
+        { q: "İnsanın özgür iradesine, kendini gerçekleştirme potansiyeline ve biricikliğine vurgu yapan 'Üçüncü Güç' olarak bilinen yaklaşım hangisidir?", o: ["Psikanaliz", "Davranışçılık", "Hümanistik (İnsancıl) Yaklaşım", "Biyolojik Yaklaşım", "Bilişsel Yaklaşım"], a: 2 },
+        { q: "Abraham Maslow ve Carl Rogers hangi yaklaşımın önemli temsilcileridir?", o: ["Davranışçı", "Bilişsel", "Hümanistik", "Psikodinamik", "Evrimsel"], a: 2 },
+        { q: "İnsan zihnini bir bilgisayar gibi bilgi işleme sistemi olarak gören, bellek, algı, düşünme gibi süreçleri inceleyen yaklaşım hangisidir?", o: ["Bilişsel (Cognitive) Yaklaşım", "Davranışçı Yaklaşım", "Psikodinamik Yaklaşım", "Biyolojik Yaklaşım", "Sosyal Yaklaşım"], a: 0 },
+        { q: "Davranışları beyin, sinir sistemi, hormonlar ve genetik faktörlerle açıklamaya çalışan yaklaşım hangisidir?", o: ["Bilişsel", "Davranışsal", "Biyolojik / Nörobiyolojik Yaklaşım", "Sosyo-kültürel", "Hümanistik"], a: 2 },
+        { q: "Davranışların, doğal ayıklanma yoluyla hayatta kalma ve üreme avantajı sağladığı için kuşaktan kuşağa aktarıldığını savunan yaklaşım hangisidir?", o: ["Evrimsel Psikoloji", "Sosyal Psikoloji", "Klinik Psikoloji", "Gelişim Psikolojisi", "Bilişsel Psikoloji"], a: 0 },
+        { q: "Kültürün, toplumsal normların ve sosyal çevrenin davranış üzerindeki etkisini inceleyen yaklaşım hangisidir?", o: ["Biyolojik", "Sosyo-kültürel Yaklaşım", "Evrimsel", "Psikodinamik", "Bilişsel"], a: 1 },
+        { q: "Aşağıdakilerden hangisi psikolojinin temel amaçlarından biri değildir?", o: ["Betimleme (Tanımlama)", "Açıklama", "Yordama (Tahmin Etme)", "Kontrol Etme", "Yargılama / Ayıplama"], a: 4 },
+        { q: "Psikolojinin tıp eğitimi almış, ilaç yazma yetkisi olan uzmanı kimdir?", o: ["Klinik Psikolog", "Psikiyatrist", "Psikolojik Danışman", "Sosyal Hizmet Uzmanı", "Pedagog"], a: 1 },
+        { q: "Ruhsal bozuklukların tanısı ve tedavisi (psikoterapi) ile ilgilenen psikoloji alt dalı hangisidir?", o: ["Deneysel Psikoloji", "Sosyal Psikoloji", "Klinik Psikoloji", "Endüstri Psikolojisi", "Gelişim Psikolojisi"], a: 2 },
+        { q: "Doğumdan ölüme kadar insanda meydana gelen fiziksel, zihinsel ve duygusal değişimleri inceleyen alt dal hangisidir?", o: ["Klinik Psikoloji", "Gelişim Psikolojisi", "Sosyal Psikoloji", "Bilişsel Psikoloji", "Sağlık Psikolojisi"], a: 1 },
+        { q: "Bireyin grup içindeki davranışlarını, tutumlarını, önyargılarını ve sosyal etkileşimlerini inceleyen alt dal hangisidir?", o: ["Klinik Psikoloji", "Gelişim Psikolojisi", "Sosyal Psikoloji", "Endüstri Psikolojisi", "Spor Psikolojisi"], a: 2 },
+        { q: "İş yerinde verimliliği artırma, personel seçimi ve çalışan motivasyonu ile ilgilenen alt dal hangisidir?", o: ["Okul Psikolojisi", "Endüstri ve Örgüt Psikolojisi", "Adli Psikoloji", "Trafik Psikolojisi", "Klinik Psikoloji"], a: 1 },
+        { q: "Öğrenme süreçlerini, öğretim tekniklerini ve öğrenci başarısını etkileyen faktörleri inceleyen alt dal hangisidir?", o: ["Eğitim Psikolojisi", "Sağlık Psikolojisi", "Deneysel Psikoloji", "Sosyal Psikoloji", "Klinik Psikoloji"], a: 0 },
+        { q: "Psikolojik testlerin geliştirilmesi, uygulanması ve puanlanması ile ilgilenen, ölçme ve değerlendirme odaklı alt dal hangisidir?", o: ["Psikometri", "Fizyolojik Psikoloji", "Klinik Psikoloji", "Sosyal Psikoloji", "Gelişim Psikolojisi"], a: 0 },
+        { q: "Bilimsel yöntemin ilk adımı genellikle nedir?", o: ["Deney yapmak", "Hipotez kurmak", "Sorun belirleme / Gözlem yapma", "Rapor yazma", "Veri analizi"], a: 2 },
+        { q: "Doğruluğu bir araştırma ile test edilecek olan, değişkenler arasındaki ilişkiye dair geçici tahmine ne denir?", o: ["Teori", "Hipotez (Denence)", "Yasa", "İlke", "Kural"], a: 1 },
+        { q: "Araştırmacının müdahalesi olmadan, davranışların doğal ortamında izlendiği yöntem hangisidir?", o: ["Deneysel Yöntem", "Doğal Gözlem", "Vaka Çalışması", "Anket", "Test"], a: 1 },
+        { q: "Bir bireyin veya küçük bir grubun derinlemesine ve detaylı olarak incelendiği yöntem hangisidir?", o: ["Doğal Gözlem", "Vaka Çalışması (Örnek Olay)", "Korelasyon", "Deney", "Tarama"], a: 1 },
+        { q: "Geniş kitlelerin duygu, düşünce ve tutumlarını ölçmek için soru listeleri kullanılan yöntem hangisidir?", o: ["Gözlem", "Vaka Çalışması", "Anket / Tarama Yöntemi", "Deney", "Biyolojik ölçüm"], a: 2 },
+        { q: "İki değişken arasındaki ilişkinin yönünü ve gücünü gösteren istatistiksel yönteme ne denir?", o: ["Korelasyon (Bağıntı)", "Deney", "Gözlem", "Vaka analizi", "Betimleme"], a: 0 },
+        { q: "Korelasyon katsayısı hangi aralıkta değer alır?", o: ["0 ile 100 arası", "-1 ile +1 arası", "1 ile 10 arası", "Sadece pozitif değerler", "Sadece negatif değerler"], a: 1 },
+        { q: "+1.00 korelasyon neyi ifade eder?", o: ["İlişki yokluğunu", "Mükemmel pozitif ilişkiyi (Biri artarken diğeri de artar)", "Mükemmel negatif ilişkiyi", "Hatalı ilişkiyi", "Zayıf ilişkiyi"], a: 1 },
+        { q: "Neden-sonuç ilişkisini belirlemek için kullanılan en güvenilir araştırma yöntemi hangisidir?", o: ["Korelasyon", "Deneysel Yöntem", "Gözlem", "Anket", "Vaka çalışması"], a: 1 },
+        { q: "Deneysel yöntemde araştırmacının değiştirdiği, manipüle ettiği ve etkisini incelediği değişkene ne denir?", o: ["Bağımlı Değişken", "Bağımsız Değişken (Neden)", "Kontrol Değişkeni", "Karıştırıcı Değişken", "Sabit Değişken"], a: 1 },
+        { q: "Bağımsız değişkenden etkilenmesi beklenen, sonuç durumundaki değişkene ne denir?", o: ["Bağımsız Değişken", "Bağımlı Değişken (Sonuç)", "Dışsal Değişken", "Kontrol Değişkeni", "Manipüle edilen değişken"], a: 1 },
+        { q: "Bir deneyde, bağımsız değişkenin uygulanmadığı, karşılaştırma yapmak için kullanılan gruba ne denir?", o: ["Deney Grubu", "Kontrol Grubu", "Örneklem", "Evren", "Pilot grup"], a: 1 },
+        { q: "İlaç araştırmalarında, içinde etken madde bulunmayan ama ilaç gibi görünen maddeye ne denir?", o: ["Aşı", "Plasebo", "Serum", "Vitamin", "Antibiyotik"], a: 1 },
+        { q: "Katılımcıların hangi grupta (deney veya kontrol) olduklarını bilmemelerine dayalı tekniğe ne denir?", o: ["Tek kör tekniği", "Çift kör tekniği", "Rastgele atama", "Korelasyon", "Gözlem"], a: 0 },
+        { q: "Araştırma sonuçlarının genelleneceği büyük gruba 'Evren', evreni temsil etmesi için seçilen küçük gruba ne denir?", o: ["Denek", "Örneklem", "Grup", "Sınıf", "Topluluk"], a: 1 },
+        { q: "Psikoloji araştırmalarında uyulması gereken ahlaki kurallara ne ad verilir?", o: ["Yasa", "Yönetmelik", "Etik İlkeler", "Prosedür", "Talimat"], a: 2 },
+        { q: "Araştırmaya katılan kişilere araştırmanın amacı ve riskleri hakkında bilgi verip rızalarını almaya ne denir?", o: ["Bilgilendirilmiş Onam", "Gizlilik", "Aldatma", "Gönüllülük", "Zarar vermeme"], a: 0 },
+        { q: "B.F. Skinner hangi psikoloji ekolünün en önemli temsilcilerinden biridir?", o: ["Psikanaliz", "Hümanizm", "Davranışçılık", "Bilişselcilik", "Yapısalcılık"], a: 2 },
+        { q: "'Bana bir düzine sağlıklı bebek verin, onları doktor, avukat hatta hırsız olacak şekilde yetiştirebilirim' sözü kime aittir?", o: ["Freud", "Watson", "James", "Wundt", "Piaget"], a: 1 },
+        { q: "Bilişsel psikolojinin ortaya çıkışında etkili olan ve 'Bilişsel Devrim' olarak adlandırılan gelişme neyle ilişkilidir?", o: ["Bilgisayarların icadı ve bilgi işlem metaforu", "Genetiğin keşfi", "İlaçların gelişimi", "Savaşlar", "Ekonomi"], a: 0 },
+        { q: "Adli süreçlerde, suçlu profillemede ve görgü tanıklığının güvenilirliğinde rol oynayan psikoloji dalı hangisidir?", o: ["Adli Psikoloji", "Sağlık Psikolojisi", "Endüstri Psikolojisi", "Eğitim Psikolojisi", "Spor Psikolojisi"], a: 0 },
+        { q: "Fiziksel hastalıkların psikolojik kökenlerini ve sağlığı koruma yollarını inceleyen dal hangisidir?", o: ["Klinik Psikoloji", "Sağlık Psikolojisi", "Gelişim Psikolojisi", "Sosyal Psikoloji", "Deneysel Psikoloji"], a: 1 },
+        { q: "Psikolojinin 'Tabula Rasa' (Boş Levha) kavramı, insan zihninin doğuştan boş olduğunu ve deneyimle şekillendiğini savunur. Bu görüş kime aittir?", o: ["Platon", "Descartes", "John Locke", "Sokrates", "Kant"], a: 2 },
+        { q: "Modern psikologların çoğu tek bir yaklaşıma bağlı kalmak yerine, duruma göre farklı yaklaşımları bir arada kullanırlar. Buna ne denir?", o: ["Dogmatik yaklaşım", "Eklektik (Bütünleştirici) Yaklaşım", "Tek yönlü yaklaşım", "Tutucu yaklaşım", "Şüpheci yaklaşım"], a: 1 }
+    ];
+
+    let currentQuestion = 0;
+    let userAnswers = new Array(questions.length).fill(null);
+
+    function loadQuestion() {
+        const container = document.getElementById('quiz-container');
+        container.innerHTML = '';
+
+        const q = questions[currentQuestion];
+        
+        let html = `
+            <div class="question-block active">
+                <div class="question-text">${currentQuestion + 1}. ${q.q}</div>
+                <div class="options">
+        `;
+
+        q.o.forEach((opt, index) => {
+            const isSelected = userAnswers[currentQuestion] === index ? 'selected' : '';
+            const isChecked = userAnswers[currentQuestion] === index ? 'checked' : '';
+            html += `
+                <label class="option-label ${isSelected}" id="opt-${index}">
+                    <input type="radio" name="q${currentQuestion}" value="${index}" onclick="selectAnswer(${index})" ${isChecked}>
+                    ${String.fromCharCode(65 + index)}) ${opt}
+                </label>
+            `;
+        });
+
+        html += `</div></div>`;
+        container.innerHTML = html;
+
+        // Progress Bar
+        const progressPercent = ((currentQuestion + 1) / questions.length) * 100;
+        document.getElementById('progress-bar').style.width = progressPercent + '%';
+        document.getElementById('progress-text').innerText = `Soru ${currentQuestion + 1} / ${questions.length}`;
+        
+        // Buton Yönetimi
+        document.getElementById('prevBtn').disabled = currentQuestion === 0;
+        
+        if (currentQuestion === questions.length - 1) {
+            document.getElementById('nextBtn').style.display = 'none';
+            document.getElementById('finishBtn').style.display = 'inline-block';
+        } else {
+            document.getElementById('nextBtn').style.display = 'inline-block';
+            document.getElementById('finishBtn').style.display = 'none';
+        }
+    }
+
+    function selectAnswer(index) {
+        userAnswers[currentQuestion] = index;
+        const labels = document.querySelectorAll('.option-label');
+        labels.forEach(label => label.classList.remove('selected'));
+        document.getElementById(`opt-${index}`).classList.add('selected');
+    }
+
+    function showCurrentAnswer() {
+        const correctIndex = questions[currentQuestion].a;
+        const correctLabel = document.getElementById(`opt-${correctIndex}`);
+        if(correctLabel) correctLabel.classList.add('correct-highlight');
+        
+        if (userAnswers[currentQuestion] !== null && userAnswers[currentQuestion] !== correctIndex) {
+            document.getElementById(`opt-${userAnswers[currentQuestion]}`).classList.add('wrong-highlight');
+        }
+    }
+
+    function nextQuestion() {
+        if (currentQuestion < questions.length - 1) {
+            currentQuestion++;
+            loadQuestion();
+        }
+    }
+
+    function prevQuestion() {
+        if (currentQuestion > 0) {
+            currentQuestion--;
+            loadQuestion();
+        }
+    }
+
+    function finishQuiz() {
+        let correctCount = 0;
+        let wrongCount = 0;
+        let emptyCount = 0;
+        let reviewHtml = '';
+
+        questions.forEach((q, index) => {
+            const userAnswer = userAnswers[index];
+            const isCorrect = userAnswer === q.a;
+            
+            let statusText = '';
+            let statusClass = '';
+
+            if (userAnswer === null) {
+                emptyCount++;
+                statusText = 'Boş';
+                statusClass = 'status-empty';
+            } else if (isCorrect) {
+                correctCount++;
+                statusText = 'Doğru';
+                statusClass = 'status-correct';
+            } else {
+                wrongCount++;
+                statusText = 'Yanlış';
+                statusClass = 'status-wrong';
+            }
+
+            reviewHtml += `
+                <tr>
+                    <td>${index + 1}</td>
+                    <td>${q.q}</td>
+                    <td>${userAnswer !== null ? String.fromCharCode(65 + userAnswer) + ') ' + q.o[userAnswer] : '-'}</td>
+                    <td>${String.fromCharCode(65 + q.a)}) ${q.o[q.a]}</td>
+                    <td class="${statusClass}">${statusText}</td>
+                </tr>
+            `;
+        });
+
+        document.getElementById('quiz-screen').style.display = 'none';
+        document.getElementById('result-screen').style.display = 'block';
+
+        // Puanlama: Her soru 2 puan (100/50)
+        const score = Math.round((correctCount / questions.length) * 100);
+        
+        document.getElementById('score-circle').innerText = score;
+        document.getElementById('score-details').innerHTML = `
+            <strong>Doğru:</strong> ${correctCount} | 
+            <strong>Yanlış:</strong> ${wrongCount} | 
+            <strong>Boş:</strong> ${emptyCount}
+        `;
+        
+        document.getElementById('review-body').innerHTML = reviewHtml;
+    }
+
+    // Uygulamayı başlat
+    loadQuestion();
+</script>
+
+</body>
+</html>
