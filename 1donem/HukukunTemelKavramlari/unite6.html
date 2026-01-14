@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hukuk 6. Ünite: Hakkın Kazanılması, Kullanılması ve Korunması</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #ede7f6; color: #311b92; margin: 0; padding: 20px; }
+        .container { max-width: 900px; margin: 0 auto; background: #fff; padding: 40px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); position: relative; }
+        h1 { text-align: center; color: #4527a0; border-bottom: 2px solid #7e57c2; padding-bottom: 15px; margin-bottom: 30px; font-size: 24px; }
+        
+        /* Home Button */
+        .home-btn {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background-color: #512da8;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 14px;
+            transition: background 0.2s;
+        }
+        .home-btn:hover { background-color: #311b92; }
+
+        /* İlerleme Çubuğu */
+        .progress-container { background-color: #d1c4e9; border-radius: 10px; margin-bottom: 20px; height: 12px; overflow: hidden; }
+        .progress-bar { height: 100%; background-color: #673ab7; width: 0%; transition: width 0.3s; }
+        .progress-text { text-align: right; font-size: 0.9em; color: #4527a0; margin-bottom: 15px; font-weight: bold; }
+
+        /* Soru Alanı */
+        .question-block { display: none; animation: fadeIn 0.4s; }
+        .question-block.active { display: block; }
+        .question-text { font-weight: 700; font-size: 1.2em; margin-bottom: 25px; color: #1a237e; line-height: 1.4; }
+        
+        /* Seçenekler */
+        .options { display: flex; flex-direction: column; gap: 12px; }
+        .option-label { 
+            display: flex; align-items: center; padding: 15px 20px; border: 2px solid #d1c4e9; 
+            border-radius: 8px; cursor: pointer; transition: all 0.2s; background: #fff; font-size: 1em;
+        }
+        .option-label:hover { background-color: #ede7f6; border-color: #9575cd; }
+        .option-label.selected { border-color: #673ab7; background-color: #d1c4e9; }
+        .option-label input { margin-right: 15px; transform: scale(1.2); cursor: pointer; }
+        
+        /* Cevap Göster Stilleri */
+        .option-label.correct-highlight { border-color: #2e7d32; background-color: #c8e6c9; color: #1b5e20; font-weight: bold; }
+        .option-label.wrong-highlight { border-color: #c62828; background-color: #ffcdd2; color: #b71c1c; }
+
+        /* Açıklama Kutusu */
+        .explanation-box {
+            margin-top: 25px;
+            padding: 20px;
+            background-color: #f3e5f5;
+            border-left: 5px solid #673ab7;
+            border-radius: 4px;
+            color: #311b92;
+            display: none;
+            font-size: 0.95em;
+            line-height: 1.6;
+        }
+
+        /* Butonlar */
+        .controls { margin-top: 35px; display: flex; justify-content: space-between; align-items: center; gap: 15px; flex-wrap: wrap; }
+        button { border: none; padding: 12px 28px; border-radius: 6px; cursor: pointer; font-size: 16px; font-weight: 600; transition: transform 0.1s, background 0.2s; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        button:active { transform: translateY(1px); }
+        
+        .nav-btn { background-color: #5e35b1; color: white; }
+        .nav-btn:hover { background-color: #311b92; }
+        .nav-btn:disabled { background-color: #b39ddb; cursor: not-allowed; box-shadow: none; }
+        
+        .show-answer-btn { background-color: #ffb74d; color: #3e2723; }
+        .show-answer-btn:hover { background-color: #ffa726; }
+        
+        .finish-btn { background-color: #2e7d32; color: white; display: none; }
+        .finish-btn:hover { background-color: #1b5e20; }
+
+        /* Sonuç Ekranı */
+        #result-screen { display: none; }
+        .score-card { text-align: center; background: #ede7f6; padding: 30px; border-radius: 12px; margin-bottom: 30px; border: 1px solid #b39ddb; }
+        .score-circle { 
+            width: 140px; height: 140px; border-radius: 50%; background: #673ab7; color: white; 
+            display: flex; align-items: center; justify-content: center; font-size: 2.5em; font-weight: bold; 
+            margin: 0 auto 20px; box-shadow: 0 4px 10px rgba(103, 58, 183, 0.4);
+        }
+        
+        .review-table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 0.9em; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        .review-table th, .review-table td { padding: 15px; border: 1px solid #d1c4e9; text-align: left; }
+        .review-table th { background-color: #4527a0; color: white; font-weight: 600; }
+        .review-table tr:nth-child(even) { background-color: #f3e5f5; }
+        .review-table tr:hover { background-color: #ede7f6; }
+        .status-correct { color: #2e7d32; font-weight: bold; }
+        .status-wrong { color: #c62828; font-weight: bold; }
+        .status-empty { color: #ff9800; font-weight: bold; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        /* Responsive adjustments */
+        @media (max-width: 600px) {
+            .container { padding: 20px; }
+            .option-label { padding: 10px 15px; }
+            .question-text { font-size: 1.1em; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <button class="home-btn" onclick="if(confirm('Testi yeniden başlatmak istediğinize emin misiniz?')) location.reload();">⌂ Testi Yenile</button>
+    
+    <div id="quiz-screen">
+        <h1>6. Ünite: Hakkın Kazanılması, Kullanılması ve Korunması</h1>
+        
+        <div class="progress-text" id="progress-text">Soru 1 / 55</div>
+        <div class="progress-container">
+            <div class="progress-bar" id="progress-bar"></div>
+        </div>
+        
+        <div id="quiz-container">
+            <!-- Sorular buraya JS ile gelecek -->
+        </div>
+
+        <!-- Açıklama Alanı -->
+        <div id="explanation-area" class="explanation-box"></div>
+
+        <div class="controls">
+            <div>
+                <button class="nav-btn" id="prevBtn" onclick="prevQuestion()" disabled>&#8592; Önceki</button>
+            </div>
+            <div>
+                <button class="show-answer-btn" onclick="showCurrentAnswer()">👁️ Cevabı Göster</button>
+            </div>
+            <div>
+                <button class="nav-btn" id="nextBtn" onclick="nextQuestion()">Sonraki &#8594;</button>
+                <button class="finish-btn" id="finishBtn" onclick="finishQuiz()">Testi Bitir &#10004;</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="result-screen">
+        <h1>Değerlendirme Sonucu</h1>
+        <div class="score-card">
+            <div class="score-circle" id="score-circle">0</div>
+            <h3>Başarı Puanı</h3>
+            <p id="score-details" style="font-size: 1.1em; color: #555;"></p>
+        </div>
+        
+        <h3>Detaylı Soru Analizi</h3>
+        <div style="overflow-x: auto;">
+            <table class="review-table">
+                <thead>
+                    <tr>
+                        <th style="width: 5%">No</th>
+                        <th style="width: 45%">Soru</th>
+                        <th style="width: 20%">Senin Cevabın</th>
+                        <th style="width: 20%">Doğru Cevap</th>
+                        <th style="width: 10%">Durum</th>
+                    </tr>
+                </thead>
+                <tbody id="review-body">
+                    <!-- Sonuç satırları buraya gelecek -->
+                </tbody>
+            </table>
+        </div>
+        <div style="text-align: center; margin-top: 30px;">
+            <button class="nav-btn" onclick="location.reload()">Testi Tekrar Çöz</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // 55 Soruluk Hukuk 6. Ünite Testi (Hakkın Kazanılması, Kullanılması ve Korunması)
+    const questions = [
+        // 1. Hakkın Kazanılması - Genel
+        { q: "Bir hakkın kişiye bağlanmasına (kişinin hak sahibi olmasına) ne denir?", o: ["Hakkın Kaybedilmesi", "Hakkın Kazanılması (İktisabı)", "Hakkın Kullanılması", "Hakkın Devri", "Hakkın İhlali"], a: 1, exp: "Hakkın kazanılması, bir hukuki olay veya işlem sonucunda hakkın bir kişide doğmasıdır." },
+        { q: "Hakkın kazanılmasına yol açan olaylar hangisidir?", o: ["Hukuki Olay, Hukuki Fiil, Hukuki İşlem", "Sadece Kanunlar", "Sadece Mahkeme Kararları", "Sadece Sözleşmeler", "Sadece Haksız Fiiller"], a: 0, exp: "Doğum (olay), haksız fiil (fiil) veya sözleşme (işlem) hakkın kazanılmasını sağlayabilir." },
+
+        // 2. Hakkın Aslen Kazanılması
+        { q: "Bir hakkın, daha önce hiç kimseye ait değilken veya önceki sahibinden bağımsız olarak ilk defa kazanılmasına ne denir?", o: ["Devren Kazanma", "Aslen Kazanma", "Tesisen Kazanma", "Mirasla Kazanma", "İradî Kazanma"], a: 1, exp: "Aslen kazanmada hak, devreden birinden gelmez; kişi kendi fiiliyle hakkı yaratır veya ele geçirir." },
+        { q: "Sahipsiz bir taşınır malı (örn: denizden tutulan balık) malik olma iradesiyle ele geçirmeye ne denir?", o: ["İşgal", "İhraz (Sahiplenme)", "Zamanaşımı", "Kamulaştırma", "Müsadere"], a: 1, exp: "İhraz, taşınır mallarda aslen kazanma yoludur." },
+        { q: "Sahipsiz bir taşınmaz malı (arazi) malik olma iradesiyle fiilen hakimiyet altına almaya ne denir?", o: ["İhraz", "İşgal", "Zamanaşımı", "Tapu", "Devir"], a: 1, exp: "İşgal, taşınmaz mallarda aslen kazanma yoludur (Ancak günümüzde sahipsiz taşınmazlar devlete ait sayıldığı için uygulama alanı dardır)." },
+        { q: "Bir kişinin, başkasının malını belirli bir süre davasız ve aralıksız kullanarak mülkiyetini kazanmasına ne denir?", o: ["Kazandırıcı Zamanaşımı", "Düşürücü Zamanaşımı", "Hak Düşürücü Süre", "İhraz", "İşgal"], a: 0, exp: "Zamanaşımı ile kazanma da bir tür aslen kazanmadır." },
+        { q: "Bir yazarın yazdığı kitap üzerindeki telif hakkını kazanması ne tür bir kazanmadır?", o: ["Devren Kazanma", "Aslen Kazanma", "Tesisen Kazanma", "Mirasla Kazanma", "Haksız Kazanma"], a: 1, exp: "Fikir ve sanat eserleri üzerindeki haklar, eser yaratıldığı anda aslen kazanılır." },
+
+        // 3. Hakkın Devren Kazanılması
+        { q: "Bir hakkın, eski sahibinden yeni sahibine (bir hukuki işlemle veya mirasla) geçmesine ne denir?", o: ["Aslen Kazanma", "Devren Kazanma", "İhraz", "İşgal", "Zamanaşımı"], a: 1, exp: "Satış, bağış veya miras yoluyla kazanma devren kazanmadır." },
+        { q: "Taşınır malların mülkiyetinin devren kazanılması ne ile gerçekleşir?", o: ["Tapu Tescili", "Teslim (Zilyetliğin Devri)", "Noter Senedi", "Sözlü Anlaşma", "Mahkeme Kararı"], a: 1, exp: "Taşınır mülkiyeti, malın alıcıya teslimiyle geçer." },
+        { q: "Taşınmaz malların (ev, arsa) mülkiyetinin devren kazanılması ne ile gerçekleşir?", o: ["Anahtar Teslimi", "Tapu Siciline Tescil", "Noter Satışı", "Sözleşme", "Para Ödeme"], a: 1, exp: "Taşınmazlarda mülkiyet, tapu kütüğüne tescil anında geçer." },
+        { q: "Miras yoluyla hakkın kazanılması ne tür bir kazanmadır?", o: ["Aslen Kazanma", "Devren Kazanma", "Tesisen Kazanma", "İhraz", "Haksız Fiil"], a: 1, exp: "Mirasbırakanın hakları külli halefiyet yoluyla mirasçılara devredilir." },
+
+        // 4. Hakkın Tesisen Kazanılması
+        { q: "Mevcut bir hak üzerinden, o haktan doğan bazı yetkilerin başkasına tanınması suretiyle yeni bir hak yaratılmasına ne denir?", o: ["Aslen Kazanma", "Devren Kazanma", "Tesisen Kazanma", "İhraz", "Zamanaşımı"], a: 2, exp: "Örn: Ev sahibinin evini kiraya vermesi (kiracıya hak tanıması) veya rehin hakkı kurması." },
+
+        // 5. Hakların Kazanılmasında İyiniyet (Sübjektif İyiniyet)
+        { q: "Hakların kazanılmasında geçerli olan, kişinin bir hakkı kazanmasına engel olan durumu 'bilmemesi' (dürüstçe bilgisizlik) ilkesine ne denir?", o: ["Objektif İyiniyet", "Sübjektif İyiniyet (İyi Niyet)", "Dürüstlük Kuralı", "Kusursuzluk", "İhmal"], a: 1, exp: "TMK m.3: Kanunun iyiniyete hukuki sonuç bağladığı durumlarda asıl olan iyiniyetin varlığıdır." },
+        { q: "Sübjektif iyiniyet (TMK m.3) hangi alanda rol oynar?", o: ["Hakların Kullanılmasında", "Borçların Ödenmesinde", "Hakların Kazanılmasında", "Suçun Cezalandırılmasında", "Vergi Ödemede"], a: 2, exp: "İyiniyet, hakkın kazanılmasındaki eksikliği (örn: satıcının malik olmaması) telafi edebilir." },
+        { q: "Emin sıfatıyla zilyetten (örn: emanetçi, kiracı) bir malı satın alan kişinin, satıcının malik olmadığını bilmemesi (iyiniyetli olması) durumunda sonuç ne olur?", o: ["Mülkiyeti kazanamaz", "Mülkiyeti kazanır (İyiniyeti korunur)", "Malı iade etmelidir", "Tazminat öder", "Hapse girer"], a: 1, exp: "Hukuk, ticari güveni korumak için iyiniyetli üçüncü kişinin kazanımını korur." },
+        { q: "Çalıntı veya kayıp malı (zilyedin rızası dışında çıkan mal) satın alan iyiniyetli kişinin durumu nedir?", o: ["Mülkiyeti derhal kazanır", "Mülkiyeti 5 yıl süreyle kazanamaz (Taşınır davası açılabilir)", "Malı asla iade etmez", "Satıcıyı dava edemez", "Hemen hapse girer"], a: 1, exp: "Rıza dışı çıkan mallarda iyiniyet tam korunmaz; malik 5 yıl içinde malı geri isteyebilir." },
+        { q: "İyiniyetin varlığı konusunda ispat yükü kime aittir?", o: ["İyiniyetli olduğunu iddia edene", "İyiniyetli olmadığını (kötü niyetli olduğunu) iddia eden karşı tarafa", "Hakime", "Notere", "Polise"], a: 1, exp: "TMK m.3'e göre 'Asıl olan iyiniyettir'. Kimse iyiniyetli olduğunu ispatlamak zorunda değildir; aksini iddia eden ispatlar." },
+        { q: "Kişi, durumun gereklerine göre kendisinden beklenen özeni göstermemişse iyiniyet iddiasında bulunabilir mi?", o: ["Evet, bulunabilir", "Hayır, 'İyiniyet iddiasında bulunamaz'", "Kısmen bulunabilir", "Hakim takdir eder", "Sadece tazminat öder"], a: 1, exp: "Ağır ihmal veya özensizlik durumunda kanun iyiniyeti korumaz." },
+
+        // 6. Hakkın Kaybedilmesi
+        { q: "Bir hakkın sahibinin elinden çıkmasına ne denir?", o: ["Hakkın Kazanılması", "Hakkın Kaybedilmesi", "Hakkın Kullanılması", "Hakkın Korunması", "Hakkın İhlali"], a: 1, exp: "Hakkın kaybedilmesi, hakkın sona ermesi veya başkasına geçmesidir." },
+        { q: "Hakkın, bir olay veya hukuki işlemle (örn: ölüm, istifa, malın yok olması) tamamen ortadan kalkmasına ne denir?", o: ["Nisbi Kayıp", "Mutlak Kayıp", "Devren Kayıp", "Zamanaşımı", "İhraz"], a: 1, exp: "Hakkın konusu (eşya) yok olursa veya süresi dolarsa hak mutlak olarak sona erer." },
+        { q: "Hakkın bir kişiden diğerine geçmesi (örn: satış) durumunda, eski malik için söz konusu olan kayıp türü nedir?", o: ["Mutlak Kayıp", "Nisbi Kayıp", "Hükümsüzlük", "İptal", "Zamanaşımı"], a: 1, exp: "Hak ortadan kalkmaz, sadece sahibi değişir (Başkası kazandığı için diğeri kaybeder)." },
+
+        // 7. Hakkın Kullanılması ve Dürüstlük Kuralı
+        { q: "Hakların kullanılması ve borçların yerine getirilmesinde geçerli olan temel ilke nedir?", o: ["Sübjektif İyiniyet", "Objektif İyiniyet (Dürüstlük Kuralı)", "Kusur İlkesi", "İhmal", "Zorunluluk"], a: 1, exp: "TMK m.2: 'Herkes, haklarını kullanırken ve borçlarını yerine getirirken dürüstlük kurallarına uymak zorundadır.'" },
+        { q: "Dürüstlük kuralı (TMK m.2) neyi ifade eder?", o: ["Bilmemeyi", "Mazur görülebilir bilgisizliği", "Makul, dürüst ve orta zekalı bir insanın davranması gerektiği gibi davranmayı", "Sadece kendi çıkarını düşünmeyi", "Kanuna aykırı davranmayı"], a: 2, exp: "Objektif iyiniyet, davranışın dürüstlüğünü ve güvenilirliğini esas alır." },
+        { q: "Bir hakkın, sırf başkasına zarar vermek amacıyla kullanılmasına ne denir?", o: ["Hakkın Korunması", "Hakkın Kötüye Kullanılması", "Meşru Müdafaa", "Zaruret Hali", "İyiniyet"], a: 1, exp: "Hukuk düzeni, hakkın açıkça kötüye kullanılmasını korumaz (TMK m.2/2)." },
+        { q: "Hakkın kötüye kullanılması yasağına örnek hangisidir?", o: ["Kendi arsasına ev yapmak", "Alacağını vadesinde istemek", "Manzarasını kapatmak için komşunun sınırına yüksek duvar örmek", "Kiracıyı tahliye etmek", "Boşanma davası açmak"], a: 2, exp: "Duvar örmek bir haktır ancak amacı komşuya zarar vermekse kötüye kullanımdır." },
+        { q: "Dürüstlük kuralı hangi işlevi GÖRMEZ?", o: ["Kanun boşluklarını doldurma", "Sözleşmelerin yorumlanması", "Borçların ifa tarzını belirleme", "Hakların kazanılmasında bilgisizliği koruma", "Sözleşmenin değişen şartlara uyarlanması"], a: 3, exp: "Hakların kazanılmasında bilgisizliği koruma işlevi 'Sübjektif İyiniyet'in (TMK m.3) görevidir." },
+
+        // 8. Hakkın Korunması - Devlet Eliyle
+        { q: "Hakların korunmasında asıl olan (kural olan) yöntem hangisidir?", o: ["İhkak-ı Hak", "Devlet Eliyle Koruma (Talep ve Dava Hakkı)", "Kısas", "Düello", "Sessiz kalma"], a: 1, exp: "Modern hukukta kişiler haklarını bizzat değil, devletin yargı organları aracılığıyla ararlar." },
+        { q: "Kişinin, hakkını ihlal eden taraftan ihlalin giderilmesini istemesine ne denir?", o: ["Dava Hakkı", "Talep Hakkı", "Şikayet Hakkı", "İtiraz Hakkı", "Savunma Hakkı"], a: 1, exp: "Talep hakkı, dava açmadan önceki aşamadır (Örn: Borçluya ihtarname çekmek)." },
+        { q: "Talep hakkına rağmen hakkı teslim edilmeyen kişinin mahkemeye başvurmasına ne denir?", o: ["Dava Hakkı", "Savunma Hakkı", "Cebri İcra", "Takip", "İtiraz"], a: 0, exp: "Dava hakkı, Anayasa ile güvence altına alınmış (Hak arama hürriyeti) bir yetkidir." },
+        { q: "Mahkeme kararına rağmen hakkı yerine getirilmeyen kişinin, devletin icra organlarına başvurarak hakkını zorla almasına ne denir?", o: ["Dava", "Cebri İcra", "Hapis", "Tazminat", "Müsadere"], a: 1, exp: "Cebri icra, hakkın devlet zoruyla fiilen elde edilmesidir." },
+
+        // 9. Hakkın Bizzat Sahibi Eliyle Korunması (İhkak-ı Hak İstisnaları)
+        { q: "Kişinin hakkını bizzat güç kullanarak koruması (İhkak-ı Hak) kural olarak nasıldır?", o: ["Serbesttir", "Yasaktır (Suç teşkil eder)", "Teşvik edilir", "Zorunludur", "Hakimin iznine bağlıdır"], a: 1, exp: "İhkak-ı hak, kamu düzenini bozacağı için yasaktır; ancak çok sınırlı istisnaları vardır." },
+        { q: "Bir kimsenin, kendisine veya başkasına yönelen haksız ve devam eden bir saldırıyı defetmek için, saldırgana karşı orantılı güç kullanmasına ne denir?", o: ["Meşru Müdafaa (Nefsi Müdafaa)", "Zaruret Hali", "Kuvvet Kullanma", "Kısas", "Öç Alma"], a: 0, exp: "Meşru müdafaa hukuka uygunluk nedenidir; kişi ceza almaz ve tazminat ödemez." },
+        { q: "Meşru müdafaanın şartlarından biri hangisidir?", o: ["Saldırının bitmiş olması", "Saldırının haksız olması ve devam ediyor olması", "Saldırganın zengin olması", "Polisin olay yerinde olması", "Önceden izin alınması"], a: 1, exp: "Saldırı bitmişse savunma değil intikam olur; savunma o anki saldırıyı durdurmaya yönelik olmalıdır." },
+        { q: "Kendisini veya başkasını ağır ve muhakkak bir tehlikeden korumak için, tehlikeyle ilgisi olmayan üçüncü bir kişinin malına zarar verilmesine ne denir?", o: ["Meşru Müdafaa", "Zaruret Hali (Iztırar Hali)", "Hırsızlık", "Gasp", "Mala Zarar"], a: 1, exp: "Örn: Soğuktan donmamak için başkasının kulübesine girmek. Zaruret halinde ceza verilmez ama tazminat (hakkaniyet gereği) ödenebilir." },
+        { q: "Hakkın kaybolmasını önlemek amacıyla, devlet gücünün zamanında yetişemediği durumlarda, orantılı güç kullanarak hakkı korumaya ne denir?", o: ["Kuvvet Kullanma Yetkisi", "Meşru Müdafaa", "Zaruret Hali", "Cebri İcra", "Zoralım"], a: 0, exp: "Örn: Otelcinin, borcunu ödemeden kaçan müşterinin bavulunu zorla alıkoyması (Hapis hakkı)." },
+
+        // 10. İspat Yükü
+        { q: "Hakkın korunmasında, iddia edilen bir vakıanın varlığını kanıtlama yükümlülüğüne ne denir?", o: ["Dava Yükü", "İspat Yükü", "Karar Yükü", "İnkar Yükü", "Savunma Yükü"], a: 1, exp: "TMK m.6: 'Kanunda aksine bir hüküm bulunmadıkça, taraflardan her biri, hakkını dayandırdığı olguların varlığını ispatla yükümlüdür.'" },
+        { q: "'Müddei iddiasını ispatla mükelleftir' kuralı neyi ifade eder?", o: ["Hakimin ispat etmesi gerektiğini", "Davayı açan veya bir iddiada bulunanın (Müddei), iddiasını kanıtlamak zorunda olduğunu", "Sanığın suçsuzluğunu ispatlamasını", "Tanıkların konuşmasını", "Hiçbir şeyi"], a: 1, exp: "İspat yükü, iddia sahibinin omuzundadır." },
+        { q: "Bilinen bir olgudan bilinmeyen bir olgunun varlığının çıkarılmasına (varsayım) ne denir?", o: ["Delil", "Karine", "İtiraf", "Yemin", "Tanık"], a: 1, exp: "Karineler ispat yükünü yer değiştirir; karineye dayanan kişi ispat yükünden kurtulur, karşı taraf aksini ispatlamalıdır." },
+        { q: "Aksinin ispatlanması mümkün olan karinelere ne denir?", o: ["Kesin Karine", "Adi (Basit) Karine", "Mutlak Karine", "Yasal Karine", "Doğal Karine"], a: 1, exp: "Örn: Babalık karinesi; koca babadır ama DNA testiyle aksi ispatlanabilir." },
+        { q: "Aksinin ispatlanması mümkün olmayan karinelere ne denir?", o: ["Adi Karine", "Kesin Karine", "Yasal Karine", "Fiili Karine", "Basit Karine"], a: 1, exp: "Örn: Tapu sicilindeki kayıtların herkesçe bilindiği varsayımı kesin karinedir, 'bilmiyordum' denilemez." },
+
+        // Karışık / Pekiştirme
+        { q: "Tapu kütüğünde adı malik olarak yazan kişinin malik sayılması ne tür bir karinedir?", o: ["Fiili Karine", "Mülkiyet Karinesi (Yasal Karine)", "Kesin Karine", "Suçluluk Karinesi", "İyiniyet Karinesi"], a: 1, exp: "Bu karine sayesinde tapuda adı yazan kişi mülkiyetini ispatlamak zorunda kalmaz." },
+        { q: "Taşınır mallarda zilyetlik (malı elinde bulundurma) neye karinedir?", o: ["Kiracılığa", "Mülkiyete", "Hırsızlığa", "Borca", "Emanetçiliğe"], a: 1, exp: "Taşınır malı elinde bulunduran kişi, onun maliki sayılır (Mülkiyet Karinesi)." },
+        { q: "İyiniyetin (TMK m.3) varlığı hukukta nasıl kabul edilir?", o: ["İspat edilmelidir", "Karine olarak kabul edilir (Asıl olan iyiniyettir)", "Yok sayılır", "Sözleşmeyle belirlenir", "Hakim takdir eder"], a: 1, exp: "İyiniyet bir karinedir; kötü niyeti iddia eden ispatlamalıdır." },
+        { q: "Meşru müdafaa ile Zaruret hali arasındaki temel fark nedir?", o: ["Fark yoktur", "Meşru müdafaada saldırgana, Zaruret halinde ise tehlikeyle ilgisi olmayan üçüncü kişiye zarar verilir", "Meşru müdafaa suçtur", "Zaruret hali cezalandırılır", "Biri gece biri gündüz olur"], a: 1, exp: "Meşru müdafaada hedef saldırgandır; zaruret halinde ise masum birinin malı feda edilir." },
+        { q: "Zamanaşımı, hakkı doğrudan sona erdirir mi?", o: ["Evet, hak yok olur", "Hayır, hak devam eder ama dava yoluyla talep edilemez hale gelir (Eksik Borç)", "Devlete geçer", "Hapis cezasına dönüşür", "Faiz işler"], a: 1, exp: "Zamanaşımına uğrayan borç ödenirse geçerlidir, geri istenemez; sadece dava edildiğinde 'zamanaşımı def'i' ile ödenmeyebilir." },
+        { q: "Resmi sicillerin (Tapu, Nüfus) içeriğinin doğru olduğu varsayımı neyi sağlar?", o: ["İspat yükünü devlete yükler", "Kayıtlara dayananların ispat yükünden kurtulmasını sağlar (Resmi Senedin İspat Gücü)", "Yalan söylemeyi", "Gizliliği", "Vergi kaçırmayı"], a: 1, exp: "Resmi kayıtlar aksi ispatlanana kadar kesin delil sayılır." },
+        { q: "Alacaklının, borcunu ödemeyen kişinin malına geçici olarak el koyması (Hapis Hakkı) hangi koruma türüne örnektir?", o: ["Devlet eliyle koruma", "Meşru müdafaa", "Kuvvet Kullanma (Özel durum)", "Zaruret hali", "Cebri icra"], a: 2, exp: "Kanunun izin verdiği özel durumlarda (örn: tamirci parası ödenmezse arabayı vermez) kuvvet kullanma meşrudur." },
+        { q: "İspat yükünün yer değiştirmesine ne denir?", o: ["İspatın tersine dönmesi", "Karine etkisi", "Yemin teklifi", "İkrar", "Fesih"], a: 1, exp: "Lehine karine olan taraf ispat yükünden kurtulur, yük karşı tarafa geçer." },
+        { q: "Hukuk davalarında en güçlü delil türü hangisidir?", o: ["Tanık", "Senet (Yazılı Belge / Kesin Delil)", "Bilirkişi", "Keşif", "Duyum"], a: 1, exp: "Belli bir tutarı (sınırı) aşan hukuki işlemlerde senetle ispat zorunludur." },
+        { q: "Hakimin olayları aydınlatmak için re'sen (kendiliğinden) araştırma yaptığı davalar genellikle hangileridir?", o: ["Sadece alacak davaları", "Kamu düzenini ilgilendiren davalar (Örn: Boşanma, Velayet, Ceza)", "Sadece ticari davalar", "Sadece kira davaları", "Hiçbiri"], a: 1, exp: "Kamu düzenini ilgilendiren davalarda 'Re'sen Araştırma İlkesi' geçerlidir; tarafların ispatıyla yetinilmez." },
+        { q: "Mirasın reddi (Reddi Miras) hangi süre içinde yapılmalıdır?", o: ["1 ay", "3 ay", "1 yıl", "5 yıl", "Süre yoktur"], a: 1, exp: "Mirasın reddi, ölümün öğrenilmesinden itibaren 3 ay içinde yapılmalıdır; bu bir hak düşürücü süredir." },
+        { q: "Hak düşürücü süre ile Zamanaşımı arasındaki fark nedir?", o: ["Fark yoktur", "Zamanaşımı hakkı eksik borç haline getirir; Hak düşürücü süre hakkı tamamen sona erdirir ve hakim re'sen dikkate alır", "Zamanaşımı daha kısadır", "Hak düşürücü süre uzatılabilir", "Zamanaşımı kesilemez"], a: 1, exp: "Hak düşürücü sürede hak biter; zamanaşımında ise sadece dava hakkı engellenebilir." }
+    ];
+
+    let currentQuestion = 0;
+    let userAnswers = new Array(questions.length).fill(null);
+
+    function loadQuestion() {
+        const container = document.getElementById('quiz-container');
+        const explanationArea = document.getElementById('explanation-area');
+        
+        container.innerHTML = '';
+        explanationArea.style.display = 'none';
+
+        const q = questions[currentQuestion];
+        
+        let html = `
+            <div class="question-block active">
+                <div class="question-text">${currentQuestion + 1}. ${q.q}</div>
+                <div class="options">
+        `;
+
+        q.o.forEach((opt, index) => {
+            const isSelected = userAnswers[currentQuestion] === index ? 'selected' : '';
+            const isChecked = userAnswers[currentQuestion] === index ? 'checked' : '';
+            html += `
+                <label class="option-label ${isSelected}" id="opt-${index}">
+                    <input type="radio" name="q${currentQuestion}" value="${index}" onclick="selectAnswer(${index})" ${isChecked}>
+                    ${String.fromCharCode(65 + index)}) ${opt}
+                </label>
+            `;
+        });
+
+        html += `</div></div>`;
+        container.innerHTML = html;
+
+        // Progress Bar
+        const progressPercent = ((currentQuestion + 1) / questions.length) * 100;
+        document.getElementById('progress-bar').style.width = progressPercent + '%';
+        document.getElementById('progress-text').innerText = `Soru ${currentQuestion + 1} / ${questions.length}`;
+        
+        // Buton Yönetimi
+        document.getElementById('prevBtn').disabled = currentQuestion === 0;
+        
+        if (currentQuestion === questions.length - 1) {
+            document.getElementById('nextBtn').style.display = 'none';
+            document.getElementById('finishBtn').style.display = 'inline-block';
+        } else {
+            document.getElementById('nextBtn').style.display = 'inline-block';
+            document.getElementById('finishBtn').style.display = 'none';
+        }
+    }
+
+    function selectAnswer(index) {
+        userAnswers[currentQuestion] = index;
+        const labels = document.querySelectorAll('.option-label');
+        labels.forEach(label => label.classList.remove('selected'));
+        document.getElementById(`opt-${index}`).classList.add('selected');
+    }
+
+    function showCurrentAnswer() {
+        const q = questions[currentQuestion];
+        const correctIndex = q.a;
+        const correctLabel = document.getElementById(`opt-${correctIndex}`);
+        const explanationArea = document.getElementById('explanation-area');
+
+        if(correctLabel) correctLabel.classList.add('correct-highlight');
+        
+        if (userAnswers[currentQuestion] !== null && userAnswers[currentQuestion] !== correctIndex) {
+            document.getElementById(`opt-${userAnswers[currentQuestion]}`).classList.add('wrong-highlight');
+        }
+
+        explanationArea.innerHTML = `<strong>Açıklama:</strong> ${q.exp}`;
+        explanationArea.style.display = 'block';
+    }
+
+    function nextQuestion() {
+        if (currentQuestion < questions.length - 1) {
+            currentQuestion++;
+            loadQuestion();
+        }
+    }
+
+    function prevQuestion() {
+        if (currentQuestion > 0) {
+            currentQuestion--;
+            loadQuestion();
+        }
+    }
+
+    function finishQuiz() {
+        let correctCount = 0;
+        let wrongCount = 0;
+        let emptyCount = 0;
+        let reviewHtml = '';
+
+        questions.forEach((q, index) => {
+            const userAnswer = userAnswers[index];
+            const isCorrect = userAnswer === q.a;
+            
+            let statusText = '';
+            let statusClass = '';
+
+            if (userAnswer === null) {
+                emptyCount++;
+                statusText = 'Boş';
+                statusClass = 'status-empty';
+            } else if (isCorrect) {
+                correctCount++;
+                statusText = 'Doğru';
+                statusClass = 'status-correct';
+            } else {
+                wrongCount++;
+                statusText = 'Yanlış';
+                statusClass = 'status-wrong';
+            }
+
+            reviewHtml += `
+                <tr>
+                    <td>${index + 1}</td>
+                    <td>${q.q}</td>
+                    <td>${userAnswer !== null ? String.fromCharCode(65 + userAnswer) + ') ' + q.o[userAnswer] : '-'}</td>
+                    <td>${String.fromCharCode(65 + q.a)}) ${q.o[q.a]}</td>
+                    <td class="${statusClass}">${statusText}</td>
+                </tr>
+            `;
+        });
+
+        document.getElementById('quiz-screen').style.display = 'none';
+        document.getElementById('result-screen').style.display = 'block';
+
+        const score = Math.round((correctCount / questions.length) * 100);
+        
+        document.getElementById('score-circle').innerText = score;
+        document.getElementById('score-details').innerHTML = `
+            <strong>Doğru:</strong> ${correctCount} &nbsp;|&nbsp; 
+            <strong>Yanlış:</strong> ${wrongCount} &nbsp;|&nbsp; 
+            <strong>Boş:</strong> ${emptyCount}
+        `;
+        
+        document.getElementById('review-body').innerHTML = reviewHtml;
+    }
+
+    // Uygulamayı başlat
+    loadQuestion();
+</script>
+
+</body>
+</html>
