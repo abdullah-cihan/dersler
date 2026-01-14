@@ -3,18 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sosyal Bilimlerde Temel Kavramlar - 4. Ünite</title>
+    <title>Sosyal Bilimlerde Temel Kavramlar - 4. Ünite: Aile ve Toplumsal Cinsiyet</title>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #fbe9e7; color: #333; margin: 0; padding: 20px; }
-        .container { max-width: 900px; margin: 0 auto; background: #fff; padding: 40px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); position: relative; }
-        h1 { text-align: center; color: #d84315; border-bottom: 2px solid #ff5722; padding-bottom: 10px; margin-bottom: 30px; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f3e5f5; color: #4a148c; margin: 0; padding: 20px; }
+        .container { max-width: 900px; margin: 0 auto; background: #fff; padding: 40px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); position: relative; }
+        h1 { text-align: center; color: #6a1b9a; border-bottom: 2px solid #ab47bc; padding-bottom: 15px; margin-bottom: 30px; font-size: 24px; }
         
         /* Home Button */
         .home-btn {
             position: absolute;
             top: 20px;
             left: 20px;
-            background-color: #ff7043;
+            background-color: #7b1fa2;
             color: white;
             border: none;
             padding: 8px 15px;
@@ -24,85 +24,95 @@
             font-size: 14px;
             transition: background 0.2s;
         }
-        .home-btn:hover { background-color: #d84315; }
+        .home-btn:hover { background-color: #4a148c; }
 
         /* İlerleme Çubuğu */
-        .progress-container { background-color: #ffccbc; border-radius: 10px; margin-bottom: 20px; height: 10px; overflow: hidden; }
-        .progress-bar { height: 100%; background-color: #d84315; width: 0%; transition: width 0.3s; }
-        .progress-text { text-align: right; font-size: 0.9em; color: #bf360c; margin-bottom: 15px; }
+        .progress-container { background-color: #e1bee7; border-radius: 10px; margin-bottom: 20px; height: 12px; overflow: hidden; }
+        .progress-bar { height: 100%; background-color: #8e24aa; width: 0%; transition: width 0.3s; }
+        .progress-text { text-align: right; font-size: 0.9em; color: #6a1b9a; margin-bottom: 15px; font-weight: bold; }
 
         /* Soru Alanı */
-        .question-block { display: none; animation: fadeIn 0.5s; }
+        .question-block { display: none; animation: fadeIn 0.4s; }
         .question-block.active { display: block; }
-        .question-text { font-weight: 600; font-size: 1.25em; margin-bottom: 20px; color: #bf360c; }
+        .question-text { font-weight: 700; font-size: 1.2em; margin-bottom: 25px; color: #38006b; line-height: 1.4; }
         
         /* Seçenekler */
-        .options { display: flex; flex-direction: column; gap: 10px; }
+        .options { display: flex; flex-direction: column; gap: 12px; }
         .option-label { 
-            display: flex; align-items: center; padding: 12px 15px; border: 2px solid #e0e0e0; 
-            border-radius: 8px; cursor: pointer; transition: all 0.2s; background: #fff;
+            display: flex; align-items: center; padding: 15px 20px; border: 2px solid #e1bee7; 
+            border-radius: 8px; cursor: pointer; transition: all 0.2s; background: #fff; font-size: 1em;
         }
-        .option-label:hover { background-color: #fbe9e7; border-color: #ffab91; }
-        .option-label.selected { border-color: #d84315; background-color: #ffccbc; }
-        .option-label input { margin-right: 15px; transform: scale(1.2); }
+        .option-label:hover { background-color: #f3e5f5; border-color: #ba68c8; }
+        .option-label.selected { border-color: #8e24aa; background-color: #f3e5f5; }
+        .option-label input { margin-right: 15px; transform: scale(1.2); cursor: pointer; }
         
         /* Cevap Göster Stilleri */
-        .option-label.correct-highlight { border-color: #27ae60; background-color: #d5f5e3; color: #1e8449; font-weight: bold; }
-        .option-label.wrong-highlight { border-color: #e74c3c; background-color: #fadbd8; }
+        .option-label.correct-highlight { border-color: #2e7d32; background-color: #c8e6c9; color: #1b5e20; font-weight: bold; }
+        .option-label.wrong-highlight { border-color: #c62828; background-color: #ffcdd2; color: #b71c1c; }
 
         /* Açıklama Kutusu */
         .explanation-box {
-            margin-top: 20px;
-            padding: 15px;
-            background-color: #fbe9e7;
-            border-left: 5px solid #ff5722;
+            margin-top: 25px;
+            padding: 20px;
+            background-color: #f3e5f5;
+            border-left: 5px solid #8e24aa;
             border-radius: 4px;
-            color: #d84315;
+            color: #4a148c;
             display: none;
             font-size: 0.95em;
-            line-height: 1.5;
+            line-height: 1.6;
         }
 
         /* Butonlar */
-        .controls { margin-top: 30px; display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
-        button { border: none; padding: 12px 24px; border-radius: 6px; cursor: pointer; font-size: 16px; font-weight: 600; transition: background 0.2s; }
-        .nav-btn { background-color: #d84315; color: white; }
-        .nav-btn:hover { background-color: #bf360c; }
-        .nav-btn:disabled { background-color: #bdc3c7; cursor: not-allowed; }
+        .controls { margin-top: 35px; display: flex; justify-content: space-between; align-items: center; gap: 15px; flex-wrap: wrap; }
+        button { border: none; padding: 12px 28px; border-radius: 6px; cursor: pointer; font-size: 16px; font-weight: 600; transition: transform 0.1s, background 0.2s; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        button:active { transform: translateY(1px); }
         
-        .show-answer-btn { background-color: #ff5722; color: white; }
-        .show-answer-btn:hover { background-color: #e64a19; }
+        .nav-btn { background-color: #7b1fa2; color: white; }
+        .nav-btn:hover { background-color: #4a148c; }
+        .nav-btn:disabled { background-color: #e1bee7; cursor: not-allowed; box-shadow: none; }
         
-        .finish-btn { background-color: #27ae60; color: white; display: none; }
-        .finish-btn:hover { background-color: #219150; }
+        .show-answer-btn { background-color: #e65100; color: white; }
+        .show-answer-btn:hover { background-color: #bf360c; }
+        
+        .finish-btn { background-color: #2e7d32; color: white; display: none; }
+        .finish-btn:hover { background-color: #1b5e20; }
 
         /* Sonuç Ekranı */
         #result-screen { display: none; }
-        .score-card { text-align: center; background: #f8f9fa; padding: 20px; border-radius: 10px; margin-bottom: 30px; }
+        .score-card { text-align: center; background: #f3e5f5; padding: 30px; border-radius: 12px; margin-bottom: 30px; border: 1px solid #ce93d8; }
         .score-circle { 
-            width: 120px; height: 120px; border-radius: 50%; background: #d84315; color: white; 
-            display: flex; align-items: center; justify-content: center; font-size: 2em; font-weight: bold; 
-            margin: 0 auto 15px; 
+            width: 140px; height: 140px; border-radius: 50%; background: #8e24aa; color: white; 
+            display: flex; align-items: center; justify-content: center; font-size: 2.5em; font-weight: bold; 
+            margin: 0 auto 20px; box-shadow: 0 4px 10px rgba(142, 36, 170, 0.4);
         }
         
-        .review-table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 0.95em; }
-        .review-table th, .review-table td { padding: 12px; border: 1px solid #ddd; text-align: left; }
-        .review-table th { background-color: #bf360c; color: white; }
-        .review-table tr:nth-child(even) { background-color: #f2f2f2; }
-        .status-correct { color: #27ae60; font-weight: bold; }
-        .status-wrong { color: #c0392b; font-weight: bold; }
-        .status-empty { color: #f39c12; font-weight: bold; }
+        .review-table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 0.9em; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        .review-table th, .review-table td { padding: 15px; border: 1px solid #e1bee7; text-align: left; }
+        .review-table th { background-color: #6a1b9a; color: white; font-weight: 600; }
+        .review-table tr:nth-child(even) { background-color: #f3e5f5; }
+        .review-table tr:hover { background-color: #e1bee7; }
+        .status-correct { color: #2e7d32; font-weight: bold; }
+        .status-wrong { color: #c62828; font-weight: bold; }
+        .status-empty { color: #f57f17; font-weight: bold; }
 
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        /* Responsive adjustments */
+        @media (max-width: 600px) {
+            .container { padding: 20px; }
+            .option-label { padding: 10px 15px; }
+            .question-text { font-size: 1.1em; }
+        }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <a href="#" class="home-btn" onclick="alert('Anasayfaya yönlendiriliyorsunuz...'); location.reload();">⌂ Anasayfa</a>
+    <button class="home-btn" onclick="if(confirm('Testi yeniden başlatmak istediğinize emin misiniz?')) location.reload();">⌂ Testi Yenile</button>
     
     <div id="quiz-screen">
-        <h1>4. Ünite: Siyaset</h1>
+        <h1>4. Ünite: Aile, Ataerkillik ve Toplumsal Cinsiyet</h1>
         
         <div class="progress-text" id="progress-text">Soru 1 / 50</div>
         <div class="progress-container">
@@ -134,85 +144,105 @@
         <h1>Değerlendirme Sonucu</h1>
         <div class="score-card">
             <div class="score-circle" id="score-circle">0</div>
-            <h3>Toplam Puan</h3>
-            <p id="score-details"></p>
+            <h3>Başarı Puanı</h3>
+            <p id="score-details" style="font-size: 1.1em; color: #555;"></p>
         </div>
         
         <h3>Detaylı Soru Analizi</h3>
-        <table class="review-table">
-            <thead>
-                <tr>
-                    <th style="width: 5%">No</th>
-                    <th style="width: 45%">Soru</th>
-                    <th style="width: 20%">Senin Cevabın</th>
-                    <th style="width: 20%">Doğru Cevap</th>
-                    <th style="width: 10%">Durum</th>
-                </tr>
-            </thead>
-            <tbody id="review-body">
-                <!-- Sonuç satırları buraya gelecek -->
-            </tbody>
-        </table>
+        <div style="overflow-x: auto;">
+            <table class="review-table">
+                <thead>
+                    <tr>
+                        <th style="width: 5%">No</th>
+                        <th style="width: 45%">Soru</th>
+                        <th style="width: 20%">Senin Cevabın</th>
+                        <th style="width: 20%">Doğru Cevap</th>
+                        <th style="width: 10%">Durum</th>
+                    </tr>
+                </thead>
+                <tbody id="review-body">
+                    <!-- Sonuç satırları buraya gelecek -->
+                </tbody>
+            </table>
+        </div>
         <div style="text-align: center; margin-top: 30px;">
             <button class="nav-btn" onclick="location.reload()">Testi Tekrar Çöz</button>
-            <button class="home-btn" style="position: static; display: inline-block; margin-left: 10px;" onclick="location.reload()">Anasayfaya Dön</button>
         </div>
     </div>
 </div>
 
 <script>
-    // 4. Ünite Konuları: Siyasetin Tanımı, İktidar, Otorite, Meşruiyet, Devlet, Siyasi Partiler, Baskı Grupları, Demokrasi
+    // 50 Soruluk AÖF Tarzı Soru Havuzu - 4. Ünite: Aile, Ataerkillik ve Toplumsal Cinsiyet
     const questions = [
-        { q: "Siyaset biliminin temel inceleme konusu nedir?", o: ["Ekonomik krizler", "İktidar, güç ve devlet yönetimi", "Psikolojik sorunlar", "Aile içi ilişkiler", "Eğitim sistemi"], a: 1, exp: "Siyaset (politika), toplumda kimin neyi, ne zaman ve nasıl elde edeceğini belirleyen iktidar ve yönetim süreçlerini inceler." },
-        { q: "Max Weber'e göre, bir kişinin veya grubun başkalarının direnişine rağmen kendi iradesini kabul ettirebilme yeteneğine ne denir?", o: ["Otorite", "İktidar (Güç)", "Meşruiyet", "Liderlik", "Egemenlik"], a: 1, exp: "İktidar (Power), bir iradenin başkalarına zorla veya rızayla kabul ettirilmesi kapasitesidir." },
-        { q: "Gücün (iktidarın) toplum tarafından haklı, doğru ve kabul edilebilir (meşru) görülmesi durumuna ne denir?", o: ["Otorite", "Zorbalık", "Baskı", "Şiddet", "Manipülasyon"], a: 0, exp: "Otorite, meşrulaştırılmış güçtür; insanlar bu güce itaat etmeyi bir görev veya doğru bir davranış olarak görürler." },
-        { q: "Weber'in sınıflandırmasına göre, kaynağını geçmişten gelen adetlerden, inançlardan ve kutsallıktan alan otorite türü hangisidir?", o: ["Yasal-Ussal Otorite", "Geleneksel Otorite", "Karizmatik Otorite", "Demokratik Otorite", "Bürokratik Otorite"], a: 1, exp: "Geleneksel otorite (örn: padişahlık, kabile reisliği), 'eskiden beri böyle olduğu için' itaat edilen otoritedir." },
-        { q: "Kaynağını liderin olağanüstü kişisel özelliklerinden, kahramanlığından veya büyüleyiciliğinden alan otorite türü hangisidir?", o: ["Geleneksel Otorite", "Karizmatik Otorite", "Yasal Otorite", "Ussal Otorite", "Monarşik Otorite"], a: 1, exp: "Karizmatik otorite (örn: Atatürk, Gandhi), liderin kişisel çekimine ve yeteneklerine duyulan inanca dayanır." },
-        { q: "Modern toplumlarda yaygın olan, kaynağını yazılı yasalardan, anayasadan ve kurallardan alan otorite türü hangisidir?", o: ["Karizmatik Otorite", "Yasal-Ussal (Rasyonel) Otorite", "Geleneksel Otorite", "Teokratik Otorite", "Mutlak Otorite"], a: 1, exp: "Yasal-ussal otorite, kişilere değil, kurallara ve yasalara itaati esas alır (örn: seçimle gelen başbakan)." },
-        { q: "Belirli bir toprak parçası üzerinde, meşru fiziksel şiddet kullanma tekelini elinde bulunduran en üst siyasi örgütlenmeye ne denir?", o: ["Hükümet", "Devlet", "Millet", "Parti", "Sivil Toplum"], a: 1, exp: "Devlet, sınırları belli bir alanda egemen olan ve şiddet kullanma hakkını tekelinde tutan kurumdur." },
-        { q: "Siyasal iktidarın tek bir kişinin elinde toplandığı ve genellikle miras yoluyla geçtiği yönetim biçimi hangisidir?", o: ["Demokrasi", "Monarşi", "Oligarşi", "Teokrasi", "Cumhuriyet"], a: 1, exp: "Monarşi (krallık, padişahlık), egemenliğin tek bir hükümdara ait olduğu rejimdir." },
-        { q: "İktidarın küçük bir azınlık grubun (zenginler, askerler veya soylular) elinde olduğu yönetim biçimine ne denir?", o: ["Monarşi", "Oligarşi", "Demokrasi", "Totalitarizm", "Anarşi"], a: 1, exp: "Oligarşi, 'azınlığın yönetimi' demektir." },
-        { q: "Halkın kendi kendini yönetmesi ilkesine dayanan, seçme ve seçilme hakkının, temel hak ve özgürlüklerin bulunduğu rejim hangisidir?", o: ["Otokrasi", "Demokrasi", "Teokrasi", "Plütokrasi", "Aristokrasi"], a: 1, exp: "Demokrasi, halkın egemenliğine, eşitliğe ve özgürlüğe dayalı yönetim biçimidir." },
-        { q: "Dini kuralların ve din adamlarının yönetimde etkili olduğu rejim türü hangisidir?", o: ["Teokrasi", "Demokrasi", "Oligarşi", "Monarşi", "Cumhuriyet"], a: 0, exp: "Teokrasi, 'Tanrı yönetimi' anlamına gelir ve dini otoritenin siyasi iktidarı elinde tuttuğu sistemdir." },
-        { q: "Devletin toplumun tüm alanlarını (özel hayat, ekonomi, sanat vb.) tam bir denetim altına aldığı ve muhalefete izin vermediği baskıcı rejim türü hangisidir?", o: ["Otoritarizm", "Totalitarizm", "Liberalizm", "Sosyalizm", "Federalizm"], a: 1, exp: "Totalitarizm (örn: Nazi Almanyası), devletin birey üzerindeki kontrolünün mutlak olduğu rejimdir." },
-        { q: "Seçimlere katılarak siyasal iktidarı ele geçirmeyi veya paylaşmayı amaçlayan örgütlenmelere ne denir?", o: ["Baskı Grupları", "Siyasi Partiler", "Sivil Toplum Kuruluşları", "Sendikalar", "Lobiler"], a: 1, exp: "Siyasi partiler, iktidara gelmek için halktan oy isteyen ve programları olan örgütlerdir." },
-        { q: "İktidarı ele geçirmekten çok, kendi çıkarları doğrultusunda iktidarı etkilemeye çalışan (lobi yapan) gruplara ne denir?", o: ["Siyasi Partiler", "Baskı (Çıkar) Grupları", "Hükümet", "Bürokrasi", "Meclis"], a: 1, exp: "Baskı grupları (sendikalar, meslek odaları), üyelerinin menfaatlerini korumak için hükümet kararlarını etkilemeye çalışır." },
-        { q: "Devletin dışında kalan, gönüllü örgütlenmeler, dernekler ve vakıflar alanına ne ad verilir?", o: ["Özel Sektör", "Sivil Toplum", "Kamu Sektörü", "Siyasi Parti", "Bürokrasi"], a: 1, exp: "Sivil toplum, devletten bağımsız olarak vatandaşların kendi inisiyatifleriyle oluşturdukları kamusal alandır." },
-        { q: "Demokrasilerde yasama, yürütme ve yargı güçlerinin birbirinden ayrılmasına ne denir?", o: ["Güçler Birliği", "Güçler Ayrılığı (Kuvvetler Ayrılığı)", "Merkeziyetçilik", "Federalizm", "Otoriterizm"], a: 1, exp: "Güçler ayrılığı, iktidarın tek elde toplanmasını önleyerek denge ve denetleme mekanizmasını sağlar." },
-        { q: "Bir devletin kendi sınırları içinde yaşayan vatandaşları üzerinde mutlak ve sınırsız yetkiye sahip olmasına ne denir?", o: ["Meşruiyet", "Egemenlik", "Otorite", "Bürokrasi", "Liderlik"], a: 1, exp: "Egemenlik, devletin iç ve dış işlerinde bağımsız karar alma ve uygulama yetkisidir." },
-        { q: "Plüralist (Çoğulcu) demokrasi anlayışına göre iktidar nasıldır?", o: ["Tek bir elde toplanmıştır", "Farklı çıkar grupları arasında dağılmıştır ve müzakere ile kullanılır", "Sadece askerlerdedir", "Sadece zenginlerdedir", "Halkın tamamındadır"], a: 1, exp: "Plüralizm, toplumda farklı görüşlerin ve grupların rekabet ederek iktidarı paylaştığını savunur." },
-        { q: "Elitist (Seçkinci) demokrasi teorisine göre toplumda asıl gücü kimler elinde tutar?", o: ["Halkın tamamı", "Küçük, örgütlü ve ayrıcalıklı bir azınlık (Elitler)", "Sivil toplum kuruluşları", "Sadece aydınlar", "Hiç kimse"], a: 1, exp: "Elit teorisi (Mosca, Pareto, Michels), her toplumda yöneten bir azınlık ve yönetilen bir çoğunluk olduğunu savunur." },
-        { q: "C. Wright Mills'in 'İktidar Seçkinleri' (Power Elite) teorisine göre ABD'de gücü elinde tutan üçlü yapı hangisidir?", o: ["Kilise, Üniversite, Medya", "Siyaset, Ordu ve Büyük Şirketlerin yöneticileri", "Halk, Sendikalar, Dernekler", "Yargı, Yasama, Yürütme", "Aile, Okul, Cami"], a: 1, exp: "Mills, bu üç kurumun tepesindeki kişilerin birbirleriyle bağlantılı olduğunu ve kararları belirlediğini savunur." },
-        { q: "Siyasal sosyalleşme nedir?", o: ["Parti kurmak", "Bireyin siyasal değerleri, tutumları ve davranış kalıplarını öğrenme süreci", "Seçim yapmak", "Devlet yönetmek", "Yasa çıkarmak"], a: 1, exp: "Siyasal sosyalleşme, bireyin çocukluktan itibaren ailesinden, okulundan ve medyanın etkisiyle siyasi görüşlerini oluşturmasıdır." },
-        { q: "Aşağıdakilerden hangisi siyasal katılımın en temel ve yaygın biçimidir?", o: ["Protesto etmek", "Oy kullanmak", "Parti üyesi olmak", "Siyasetçi olmak", "Kampanya yürütmek"], a: 1, exp: "Oy kullanmak, demokratik sistemlerde vatandaşların en kolay ve en sık başvurduğu katılım aracıdır." },
-        { q: "Michels'in 'Oligarşinin Tunç Kanunu' neyi ifade eder?", o: ["Her örgütün zamanla kaçınılmaz olarak küçük bir grubun (oligarşinin) yönetimine gireceğini", "Demokrasinin en iyi rejim olduğunu", "Oligarşinin yıkılacağını", "Halkın her zaman haklı olduğunu", "Liderlerin önemsiz olduğunu"], a: 0, exp: "Michels, en demokratik örgütlerde bile zamanla bürokrasinin ve uzmanlaşmanın gücü küçük bir elitin eline verdiğini savunur." },
-        { q: "Yönetilenlerin, yönetenlerin yönetme hakkına (otoritesine) olan inancını kaybetmesi durumuna ne denir?", o: ["Ekonomik kriz", "Meşruiyet Krizi", "Seçim", "Demokrasi", "Bürokrasi"], a: 1, exp: "Meşruiyet krizi, halkın sisteme ve liderlere olan güveninin ve rızasının çökmesi durumudur." },
-        { q: "Ulus-Devlet kavramı neyi ifade eder?", o: ["Bir imparatorluğu", "Sınırları belli bir toprak parçasında, ortak bir kültür/tarih bilincine (ulus) dayalı egemen devleti", "Şehir devletlerini", "Dini devleti", "Kabile devletini"], a: 1, exp: "Ulus-devlet, modern çağın siyasi birimidir; milliyetçilik ilkesine ve merkezi yönetime dayanır." },
-        { q: "Sivil İtaatsizlik nedir?", o: ["Devleti yıkmak için şiddet kullanmak", "Haksız olduğu düşünülen yasalara karşı, şiddet içermeyen, kamuya açık ve vicdani bir reddediş eylemi", "Vergi kaçırmak", "Oy kullanmamak", "Suç işlemek"], a: 1, exp: "Sivil itaatsizlik (örn: Gandhi), yasal ama adaletsiz olduğuna inanılan durumlara karşı pasif direniştir." },
-        { q: "İdeoloji kavramı neyi ifade eder?", o: ["Sadece dini inançları", "Bir toplumsal grubun veya sınıfın dünyayı anlamlandırma biçimi, inanç ve değerler sistemi", "Bilimsel gerçekleri", "Kişisel fikirleri", "Sanatsal görüşleri"], a: 1, exp: "İdeoloji (Liberalizm, Sosyalizm vb.), siyasi ve toplumsal düzenin nasıl olması gerektiğine dair bütünlüklü fikirler sistemidir." },
-        { q: "Aristoteles'e göre 'Politeia' (Cumhuriyet) hangi yönetim biçiminin bozulmamış halidir?", o: ["Demokrasi", "Oligarşi", "Tiranlık", "Monarşi", "Aristokrasi"], a: 0, exp: "Aristoteles, demokrasiyi 'fakirlerin çoğunluk diktatörlüğü' olarak görürken, Politeia'yı orta sınıfın yönetimi ve ideal form olarak görmüştür." },
-        { q: "Weber'e göre modern devletin en belirgin özelliği olan ve işlerin rasyonel kurallara göre yürütüldüğü örgütlenme biçimi nedir?", o: ["Ordu", "Bürokrasi", "Meclis", "Parti", "Şirket"], a: 1, exp: "Bürokrasi; hiyerarşi, uzmanlaşma, yazılı kurallar ve gayrişahsilik ilkelerine dayanan yönetim aygıtıdır." },
-        { q: "Aşağıdakilerden hangisi bir 'Baskı Grubu' örneğidir?", o: ["Adalet ve Kalkınma Partisi", "TÜSİAD (Türk Sanayicileri ve İş İnsanları Derneği)", "İçişleri Bakanlığı", "Anayasa Mahkemesi", "Birleşmiş Milletler"], a: 1, exp: "TÜSİAD, iktidarı ele geçirmeyi değil, iş dünyasının çıkarları doğrultusunda ekonomik politikaları etkilemeyi amaçlayan bir baskı grubudur." },
-        { q: "Demokrasilerde medyanın 'Dördüncü Güç' olarak adlandırılmasının nedeni nedir?", o: ["Hükümeti devirebildiği için", "Kamuoyu oluşturma ve iktidarı denetleme işlevi gördüğü için", "Çok para kazandığı için", "Eğlendirdiği için", "Yalan söyleyebildiği için"], a: 1, exp: "Medya; yasama, yürütme ve yargıdan sonra halk adına iktidarı denetleyen ve bilgilendiren güç olarak görülür." },
-        { q: "Bir ülkede birden fazla siyasi partinin serbestçe örgütlenip seçimlere katılabildiği sisteme ne denir?", o: ["Tek Parti Sistemi", "Çok Partili Sistem (Plüralizm)", "Otoriter Sistem", "Totaliter Sistem", "Teokratik Sistem"], a: 1, exp: "Çok partili sistem, demokrasinin temel göstergelerinden biridir ve farklı görüşlerin temsiline olanak tanır." },
-        { q: "Siyasetin sadece devlet yönetimiyle sınırlı olmayıp, güç ilişkilerinin olduğu her yerde (aile, işyeri vb.) var olduğunu savunan görüşe ne denir?", o: ["Mikro Siyaset", "Makro Siyaset", "Uluslararası İlişkiler", "Jeopolitik", "Bürokrasi"], a: 0, exp: "Mikro siyaset, gündelik yaşamdaki iktidar mücadelelerini ve güç dengelerini inceler." },
-        { q: "Hukuk devleti ilkesi neyi ifade eder?", o: ["Devletin her istediğini yapabilmesini", "Yöneticilerin ve devletin de yasalarla bağlı olmasını ve keyfi davranamamasını", "Sadece halkın yasalara uymasını", "Kanunların sert olmasını", "Avukatların yönetmesini"], a: 1, exp: "Hukuk devleti, iktidarın keyfiliğini sınırlayan ve vatandaşların haklarını güvence altına alan temel ilkedir." },
-        { q: "Refah Devleti (Sosyal Devlet) anlayışı neyi hedefler?", o: ["Sadece güvenliği sağlamayı", "Vatandaşlarına asgari bir yaşam standardı, sağlık, eğitim ve sosyal güvenlik hizmeti sunmayı", "Piyasayı tamamen serbest bırakmayı", "Vergi almamayı", "Savaş yapmayı"], a: 1, exp: "Refah devleti, sosyal adaleti sağlamak ve eşitsizlikleri azaltmak için piyasaya müdahale eden devlet modelidir." },
-        { q: "Machiavelli'nin 'Prens' adlı eserinde savunduğu temel siyaset anlayışı nedir?", o: ["Ahlakın siyasetten üstün olduğu", "Amaca giden her yolun mübah olduğu (Realpolitik)", "Demokrasinin en iyi rejim olduğu", "Dinin devleti yönetmesi gerektiği", "Barışın her şeyden önemli olduğu"], a: 1, exp: "Machiavelli, liderin iktidarını korumak için gerekirse ahlak dışı yöntemlere başvurabileceğini savunmuştur." },
-        { q: "Küreselleşme sürecinde ulus-devletlerin egemenliği nasıl etkilenmiştir?", o: ["Artmıştır", "Değişmemiştir", "Uluslararası örgütler ve küresel sermaye karşısında sınırları aşınmış ve yetkileri kısmen zayıflamıştır", "Tamamen yok olmuştur", "Sadece güçlenmiştir"], a: 2, exp: "Küreselleşme, devletlerin tek başına karar alma gücünü sınırlamış, uluslarüstü kurumların (AB, BM, IMF) etkisini artırmıştır." },
-        { q: "Otoriter rejimlerde sivil toplumun durumu nasıldır?", o: ["Çok güçlüdür", "Devletten bağımsızdır", "Zayıftır, baskı altındadır veya devletin kontrolündedir", "Devleti yönetir", "Özgürdür"], a: 2, exp: "Otoriter rejimler, alternatif güç odakları oluşmasını engellemek için sivil toplumu bastırır." },
-        { q: "Lobicilik faaliyeti nedir?", o: ["Otelde çalışmak", "Baskı gruplarının, karar vericileri (milletvekillerini vb.) kendi lehlerine karar almaya ikna etme çabası", "Seçimlerde oy kullanmak", "Parti kurmak", "Protesto yapmak"], a: 1, exp: "Lobicilik, özel çıkarların yasal yollarla siyasi kararları etkileme girişimidir." },
-        { q: "Doğrudan Demokrasi nedir?", o: ["Halkın temsilciler seçmesi", "Halkın kararları doğrudan kendisinin alması (Örn: Referandum, Antik Yunan meclisleri)", "Kralın yönetmesi", "Askerin yönetmesi", "Zenginlerin yönetmesi"], a: 1, exp: "Doğrudan demokrasi, aracı (vekil) olmadan vatandaşların bizzat katılımıyla gerçekleşen yönetimdir." },
-        { q: "Temsili Demokrasi nedir?", o: ["Halkın kararları doğrudan alması", "Halkın egemenliğini seçtiği temsilciler (milletvekilleri) aracılığıyla kullanması", "Kralın temsil edilmesi", "Otoriter yönetim", "Sadece zenginlerin seçilmesi"], a: 1, exp: "Günümüzdeki modern demokrasilerin çoğu, nüfus kalabalığı nedeniyle temsili demokrasidir." },
-        { q: "Siyasetin 'uzlaşma sanatı' olduğunu savunan görüşe göre siyasetin amacı nedir?", o: ["Düşmanı yok etmek", "Farklı çıkarlar arasında denge kurarak toplumsal barışı sağlamak", "Sadece kendi fikrini kabul ettirmek", "Savaş çıkarmak", "Hiçbir şey yapmamak"], a: 1, exp: "Bu görüşe göre siyaset, çatışan çıkarların şiddet kullanılmadan çözüme kavuşturulduğu bir süreçtir." },
-        { q: "Hegemonya kavramı (Gramsci'ye göre) neyi ifade eder?", o: ["Sadece askeri gücü", "Egemen sınıfın kendi değer ve inançlarını 'doğal' ve 'sağduyu' gibi göstererek toplumun rızasını alması", "Zorbalığı", "Ekonomik krizi", "Seçimleri"], a: 1, exp: "Hegemonya, iktidarın sadece zorla değil, kültürel ve ideolojik araçlarla (okul, medya) zihinleri yöneterek sürdürülmesidir." },
-        { q: "Bir ülkede seçimlerin düzenli yapılması o ülkenin demokratik olması için yeterli midir?", o: ["Evet, yeterlidir", "Hayır, ayrıca hukukun üstünlüğü, basın özgürlüğü ve insan haklarına saygı da gereklidir", "Seçim varsa her şey tamamdır", "Sadece seçim yeterlidir", "Demokrasi için seçime gerek yoktur"], a: 1, exp: "Seçim demokrasinin gerekli ama yeterli olmayan bir koşuludur; özgürlükler ve kurumlar da şarttır (Liberal Demokrasi)." },
-        { q: "Siyasal ilgisizlik (Apolitizm) nedir?", o: ["Aşırı fanatiklik", "Siyasi süreçlere katılmama, ilgilenmeme ve uzak durma durumu", "Her partiye üye olma", "Siyaset bilimci olma", "Devlet başkanı olma"], a: 1, exp: "Siyasal ilgisizlik, bireyin siyasete yabancılaşması ve katılım göstermemesidir." },
-        { q: "Weber'e göre bürokrasinin olumsuz yönü nedir?", o: ["Hızlı olması", "Verimli olması", "Demir Kafes (İnsanı kurallar içinde sıkıştırması ve yaratıcılığı öldürmesi)", "Adil olması", "Ucuz olması"], a: 2, exp: "Weber, bürokrasinin rasyonelliğinin zamanla insanı mekanikleştiren ve özgürlüğünü kısıtlayan bir 'demir kafes'e dönüşebileceğini öngörmüştür." },
-        { q: "Faşizm nasıl bir siyasi ideolojidir?", o: ["Özgürlükçü", "Aşırı milliyetçi, devletçi, lider odaklı ve antidemokratik", "Eşitlikçi", "Barışçıl", "Dini"], a: 1, exp: "Faşizm, bireyi devlet içinde eriten, lidere mutlak itaat isteyen ve farklılıkları reddeden totaliter bir ideolojidir." },
-        { q: "Meritokrasi (Liyakat) ilkesi siyasette ne anlama gelir?", o: ["Akrabaları işe almak", "Zenginleri yönetici yapmak", "Görevlerin yetenek, bilgi ve beceriye göre verilmesi", "Kura ile seçim", "Rastgele atama"], a: 2, exp: "Liyakat, kamu görevlerine girişte ve yükselmede adam kayırmanın değil, ehliyetin esas alınmasıdır." },
-        { q: "Kamuoyu (Public Opinion) nedir?", o: ["Devletin görüşü", "Halkın belli bir konudaki genel kanaati ve tutumu", "Sadece gazetecilerin görüşü", "Sadece zenginlerin görüşü", "Hiç kimsenin görüşü"], a: 1, exp: "Kamuoyu, toplumu ilgilendiren konularda halkın çoğunluğunun benimsediği ortak görüştür ve siyaseti etkiler." },
-        { q: "Karizmatik liderliğin en büyük zayıflığı nedir?", o: ["Halkın sevmemesi", "Liderin ölümünden sonra otoritenin devamlılığının zor olması (Rutinleşme sorunu)", "Çok güçlü olması", "Yasalarla sınırlı olması", "Geleneksel olması"], a: 1, exp: "Karizma kişiye bağlı olduğu için, lider ölünce otorite boşluğu doğar; bu nedenle kurumsallaşması gerekir." }
+        // Aile ve Aileye Yaklaşımlar
+        { q: "Sosyolojide ailenin en yaygın kabul gören tanımı aşağıdakilerden hangisidir?", o: ["Sadece kan bağı olan insanların birliği", "Sadece aynı evde yaşayan insanların birliği", "Aralarında kan bağı, evlilik ya da evlat edinme bağı bulunan, aynı haneyi paylaşan ve ekonomik işbirliği yapan grup", "Sadece resmi nikahlı çiftler", "Çocuk sahibi olan çiftler"], a: 2, exp: "Aile; evlilik, kan bağı veya evlat edinme ile birbirine bağlı, genellikle aynı hanede yaşayan ve ekonomik/sosyal işlevleri paylaşan gruptur." },
+        { q: "Fonksiyonalist (İşlevselci) yaklaşıma göre ailenin temel işlevlerinden biri nedir?", o: ["Kadınları sömürmek", "Özel mülkiyeti korumak", "Toplumun devamlılığı için çocukların sosyalleşmesini sağlamak ve yetişkinlerin kişiliğini stabilize etmek", "Sınıf çatışması yaratmak", "Ataerkilliği güçlendirmek"], a: 2, exp: "Talcott Parsons'a göre aile, çocukların birincil sosyalleşmesini sağlar ve yetişkinlerin duygusal dengesini (kişilik stabilizasyonu) korur." },
+        { q: "Çatışma Kuramı'na (özellikle Marksist bakışa) göre aile kurumu neye hizmet eder?", o: ["Toplumsal uyuma", "Bireylerin mutluluğuna", "Kapitalist sisteme; özel mülkiyetin miras yoluyla aktarılmasına ve işgücünün yeniden üretimine", "Dini değerlere", "Kadın haklarına"], a: 2, exp: "Engels'e göre çekirdek aile, özel mülkiyetin babadan oğula geçmesini garanti altına almak için ortaya çıkmıştır." },
+        { q: "Feminist yaklaşıma göre aile içindeki en temel sorun nedir?", o: ["Çocukların eğitimi", "Ekonomik yetersizlik", "Kadının emeğinin (ev işi, bakım) karşılıksız sömürülmesi ve ataerkil iktidar ilişkileri", "Boşanma oranları", "Akrabalık ilişkileri"], a: 2, exp: "Feministler, aileyi 'altruizm' (fedakarlık) yeri olarak değil, kadın emeğinin sömürüldüğü ataerkil bir alan olarak eleştirir." },
+        
+        // Aile Biçimleri ve Evlilik Türleri
+        { q: "Anne, baba ve evlenmemiş çocuklardan oluşan, modern sanayi toplumlarında en yaygın olan aile tipi hangisidir?", o: ["Geniş Aile", "Çekirdek (Nükleer) Aile", "Tek Ebeveynli Aile", "Klan", "Poligamik Aile"], a: 1, exp: "Sanayileşme ve kentleşme ile birlikte geniş aileden, daha hareketli ve küçük olan çekirdek aileye geçiş olmuştur." },
+        { q: "Üç veya daha fazla kuşağın (büyükanne, dede, ebeveynler, çocuklar) bir arada yaşadığı aile tipine ne ad verilir?", o: ["Çekirdek Aile", "Geniş Aile", "Parçalanmış Aile", "Modern Aile", "Yeniden Kurulmuş Aile"], a: 1, exp: "Geleneksel tarım toplumlarında yaygın olan, akrabalık bağlarının güçlü olduğu aile tipidir." },
+        { q: "Bir erkeğin aynı anda birden fazla kadınla evli olmasına ne ad verilir?", o: ["Monogami", "Poliandri", "Polijini", "Endogami", "Egzogami"], a: 2, exp: "Poligami (çok eşlilik) genel terimdir; erkeğin çok eşliliğine 'Polijini', kadının çok eşliliğine 'Poliandri' denir." },
+        { q: "Evlenen çiftin, erkeğin ailesinin yanına veya yakınına yerleşmesine ne ad verilir?", o: ["Matrilokal", "Patrilokal", "Neolokal", "Bilokal", "Avunkulokal"], a: 1, exp: "Patrilokalite (baba yanı), ataerkil toplumlarda yaygındır. Neolokalite ise çiftin ayrı eve çıkmasıdır." },
+        { q: "Boşanmış kişilerin, yanlarında çocuklarını da getirerek yeni bir evlilik yapmasıyla oluşan aile tipine ne denir?", o: ["Geniş Aile", "Üvey / Yeniden Kurulmuş (Reconstituted) Aile", "Çekirdek Aile", "Geleneksel Aile", "Sanal Aile"], a: 1, exp: "Bu aile tipi, modern toplumlarda boşanma oranlarının artmasıyla yaygınlaşmıştır." },
+        
+        // Toplumsal Cinsiyet (Gender) vs Biyolojik Cinsiyet (Sex)
+        { q: "'Toplumsal Cinsiyet' (Gender) kavramı neyi ifade eder?", o: ["Biyolojik farklılıkları", "Kadın ve erkek arasındaki hormonal farkları", "Toplumun kadınlık ve erkeklik rollerine yüklediği kültürel ve sosyal anlamları", "Doğuştan gelen özellikleri", "Genetik yapıyı"], a: 2, exp: "Biyolojik cinsiyet (sex) doğuştan gelirken, toplumsal cinsiyet (gender) sonradan öğrenilen, kültürel olarak inşa edilen rollerdir." },
+        { q: "Simone de Beauvoir'ın ünlü sözü 'Kadın doğulmaz, kadın olunur' neyi vurgular?", o: ["Kadınlığın biyolojik olduğunu", "Kadınlığın doğuştan üstün olduğunu", "Kadınlık rollerinin toplumsal ve kültürel süreçlerle sonradan inşa edildiğini", "Kadın olmanın imkansız olduğunu", "Cinsiyetin önemsiz olduğunu"], a: 2, exp: "Bu söz, cinsiyetin biyolojik bir kader değil, toplumsal bir inşa süreci olduğunu (Toplumsal Cinsiyet) anlatır." },
+        { q: "Biyolojik cinsiyetin temel belirleyicisi nedir?", o: ["Kıyafetler", "Saç uzunluğu", "Kromozomlar, hormonlar ve üreme organları", "Meslekler", "Davranışlar"], a: 2, exp: "Biyolojik cinsiyet, bedensel ve fizyolojik özelliklere (XX/XY kromozomları vb.) dayanır." },
+        
+        // Cinsiyetin İnşası ve Sosyalleşme
+        { q: "Toplumsallaşma sürecinde cinsiyet rollerinin öğrenilmesinde etkili olan araçlara (ajanlara) ne denir?", o: ["Genetik kodlar", "Toplumsallaşma Ajanları (Aile, Okul, Akran Grubu, Medya)", "Hormonlar", "Yedek parça", "Bürokrasi"], a: 1, exp: "Çocuklar, aileden başlayarak oyuncaklar, okul kitapları ve medya aracılığıyla 'kız gibi' veya 'erkek gibi' davranmayı öğrenirler." },
+        { q: "Ann Oakley'e göre ailede cinsiyet rollerinin öğrenilmesi hangi yolla gerçekleşir?", o: ["Genetik aktarımla", "Manipülasyon, Kanalize etme, Sözel hitaplar ve Farklı etkinlikler yoluyla", "Okulda ders alarak", "Doğal içgüdülerle", "Rüyalarla"], a: 1, exp: "Oakley, ebeveynlerin kız ve erkek çocuklara farklı oyuncaklar vererek (kanalize etme) veya farklı sıfatlarla severek rolleri öğrettiğini belirtir." },
+        { q: "Ders kitaplarında doktorun erkek, hemşirenin kadın olarak resmedilmesi neye örnektir?", o: ["Biyolojik gerçeğe", "Cinsiyet kalıpyargılarının (stereotiplerin) yeniden üretilmesine", "Eşitliğe", "Tesadüfe", "Bilimsel veriye"], a: 1, exp: "Bu tür temsiller, mesleklerin cinsiyetle özdeşleştirilmesine ve kalıpyargıların pekişmesine neden olur." },
+        
+        // Cinsiyet Rolleri ve Kalıpyargılar
+        { q: "Aşağıdakilerden hangisi geleneksel 'Erkeklik' rolüyle ilişkilendirilen özelliklerden biri DEĞİLDİR?", o: ["Güçlü olmak", "Duygusal olmak", "Rasyonel olmak", "Kamusal alanda var olmak", "Rekabetçi olmak"], a: 1, exp: "Geleneksel erkeklik kurgusunda duygusallık, ağlamak veya zayıflık göstermek genellikle dışlanır; bunlar 'kadınsı' özellikler sayılır." },
+        { q: "Toplumda baskın kabul edilen, diğer erkeklikleri ve kadınları tahakküm altına alan ideal erkeklik formuna ne denir?", o: ["Alternatif Erkeklik", "Hegemonik Erkeklik", "Pasif Erkeklik", "Biyolojik Erkeklik", "Eşitlikçi Erkeklik"], a: 1, exp: "R.W. Connell'ın kavramıyla hegemonik erkeklik, gücü ve otoriteyi elinde tutan, kültürel olarak yüceltilen erkeklik modelidir." },
+        { q: "Kadınların 'özel alan' (ev), erkeklerin 'kamusal alan' (iş/siyaset) ile özdeşleştirilmesi neyi ifade eder?", o: ["Cinsiyete dayalı mekan ayrışmasını ve rol dağılımını", "Doğal iş bölümünü", "Biyolojik zorunluluğu", "Modernleşmeyi", "Eşitliği"], a: 0, exp: "Sanayi devrimiyle birlikte ev ve iş yeri ayrışmış, kadın eve (yeniden üretim), erkek işe (üretim) hapsedilmiştir." },
+        
+        // Ataerkillik (Patriarka)
+        { q: "'Ataerkillik' (Patriarka) kavramının en genel tanımı nedir?", o: ["Babanın çocukları sevmesi", "Erkeklerin kadınlar üzerinde egemenlik kurduğu, onları ezdiği ve sömürdüğü toplumsal sistem", "Kadınların yönetimi", "Eşitlikçi toplum", "Sadece aile içi şiddet"], a: 1, exp: "Ataerkillik, sadece ailede değil, devletten ekonomiye tüm toplumsal kurumlarda erkeğin üstünlüğüne dayalı bir iktidar sistemidir." },
+        { q: "Sylvia Walby'e göre ataerkillik sadece tek bir yapıdan ibaret değildir. Aşağıdakilerden hangisi Walby'nin saydığı 6 ataerkil yapıdan biri DEĞİLDİR?", o: ["Hanehalkı üretimi", "Ücretli çalışma", "Devlet", "Şiddet", "Futbol takımları"], a: 4, exp: "Walby; Hanehalkı, Ücretli İş, Devlet, Şiddet, Cinsellik ve Kültür olmak üzere 6 alanda ataerkilliğin işlediğini söyler." },
+        { q: "Ataerkil pazarlık (Deniz Kandiyoti) kavramı neyi anlatır?", o: ["Kadınların pazarda alışveriş yapmasını", "Kadınların ataerkil sistem içinde hayatta kalmak ve güvenlik sağlamak için sistemin kurallarına uyum gösterme stratejilerini", "Erkeklerin pazarlığını", "Fiyat indirimini", "Boşanma davasını"], a: 1, exp: "Kadınlar bazen baskıya açıkça direnmek yerine, itaat ederek sistemin sunduğu korumadan (örn: oğlunun üzerinden statü kazanmak) yararlanmayı seçebilirler." },
+        
+        // Cinsiyete Dayalı İş Bölümü ve Eşitsizlik
+        { q: "Kadınların iş hayatında belirli bir seviyeden sonra yükselmelerini engelleyen, görünmez bariyerlere ne ad verilir?", o: ["Cam Tavan (Glass Ceiling)", "Yürüyen Merdiven", "Beton Duvar", "Demir Kafes", "Altın Kafes"], a: 0, exp: "Cam tavan; liyakat sahibi kadınların, sadece kadın oldukları için üst yönetim kademelerine çıkamamalarını ifade eden görünmez engellerdir." },
+        { q: "Kadınların hem evde karşılıksız ev işlerini yapması hem de dışarıda ücretli bir işte çalışması durumuna ne ad verilir?", o: ["Tek Vardiya", "Çifte Mesai / İkinci Vardiya (Second Shift)", "Gönüllü Çalışma", "Yarı Zamanlı Çalışma", "Hobiler"], a: 1, exp: "Arlie Hochschild'in kavramıyla, çalışan kadınlar işten eve geldiklerinde dinlenemez, ev işleri ve çocuk bakımıyla 'ikinci vardiya'ya başlarlar." },
+        { q: "İş piyasasında kadınların genellikle düşük ücretli, güvencesiz ve 'kadın işi' (hemşirelik, öğretmenlik vb.) olarak görülen sektörlerde yoğunlaşmasına ne denir?", o: ["Dikey Ayrışma", "Yatay Ayrışma / Mesleki Ayrışma", "Pozitif Ayrımcılık", "Kariyer Planlaması", "Tesadüf"], a: 1, exp: "Yatay ayrışma, kadınların ve erkeklerin farklı meslek gruplarında kümelenmesidir." },
+        { q: "Erkeklerin, kadınların yoğun olduğu mesleklerde (örn: hemşirelik) çalışırken, kadınlara göre daha hızlı yükselmeleri ve avantajlı olmaları durumuna ne denir?", o: ["Cam Tavan", "Cam Asansör (Glass Escalator)", "Düşük Ücret", "Mobbing", "Ayrımcılık"], a: 1, exp: "Cam tavanın tersine, erkekler 'kadın mesleklerinde' bile görünmez bir asansörle yukarı taşınırlar." },
+        { q: "Aynı işi yapmalarına rağmen kadınların erkeklerden daha az ücret alması ne tür bir eşitsizliktir?", o: ["Biyolojik eşitsizlik", "Ücret Eşitsizliği / Cinsiyete Dayalı Ücret Farkı", "Doğal eşitsizlik", "Eğitim farkı", "Yaş farkı"], a: 1, exp: "Küresel çapta kadınlar, aynı iş için erkeklere göre daha az kazanmaktadır (Gender Pay Gap)." },
+
+        // Şiddet ve Ayrımcılık
+        { q: "Kadına yönelik şiddetin temel kaynağı feminist teoriye göre nedir?", o: ["Erkeklerin biyolojik yapısı", "Kadınların kışkırtması", "Alkol ve madde kullanımı", "Ataerkil güç ilişkileri ve erkeğin kadın üzerindeki denetim kurma arzusu", "Psikolojik hastalıklar"], a: 3, exp: "Şiddet, münferit bir öfke patlaması değil, ataerkil sistemin kadınları itaat altına almak için kullandığı bir araçtır." },
+        { q: "Aşağıdakilerden hangisi kadına yönelik şiddet türlerinden biri DEĞİLDİR?", o: ["Fiziksel Şiddet", "Psikolojik/Duygusal Şiddet", "Ekonomik Şiddet", "Cinsel Şiddet", "Kişisel Gelişim"], a: 4, exp: "Şiddet sadece dayak değildir; aşağılama (psikolojik), parayı vermeme (ekonomik) veya zorla ilişki (cinsel) de şiddettir." },
+        { q: "Namus cinayetleri sosyolojik olarak nasıl açıklanır?", o: ["Bireysel cinnet", "Kıskançlık", "Kadın bedeni ve cinselliği üzerindeki toplumsal/erkek denetiminin en uç noktası", "Dini bir gereklilik", "Aşk"], a: 2, exp: "Namus, kadının değil ailenin/erkeğin mülkü olarak görülür ve bu mülke zarar geldiği düşünüldüğünde şiddet meşrulaştırılır." },
+        
+        // Diğer Kavramlar ve Toplumsal Değişim
+        { q: "Modern toplumlarda boşanma oranlarının artmasının nedenlerinden biri hangisidir?", o: ["Kadınların ekonomik bağımsızlık kazanması", "İnsanların artık sevmemesi", "Evliliğin yasaklanması", "Nüfusun azalması", "Dinin güçlenmesi"], a: 0, exp: "Kadınların eğitim ve iş hayatına katılımı, mutsuz evlilikleri sürdürme zorunluluğunu azaltmıştır." },
+        { q: "Bir toplumda kadınların eğitim, sağlık ve siyasete katılım oranlarının erkeklerden düşük olması neyi gösterir?", o: ["Toplumsal Cinsiyet Eşitliğini", "Toplumsal Cinsiyet Eşitsizliğini", "Doğal Seleksiyonu", "Kadınların isteksizliğini", "Kaderi"], a: 1, exp: "Bu göstergeler (GEM - Toplumsal Cinsiyet Güçlendirme Ölçüsü), eşitsizliğin somut kanıtlarıdır." },
+        { q: "Kitle iletişim araçlarında (reklamlar, diziler) kadınların genellikle ev hanımı veya cinsel obje olarak sunulması neye örnektir?", o: ["Gerçekçiliğe", "Cinsiyetçiliğe ve stereotiplerin yeniden üretimine", "Sanata", "Özgürlüğe", "Eşitliğe"], a: 1, exp: "Medya, cinsiyetçi kalıpları en çok yeniden üreten ve pekiştiren alanlardan biridir." },
+        { q: "Endogami ne demektir?", o: ["Grup dışından evlilik", "Grup içinden (akraba, kabile, din vb.) evlilik", "Çok eşlilik", "Tek eşlilik", "Boşanma"], a: 1, exp: "Endogami, kanı veya malı grup içinde tutmak için yapılan (örn: kuzen evliliği) evlilik türüdür." },
+        { q: "Levirat ne tür bir evlilik geleneğidir?", o: ["Kadının ölen kocasının kardeşiyle (kayınbirader) evlendirilmesi", "Erkeğin ölen karısının kardeşiyle (baldız) evlendirilmesi", "Kuzen evliliği", "Kaçarak evlilik", "Anlaşmalı evlilik"], a: 0, exp: "Sororat ise erkeğin ölen karısının kız kardeşiyle evlenmesidir. Amaç malın ve çocukların ailede kalmasıdır." },
+        { q: "Eşitlikçi (Egaliter) aile yapısı neyi ifade eder?", o: ["Babanın sözünün geçtiği", "Annenin sözünün geçtiği", "Karar alma yetkisinin ve sorumlulukların kadın ve erkek arasında eşit paylaşıldığı yapı", "Çocukların yönettiği yapı", "Devletin yönettiği yapı"], a: 2, exp: "Modern toplumlarda idealize edilen, güç ve otoritenin paylaşıldığı aile modelidir." },
+        
+        // Pekiştirme Soruları
+        { q: "Kız çocuklarına pembe, erkek çocuklarına mavi kıyafet giydirilmesi neyin başlangıcıdır?", o: ["Biyolojik gelişimin", "Toplumsal cinsiyet sosyalleşmesinin", "Zeka gelişiminin", "Okul hayatının", "Hiçbir şeyin"], a: 1, exp: "Renk kodları bile toplumun cinsiyetlere yüklediği ilk kültürel işaretlerdir." },
+        { q: "Anthony Giddens'a göre 'Plastik Cinsellik' ne demektir?", o: ["Estetik ameliyat", "Cinselliğin üremeden ayrılarak, haz ve kimlik inşası için özgürce yaşanabilir hale gelmesi", "Sahte cinsellik", "Robotlarla cinsellik", "Cinsiyetsizlik"], a: 1, exp: "Doğum kontrol yöntemleri sayesinde cinsellik, üreme zorunluluğundan kopmuş ve ilişki merkezli hale gelmiştir." },
+        { q: "Ataerkil temettü (Patriarchal Dividend) nedir?", o: ["Borsada hisse", "Tüm erkeklerin, ataerkil sistemden (baskıcı olmasalar bile) dolaylı olarak sağladıkları çıkar ve avantajlar", "Kadınların kazancı", "Devlet yardımı", "Emeklilik ikramiyesi"], a: 1, exp: "Connell'a göre, hegemonik erkekliğe uymayan erkekler bile, kadınların ezilmesinden doğan genel avantajlardan (daha yüksek maaş vb.) yararlanırlar." },
+        { q: "Kadınların siyasal temsilde eksik olması (parlamentoda az kadın olması) neyin sonucudur?", o: ["Kadınların siyasetten anlamamasının", "Siyasetin 'erkek işi' olarak kodlanmasının ve yapısal engellerin", "Kadınların istememesinin", "Yasaların yasaklamasının", "Nüfusun az olmasının"], a: 1, exp: "Siyaset, kamusal alanın zirvesi olarak tarihsel olarak erkeklere ait görülmüş ve kadınlar dışlanmıştır." },
+        { q: "Aile içi şiddetin en çok kime yöneldiği istatistiksel bir gerçektir?", o: ["Erkeklere", "Kadınlara ve çocuklara", "Komşulara", "Patronlara", "Polislere"], a: 1, exp: "Dünya genelinde aile içi şiddet mağdurlarının büyük çoğunluğu kadınlardır." },
+        { q: "Matriarka (Anaerkillik) tarihte yaygın bir sistem midir?", o: ["Evet, her yerde vardır", "Hayır, antropolojik bulgulara göre ataerkillik kadar yaygın ve sistematik bir 'kadın egemenliği' dönemi kanıtlanamamıştır", "Sadece Avrupa'da vardır", "Gelecekte olacaktır", "Hayvanlarda vardır"], a: 1, exp: "Matrilineal (ana soylu) toplumlar vardır ama kadınların erkekleri yönettiği Matriarka (Anaerkillik) tartışmalıdır." },
+        { q: "Cinsiyetçilik (Sexism) nedir?", o: ["Cinsiyet değiştirmek", "Bir cinsiyetin (genellikle erkeğin) diğerinden üstün olduğuna dair ideoloji ve önyargılar", "Cinsiyet eşitliği", "Cinselliği sevmek", "Biyoloji bilimi"], a: 1, exp: "Irkçılık gibi, cinsiyetçilik de bir grubu aşağılayarak diğerinin iktidarını meşrulaştırır." },
+        { q: "Heteronormativite ne demektir?", o: ["Herkesin heteroseksüel (karşı cinsten hoşlanan) olduğunun varsayılması ve bunun tek 'normal' kabul edilmesi", "Herkesin eşcinsel olması", "Cinsiyetsizlik", "Karışık evlilik", "Çok eşlilik"], a: 0, exp: "Bu norm, farklı cinsel yönelimleri dışlar ve görünmez kılar." },
+        { q: "Sanayileşme öncesi ailede üretim ve tüketim nasıldı?", o: ["Ayrışmıştı", "Aile hem üretim hem tüketim birimiydi (Hane ekonomisi)", "Sadece tüketim birimiydi", "Fabrikada yapılırdı", "Devlet yapardı"], a: 1, exp: "Tarlada veya atölyede tüm aile birlikte çalışırdı; ev ve iş yeri ayrışmamıştı." },
+        { q: "Modern toplumda ailenin 'duygusal' işlevi neden artmıştır?", o: ["İnsanlar daha duygusal olduğu için", "Kamusal alandaki (iş dünyası) rekabet ve soğukluktan kaçıp sığınılacak bir 'liman' arandığı için", "Televizyon izlendiği için", "Evler büyüdüğü için", "Yemekler lezzetli olduğu için"], a: 1, exp: "Aile, modern bireyin kimlik bulduğu ve duygusal tatmin sağladığı neredeyse tek alan haline gelmiştir." },
+        { q: "Türkiye'de Cumhuriyet döneminde kadın hakları konusunda atılan en önemli adım nedir?", o: ["Tanzimat Fermanı", "Medeni Kanun'un (1926) kabulü ve seçme/seçilme hakkının verilmesi (1934)", "Sened-i İttifak", "1980 Darbesi", "Avrupa Birliği süreci"], a: 1, exp: "Medeni Kanun ile çok eşlilik yasaklanmış, resmi nikah ve mirasta eşitlik gelmiş; siyasi haklarla vatandaşlık statüsü kazanılmıştır." },
+        { q: "'Görünmeyen Emek' kavramı neyi anlatır?", o: ["Kaçak işçilik", "Hayaletler", "Kadınların ev içinde yaptığı, maaşı olmayan ve 'iş'ten sayılmayan yemek, temizlik, bakım hizmetleri", "Casusluk", "Gece çalışması"], a: 2, exp: "Bu emek, kapitalist sistemin devamı için hayati olsa da (işgücünü besler, dinlendirir) ekonomik karşılığı yoktur." },
+        { q: "Liberal Feminizm çözüm olarak neyi önerir?", o: ["Devrimi", "Erkekleri yok etmeyi", "Yasal reformlar, eğitim ve fırsat eşitliği ile kadınların kamusal alana katılımını", "Aileyi yıkmayı", "Köye dönmeyi"], a: 2, exp: "Sistemi tamamen yıkmak yerine, mevcut sistem içindeki yasal engelleri kaldırarak eşitliği savunur." },
+        { q: "Radikal Feminizm sorunun kaynağını nerede görür?", o: ["Yasalarda", "Eğitimsizlikte", "Doğrudan Ataerkillik sisteminde ve erkeklerin kadın bedeni/emeği üzerindeki denetiminde", "Kapitalizmde", "Dinde"], a: 2, exp: "Onlara göre ataerkillik en temel eşitsizlik biçimidir ve özel alan (aile) politiktir." },
+        { q: "Sosyalist Feminizm neyi savunur?", o: ["Kadınların sorununun hem kapitalizm (sınıf) hem de ataerkillik (cinsiyet) kaynaklı olduğunu", "Sadece sınıf sorununu", "Sadece cinsiyet sorununu", "Zengin olmayı", "Devletçi ekonomiyi"], a: 0, exp: "Kadının kurtuluşu için hem kapitalizmin hem de ataerkilliğin yıkılması gerektiğini düşünürler." }
     ];
 
     let currentQuestion = 0;
@@ -223,7 +253,7 @@
         const explanationArea = document.getElementById('explanation-area');
         
         container.innerHTML = '';
-        explanationArea.style.display = 'none'; // Yeni soruda açıklamayı gizle
+        explanationArea.style.display = 'none';
 
         const q = questions[currentQuestion];
         
@@ -283,7 +313,6 @@
             document.getElementById(`opt-${userAnswers[currentQuestion]}`).classList.add('wrong-highlight');
         }
 
-        // Açıklamayı Göster
         explanationArea.innerHTML = `<strong>Açıklama:</strong> ${q.exp}`;
         explanationArea.style.display = 'block';
     }
@@ -343,13 +372,12 @@
         document.getElementById('quiz-screen').style.display = 'none';
         document.getElementById('result-screen').style.display = 'block';
 
-        // Puanlama: Her soru 2 puan (100/50)
         const score = Math.round((correctCount / questions.length) * 100);
         
         document.getElementById('score-circle').innerText = score;
         document.getElementById('score-details').innerHTML = `
-            <strong>Doğru:</strong> ${correctCount} | 
-            <strong>Yanlış:</strong> ${wrongCount} | 
+            <strong>Doğru:</strong> ${correctCount} &nbsp;|&nbsp; 
+            <strong>Yanlış:</strong> ${wrongCount} &nbsp;|&nbsp; 
             <strong>Boş:</strong> ${emptyCount}
         `;
         
