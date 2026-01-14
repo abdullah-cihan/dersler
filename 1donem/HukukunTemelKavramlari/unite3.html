@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hukuk 3. Ünite: Hukuk Sistemleri ve Türk Hukuk Tarihi</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #fce4ec; color: #880e4f; margin: 0; padding: 20px; }
+        .container { max-width: 900px; margin: 0 auto; background: #fff; padding: 40px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); position: relative; }
+        h1 { text-align: center; color: #880e4f; border-bottom: 2px solid #c2185b; padding-bottom: 15px; margin-bottom: 30px; font-size: 24px; }
+        
+        /* Home Button */
+        .home-btn {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background-color: #ad1457;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 14px;
+            transition: background 0.2s;
+        }
+        .home-btn:hover { background-color: #880e4f; }
+
+        /* İlerleme Çubuğu */
+        .progress-container { background-color: #f8bbd0; border-radius: 10px; margin-bottom: 20px; height: 12px; overflow: hidden; }
+        .progress-bar { height: 100%; background-color: #c2185b; width: 0%; transition: width 0.3s; }
+        .progress-text { text-align: right; font-size: 0.9em; color: #880e4f; margin-bottom: 15px; font-weight: bold; }
+
+        /* Soru Alanı */
+        .question-block { display: none; animation: fadeIn 0.4s; }
+        .question-block.active { display: block; }
+        .question-text { font-weight: 700; font-size: 1.2em; margin-bottom: 25px; color: #4a0072; line-height: 1.4; }
+        
+        /* Seçenekler */
+        .options { display: flex; flex-direction: column; gap: 12px; }
+        .option-label { 
+            display: flex; align-items: center; padding: 15px 20px; border: 2px solid #f8bbd0; 
+            border-radius: 8px; cursor: pointer; transition: all 0.2s; background: #fff; font-size: 1em;
+        }
+        .option-label:hover { background-color: #fce4ec; border-color: #f48fb1; }
+        .option-label.selected { border-color: #c2185b; background-color: #f8bbd0; }
+        .option-label input { margin-right: 15px; transform: scale(1.2); cursor: pointer; }
+        
+        /* Cevap Göster Stilleri */
+        .option-label.correct-highlight { border-color: #2e7d32; background-color: #c8e6c9; color: #1b5e20; font-weight: bold; }
+        .option-label.wrong-highlight { border-color: #c62828; background-color: #ffcdd2; color: #b71c1c; }
+
+        /* Açıklama Kutusu */
+        .explanation-box {
+            margin-top: 25px;
+            padding: 20px;
+            background-color: #fce4ec;
+            border-left: 5px solid #880e4f;
+            border-radius: 4px;
+            color: #880e4f;
+            display: none;
+            font-size: 0.95em;
+            line-height: 1.6;
+        }
+
+        /* Butonlar */
+        .controls { margin-top: 35px; display: flex; justify-content: space-between; align-items: center; gap: 15px; flex-wrap: wrap; }
+        button { border: none; padding: 12px 28px; border-radius: 6px; cursor: pointer; font-size: 16px; font-weight: 600; transition: transform 0.1s, background 0.2s; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        button:active { transform: translateY(1px); }
+        
+        .nav-btn { background-color: #880e4f; color: white; }
+        .nav-btn:hover { background-color: #560027; }
+        .nav-btn:disabled { background-color: #f48fb1; cursor: not-allowed; box-shadow: none; }
+        
+        .show-answer-btn { background-color: #ffb74d; color: #3e2723; }
+        .show-answer-btn:hover { background-color: #ffa726; }
+        
+        .finish-btn { background-color: #2e7d32; color: white; display: none; }
+        .finish-btn:hover { background-color: #1b5e20; }
+
+        /* Sonuç Ekranı */
+        #result-screen { display: none; }
+        .score-card { text-align: center; background: #fce4ec; padding: 30px; border-radius: 12px; margin-bottom: 30px; border: 1px solid #f48fb1; }
+        .score-circle { 
+            width: 140px; height: 140px; border-radius: 50%; background: #880e4f; color: white; 
+            display: flex; align-items: center; justify-content: center; font-size: 2.5em; font-weight: bold; 
+            margin: 0 auto 20px; box-shadow: 0 4px 10px rgba(136, 14, 79, 0.4);
+        }
+        
+        .review-table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 0.9em; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        .review-table th, .review-table td { padding: 15px; border: 1px solid #f8bbd0; text-align: left; }
+        .review-table th { background-color: #880e4f; color: white; font-weight: 600; }
+        .review-table tr:nth-child(even) { background-color: #fff; }
+        .review-table tr:hover { background-color: #fce4ec; }
+        .status-correct { color: #2e7d32; font-weight: bold; }
+        .status-wrong { color: #c62828; font-weight: bold; }
+        .status-empty { color: #f57f17; font-weight: bold; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        /* Responsive adjustments */
+        @media (max-width: 600px) {
+            .container { padding: 20px; }
+            .option-label { padding: 10px 15px; }
+            .question-text { font-size: 1.1em; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <button class="home-btn" onclick="if(confirm('Testi yeniden başlatmak istediğinize emin misiniz?')) location.reload();">⌂ Testi Yenile</button>
+    
+    <div id="quiz-screen">
+        <h1>3. Ünite: Hukuk Sistemleri ve Türk Hukuk Tarihi</h1>
+        
+        <div class="progress-text" id="progress-text">Soru 1 / 55</div>
+        <div class="progress-container">
+            <div class="progress-bar" id="progress-bar"></div>
+        </div>
+        
+        <div id="quiz-container">
+            <!-- Sorular buraya JS ile gelecek -->
+        </div>
+
+        <!-- Açıklama Alanı -->
+        <div id="explanation-area" class="explanation-box"></div>
+
+        <div class="controls">
+            <div>
+                <button class="nav-btn" id="prevBtn" onclick="prevQuestion()" disabled>&#8592; Önceki</button>
+            </div>
+            <div>
+                <button class="show-answer-btn" onclick="showCurrentAnswer()">👁️ Cevabı Göster</button>
+            </div>
+            <div>
+                <button class="nav-btn" id="nextBtn" onclick="nextQuestion()">Sonraki &#8594;</button>
+                <button class="finish-btn" id="finishBtn" onclick="finishQuiz()">Testi Bitir &#10004;</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="result-screen">
+        <h1>Değerlendirme Sonucu</h1>
+        <div class="score-card">
+            <div class="score-circle" id="score-circle">0</div>
+            <h3>Başarı Puanı</h3>
+            <p id="score-details" style="font-size: 1.1em; color: #555;"></p>
+        </div>
+        
+        <h3>Detaylı Soru Analizi</h3>
+        <div style="overflow-x: auto;">
+            <table class="review-table">
+                <thead>
+                    <tr>
+                        <th style="width: 5%">No</th>
+                        <th style="width: 45%">Soru</th>
+                        <th style="width: 20%">Senin Cevabın</th>
+                        <th style="width: 20%">Doğru Cevap</th>
+                        <th style="width: 10%">Durum</th>
+                    </tr>
+                </thead>
+                <tbody id="review-body">
+                    <!-- Sonuç satırları buraya gelecek -->
+                </tbody>
+            </table>
+        </div>
+        <div style="text-align: center; margin-top: 30px;">
+            <button class="nav-btn" onclick="location.reload()">Testi Tekrar Çöz</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // 55 Soruluk Hukuk 3. Ünite Testi (Hukuk Sistemleri ve Türk Hukuk Tarihi)
+    const questions = [
+        // 1. Karşılaştırmalı Hukuk ve Giriş
+        { q: "Farklı ülkelerin hukuk sistemlerini inceleyerek benzerlik ve farklılıkları ortaya koyan hukuk dalına ne denir?", o: ["Uluslararası Hukuk", "Karşılaştırmalı Hukuk (Mukayeseli Hukuk)", "Hukuk Tarihi", "Kamu Hukuku", "Özel Hukuk"], a: 1, exp: "Karşılaştırmalı hukuk, evrensel hukuk ilkelerine ulaşmak ve hukuk reformları yapmak için sistemleri kıyaslar." },
+        { q: "Karşılaştırmalı hukukta 'Makro Karşılaştırma' neyi ifade eder?", o: ["Sadece bir kanun maddesinin karşılaştırılması", "İki farklı hukuk sisteminin genel yapısı ve mantığının karşılaştırılması", "Sadece ceza hukukunun karşılaştırılması", "Hakimlerin maaşlarının karşılaştırılması", "Mahkeme binalarının karşılaştırılması"], a: 1, exp: "Makro karşılaştırma, sistemlerin ruhunu ve genel işleyişini (örn: Kıta Avrupası vs Anglo-Sakson) ele alır." },
+        { q: "Hukuk sistemlerinin sınıflandırılmasında en yaygın kullanılan ölçüt nedir?", o: ["Nüfus yoğunluğu", "Ekonomik güç", "Hukuk tekniği, kaynakları ve tarihsel kökeni (Hukuk Ailesi)", "Dini inanç", "Coğrafi konum"], a: 2, exp: "Benzer hukuk tekniklerine ve kaynaklara sahip ülkeler aynı 'Hukuk Ailesi' içinde sınıflandırılır." },
+
+        // 2. Batı Hukuk Kültürü: Kıta Avrupası (Roma-Germen) Sistemi
+        { q: "Kara Avrupası (Kıta Avrupası) Hukuk Sisteminin temelini hangi tarihi hukuk oluşturur?", o: ["Hammurabi Kanunları", "Roma Hukuku", "İslam Hukuku", "İngiliz Hukuku", "Eski Türk Hukuku"], a: 1, exp: "Bu sistem, Roma Hukuku'nun (özellikle Justinianus'un derlemelerinin) yeniden doğuşu ve benimsenmesiyle şekillenmiştir." },
+        { q: "Doğu Roma İmparatoru Justinianus'un hazırlattığı ve modern hukukun temeli sayılan devasa hukuk derlemesinin adı nedir?", o: ["Magna Carta", "Corpus Iuris Civilis", "On İki Levha Kanunları", "Hammurabi Kanunları", "Mecelle"], a: 1, exp: "Corpus Iuris Civilis, Roma hukukunun günümüze ulaşmasını sağlayan en önemli eserdir." },
+        { q: "Kıta Avrupası Hukuk Sisteminin en belirgin özelliği nedir?", o: ["Hukukun yazısız olması", "Hukukun tedvin edilmiş (yazılı kanunlar halinde derlenmiş) olması", "Hakimlerin kanun yaratması", "Jüri sisteminin olması", "Dini kurallara dayanması"], a: 1, exp: "Bu sistemde hukuk kuralları, parlamentolar tarafından yapılan yazılı kanunlarda (Code) toplanmıştır." },
+        { q: "Kıta Avrupası sisteminde hukukun birincil kaynağı nedir?", o: ["İçtihat (Mahkeme Kararları)", "Örf ve Adet", "Yazılı Kanunlar (Mevzuat)", "Doktrin", "Yönetmelik"], a: 2, exp: "Hakimler öncelikle yazılı kanunlara (Anayasa, Kanun vb.) bakmak zorundadır." },
+        { q: "Kıta Avrupası sisteminde hukukçuların kullandığı temel akıl yürütme yöntemi hangisidir?", o: ["Tümevarım (Özelden Genele)", "Tümdengelim (Genelden Özele / Dedüksiyon)", "Deneme Yanılma", "Sezgi", "İstatistik"], a: 1, exp: "Genel soyut kurallar (kanun), somut olaylara uygulanır." },
+
+        // 3. Batı Hukuk Kültürü: Anglo-Sakson (Common Law) Sistemi
+        { q: "İngiltere'de doğup ABD, Kanada, Avustralya gibi ülkelere yayılan hukuk sistemine ne ad verilir?", o: ["Kıta Avrupası Sistemi", "Anglo-Sakson (Common Law) Sistemi", "İslam Hukuku", "Sosyalist Hukuk", "Roma Hukuku"], a: 1, exp: "Common Law, İngiliz kraliyet mahkemelerinin kararlarıyla oluşmuş ortak hukuktur." },
+        { q: "Anglo-Sakson (Common Law) sisteminin en temel kaynağı nedir?", o: ["Anayasa", "Yazılı Kanunlar", "Yargı Kararları (İçtihatlar / Precedent)", "Yönetmelikler", "Doktrin"], a: 2, exp: "Bu sistemde hukuk, hakimlerin verdiği emsal kararlarla (judge-made law) gelişir." },
+        { q: "Anglo-Sakson hukukunda 'Stare Decisis' ilkesi ne anlama gelir?", o: ["Kanunların üstünlüğü", "Emsal kararlara (önceki mahkeme kararlarına) uyma zorunluluğu", "Hakimin özgürlüğü", "Jüri kararı", "Yazılılık ilkesi"], a: 1, exp: "Alt mahkemeler, üst mahkemelerin benzer olaylarda verdiği kararlara uymak zorundadır." },
+        { q: "Common Law sisteminde hukuki akıl yürütme yöntemi nasıldır?", o: ["Tümdengelim", "Tümevarım (Örnek olaydan genel kurala / İndüksiyon)", "Kıyas", "Soyutlama", "Ezber"], a: 1, exp: "Somut olaylardaki çözümlerden yola çıkarak genel ilkelere ulaşılır." },
+        { q: "Tarihsel süreçte Common Law'ın katılığını gidermek için İngiltere'de ortaya çıkan ve 'hakkaniyet' (insaf) esasına dayanan hukuk dalı hangisidir?", o: ["Statute Law", "Equity (Hakkaniyet Hukuku)", "Civil Law", "Canon Law", "Public Law"], a: 1, exp: "Equity mahkemeleri, Common Law'ın şekilci yapısının yol açtığı adaletsizlikleri gidermek için kurulmuştur." },
+
+        // 4. Türk Hukuk Tarihi: İslam Hukuku
+        { q: "İslam hukukunda hukukun temel kaynaklarına ne ad verilir?", o: ["Edille-i Şer'iyye", "Mecelle", "Kanunname", "Fetva", "İçtihat"], a: 0, exp: "Edille-i Şer'iyye (Şer'i Deliller); Kitap, Sünnet, İcma ve Kıyas'tan oluşur." },
+        { q: "İslam hukukunun birinci ve en temel kaynağı nedir?", o: ["Sünnet", "İcma", "Kur'an-ı Kerim (Kitap)", "Kıyas", "Örf"], a: 2, exp: "Diğer tüm kaynaklar Kur'an'a uygun olmak zorundadır." },
+        { q: "Hz. Muhammed'in sözleri, fiilleri ve onaylarından oluşan kaynağa ne denir?", o: ["Ayet", "Sünnet", "İcma", "Kıyas", "İçtihat"], a: 1, exp: "Sünnet, Kur'an'ı açıklayan ve tamamlayan ikinci asli kaynaktır." },
+        { q: "İslam hukuk bilginlerinin (müçtehitlerin) bir konuda görüş birliğine varmasına ne denir?", o: ["Kıyas", "İcma", "Sünnet", "İçtihat", "Fetva"], a: 1, exp: "İcma, ortak akıl ve konsensüsü ifade eder." },
+        { q: "Hakkında hüküm bulunmayan bir meseleyi, aralarındaki ortak neden (illet) dolayısıyla hakkında hüküm bulunan başka bir meseleye benzeterek çözmeye ne denir?", o: ["İcma", "Kıyas", "Sünnet", "İstihsan", "Örf"], a: 1, exp: "Kıyas, İslam hukukunun akıl yürütme yöntemidir (Örn: Şarap yasağının diğer içkilerde de uygulanması)." },
+        { q: "İslam hukukunda kuralların oluşumunda hukukun 'meseleci' (kazuistik) olması ne demektir?", o: ["Genel kuralların olması", "Her somut olay için ayrı çözüm üretilmesi", "Kanunların yazılı olması", "Anayasa olması", "Hiçbir kuralın olmaması"], a: 1, exp: "İslam hukuku (Fıkıh), soyut genel kurallar koymak yerine karşılaşılan meselelere çözüm üreterek gelişmiştir." },
+        { q: "İslam hukukunda 'Fıkıh' neyi ifade eder?", o: ["Sadece ibadetleri", "Hukuk ilmini ve hukuki kuralları", "Tarihi", "Siyaseti", "Ekonomiyi"], a: 1, exp: "Fıkıh, şeriatın pratik hayata uygulanması, yani İslam hukuk bilimidir." },
+
+        // 5. Türk Hukuk Tarihi: Osmanlı Hukuku
+        { q: "Osmanlı Devleti'nde hukuk sistemi hangi ikili yapıya dayanıyordu?", o: ["Roma ve Germen", "Şer'i Hukuk ve Örfi Hukuk", "İngiliz ve Fransız", "Laik ve Dini", "Yazılı ve Sözlü"], a: 1, exp: "Temel İslam hukuku (Şer'i) ile padişahın emirlerinden oluşan devlet hukuku (Örfi) birlikte uygulanırdı." },
+        { q: "Osmanlı'da padişahın, şer'i hukuka aykırı olmamak kaydıyla, idari ve mali konularda koyduğu kurallara ne denirdi?", o: ["Ayet", "Hadis", "Örfi Hukuk (Kanunname)", "Mecelle", "Fetva"], a: 2, exp: "Fatih Sultan Mehmet'in 'Kanunname-i Ali Osman'ı buna en ünlü örnektir." },
+        { q: "Osmanlı'da kadıların verdiği hükümlerin kaydedildiği defterlere ne ad verilirdi?", o: ["Mühimme Defteri", "Şer'iyye Sicilleri", "Tapu Tahrir", "Salname", "Vakanüvis"], a: 1, exp: "Şer'iyye sicilleri, Osmanlı hukuk uygulamasını günümüze taşıyan en önemli arşiv belgeleridir." },
+        { q: "Tanzimat Fermanı (1839) Osmanlı hukukunda nasıl bir dönüm noktasıdır?", o: ["Şeriatın kaldırılması", "Batılılaşma ve kanunlaştırma hareketlerinin başlaması", "Cumhuriyetin ilanı", "Halifeliğin kaldırılması", "Matbaanın gelmesi"], a: 1, exp: "Tanzimat ile birlikte Batı (özellikle Fransız) kanunları tercüme edilerek alınmaya başlanmıştır (Ticaret, Ceza vb.)." },
+        { q: "Osmanlı'nın son döneminde hazırlanan, İslam hukukuna dayalı ilk medeni kanunlaştırma örneği olan eser hangisidir?", o: ["Kanun-i Esasi", "Mecelle-i Ahkam-ı Adliye (Mecelle)", "Fatih Kanunnamesi", "Tanzimat Fermanı", "1924 Anayasası"], a: 1, exp: "Ahmet Cevdet Paşa başkanlığındaki heyet tarafından hazırlanan Mecelle, yerli ve milli bir kanunlaştırmadır." },
+        { q: "Mecelle hangi İslam mezhebinin görüşlerine göre hazırlanmıştır?", o: ["Şafii", "Hanefi", "Maliki", "Hanbeli", "Caferi"], a: 1, exp: "Osmanlı'nın resmi mezhebi olan Hanefi fıkhı esas alınmıştır." },
+        { q: "Mecelle neden Cumhuriyet döneminde kaldırılmıştır?", o: ["Çok uzun olduğu için", "Dini temelli olması, kazuistik (meseleci) yapısı ve aile hukukunu kapsamaması nedeniyle yetersiz kalması", "Yazarı bilinmediği için", "Fransızca olduğu için", "Pahalı olduğu için"], a: 1, exp: "Mecelle modern ihtiyaçları karşılayamıyordu ve laik hukuk sistemine geçişte yetersizdi." },
+        
+        // 6. Türk Hukuk Devrimi ve Cumhuriyet Dönemi
+        { q: "Cumhuriyet döneminde yapılan Hukuk Devrimi'nin temel amacı nedir?", o: ["Eski kanunları Türkçeleştirmek", "Hukuk sistemini laikleştirmek, çağdaşlaştırmak ve birleştirmek (Hukuk Birliği)", "Daha çok ceza vermek", "Mahkeme sayısını azaltmak", "Avrupa'yı taklit etmek"], a: 1, exp: "Osmanlı'daki çoklu hukuk sistemine (kapitülasyonlar, cemaat mahkemeleri vb.) son vererek tek ve laik bir hukuk sistemi kurulmuştur." },
+        { q: "Türk Medeni Kanunu (1926) hangi ülkeden alınmıştır (resepsiyon)?", o: ["Almanya", "Fransa", "İtalya", "İsviçre", "İngiltere"], a: 3, exp: "İsviçre Medeni Kanunu; en yeni, modern, pratik, halkçı ve laik olduğu için tercih edilmiştir." },
+        { q: "Aşağıdakilerden hangisi İsviçre Medeni Kanunu'nun tercih edilme nedenlerinden biri DEĞİLDİR?", o: ["Dili sade ve anlaşılır olması", "Hakime geniş takdir yetkisi vermesi", "Kadın-erkek eşitliğine dayanması", "Dini kurallara dayanması", "Modern ve laik olması"], a: 3, exp: "Tam tersine, laik yapısı nedeniyle tercih edilmiştir." },
+        { q: "1926 yılında kabul edilen Türk Ceza Kanunu hangi ülkeden alınmıştır?", o: ["Almanya", "İtalya (Zanardelli Kanunu)", "Fransa", "İsviçre", "İspanya"], a: 1, exp: "Dönemin en liberal ve modern ceza kanunu olduğu için İtalya'dan esinlenilmiştir." },
+        { q: "Yabancı bir hukuk sisteminden bir kanunun alınıp, gerekirse uyarlanarak ülkeye kazandırılmasına ne denir?", o: ["İptal", "Resepsiyon (İktibas)", "Tercüme", "Taklit", "İthalat"], a: 1, exp: "Resepsiyon, sadece çeviri değil, o kanunun hukuk kültürüne entegre edilmesidir." },
+        { q: "Türk Borçlar Kanunu ve Türk Ticaret Kanunu hangi ülkelerin etkisiyle hazırlanmıştır?", o: ["İsviçre ve Almanya", "Fransa ve İtalya", "İngiltere ve ABD", "Rusya ve Çin", "İran ve Irak"], a: 0, exp: "Borçlar hukuku İsviçre'den, Ticaret hukuku ise Alman hukukundan etkilenerek hazırlanmıştır." },
+        { q: "Hukuk devriminin en önemli sonuçlarından biri olan 'Hukuk Birliği' neyi ifade eder?", o: ["Tüm dünyada aynı kanunların olması", "Ülke içindeki herkesin (din, mezhep farkı gözetmeksizin) aynı kanunlara ve mahkemelere tabi olması", "Sadece avukatların birleşmesi", "Kanunların tek kitapta toplanması", "Mahkemelerin kapatılması"], a: 1, exp: "Osmanlı'da Müslümanlara ayrı, gayrimüslimlere ayrı hukuk uygulanırken; Cumhuriyet bunu kaldırıp herkesi eşit saymıştır." },
+
+        // 7. Karışık ve Pekiştirme Soruları
+        { q: "Hukuk sistemlerinin 'kodifikasyon' (kanunlaştırma) hareketi hangi sistemin özelliğidir?", o: ["Common Law", "Kıta Avrupası (Civil Law)", "İslam Hukuku (Klasik dönem)", "Örf Hukuku", "Kabile Hukuku"], a: 1, exp: "Napolyon Kanunları (Code Napoleon) ile başlayan, dağınık kuralların tek kitapta toplanması hareketidir." },
+        { q: "Türkiye Cumhuriyeti şu an hangi hukuk ailesine mensuptur?", o: ["Anglo-Sakson", "İslam Hukuku", "Kıta Avrupası (Roma-Germen)", "Sosyalist Hukuk", "Uzak Doğu Hukuku"], a: 2, exp: "Yaptığımız resepsiyonlar (İsviçre, Almanya, İtalya, Fransa) ile Kara Avrupası sistemine dahil olduk." },
+        { q: "1924 Anayasası'nın 'Devletin dini İslam'dır' maddesi ne zaman çıkarılarak laiklik ilkesi tam yerleşmiştir?", o: ["1924", "1928", "1937", "1960", "1982"], a: 1, exp: "1928'de devletin dini ibaresi çıkarılmış, 1937'de Laiklik ilkesi anayasaya girmiştir." },
+        { q: "Osmanlı'da 'Fetva' verme yetkisine sahip en yüksek din ve hukuk görevlisi kimdir?", o: ["Sadrazam", "Şeyhülislam", "Kazasker", "Kadı", "Nişancı"], a: 1, exp: "Şeyhülislam, verilen kararların veya padişah fermanlarının şeriata uygun olup olmadığını denetlerdi." },
+        { q: "Mahkeme kararlarının (içtihatların) 'bağlayıcı' ve 'asli kaynak' olduğu sistem hangisidir?", o: ["Kıta Avrupası", "Türk Hukuku", "Common Law (Anglo-Sakson)", "Roma Hukuku", "Mecelle"], a: 2, exp: "Common Law'da hakimler hukuk yaratır ve bu kurallar bağlayıcıdır." },
+        { q: "1876 yılında ilan edilen Osmanlı'nın ve Türk tarihinin ilk anayasası hangisidir?", o: ["Sened-i İttifak", "Kanun-i Esasi", "Teşkilat-ı Esasiye", "1921 Anayasası", "Gülhane Hattı Hümayunu"], a: 1, exp: "Kanun-i Esasi ile meşrutiyet sistemine geçilmiş ve ilk parlamento açılmıştır." },
+        { q: "Aşağıdakilerden hangisi İslam hukukunun 'tali' (ikincil/yardımcı) kaynaklarından biridir?", o: ["Kur'an", "Sünnet", "İcma", "İstihsan / Maslahat", "Kıyas"], a: 3, exp: "İstihsan, kamu yararı (maslahat) veya örf gibi kaynaklar, asli delillerden sonra gelir." },
+        { q: "Medeni Kanun'un kabulüyle kadınlara hangi haklar verilmiştir?", o: ["Sadece seçme hakkı", "Sadece seçilme hakkı", "Mirasta ve şahitlikte eşitlik, resmi nikah, tek eşlilik, boşanma hakkı", "Askere gitme hakkı", "Vergi vermeme hakkı"], a: 2, exp: "Siyasi haklar (seçme-seçilme) Medeni Kanun'da değil, 1930 ve 1934'teki anayasa/kanun değişiklikleriyle verilmiştir." },
+        { q: "Osmanlı'da 'Kapitülasyonlar' hukuk sistemini nasıl etkilemiştir?", o: ["Güçlendirmiştir", "Hukuk birliğini bozmuş ve yabancılara yargı bağışıklığı tanıyarak devletin egemenliğini zedelemiştir", "Müslümanları korumuştur", "Ticaretin gelişmesini sağlamıştır", "Etkilememiştir"], a: 1, exp: "Kapitülasyonlar nedeniyle yabancılar Osmanlı mahkemelerinde yargılanamıyordu; bu da çok başlılık yaratıyordu." },
+        { q: "İdare Hukuku alanında Türkiye hangi ülkeden etkilenmiştir?", o: ["İngiltere", "ABD", "Fransa", "İsviçre", "İtalya"], a: 2, exp: "Şura-yı Devlet (Danıştay) ve idari yargı yapısı Fransa modeline göre kurulmuştur." },
+        { q: "Common Law sisteminde 'Jüri'nin görevi nedir?", o: ["Cezayı belirlemek", "Sanığın suçlu olup olmadığına (maddi vakıaya) karar vermek", "Kanun yapmak", "Hakimi denetlemek", "Tanıklık yapmak"], a: 1, exp: "Suçluluk kararını vatandaşlardan oluşan jüri verir, hukuki cezayı hakim belirler." },
+        { q: "Kıta Avrupası sisteminde hukuk eğitimi nasıldır?", o: ["Usta-çırak ilişkisiyle", "Üniversitelerde teorik ve sistematik eğitimle", "Mahkemelerde izleyerek", "Kiliselerde", "Sadece kitap okuyarak"], a: 1, exp: "Roma hukuku geleneği üniversitelerde akademik bir disiplin olarak gelişmiştir." },
+        { q: "Osmanlı'da örfi hukukun kaynağı nedir?", o: ["Kur'an", "Hadis", "Padişahın İradesi (Ferman, Kanunname)", "Kadı kararları", "Ulema görüşü"], a: 2, exp: "Örfi hukuk, hükümdarın yasama yetkisine dayanır." },
+        { q: "1921 Anayasası'nın (Teşkilat-ı Esasiye) en önemli özelliği nedir?", o: ["Çok uzun olması", "Laik olması", "Egemenliğin kayıtsız şartsız millete ait olduğunu ilan etmesi ve meclis hükümeti sistemini benimsemesi", "Padişahı güçlendirmesi", "Yargı bağımsızlığı"], a: 2, exp: "Kurtuluş Savaşı şartlarında hazırlanan, kısa ve çerçeve bir anayasadır; milli egemenliği esas alır." },
+        { q: "Roma Hukuku'nun günümüz hukukuna en büyük mirası nedir?", o: ["Ceza hukuku", "Özel Hukuk (Özellikle Borçlar ve Eşya Hukuku) kavramları ve sistematiği", "Anayasa hukuku", "İdare hukuku", "Vergi hukuku"], a: 1, exp: "Sözleşme, mülkiyet, haksız fiil gibi kavramların temeli Roma hukukunda atılmıştır." },
+        { q: "İslam hukukunda 'Müftü'nün görevi nedir?", o: ["Dava açmak", "Hüküm vermek (Yargılama)", "Kendisine sorulan meseleler hakkında şeriata uygun görüş (Fetva) bildirmek", "Kanun yapmak", "Cezayı infaz etmek"], a: 2, exp: "Müftü yargılama yapmaz, sadece hukuki görüş bildirir; yargılamayı Kadı yapar." },
+        { q: "Hukuk kurallarının 'Kazuistik' (Meseleci) olması ne demektir?", o: ["Çok kısa olması", "Her olayı en ince ayrıntısına kadar düzenlemeye çalışması", "Sadece genel ilkeler koyması", "Hiç yazılı olmaması", "Sadece hakimlere yönelik olması"], a: 1, exp: "Modern kanunlar kazuistik değil, 'Soyut ve Çerçeve' nitelikte olmayı tercih eder." },
+        { q: "Türkiye'de hukuk devriminin tamamlayıcısı olarak 1928'de ne yapılmıştır?", o: ["Soyadı kanunu", "Harf Devrimi (Latin alfabesinin kabulü)", "Kılık kıyafet devrimi", "Saltanatın kaldırılması", "Cumhuriyetin ilanı"], a: 1, exp: "Latin alfabesine geçiş, Batı hukukuyla entegrasyonu ve hukuk eğitimini kolaylaştırmıştır." },
+        { q: "Anglo-Sakson sisteminde hukukun 'Yazısız' olması ne anlama gelir?", o: ["Hiçbir kuralın olmaması", "Kuralların tek bir kanun kitabında (Code) toplanmamış olması, dağınık halde içtihatlarda bulunması", "Okuma yazma bilinmemesi", "Sadece sözlü olması", "Gizli olması"], a: 1, exp: "Yazısızlık, 'kodifiye edilmemiş' (derlenmemiş) demektir; yoksa mahkeme kararları yazılıdır." },
+        { q: "Mecelle'nin ilk 100 maddesi neyden oluşur?", o: ["Ceza kurallarından", "Genel hukuk ilkeleri ve külli kaidelerden", "Aile hukukundan", "Miras hukukundan", "Anayasa maddelerinden"], a: 1, exp: "'Beraat-i zimmet asıldır', 'Zarar izale olunur' gibi evrensel hukuk ilkeleri burada yer alır." }
+    ];
+
+    let currentQuestion = 0;
+    let userAnswers = new Array(questions.length).fill(null);
+
+    function loadQuestion() {
+        const container = document.getElementById('quiz-container');
+        const explanationArea = document.getElementById('explanation-area');
+        
+        container.innerHTML = '';
+        explanationArea.style.display = 'none';
+
+        const q = questions[currentQuestion];
+        
+        let html = `
+            <div class="question-block active">
+                <div class="question-text">${currentQuestion + 1}. ${q.q}</div>
+                <div class="options">
+        `;
+
+        q.o.forEach((opt, index) => {
+            const isSelected = userAnswers[currentQuestion] === index ? 'selected' : '';
+            const isChecked = userAnswers[currentQuestion] === index ? 'checked' : '';
+            html += `
+                <label class="option-label ${isSelected}" id="opt-${index}">
+                    <input type="radio" name="q${currentQuestion}" value="${index}" onclick="selectAnswer(${index})" ${isChecked}>
+                    ${String.fromCharCode(65 + index)}) ${opt}
+                </label>
+            `;
+        });
+
+        html += `</div></div>`;
+        container.innerHTML = html;
+
+        // Progress Bar
+        const progressPercent = ((currentQuestion + 1) / questions.length) * 100;
+        document.getElementById('progress-bar').style.width = progressPercent + '%';
+        document.getElementById('progress-text').innerText = `Soru ${currentQuestion + 1} / ${questions.length}`;
+        
+        // Buton Yönetimi
+        document.getElementById('prevBtn').disabled = currentQuestion === 0;
+        
+        if (currentQuestion === questions.length - 1) {
+            document.getElementById('nextBtn').style.display = 'none';
+            document.getElementById('finishBtn').style.display = 'inline-block';
+        } else {
+            document.getElementById('nextBtn').style.display = 'inline-block';
+            document.getElementById('finishBtn').style.display = 'none';
+        }
+    }
+
+    function selectAnswer(index) {
+        userAnswers[currentQuestion] = index;
+        const labels = document.querySelectorAll('.option-label');
+        labels.forEach(label => label.classList.remove('selected'));
+        document.getElementById(`opt-${index}`).classList.add('selected');
+    }
+
+    function showCurrentAnswer() {
+        const q = questions[currentQuestion];
+        const correctIndex = q.a;
+        const correctLabel = document.getElementById(`opt-${correctIndex}`);
+        const explanationArea = document.getElementById('explanation-area');
+
+        if(correctLabel) correctLabel.classList.add('correct-highlight');
+        
+        if (userAnswers[currentQuestion] !== null && userAnswers[currentQuestion] !== correctIndex) {
+            document.getElementById(`opt-${userAnswers[currentQuestion]}`).classList.add('wrong-highlight');
+        }
+
+        explanationArea.innerHTML = `<strong>Açıklama:</strong> ${q.exp}`;
+        explanationArea.style.display = 'block';
+    }
+
+    function nextQuestion() {
+        if (currentQuestion < questions.length - 1) {
+            currentQuestion++;
+            loadQuestion();
+        }
+    }
+
+    function prevQuestion() {
+        if (currentQuestion > 0) {
+            currentQuestion--;
+            loadQuestion();
+        }
+    }
+
+    function finishQuiz() {
+        let correctCount = 0;
+        let wrongCount = 0;
+        let emptyCount = 0;
+        let reviewHtml = '';
+
+        questions.forEach((q, index) => {
+            const userAnswer = userAnswers[index];
+            const isCorrect = userAnswer === q.a;
+            
+            let statusText = '';
+            let statusClass = '';
+
+            if (userAnswer === null) {
+                emptyCount++;
+                statusText = 'Boş';
+                statusClass = 'status-empty';
+            } else if (isCorrect) {
+                correctCount++;
+                statusText = 'Doğru';
+                statusClass = 'status-correct';
+            } else {
+                wrongCount++;
+                statusText = 'Yanlış';
+                statusClass = 'status-wrong';
+            }
+
+            reviewHtml += `
+                <tr>
+                    <td>${index + 1}</td>
+                    <td>${q.q}</td>
+                    <td>${userAnswer !== null ? String.fromCharCode(65 + userAnswer) + ') ' + q.o[userAnswer] : '-'}</td>
+                    <td>${String.fromCharCode(65 + q.a)}) ${q.o[q.a]}</td>
+                    <td class="${statusClass}">${statusText}</td>
+                </tr>
+            `;
+        });
+
+        document.getElementById('quiz-screen').style.display = 'none';
+        document.getElementById('result-screen').style.display = 'block';
+
+        const score = Math.round((correctCount / questions.length) * 100);
+        
+        document.getElementById('score-circle').innerText = score;
+        document.getElementById('score-details').innerHTML = `
+            <strong>Doğru:</strong> ${correctCount} &nbsp;|&nbsp; 
+            <strong>Yanlış:</strong> ${wrongCount} &nbsp;|&nbsp; 
+            <strong>Boş:</strong> ${emptyCount}
+        `;
+        
+        document.getElementById('review-body').innerHTML = reviewHtml;
+    }
+
+    // Uygulamayı başlat
+    loadQuestion();
+</script>
+
+</body>
+</html>
