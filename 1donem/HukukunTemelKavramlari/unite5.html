@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hukuk 5. Ünite: Hukuki İlişkiler ve Haklar</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #e8f5e9; color: #1b5e20; margin: 0; padding: 20px; }
+        .container { max-width: 900px; margin: 0 auto; background: #fff; padding: 40px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); position: relative; }
+        h1 { text-align: center; color: #2e7d32; border-bottom: 2px solid #66bb6a; padding-bottom: 15px; margin-bottom: 30px; font-size: 24px; }
+        
+        /* Home Button */
+        .home-btn {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background-color: #43a047;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 14px;
+            transition: background 0.2s;
+        }
+        .home-btn:hover { background-color: #1b5e20; }
+
+        /* İlerleme Çubuğu */
+        .progress-container { background-color: #c8e6c9; border-radius: 10px; margin-bottom: 20px; height: 12px; overflow: hidden; }
+        .progress-bar { height: 100%; background-color: #2e7d32; width: 0%; transition: width 0.3s; }
+        .progress-text { text-align: right; font-size: 0.9em; color: #1b5e20; margin-bottom: 15px; font-weight: bold; }
+
+        /* Soru Alanı */
+        .question-block { display: none; animation: fadeIn 0.4s; }
+        .question-block.active { display: block; }
+        .question-text { font-weight: 700; font-size: 1.2em; margin-bottom: 25px; color: #004d40; line-height: 1.4; }
+        
+        /* Seçenekler */
+        .options { display: flex; flex-direction: column; gap: 12px; }
+        .option-label { 
+            display: flex; align-items: center; padding: 15px 20px; border: 2px solid #c8e6c9; 
+            border-radius: 8px; cursor: pointer; transition: all 0.2s; background: #fff; font-size: 1em;
+        }
+        .option-label:hover { background-color: #e8f5e9; border-color: #81c784; }
+        .option-label.selected { border-color: #2e7d32; background-color: #c8e6c9; }
+        .option-label input { margin-right: 15px; transform: scale(1.2); cursor: pointer; }
+        
+        /* Cevap Göster Stilleri */
+        .option-label.correct-highlight { border-color: #2e7d32; background-color: #a5d6a7; color: #1b5e20; font-weight: bold; }
+        .option-label.wrong-highlight { border-color: #c62828; background-color: #ffcdd2; color: #b71c1c; }
+
+        /* Açıklama Kutusu */
+        .explanation-box {
+            margin-top: 25px;
+            padding: 20px;
+            background-color: #f1f8e9;
+            border-left: 5px solid #2e7d32;
+            border-radius: 4px;
+            color: #1b5e20;
+            display: none;
+            font-size: 0.95em;
+            line-height: 1.6;
+        }
+
+        /* Butonlar */
+        .controls { margin-top: 35px; display: flex; justify-content: space-between; align-items: center; gap: 15px; flex-wrap: wrap; }
+        button { border: none; padding: 12px 28px; border-radius: 6px; cursor: pointer; font-size: 16px; font-weight: 600; transition: transform 0.1s, background 0.2s; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        button:active { transform: translateY(1px); }
+        
+        .nav-btn { background-color: #388e3c; color: white; }
+        .nav-btn:hover { background-color: #1b5e20; }
+        .nav-btn:disabled { background-color: #a5d6a7; cursor: not-allowed; box-shadow: none; }
+        
+        .show-answer-btn { background-color: #fbc02d; color: #1b5e20; }
+        .show-answer-btn:hover { background-color: #f57f17; }
+        
+        .finish-btn { background-color: #2e7d32; color: white; display: none; }
+        .finish-btn:hover { background-color: #1b5e20; }
+
+        /* Sonuç Ekranı */
+        #result-screen { display: none; }
+        .score-card { text-align: center; background: #e8f5e9; padding: 30px; border-radius: 12px; margin-bottom: 30px; border: 1px solid #81c784; }
+        .score-circle { 
+            width: 140px; height: 140px; border-radius: 50%; background: #2e7d32; color: white; 
+            display: flex; align-items: center; justify-content: center; font-size: 2.5em; font-weight: bold; 
+            margin: 0 auto 20px; box-shadow: 0 4px 10px rgba(46, 125, 50, 0.4);
+        }
+        
+        .review-table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 0.9em; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        .review-table th, .review-table td { padding: 15px; border: 1px solid #c8e6c9; text-align: left; }
+        .review-table th { background-color: #2e7d32; color: white; font-weight: 600; }
+        .review-table tr:nth-child(even) { background-color: #f1f8e9; }
+        .review-table tr:hover { background-color: #c8e6c9; }
+        .status-correct { color: #2e7d32; font-weight: bold; }
+        .status-wrong { color: #c62828; font-weight: bold; }
+        .status-empty { color: #f57f17; font-weight: bold; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        /* Responsive adjustments */
+        @media (max-width: 600px) {
+            .container { padding: 20px; }
+            .option-label { padding: 10px 15px; }
+            .question-text { font-size: 1.1em; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <button class="home-btn" onclick="if(confirm('Testi yeniden başlatmak istediğinize emin misiniz?')) location.reload();">⌂ Testi Yenile</button>
+    
+    <div id="quiz-screen">
+        <h1>5. Ünite: Hukuki İlişkiler ve Haklar</h1>
+        
+        <div class="progress-text" id="progress-text">Soru 1 / 55</div>
+        <div class="progress-container">
+            <div class="progress-bar" id="progress-bar"></div>
+        </div>
+        
+        <div id="quiz-container">
+            <!-- Sorular buraya JS ile gelecek -->
+        </div>
+
+        <!-- Açıklama Alanı -->
+        <div id="explanation-area" class="explanation-box"></div>
+
+        <div class="controls">
+            <div>
+                <button class="nav-btn" id="prevBtn" onclick="prevQuestion()" disabled>&#8592; Önceki</button>
+            </div>
+            <div>
+                <button class="show-answer-btn" onclick="showCurrentAnswer()">👁️ Cevabı Göster</button>
+            </div>
+            <div>
+                <button class="nav-btn" id="nextBtn" onclick="nextQuestion()">Sonraki &#8594;</button>
+                <button class="finish-btn" id="finishBtn" onclick="finishQuiz()">Testi Bitir &#10004;</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="result-screen">
+        <h1>Değerlendirme Sonucu</h1>
+        <div class="score-card">
+            <div class="score-circle" id="score-circle">0</div>
+            <h3>Başarı Puanı</h3>
+            <p id="score-details" style="font-size: 1.1em; color: #555;"></p>
+        </div>
+        
+        <h3>Detaylı Soru Analizi</h3>
+        <div style="overflow-x: auto;">
+            <table class="review-table">
+                <thead>
+                    <tr>
+                        <th style="width: 5%">No</th>
+                        <th style="width: 45%">Soru</th>
+                        <th style="width: 20%">Senin Cevabın</th>
+                        <th style="width: 20%">Doğru Cevap</th>
+                        <th style="width: 10%">Durum</th>
+                    </tr>
+                </thead>
+                <tbody id="review-body">
+                    <!-- Sonuç satırları buraya gelecek -->
+                </tbody>
+            </table>
+        </div>
+        <div style="text-align: center; margin-top: 30px;">
+            <button class="nav-btn" onclick="location.reload()">Testi Tekrar Çöz</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // 55 Soruluk Hukuk 5. Ünite Testi (Hukuki İlişkiler ve Haklar)
+    const questions = [
+        // 1. Hak Kavramı ve Tanımı
+        { q: "Hukuk kuralları tarafından kişilere tanınan ve korunan menfaatlere (yetkilere) ne denir?", o: ["Ödev", "Hak", "Borç", "Sorumluluk", "Ceza"], a: 1, exp: "Hak, hukukun kişiye tanıdığı irade kudreti veya koruduğu menfaattir." },
+        { q: "Hukuk düzeninin düzenlediği olaylar üzerine, kişiler arasında doğan hak ve borç ilişkisine ne denir?", o: ["Sosyal İlişki", "Hukuki İlişki", "Ekonomik İlişki", "Siyasi İlişki", "Ahlaki İlişki"], a: 1, exp: "Örn: Alım-satım sözleşmesi, taraflar arasında hukuki bir ilişki kurar." },
+        { q: "Hakkın tanımı konusunda 'İrade Teorisi'ni savunanlara göre hak nedir?", o: ["Hukuken korunan menfaattir", "Hukuk düzeninin kişiye tanıdığı irade kudretidir (İstemeye yetkili olma)", "Tanrı vergisidir", "Toplumsal bir sözleşmedir", "Devletin lütfudur"], a: 1, exp: "Bu teoriye göre hak, başkalarından bir şeyi yapmasını veya yapmamasını isteme gücüdür." },
+        
+        // 2. Hakların Ayrımı: Kamu Hakları - Özel Haklar
+        { q: "Kişilerin devletle olan ilişkilerini düzenleyen ve devlete karşı ileri sürülebilen haklara ne denir?", o: ["Özel Haklar", "Kamu Hakları", "Nisbi Haklar", "Miras Hakları", "Telif Hakları"], a: 1, exp: "Kamu hakları Anayasa hukukunun konusudur (Seçme, seçilme, dilekçe hakkı vb.)." },
+        { q: "Eşitler arasındaki (birey-birey) ilişkilerden doğan haklara ne denir?", o: ["Kamu Hakları", "Özel Haklar", "Siyasi Haklar", "İdari Haklar", "Negatif Haklar"], a: 1, exp: "Medeni Kanun veya Borçlar Kanunu'ndan doğan haklar (mülkiyet, alacak) özel haklardır." },
+
+        // 3. Kamu Hakları ve Türleri (Jellinek'in Ayrımı)
+        { q: "Georg Jellinek'in sınıflandırmasına göre, kişiyi devlete ve topluma karşı koruyan, devletin müdahale edemeyeceği alana ne denir?", o: ["Pozitif Statü Hakları (İsteme)", "Negatif Statü Hakları (Koruyucu/Kişisel Haklar)", "Aktif Statü Hakları (Katılma)", "Sosyal Haklar", "Ekonomik Haklar"], a: 1, exp: "Negatif haklar, devletin 'karışmama' (gölge etmeme) yükümlülüğü olduğu haklardır (Örn: Konut dokunulmazlığı, kişi hürriyeti)." },
+        { q: "Kişinin devletten olumlu bir davranış, hizmet veya yardım isteme yetkisi veren haklara ne denir?", o: ["Negatif Statü Hakları", "Pozitif Statü Hakları (İsteme/Sosyal ve Ekonomik Haklar)", "Aktif Statü Hakları", "Siyasi Haklar", "Kişisel Haklar"], a: 1, exp: "Sağlık hakkı, eğitim hakkı, çalışma hakkı gibi haklar devletin 'yapma' (hizmet verme) ödevini gerektirir." },
+        { q: "Kişinin devlet yönetimine ve siyasal kuruluşlara katılmasını sağlayan haklara ne denir?", o: ["Negatif Statü Hakları", "Pozitif Statü Hakları", "Aktif Statü Hakları (Katılma/Siyasi Haklar)", "Koruyucu Haklar", "İsteme Hakları"], a: 2, exp: "Seçme, seçilme, siyasi parti kurma ve kamu hizmetine girme hakları bu gruptadır." },
+        { q: "Aşağıdakilerden hangisi 'Negatif Statü Hakkı'dır (Kişisel Hak)?", o: ["Eğitim Hakkı", "Seçme Hakkı", "Mülkiyet ve Miras Hakkı / Konut Dokunulmazlığı", "Çalışma Hakkı", "Sosyal Güvenlik Hakkı"], a: 2, exp: "Mülkiyet ve konut dokunulmazlığı, devletin dokunamayacağı özel alanı korur." },
+        { q: "Aşağıdakilerden hangisi 'Pozitif Statü Hakkı'dır (Sosyal-Ekonomik Hak)?", o: ["Din ve Vicdan Hürriyeti", "Sağlık Hakkı", "Seçilme Hakkı", "Dernek Kurma Hakkı", "Basın Hürriyeti"], a: 1, exp: "Sağlık hakkı, devletten hastane ve tedavi hizmeti istemeyi içerir." },
+        { q: "Aşağıdakilerden hangisi 'Aktif Statü Hakkı'dır (Siyasi Hak)?", o: ["Konut Dokunulmazlığı", "Ailenin Korunması", "Kamu Hizmetine Girme (Memurluk) Hakkı", "Sendika Hakkı", "Bilim ve Sanat Hürriyeti"], a: 2, exp: "Memur olmak, devlet yönetimine katılmanın bir yoludur." },
+
+        // 4. Kamu Haklarının Sınırlandırılması
+        { q: "Temel hak ve hürriyetler, özlerine dokunulmaksızın yalnızca ne ile sınırlandırılabilir?", o: ["Yönetmelikle", "Genelgeyle", "Kanunla (Anayasa'nın ilgili maddesindeki sebeplere bağlı olarak)", "Cumhurbaşkanı kararıyla", "Vali emriyle"], a: 2, exp: "Anayasa m.13 gereği temel haklar ancak kanunla ve anayasada belirtilen özel sebeplerle sınırlanabilir." },
+        { q: "Temel hakların sınırlandırılmasında 'Ölçülülük İlkesi' ne anlama gelir?", o: ["Sınırlamanın ölçülebilir olması", "Sınırlamanın ulaşılmak istenen amaçla orantılı ve elverişli olması, aşırı olmaması", "Sınırlamanın tartılması", "Sınırlamanın kısa sürmesi", "Herkesin eşit sınırlanması"], a: 1, exp: "Araca (sınırlama) başvururken, amaç (kamu yararı) ile araç arasında makul bir denge olmalıdır." },
+
+        // 5. Özel Haklar ve Türleri (Mahiyetine Göre)
+        { q: "Sahibine, maddi veya gayrimaddi bir mal üzerinde en geniş yetkileri veren ve 'herkese karşı' ileri sürülebilen haklara ne denir?", o: ["Nisbi Haklar", "Mutlak Haklar", "Alacak Hakları", "İnşai Haklar", "Tali Haklar"], a: 1, exp: "Mülkiyet hakkı, telif hakkı veya kişilik hakları mutlak haklardır; herkes bu haklara saygı duymak zorundadır." },
+        { q: "Sadece hukuki ilişkinin tarafı olan 'belirli bir kişiye' karşı ileri sürülebilen haklara ne denir?", o: ["Mutlak Haklar", "Nisbi (Şahsi) Haklar", "Ayni Haklar", "Fikri Haklar", "Kişilik Hakları"], a: 1, exp: "Alacak hakkı nisbidir; alacaklı sadece borçlusundan borcunu isteyebilir, başkasından isteyemez." },
+        { q: "Bir eşya üzerinde sahibine doğrudan doğruya hakimiyet yetkisi veren mutlak haklara ne ad verilir?", o: ["Fikri Haklar", "Kişilik Hakları", "Ayni Haklar", "Alacak Hakları", "Üyelik Hakları"], a: 2, exp: "Mülkiyet hakkı en tam ayni haktır." },
+        { q: "Başkasına ait bir eşya üzerinde, sahibinin mülkiyet hakkını sınırlayarak kurulan ayni haklara ne denir?", o: ["Tam Ayni Hak", "Sınırlı Ayni Hak", "Nisbi Hak", "Fikri Hak", "Kişisel Hak"], a: 1, exp: "İrtifak hakkı (geçit hakkı), rehin hakkı (ipotek) veya taşınmaz yükü sınırlı ayni haklardır." },
+        
+        // 6. Özel Haklar ve Türleri (Konularına Göre)
+        { q: "Maddi varlığı olmayan, insan zekasının ve düşüncesinin ürünü olan şeyler üzerindeki haklara ne denir?", o: ["Ayni Haklar", "Fikri Haklar", "Alacak Hakları", "Şahsi Haklar", "Mülkiyet Hakları"], a: 1, exp: "Telif hakları (kitap, müzik) ve sınai haklar (patent, marka) fikri haklardır." },
+        { q: "Kişinin maddi ve manevi varlığı ile ilgili değerler (hayat, vücut bütünlüğü, onur, haysiyet, resim, ses) üzerindeki haklarına ne denir?", o: ["Kişilik Hakları", "Velayet Hakkı", "Mülkiyet Hakkı", "Rehin Hakkı", "İntifa Hakkı"], a: 0, exp: "Kişilik hakları mutlak haklardır ve parayla ölçülemez, devredilemez." },
+        { q: "Bir topluluğa (dernek, şirket) mensup olmaktan doğan haklara ne denir?", o: ["Üyelik Hakları", "Mülkiyet Hakları", "Fikri Haklar", "Ayni Haklar", "Rehin Hakları"], a: 0, exp: "Şirket ortağının kar payı hakkı veya dernek üyesinin oy kullanma hakkı üyelik hakkıdır." },
+
+        // 7. Özel Haklar (Kullanılmalarına Göre)
+        { q: "Sahibinden başkasına devredilebilen ve mirasçılara geçebilen haklara ne denir?", o: ["Devredilemeyen Haklar", "Devredilebilen Haklar", "Kişiye Sıkı Sıkıya Bağlı Haklar", "Siyasi Haklar", "Şahsi Haklar"], a: 1, exp: "Genellikle malvarlığı hakları (mülkiyet, alacak) devredilebilir." },
+        { q: "Sadece hak sahibi tarafından kullanılabilen, başkasına devredilemeyen ve mirasçılara geçmeyen haklara ne denir?", o: ["Malvarlığı Hakları", "Kişiye Sıkı Sıkıya Bağlı Haklar / Devredilemeyen Haklar", "Mutlak Haklar", "Nisbi Haklar", "Ayni Haklar"], a: 1, exp: "Boşanma davası açma, nişanı bozma, soybağını reddetme gibi haklar sadece ilgili kişi tarafından kullanılır." },
+        { q: "Aşağıdakilerden hangisi devredilemeyen (kişiye sıkı sıkıya bağlı) bir haktır?", o: ["Ev satma hakkı", "Alacağını tahsil etme hakkı", "Oturma (Sükna) Hakkı veya Boşanma davası açma hakkı", "Telif hakkının mali boyutu", "Kira geliri"], a: 2, exp: "Oturma hakkı (intifa değil sükna) ve aile hukuku hakları genellikle devredilemez." },
+
+        // 8. Özel Haklar (Amaçlarına Göre / Etkilerine Göre)
+        { q: "Kullanılmasıyla yeni bir hukuki durum yaratan, mevcut durumu değiştiren veya ortadan kaldıran haklara ne denir?", o: ["Alelade (Sıradan) Haklar", "Yenilik Doğuran (İnşai) Haklar", "Yönetim Hakları", "Yararlanma Hakları", "Kamu Hakları"], a: 1, exp: "Yenilik doğuran haklar tek taraflı irade beyanıyla sonuç doğurur; karşı tarafın kabulüne gerek yoktur." },
+        { q: "Aşağıdakilerden hangisi 'Kurucu' yenilik doğuran haktır?", o: ["İstifa", "Fesih", "Alım (İştira), Önalım (Şufa) veya Kabul beyanı", "Ayıplı malı iade", "Azil"], a: 2, exp: "Alım hakkını kullanmak veya sözleşme icabını kabul etmek yeni bir ilişki kurar." },
+        { q: "Mevcut bir hukuki ilişkiyi değiştiren haklara (örn: ayıplı malda bedel indirimi istemek) ne denir?", o: ["Kurucu Yenilik Doğuran Hak", "Değiştirici Yenilik Doğuran Hak", "Bozucu Yenilik Doğuran Hak", "Alelade Hak", "Mutlak Hak"], a: 1, exp: "Sözleşmeyi bitirmez, içeriğini değiştirir." },
+        { q: "Mevcut bir hukuki ilişkiyi tamamen ortadan kaldıran haklara (örn: Fesih, İstifa, Azil) ne denir?", o: ["Kurucu Yenilik Doğuran Hak", "Değiştirici Yenilik Doğuran Hak", "Bozucu Yenilik Doğuran Hak", "Sıradan Hak", "Ayni Hak"], a: 2, exp: "İstifa veya fesih ile ilişki sona erer." },
+        { q: "Yenilik doğuran haklar kullanıldıktan sonra geri dönülebilir mi?", o: ["Evet, her zaman", "Hayır, kural olarak kullanıldıktan sonra geri alınamaz (dönülemez)", "Karşı taraf izin vermese de dönülür", "Mahkeme kararıyla dönülür", "Sadece istifadan dönülür"], a: 1, exp: "Tek taraflı irade ulaştığı an sonuç doğurur; bu yüzden hukuk güvenliği için geri dönüşü yoktur." },
+        { q: "Kullanılmasıyla yeni bir durum yaratmayan, sadece mevcut bir hakkın kullanılmasını veya korunmasını sağlayan haklara ne denir?", o: ["Yenilik Doğuran Haklar", "Alelade (Sıradan) Haklar", "İnşai Haklar", "Mutlak Haklar", "Nisbi Haklar"], a: 1, exp: "Velayet hakkı, babalık davası açma hakkı (dava sonucunda hüküm kurulur, beyanla değil) veya alacağı isteme hakkı alelade haktır." },
+        { q: "Bir kişinin, karşı tarafın hakkını kullanmasını veya dava açmasını engelleyen savunma hakkına ne denir?", o: ["İnkar", "Def'i (Örn: Zamanaşımı def'i)", "İtiraz", "Kabul", "İkrar"], a: 1, exp: "Zamanaşımı def'i ile borçlu, 'borcum var ama süresi geçti, ödemiyorum' diyerek hakkın kullanımını engeller." },
+
+        // 9. Hakkın Kazanılması, Kaybedilmesi ve Korunması
+        { q: "Bir hakkın, devir yoluyla değil de ilk defa o kişi tarafından kazanılmasına ne denir?", o: ["Devren Kazanma", "Aslen Kazanma", "Tesisen Kazanma", "Mirasla Kazanma", "Satın Alma"], a: 1, exp: "Avcılıkla tutulan balık veya sahipsiz bir eşyayı sahiplenme (ihraz) aslen kazanmadır." },
+        { q: "Bir hakkın, eski sahibinden yeni sahibine geçmesine (satış, bağış, miras) ne denir?", o: ["Aslen Kazanma", "Devren Kazanma", "İşgal", "İhraz", "Zamanaşımı"], a: 1, exp: "Mülkiyetin tapuda devri veya taşınırın teslimi devren kazanmadır." },
+        { q: "Hakların kazanılmasında geçerli olan, kişinin bir engeli bilmemesi (mazur görülebilir bilgisizlik) ilkesi nedir?", o: ["Objektif İyiniyet", "Sübjektif İyiniyet (İyi Niyet)", "Dürüstlük Kuralı", "Kusursuzluk", "İhmal"], a: 1, exp: "TMK m.3: 'Kanunun iyiniyete hukuki sonuç bağladığı durumlarda asıl olan iyiniyetin varlığıdır.'" },
+        { q: "Hakların kullanılmasında ve borçların yerine getirilmesinde geçerli olan 'Dürüstlük Kuralı' (Objektif İyiniyet) nerede düzenlenmiştir?", o: ["TMK Madde 1", "TMK Madde 2", "TMK Madde 3", "Anayasa Madde 10", "Borçlar Kanunu"], a: 1, exp: "Herkes haklarını kullanırken dürüst davranmalıdır." },
+        { q: "Bir hakkın, başkasına zarar vermek amacıyla ve dürüstlük kuralına aykırı şekilde kullanılmasına ne denir?", o: ["Hakkın Kötüye Kullanılması", "Hakkın Devri", "Hakkın İhlali", "Hukuka Uygunluk", "Meşru Müdafaa"], a: 0, exp: "Hukuk düzeni, hakkın kötüye kullanılmasını korumaz (TMK m.2/2)." },
+        { q: "Hakların korunmasında asıl olan yöntem hangisidir?", o: ["İhkak-ı Hak (Kendi hakkını zorla alma)", "Devlet Eliyle Koruma (Talep ve Dava Hakkı)", "Kısas", "Düello", "Sessiz kalma"], a: 1, exp: "Modern hukukta kişiler haklarını mahkemeler aracılığıyla ararlar." },
+        { q: "Devlet gücünün zamanında yetişemediği durumlarda, kişinin hakkını bizzat güç kullanarak korumasına istisnai olarak izin verilir mi?", o: ["Asla verilmez", "Evet, Meşru Müdafaa ve Zaruret Hali gibi durumlarda izin verilir", "Her zaman verilir", "Sadece polise verilir", "Sadece askere verilir"], a: 1, exp: "Meşru müdafaa, hukuka uygunluk nedenidir." },
+
+        // 10. Karışık ve Pekiştirme Soruları
+        { q: "Velayet ve vesayet hakları hangi hak grubuna girer?", o: ["Malvarlığı Hakları", "Kişilik Hakları", "Mutlak Haklar (Aile Hukukundan Doğan)", "Nisbi Haklar", "Fikri Haklar"], a: 2, exp: "Velayet, herkese karşı ileri sürülebilen, aile hukukundan doğan mutlak bir haktır." },
+        { q: "Telif hakkı (Fikir ve Sanat Eseri üzerindeki hak) ne tür bir haktır?", o: ["Sadece Mali Hak", "Sadece Manevi Hak", "Hem Mali Hem Manevi yetkiler içeren Mutlak Hak", "Nisbi Hak", "Siyasi Hak"], a: 2, exp: "Yazarın eseri üzerindeki hakkı hem ismini belirtme (manevi) hem de çoğaltıp satma (mali) yetkisi verir." },
+        { q: "Bir kişinin, başkasına ait arsa üzerinden geçme hakkına (Geçit İrtifakı) ne denir?", o: ["Mülkiyet Hakkı", "Sınırlı Ayni Hak (İrtifak Hakkı)", "Alacak Hakkı", "Kişilik Hakkı", "Rehin Hakkı"], a: 1, exp: "İrtifak hakkı, mülkiyetin bazı yetkilerini başkasına tanır." },
+        { q: "Bankadaki paranızı çekme hakkınız ne tür bir haktır?", o: ["Ayni Hak", "Nisbi (Alacak) Hakkı", "Fikri Hak", "Kişilik Hakkı", "Siyasi Hak"], a: 1, exp: "Banka ile aranızdaki sözleşmeye dayanır; sadece bankadan isteyebilirsiniz." },
+        { q: "Seçme ve seçilme hakkının kullanılması hangi statü hakkına örnektir?", o: ["Negatif", "Pozitif", "Aktif Statü Hakkı", "Özel Hak", "Mutlak Hak"], a: 2, exp: "Siyasi sürece katılımı ifade eder." },
+        { q: "Konut dokunulmazlığı ihlal edilen bir kişinin, devletten 'dokunmamasını' istemesi hangi statü hakkıdır?", o: ["Pozitif", "Negatif (Koruyucu) Statü Hakkı", "Aktif", "Sosyal Hak", "Siyasi Hak"], a: 1, exp: "Devletin karışmama yükümlülüğünü hatırlatır." },
+        { q: "Devletten parasız eğitim istemek hangi statü hakkıdır?", o: ["Negatif", "Aktif", "Pozitif (İsteme) Statü Hakkı", "Kişisel Hak", "Mutlak Hak"], a: 2, exp: "Devletten bir hizmet (edim) talep edilmektedir." },
+        { q: "Hakkın kötüye kullanılması yasağı hangi ilkenin bir sonucudur?", o: ["İyi Niyet", "Dürüstlük Kuralı", "Kusur İlkesi", "Eşitlik İlkesi", "Kanunilik İlkesi"], a: 1, exp: "Dürüstlük kuralı, hakkın sınırını çizer." },
+        { q: "Tapu kütüğüne güvenerek bir taşınmazı satın alan kişinin kazanımı, gerçek sahibi başkası olsa bile korunur mu?", o: ["Hayır, korunmaz", "Evet, 'İyi Niyet' ilkesi gereği korunur", "Sadece yarısı korunur", "Devlet el koyar", "Hakim karar verir"], a: 1, exp: "TMK m.1023: Tapu kütüğündeki tescile iyiniyetle dayanarak mülkiyet kazananın bu kazanımı korunur." },
+        { q: "Aşağıdakilerden hangisi bir 'Topluluk Hakkı'dır?", o: ["Dernek üyeliği", "Apartman yöneticiliği", "Sendika kurma", "Hepsinde topluluk ilişkisi vardır ancak 'Kolektif Haklar' (Çevre, Barış vb.) daha geniş anlamdadır", "Şirket hissesi"], a: 3, exp: "Bazı modern sınıflandırmalarda çevre hakkı, barış hakkı gibi haklar 'Dayanışma Hakları' (3. Kuşak) olarak geçer." },
+        { q: "Zamanaşımı def'i ne tür bir haktır?", o: ["Yenilik Doğuran Hak", "Alelade Hak (Savunma/Def'i Hakkı)", "Mutlak Hak", "Kişilik Hakkı", "Ayni Hak"], a: 1, exp: "Hakkı ortadan kaldırmaz, sadece dava edilmesini engeller (eksik borç haline getirir)." },
+        { q: "Bir sözleşmeden dönme (cayma) hakkı kullanıldığında sözleşme ne olur?", o: ["Devam eder", "Baştan itibaren (geçmişe etkili) ortadan kalkar", "Geleceğe etkili sona erer (Fesih)", "Dondurulur", "Devredilir"], a: 1, exp: "Dönme (Rücu), sözleşmeyi hiç yapılmamış gibi geçmişe etkili sona erdirir (Bozucu yenilik doğuran hak)." },
+        { q: "İşçinin istifa etmesi ne tür bir haktır?", o: ["Kurucu Yenilik Doğuran", "Değiştirici Yenilik Doğuran", "Bozucu Yenilik Doğuran Hak", "Alelade Hak", "Nisbi Hak"], a: 2, exp: "İş sözleşmesini sona erdirir." },
+        { q: "Velayet hakkı devredilebilir mi?", o: ["Evet, parayla satılabilir", "Hayır, kişiye sıkı sıkıya bağlıdır ve kamu düzenindendir, devredilemez", "Bazen", "Anne devreder baba devredemez", "Çocuk isterse devredilir"], a: 1, exp: "Velayet ve vesayet görevleri başkasına devredilemez." }
+    ];
+
+    let currentQuestion = 0;
+    let userAnswers = new Array(questions.length).fill(null);
+
+    function loadQuestion() {
+        const container = document.getElementById('quiz-container');
+        const explanationArea = document.getElementById('explanation-area');
+        
+        container.innerHTML = '';
+        explanationArea.style.display = 'none';
+
+        const q = questions[currentQuestion];
+        
+        let html = `
+            <div class="question-block active">
+                <div class="question-text">${currentQuestion + 1}. ${q.q}</div>
+                <div class="options">
+        `;
+
+        q.o.forEach((opt, index) => {
+            const isSelected = userAnswers[currentQuestion] === index ? 'selected' : '';
+            const isChecked = userAnswers[currentQuestion] === index ? 'checked' : '';
+            html += `
+                <label class="option-label ${isSelected}" id="opt-${index}">
+                    <input type="radio" name="q${currentQuestion}" value="${index}" onclick="selectAnswer(${index})" ${isChecked}>
+                    ${String.fromCharCode(65 + index)}) ${opt}
+                </label>
+            `;
+        });
+
+        html += `</div></div>`;
+        container.innerHTML = html;
+
+        // Progress Bar
+        const progressPercent = ((currentQuestion + 1) / questions.length) * 100;
+        document.getElementById('progress-bar').style.width = progressPercent + '%';
+        document.getElementById('progress-text').innerText = `Soru ${currentQuestion + 1} / ${questions.length}`;
+        
+        // Buton Yönetimi
+        document.getElementById('prevBtn').disabled = currentQuestion === 0;
+        
+        if (currentQuestion === questions.length - 1) {
+            document.getElementById('nextBtn').style.display = 'none';
+            document.getElementById('finishBtn').style.display = 'inline-block';
+        } else {
+            document.getElementById('nextBtn').style.display = 'inline-block';
+            document.getElementById('finishBtn').style.display = 'none';
+        }
+    }
+
+    function selectAnswer(index) {
+        userAnswers[currentQuestion] = index;
+        const labels = document.querySelectorAll('.option-label');
+        labels.forEach(label => label.classList.remove('selected'));
+        document.getElementById(`opt-${index}`).classList.add('selected');
+    }
+
+    function showCurrentAnswer() {
+        const q = questions[currentQuestion];
+        const correctIndex = q.a;
+        const correctLabel = document.getElementById(`opt-${correctIndex}`);
+        const explanationArea = document.getElementById('explanation-area');
+
+        if(correctLabel) correctLabel.classList.add('correct-highlight');
+        
+        if (userAnswers[currentQuestion] !== null && userAnswers[currentQuestion] !== correctIndex) {
+            document.getElementById(`opt-${userAnswers[currentQuestion]}`).classList.add('wrong-highlight');
+        }
+
+        explanationArea.innerHTML = `<strong>Açıklama:</strong> ${q.exp}`;
+        explanationArea.style.display = 'block';
+    }
+
+    function nextQuestion() {
+        if (currentQuestion < questions.length - 1) {
+            currentQuestion++;
+            loadQuestion();
+        }
+    }
+
+    function prevQuestion() {
+        if (currentQuestion > 0) {
+            currentQuestion--;
+            loadQuestion();
+        }
+    }
+
+    function finishQuiz() {
+        let correctCount = 0;
+        let wrongCount = 0;
+        let emptyCount = 0;
+        let reviewHtml = '';
+
+        questions.forEach((q, index) => {
+            const userAnswer = userAnswers[index];
+            const isCorrect = userAnswer === q.a;
+            
+            let statusText = '';
+            let statusClass = '';
+
+            if (userAnswer === null) {
+                emptyCount++;
+                statusText = 'Boş';
+                statusClass = 'status-empty';
+            } else if (isCorrect) {
+                correctCount++;
+                statusText = 'Doğru';
+                statusClass = 'status-correct';
+            } else {
+                wrongCount++;
+                statusText = 'Yanlış';
+                statusClass = 'status-wrong';
+            }
+
+            reviewHtml += `
+                <tr>
+                    <td>${index + 1}</td>
+                    <td>${q.q}</td>
+                    <td>${userAnswer !== null ? String.fromCharCode(65 + userAnswer) + ') ' + q.o[userAnswer] : '-'}</td>
+                    <td>${String.fromCharCode(65 + q.a)}) ${q.o[q.a]}</td>
+                    <td class="${statusClass}">${statusText}</td>
+                </tr>
+            `;
+        });
+
+        document.getElementById('quiz-screen').style.display = 'none';
+        document.getElementById('result-screen').style.display = 'block';
+
+        const score = Math.round((correctCount / questions.length) * 100);
+        
+        document.getElementById('score-circle').innerText = score;
+        document.getElementById('score-details').innerHTML = `
+            <strong>Doğru:</strong> ${correctCount} &nbsp;|&nbsp; 
+            <strong>Yanlış:</strong> ${wrongCount} &nbsp;|&nbsp; 
+            <strong>Boş:</strong> ${emptyCount}
+        `;
+        
+        document.getElementById('review-body').innerHTML = reviewHtml;
+    }
+
+    // Uygulamayı başlat
+    loadQuestion();
+</script>
+
+</body>
+</html>
