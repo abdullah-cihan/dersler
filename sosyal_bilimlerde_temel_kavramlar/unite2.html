@@ -3,18 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sosyal Bilimlerde Temel Kavramlar - 2. Ünite</title>
+    <title>Sosyal Bilimlerde Temel Kavramlar - 2. Ünite: Ekonomi </title>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #e0f2f1; color: #333; margin: 0; padding: 20px; }
-        .container { max-width: 900px; margin: 0 auto; background: #fff; padding: 40px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); position: relative; }
-        h1 { text-align: center; color: #00796b; border-bottom: 2px solid #009688; padding-bottom: 10px; margin-bottom: 30px; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f6f7; color: #2c3e50; margin: 0; padding: 20px; }
+        .container { max-width: 900px; margin: 0 auto; background: #fff; padding: 40px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); position: relative; }
+        h1 { text-align: center; color: #2980b9; border-bottom: 2px solid #3498db; padding-bottom: 15px; margin-bottom: 30px; font-size: 24px; }
         
         /* Home Button */
         .home-btn {
             position: absolute;
             top: 20px;
             left: 20px;
-            background-color: #4db6ac;
+            background-color: #34495e;
             color: white;
             border: none;
             padding: 8px 15px;
@@ -24,85 +24,95 @@
             font-size: 14px;
             transition: background 0.2s;
         }
-        .home-btn:hover { background-color: #00796b; }
+        .home-btn:hover { background-color: #2c3e50; }
 
         /* İlerleme Çubuğu */
-        .progress-container { background-color: #b2dfdb; border-radius: 10px; margin-bottom: 20px; height: 10px; overflow: hidden; }
-        .progress-bar { height: 100%; background-color: #00796b; width: 0%; transition: width 0.3s; }
-        .progress-text { text-align: right; font-size: 0.9em; color: #004d40; margin-bottom: 15px; }
+        .progress-container { background-color: #ecf0f1; border-radius: 10px; margin-bottom: 20px; height: 12px; overflow: hidden; }
+        .progress-bar { height: 100%; background-color: #3498db; width: 0%; transition: width 0.3s; }
+        .progress-text { text-align: right; font-size: 0.9em; color: #7f8c8d; margin-bottom: 15px; font-weight: bold; }
 
         /* Soru Alanı */
-        .question-block { display: none; animation: fadeIn 0.5s; }
+        .question-block { display: none; animation: fadeIn 0.4s; }
         .question-block.active { display: block; }
-        .question-text { font-weight: 600; font-size: 1.25em; margin-bottom: 20px; color: #00695c; }
+        .question-text { font-weight: 700; font-size: 1.2em; margin-bottom: 25px; color: #2c3e50; line-height: 1.4; }
         
         /* Seçenekler */
-        .options { display: flex; flex-direction: column; gap: 10px; }
+        .options { display: flex; flex-direction: column; gap: 12px; }
         .option-label { 
-            display: flex; align-items: center; padding: 12px 15px; border: 2px solid #e0e0e0; 
-            border-radius: 8px; cursor: pointer; transition: all 0.2s; background: #fff;
+            display: flex; align-items: center; padding: 15px 20px; border: 2px solid #ecf0f1; 
+            border-radius: 8px; cursor: pointer; transition: all 0.2s; background: #fff; font-size: 1em;
         }
-        .option-label:hover { background-color: #e0f2f1; border-color: #80cbc4; }
-        .option-label.selected { border-color: #00796b; background-color: #b2dfdb; }
-        .option-label input { margin-right: 15px; transform: scale(1.2); }
+        .option-label:hover { background-color: #f7f9f9; border-color: #bdc3c7; }
+        .option-label.selected { border-color: #3498db; background-color: #ebf5fb; }
+        .option-label input { margin-right: 15px; transform: scale(1.2); cursor: pointer; }
         
         /* Cevap Göster Stilleri */
-        .option-label.correct-highlight { border-color: #27ae60; background-color: #d5f5e3; color: #1e8449; font-weight: bold; }
-        .option-label.wrong-highlight { border-color: #e74c3c; background-color: #fadbd8; }
+        .option-label.correct-highlight { border-color: #27ae60; background-color: #eafaf1; color: #1e8449; font-weight: bold; }
+        .option-label.wrong-highlight { border-color: #e74c3c; background-color: #fdedec; color: #c0392b; }
 
         /* Açıklama Kutusu */
         .explanation-box {
-            margin-top: 20px;
-            padding: 15px;
-            background-color: #e0f7fa;
-            border-left: 5px solid #00acc1;
+            margin-top: 25px;
+            padding: 20px;
+            background-color: #e8f6f3;
+            border-left: 5px solid #1abc9c;
             border-radius: 4px;
-            color: #006064;
+            color: #16a085;
             display: none;
             font-size: 0.95em;
-            line-height: 1.5;
+            line-height: 1.6;
         }
 
         /* Butonlar */
-        .controls { margin-top: 30px; display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
-        button { border: none; padding: 12px 24px; border-radius: 6px; cursor: pointer; font-size: 16px; font-weight: 600; transition: background 0.2s; }
-        .nav-btn { background-color: #00796b; color: white; }
-        .nav-btn:hover { background-color: #004d40; }
-        .nav-btn:disabled { background-color: #bdc3c7; cursor: not-allowed; }
+        .controls { margin-top: 35px; display: flex; justify-content: space-between; align-items: center; gap: 15px; flex-wrap: wrap; }
+        button { border: none; padding: 12px 28px; border-radius: 6px; cursor: pointer; font-size: 16px; font-weight: 600; transition: transform 0.1s, background 0.2s; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        button:active { transform: translateY(1px); }
         
-        .show-answer-btn { background-color: #f39c12; color: white; }
-        .show-answer-btn:hover { background-color: #e67e22; }
+        .nav-btn { background-color: #34495e; color: white; }
+        .nav-btn:hover { background-color: #2c3e50; }
+        .nav-btn:disabled { background-color: #bdc3c7; cursor: not-allowed; box-shadow: none; }
+        
+        .show-answer-btn { background-color: #e67e22; color: white; }
+        .show-answer-btn:hover { background-color: #d35400; }
         
         .finish-btn { background-color: #27ae60; color: white; display: none; }
         .finish-btn:hover { background-color: #219150; }
 
         /* Sonuç Ekranı */
         #result-screen { display: none; }
-        .score-card { text-align: center; background: #f8f9fa; padding: 20px; border-radius: 10px; margin-bottom: 30px; }
+        .score-card { text-align: center; background: #f8f9fa; padding: 30px; border-radius: 12px; margin-bottom: 30px; border: 1px solid #e0e0e0; }
         .score-circle { 
-            width: 120px; height: 120px; border-radius: 50%; background: #00796b; color: white; 
-            display: flex; align-items: center; justify-content: center; font-size: 2em; font-weight: bold; 
-            margin: 0 auto 15px; 
+            width: 140px; height: 140px; border-radius: 50%; background: #3498db; color: white; 
+            display: flex; align-items: center; justify-content: center; font-size: 2.5em; font-weight: bold; 
+            margin: 0 auto 20px; box-shadow: 0 4px 10px rgba(52, 152, 219, 0.4);
         }
         
-        .review-table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 0.95em; }
-        .review-table th, .review-table td { padding: 12px; border: 1px solid #ddd; text-align: left; }
-        .review-table th { background-color: #004d40; color: white; }
-        .review-table tr:nth-child(even) { background-color: #f2f2f2; }
+        .review-table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 0.9em; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        .review-table th, .review-table td { padding: 15px; border: 1px solid #ecf0f1; text-align: left; }
+        .review-table th { background-color: #2c3e50; color: white; font-weight: 600; }
+        .review-table tr:nth-child(even) { background-color: #f9f9f9; }
+        .review-table tr:hover { background-color: #f0f3f4; }
         .status-correct { color: #27ae60; font-weight: bold; }
         .status-wrong { color: #c0392b; font-weight: bold; }
         .status-empty { color: #f39c12; font-weight: bold; }
 
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        /* Responsive adjustments */
+        @media (max-width: 600px) {
+            .container { padding: 20px; }
+            .option-label { padding: 10px 15px; }
+            .question-text { font-size: 1.1em; }
+        }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <a href="#" class="home-btn" onclick="alert('Anasayfaya yönlendiriliyorsunuz...'); location.reload();">⌂ Anasayfa</a>
+    <button class="home-btn" onclick="if(confirm('Testi yeniden başlatmak istediğinize emin misiniz?')) location.reload();">⌂ Testi Yenile</button>
     
     <div id="quiz-screen">
-        <h1>2. Ünite: Birey ve Toplum</h1>
+        <h1>2. Ünite: Ekonomi (50 Soru)</h1>
         
         <div class="progress-text" id="progress-text">Soru 1 / 50</div>
         <div class="progress-container">
@@ -134,85 +144,104 @@
         <h1>Değerlendirme Sonucu</h1>
         <div class="score-card">
             <div class="score-circle" id="score-circle">0</div>
-            <h3>Toplam Puan</h3>
-            <p id="score-details"></p>
+            <h3>Başarı Puanı</h3>
+            <p id="score-details" style="font-size: 1.1em; color: #555;"></p>
         </div>
         
         <h3>Detaylı Soru Analizi</h3>
-        <table class="review-table">
-            <thead>
-                <tr>
-                    <th style="width: 5%">No</th>
-                    <th style="width: 45%">Soru</th>
-                    <th style="width: 20%">Senin Cevabın</th>
-                    <th style="width: 20%">Doğru Cevap</th>
-                    <th style="width: 10%">Durum</th>
-                </tr>
-            </thead>
-            <tbody id="review-body">
-                <!-- Sonuç satırları buraya gelecek -->
-            </tbody>
-        </table>
+        <div style="overflow-x: auto;">
+            <table class="review-table">
+                <thead>
+                    <tr>
+                        <th style="width: 5%">No</th>
+                        <th style="width: 45%">Soru</th>
+                        <th style="width: 20%">Senin Cevabın</th>
+                        <th style="width: 20%">Doğru Cevap</th>
+                        <th style="width: 10%">Durum</th>
+                    </tr>
+                </thead>
+                <tbody id="review-body">
+                    <!-- Sonuç satırları buraya gelecek -->
+                </tbody>
+            </table>
+        </div>
         <div style="text-align: center; margin-top: 30px;">
             <button class="nav-btn" onclick="location.reload()">Testi Tekrar Çöz</button>
-            <button class="home-btn" style="position: static; display: inline-block; margin-left: 10px;" onclick="location.reload()">Anasayfaya Dön</button>
         </div>
     </div>
 </div>
 
 <script>
-    // 2. Ünite Konuları: Kültür, Sosyalleşme, Statü, Rol, Sosyal Kontrol, Normlar, Değerler
+    // 50 Soruluk AÖF Tarzı Soru Havuzu - 2. Ünite: Ekonomi
     const questions = [
-        { q: "Bir toplumun tarihsel süreç içinde ürettiği ve kuşaktan kuşağa aktardığı maddi ve manevi her türlü birikime ne ad verilir?", o: ["Medeniyet", "Kültür", "Teknoloji", "Tarih", "Edebiyat"], a: 1, exp: "Kültür, bir toplumun yaşam biçimi, düşünce tarzı, sanat ve teknik eserlerinin tümünü kapsayan geniş bir kavramdır." },
-        { q: "Kültürün, binalar, araç-gereçler, giysiler gibi elle tutulur, gözle görülür unsurlarına ne denir?", o: ["Manevi Kültür", "Maddi Kültür", "İdeal Kültür", "Popüler Kültür", "Folklor"], a: 1, exp: "Maddi kültür, toplumun teknolojik ve fiziksel üretimlerini kapsar." },
-        { q: "Kültürün inançlar, değerler, normlar, dil ve düşünce biçimleri gibi soyut unsurlarına ne ad verilir?", o: ["Maddi Kültür", "Manevi Kültür", "Teknik Kültür", "Reel Kültür", "Sanayi Kültürü"], a: 1, exp: "Manevi kültür, toplumun zihniyet yapısını, ahlakını ve kurallarını ifade eder." },
-        { q: "Bireyin, içine doğduğu toplumun kültürel değerlerini, normlarını ve rollerini öğrenerek topluma uyum sağlama sürecine ne denir?", o: ["Büyüme", "Gelişme", "Sosyalleşme (Toplumsallaşma)", "Olgunlaşma", "Eğitim"], a: 2, exp: "Sosyalleşme, bireyin biyolojik bir varlıktan sosyal bir varlığa dönüşme sürecidir." },
-        { q: "Aşağıdakilerden hangisi 'Birincil Sosyalleşme' kurumudur?", o: ["Okul", "Aile", "Arkadaş Grubu", "Medya", "İşyeri"], a: 1, exp: "Aile, bireyin hayatının ilk yıllarında en temel değerleri öğrendiği ve kişiliğinin temellerinin atıldığı birincil sosyalleşme kurumudur." },
-        { q: "Bir toplumda kişilerin işgal ettiği konuma veya mevkye ne ad verilir?", o: ["Rol", "Statü", "Sınıf", "Grup", "Kategori"], a: 1, exp: "Statü, bireyin toplum içindeki yerini belirleyen, ona belirli hak ve ödevler yükleyen konumdur." },
-        { q: "Bireyin kendi çabası ve yeteneği sonucunda elde ettiği statülere ne denir?", o: ["Verilmiş (Edinilmiş) Statü", "Kazanılmış Statü", "Zorunlu Statü", "Doğal Statü", "Biyolojik Statü"], a: 1, exp: "Kazanılmış statüler (örn: doktor, öğretmen, başkan), eğitim ve kişisel başarı ile elde edilir." },
-        { q: "Bireyin doğuştan sahip olduğu veya kendi iradesi dışında (yaş, cinsiyet, ırk gibi) elde ettiği statülere ne denir?", o: ["Kazanılmış Statü", "Verilmiş (Edinilmiş) Statü", "Başarılmış Statü", "Aktif Statü", "Mesleki Statü"], a: 1, exp: "Verilmiş statüler, bireyin kontrolü dışında toplum tarafından ona atfedilen konumlardır." },
-        { q: "Bir statüye sahip olan bireyden toplumun beklediği davranış kalıplarına ne denir?", o: ["Statü", "Rol", "Norm", "Değer", "Yetki"], a: 1, exp: "Rol, statünün dinamik yönüdür; yani o statüdeki kişinin 'yapması gereken' şeylerdir." },
-        { q: "Bireyin sahip olduğu birden fazla rolün gereklerini yerine getirirken zorlanması veya bu rollerin birbiriyle çelişmesi durumuna ne denir?", o: ["Rol Pekiştirmesi", "Rol Çatışması", "Rol Oynama", "Rol Mesafe", "Rol Yapma"], a: 1, exp: "Rol çatışması, örneğin bir annenin aynı zamanda iş yerinde müdür olması ve bu iki rolün taleplerinin (zaman, ilgi) çatışmasıdır." },
-        { q: "Toplumda neyin doğru, iyi, güzel ve arzu edilir olduğuna dair paylaşılan genel inanç ve ideallere ne denir?", o: ["Normlar", "Değerler", "Semboller", "Teknikler", "Kanunlar"], a: 1, exp: "Değerler, davranışlarımıza yön veren genel ilkeler ve ideallerdir (Örn: dürüstlük, vatanseverlik)." },
-        { q: "Değerlerin somutlaşmış hali olan, belirli durumlarda nasıl davranılması gerektiğini belirleyen kurallara ne denir?", o: ["Değer", "Norm", "İnanç", "Bilgi", "Fikir"], a: 1, exp: "Normlar, değerlere dayalı olarak oluşturulan ve yaptırımı olan somut davranış kurallarıdır." },
-        { q: "Yaptırımı kınama, ayıplama veya dışlanma gibi manevi nitelikte olan, yazılı olmayan kurallara ne denir?", o: ["Kanun", "Yönetmelik", "Örf ve Adetler", "Anayasa", "Tüzük"], a: 2, exp: "Örf ve adetler, toplumun vicdanında yer etmiş, resmi olmayan ancak güçlü yaptırımı olan kurallardır." },
-        { q: "Devletin yetkili organlarınca konulan ve uyulması zorunlu olan, maddi yaptırımlı (ceza, hapis) kurallara ne denir?", o: ["Ahlak", "Görgü", "Hukuk (Yasa)", "Gelenek", "Moda"], a: 2, exp: "Hukuk kuralları, devlet gücüyle desteklenen ve ihlali durumunda resmi cezaların uygulandığı normlardır." },
-        { q: "Bireylerin veya grupların toplumun normlarına ve değerlerine uymasını sağlamak amacıyla uygulanan mekanizmalara ne denir?", o: ["Toplumsal Değişme", "Toplumsal Kontrol", "Toplumsal Hareketlilik", "Toplumsal Sapma", "Toplumsal Tabakalaşma"], a: 1, exp: "Toplumsal kontrol, düzeni sağlamak ve sapmayı önlemek için toplumun kullandığı baskı ve teşvik araçlarıdır." },
-        { q: "Bireyin toplumun veya grubun kabul ettiği normlara aykırı davranışlar sergilemesine ne denir?", o: ["Uyum", "Toplumsal Sapma", "Bütünleşme", "Sosyalleşme", "İtaat"], a: 1, exp: "Sapma, normların ihlal edilmesidir. Bu suç olabileceği gibi, sadece garip karşılanan bir davranış da olabilir." },
-        { q: "Bir bireyin toplumdaki saygınlığını ve itibarını ifade eden kavrama ne denir?", o: ["Gelir", "Servet", "Sosyal Prestij (Saygınlık)", "Güç", "Yetki"], a: 2, exp: "Prestij, bir statüye veya kişiye toplumun verdiği manevi değer ve saygıdır." },
-        { q: "Bireyin en baskın olan, diğer tüm statülerini gölgede bırakan ve toplumdaki kimliğini belirleyen statüsüne ne denir?", o: ["Anahtar (Baskın) Statü", "Yan Statü", "Geçici Statü", "Verilmiş Statü", "Tamamlayıcı Statü"], a: 0, exp: "Anahtar statü, kişinin toplumda en çok bilindiği ve tanımlandığı statüsüdür (Genellikle meslek veya cinsiyet olabilir)." },
-        { q: "Kişinin bir rolünün gerektirdiği davranışların, diğer rolünü kolaylaştırması durumuna ne denir? (Örn: Anaokulu öğretmeninin kendi çocuğuna daha iyi bakması)", o: ["Rol Çatışması", "Rol Pekiştirmesi", "Rol Karmaşası", "Rol Belirsizliği", "Rol Beklentisi"], a: 1, exp: "Rol pekiştirmesi, rollerin birbirini desteklemesi ve güçlendirmesidir." },
-        { q: "William Ogburn'a göre, maddi kültürün (teknoloji) manevi kültürden (değerler, hukuk) daha hızlı değişmesi sonucu oluşan uyumsuzluğa ne denir?", o: ["Kültür Şoku", "Kültürel Gecikme (Cultural Lag)", "Kültürel Yayılma", "Kültürel Yozlaşma", "Kültürel Asimilasyon"], a: 1, exp: "Kültürel gecikme, teknolojinin hızına hukukun ve ahlakın yetişememesi durumudur (Örn: İnternet suçlarına karşı yasaların geç çıkması)." },
-        { q: "Farklı kültürlerin karşılaşması sonucu, karşılıklı etkileşimle her iki kültürün de değişime uğramasına ne denir?", o: ["Kültürleşme", "Kültürleme", "Asimilasyon", "Zorla Kültürleme", "Yayılma"], a: 0, exp: "Kültürleşme, kültürler arası etkileşim ve alışveriş sürecidir." },
-        { q: "Bireyin kendi kültürünü merkeze alarak diğer kültürleri kendi kültürünün standartlarına göre yargılamasına ve aşağı görmesine ne denir?", o: ["Kültürel Görelilik", "Etnosentrizm", "Hoşgörü", "Empati", "Nesnellik"], a: 1, exp: "Etnosentrizm, kendi kültürünü en üstün ve doğru kabul etme eğilimidir." },
-        { q: "Her kültürün kendi koşulları içinde değerlendirilmesi gerektiğini, 'iyi' veya 'kötü' kültür olmadığını savunan yaklaşıma ne denir?", o: ["Etnosentrizm", "Kültürel Görelilik (Relyativizm)", "Irkçılık", "Evrensellik", "Yabancı Hayranlığı"], a: 1, exp: "Kültürel görelilik, bir kültürü anlamak için o kültürün kendi iç dinamiklerine bakmak gerektiğini savunur." },
-        { q: "Genel kültürün içinde yer alan ancak kendine özgü değer, norm ve yaşam tarzına sahip olan gruba ne denir?", o: ["Karşıt Kültür", "Alt Kültür", "Popüler Kültür", "Kitle Kültürü", "Yüksek Kültür"], a: 1, exp: "Alt kültür, ana kültürden tamamen kopmadan farklılaşan grupları (örn: gençlik grupları, meslek grupları) ifade eder." },
-        { q: "Mevcut toplumsal düzene ve hakim kültürel değerlere kökten karşı çıkan ve onları değiştirmeyi hedefleyen gruba ne denir?", o: ["Alt Kültür", "Karşıt (Kontra) Kültür", "Popüler Kültür", "Folklor", "Elit Kültür"], a: 1, exp: "Karşıt kültür, ana akım değerlerle çatışan ve alternatif bir yaşam tarzı öneren gruplardır (Örn: 68 kuşağı hippiler)." },
-        { q: "Normlara uymayan davranışlara karşı toplumun verdiği tepkilere (ödül veya ceza) ne denir?", o: ["Yaptırım", "Değer", "İnanç", "İdeoloji", "Ritüel"], a: 0, exp: "Yaptırım, uyumu teşvik etmek (ödül) veya sapmayı cezalandırmak için kullanılan araçlardır." },
-        { q: "Bireyin, toplumun bir üyesi olabilmek için gerekli bilgi ve becerileri (dil, giyinme, yemek yeme vb.) öğrenme sürecine ne denir?", o: ["Kültürleşme", "Kültürleme (Enculturation)", "Asimilasyon", "Entegrasyon", "Difüzyon"], a: 1, exp: "Kültürleme, eğitimin geniş anlamıdır; bireyin içine doğduğu kültürü öğrenmesidir." },
-        { q: "Kültürel öğelerin bir toplumdan diğerine geçmesi ve yayılması sürecine ne denir?", o: ["Kültürel Gecikme", "Kültürel Yayılma (Difüzyon)", "Buluş", "Keşif", "Yozlaşma"], a: 1, exp: "Difüzyon, kültürel özelliklerin (yemek, moda, fikir) toplumlar arasında yayılmasıdır." },
-        { q: "Sosyalleşmenin yaşam boyu devam eden bir süreç olmasının nedeni nedir?", o: ["İnsanların unutkan olması", "Bireyin yaşamı boyunca farklı statülere geçmesi ve yeni roller öğrenmek zorunda kalması", "Eğitimin zor olması", "Toplumun değişmemesi", "Çocukluğun uzun sürmesi"], a: 1, exp: "İnsanlar yaşlandıkça, evlendikçe, iş değiştirdikçe yeni roller öğrenirler (ikincil sosyalleşme)." },
-        { q: "Medya (Kitle İletişim Araçları), günümüzde sosyalleşme üzerinde nasıl bir etkiye sahiptir?", o: ["Etkisi yoktur", "Sadece haber verir", "Rol modeller sunarak, tüketim alışkanlıklarını ve değerleri şekillendirerek çok güçlü bir etkiye sahiptir", "Sadece çocukları etkiler", "Ailenin yerini tamamen almıştır"], a: 2, exp: "Medya, özellikle gençler üzerinde güçlü bir sosyalleştirici ajan olarak değerleri ve yaşam tarzlarını yayar." },
-        { q: "Aşağıdakilerden hangisi 'Resmi Olmayan (Enformel) Sosyal Kontrol' aracıdır?", o: ["Hapis cezası", "Para cezası", "Alay etme / Dışlama", "Tutuklama", "İdam"], a: 2, exp: "Alay etme, dedikodu veya dışlama, yasalarla değil toplum baskısı ile uygulanan etkili bir kontrol mekanizmasıdır." },
-        { q: "Bir toplumda egemen olan ve gücü elinde bulunduran grubun kültürüne ne denir?", o: ["Baskın (Egemen) Kültür", "Alt Kültür", "Azınlık Kültürü", "Karşıt Kültür", "Halk Kültürü"], a: 0, exp: "Baskın kültür, toplumun genelinde kabul gören ve kurumları yöneten kültürdür." },
-        { q: "Geniş kitleler tarafından tüketilen, ticari amaçla üretilen ve hızla değişen kültüre ne denir?", o: ["Yüksek Kültür", "Popüler Kültür", "Halk Kültürü", "Geleneksel Kültür", "Elit Kültür"], a: 1, exp: "Popüler kültür, kitle iletişim araçlarıyla yayılan ve tüketim odaklı olan kültürdür." },
-        { q: "Bir kişinin işini kaybetmesi sonucu yaşadığı statü kaybı hangi hareketlilik türüne örnektir?", o: ["Yatay Hareketlilik", "Dikey Hareketlilik (Aşağı Doğru)", "Coğrafi Hareketlilik", "Kuşaklararası Hareketlilik", "Sanal Hareketlilik"], a: 1, exp: "Statü ve yaşam standardında belirgin bir düşüş olduğu için dikey hareketliliktir." },
-        { q: "Eğitim kurumu, sosyalleşme sürecinde hangi işlevi yerine getirir?", o: ["Sadece meslek kazandırır", "Toplumun ortak değerlerini, disiplini ve vatandaşlık bilincini (resmi ve gizli müfredatla) aktarır", "Aileyi yok eder", "Dini yayar", "Sadece oyun oynatır"], a: 1, exp: "Okul, sadece bilgi değil, toplumsal kuralları ve uyumu da öğreten önemli bir sosyalleşme ajanıdır." },
-        { q: "Cooley'nin 'Ayna Benlik' kuramına göre benlik nasıl gelişir?", o: ["Doğuştan gelir", "Başkalarının bize nasıl tepki verdiğine dair yorumlarımızla şekillenir", "Sadece aynaya bakarak", "Kitap okuyarak", "Genetik faktörlerle"], a: 1, exp: "Benlik, sosyal etkileşim içinde, başkalarının bize tuttuğu 'ayna'ya göre (bizi nasıl gördüklerini düşünmemize göre) gelişir." },
-        { q: "Freud'a göre, kişiliğin ahlaki denetimini yapan ve vicdanı temsil eden bölümü hangisidir?", o: ["İd", "Ego", "Süperego", "Bilinç", "Dürtü"], a: 2, exp: "Süperego, toplumun ahlaki kurallarının içselleştirilmiş halidir ve bizi denetler." },
-        { q: "Mead'e göre 'Genelleştirilmiş Öteki' kavramı neyi ifade eder?", o: ["Yabancıları", "Toplumun genel tutum, beklenti ve normlarının birey tarafından içselleştirilmesini", "Aileyi", "Düşmanları", "Öğretmenleri"], a: 1, exp: "Genelleştirilmiş öteki, bireyin davranışlarını şekillendirirken referans aldığı 'toplumun sesi'dir." },
-        { q: "Bir toplumda statüler arası geçişin (sosyal hareketliliğin) mümkün olduğu sisteme ne denir?", o: ["Kapalı Sınıf Sistemi", "Açık Sınıf Sistemi", "Kast Sistemi", "Kölelik Sistemi", "Feodal Sistem"], a: 1, exp: "Açık sınıf sistemi, bireylerin yetenek ve başarılarına göre tabaka değiştirebildiği modern sistemdir." },
-        { q: "Kast sistemi hangi özelliği ile bilinir?", o: ["Sınıf atlamanın kolay olmasıyla", "Doğumla kazanılan ve değiştirilemeyen statüleriyle (Kapalı Tabakalaşma)", "Eğitime önem vermesiyle", "Demokratik olmasıyla", "Modern olmasıyla"], a: 1, exp: "Kast sistemi, geçişin yasak olduğu en katı (kapalı) tabakalaşma türüdür." },
-        { q: "Aşağıdakilerden hangisi bir 'Toplumsal Kurum' örneğidir?", o: ["Bir arkadaş grubu", "Bir futbol takımı", "Aile", "Bir süpermarket", "Bir park"], a: 2, exp: "Aile, eğitim, din, ekonomi ve siyaset; toplumun temel ihtiyaçlarını karşılayan köklü ve yerleşik toplumsal kurumlardır." },
-        { q: "Toplumsal değişme ne demektir?", o: ["Toplumun aynı kalması", "Toplumsal yapıda, kurumlarda ve ilişkilerde zamanla meydana gelen farklılaşma", "Nüfusun azalması", "Savaş çıkması", "Hükümetin değişmesi"], a: 1, exp: "Toplumsal değişme, toplumun yapısında ve işleyişinde meydana gelen her türlü (ileriye veya geriye) hareketi ifade eder." },
-        { q: "Modernleşme sürecinde aile yapısında nasıl bir değişim gözlenir?", o: ["Geniş aileden çekirdek aileye geçiş", "Çekirdek aileden geniş aileye geçiş", "Ailenin yok olması", "Çok eşliliğin artması", "Boşanmaların azalması"], a: 0, exp: "Sanayileşme ve kentleşme ile birlikte aileler küçülmüş ve çekirdek aile (anne-baba-çocuk) yaygınlaşmıştır." },
-        { q: "Kültürel asimilasyon ne demektir?", o: ["Kültürlerin barış içinde yaşaması", "Bir kültürün başka bir kültür içinde eriyerek kendi özelliklerini kaybetmesi", "Kültür alışverişi", "Yeni bir kültür yaratmak", "Turizm faaliyeti"], a: 1, exp: "Asimilasyon, egemen kültürün baskısı veya etkisiyle azınlık kültürünün yok olması sürecidir." },
-        { q: "Hangi sosyalleşme türü yetişkinlikte, yeni bir işe veya role uyum sağlarken gerçekleşir?", o: ["Birincil Sosyalleşme", "İkincil Sosyalleşme", "Tersine Sosyalleşme", "Erken Sosyalleşme", "Doğal Sosyalleşme"], a: 1, exp: "İkincil sosyalleşme, çocukluktan sonraki evrelerde (okul, iş, evlilik vb.) gerçekleşen öğrenme sürecidir." },
-        { q: "Toplumsal rollerden beklenen davranışların kişiden kişiye değişmemesi, rolün hangi özelliğini gösterir?", o: ["Kişisel olduğunu", "Nesnel ve toplumsal olarak tanımlandığını", "Önemsiz olduğunu", "Zor olduğunu", "Rastgele olduğunu"], a: 1, exp: "Roller bireylerden bağımsız olarak toplum tarafından tanımlanmıştır (Örn: Bir doktordan beklenen davranışlar bellidir)." },
-        { q: "Akran gruplarının sosyalleşmedeki en önemli farkı nedir?", o: ["Otoriter olmaları", "Eşit statüdeki bireylerden oluşması ve otoriteden bağımsız ilişkiler sunması", "Ders öğretmesi", "Para kazandırması", "Resmi olması"], a: 1, exp: "Akran grupları, çocuklara hiyerarşik olmayan, eşitlikçi ilişkileri ve müzakereyi öğretir." },
-        { q: "Aşağıdakilerden hangisi 'Yüksek Kültür' ürünü sayılır?", o: ["Arabesk müzik", "Opera ve Bale", "Televizyon dizileri", "Magazin dergileri", "Pop müzik"], a: 1, exp: "Yüksek kültür, entelektüel birikim ve eğitim gerektiren, elit kesime hitap eden sanat ürünlerini kapsar." },
-        { q: "Bir toplumda 'moda' ne tür bir normdur?", o: ["Kanun", "Tabu", "Geçici ve değişken bir halk yordamı (Folkway)", "Ahlak kuralı", "Dini kural"], a: 2, exp: "Moda, kısa süreliğine popüler olan ve uymamanın yaptırımı hafif olan (demode olmak) davranış kalıplarıdır." },
-        { q: "Sosyolojide 'Anomi' kavramı neyi ifade eder?", o: ["Mutluluğu", "Kuralsızlık ve normsuzluk durumunu", "Zenginliği", "Dindarlığı", "Aileyi"], a: 1, exp: "Anomi (Durkheim), hızlı toplumsal değişimlerde eski normların yıkılması ve yenilerinin oluşmaması sonucu ortaya çıkan kuralsızlık ve belirsizlik halidir." }
+        // Giriş ve Sosyolojik Yaklaşımlar (Fonksiyonalist, Çatışma, Sembolik)
+        { q: "Ekonomik kurumları, toplumun hayatta kalması için mal ve hizmetlerin üretilmesi ve dağıtılmasını sağlayan, diğer kurumlarla (aile, eğitim) uyum içinde çalışan bir yapı olarak gören yaklaşım hangisidir?", o: ["Çatışma Kuramı", "Sembolik Etkileşimcilik", "Fonksiyonalist (İşlevselci) Yaklaşım", "Marksist Yaklaşım", "Feminist Yaklaşım"], a: 2, exp: "Fonksiyonalistler, ekonominin toplumun istikrarına ve düzenine katkı sağladığını ve diğer kurumlarla karşılıklı bağımlılık içinde olduğunu savunur." },
+        { q: "Çatışma Kuramı'na göre ekonomik sistemin temel özelliği nedir?", o: ["Toplumsal uyum", "Eşitlik ve adalet", "Sınıflar arası sömürü ve güç mücadelesi", "Bireysel özgürlük", "Kültürel bütünleşme"], a: 2, exp: "Çatışma kuramcıları (özellikle Marksistler), ekonomiyi egemen sınıfın (burjuvazi) işçi sınıfını (proletarya) sömürdüğü bir eşitsizlik alanı olarak görür." },
+        { q: "Sembolik Etkileşimcilik yaklaşımı ekonomik hayatı nasıl inceler?", o: ["Makro ekonomik verilerle", "İş yerindeki günlük yüz yüze etkileşimler ve bireylerin işe yükledikleri anlamlarla", "Sınıf çatışmalarıyla", "Küresel ticaretle", "Tarihsel materyalizmle"], a: 1, exp: "Sembolik etkileşimciler, büyük yapılardan ziyade iş yerindeki mikro ilişkilere, statü sembollerine ve insanların mesleklerine yükledikleri anlamlara odaklanır." },
+        { q: "Max Weber'e göre kapitalizmin doğuşunda etkili olan dinsel ahlak sistemi hangisidir?", o: ["Katoliklik", "Protestanlık (Kalvinizm)", "Musevilik", "Budizm", "İslamiyet"], a: 1, exp: "Weber, 'Protestan Ahlakı ve Kapitalizmin Ruhu' eserinde, Protestanlığın çalışmayı ibadet sayan çileci anlayışının sermaye birikimini ve kapitalizmi doğurduğunu savunur." },
+
+        // Endüstri Toplumu ve İşin Örgütlenmesi (Taylorizm)
+        { q: "'Bilimsel Yönetim' (Scientific Management) anlayışının kurucusu kimdir?", o: ["Henry Ford", "Elton Mayo", "Frederick Winslow Taylor", "Karl Marx", "Adam Smith"], a: 2, exp: "Taylor, iş süreçlerini en küçük parçalara bölerek verimliliği artırmayı hedefleyen bilimsel yönetim ilkelerini geliştirmiştir." },
+        { q: "Taylorizm'in (Bilimsel Yönetim) temel amacı nedir?", o: ["İşçilerin mutluluğunu sağlamak", "İşçi sendikalarını güçlendirmek", "İş sürecini rasyonelleştirerek verimliliği maksimuma çıkarmak", "Üretimi azaltmak", "El sanatlarını korumak"], a: 2, exp: "Taylorizm, 'tek en iyi yol' (one best way) ilkesiyle zaman ve hareket etütleri yaparak verimliliği artırmayı hedefler." },
+        { q: "Taylorist sistemde işin planlanması (tasarım) ile işin yapılması (icra) arasındaki ilişki nasıldır?", o: ["İkisi de işçi tarafından yapılır", "Keskin bir şekilde ayrılmıştır; yönetim planlar, işçi uygular", "İşçiler planlamaya katılır", "Ayrım yoktur", "Yönetim sadece denetler"], a: 1, exp: "Taylorizmde kafa emeği (yönetim) ile kol emeği (işçi) birbirinden tamamen ayrılmıştır." },
+        
+        // İnsan İlişkileri Okulu
+        { q: "Elton Mayo ve arkadaşlarının yürüttüğü, fiziksel çalışma koşullarının (ışıklandırma vb.) yanı sıra sosyal ilişkilerin de verimliliği etkilediğini ortaya koyan ünlü araştırma hangisidir?", o: ["Ford Deneyleri", "Hawthorne Araştırmaları", "Stanford Hapishane Deneyi", "Milgram Deneyi", "Chicago Okulu"], a: 1, exp: "Hawthorne araştırmaları, işçilerin sadece ekonomik teşviklerle değil, grup içi ilişkiler ve moral motivasyonla da çalıştığını göstermiştir (İnsan İlişkileri Okulu)." },
+        { q: "Hawthorne araştırmaları sonucunda ortaya çıkan 'Hawthorne Etkisi' neyi ifade eder?", o: ["Işık artarsa üretim artar", "Gözlemlendiklerinin farkında olan deneklerin davranışlarını değiştirmesi ve performanslarının artması", "Ücret artarsa üretim artar", "Mola süreleri önemsizdir", "Sıcaklık verimi düşürür"], a: 1, exp: "İşçiler, kendilerine ilgi gösterildiği ve izlendikleri için (koşullar kötüleşse bile) daha verimli çalışmışlardır." },
+
+        // Fordizm
+        { q: "Henry Ford'un geliştirdiği, yürüyen bant sistemiyle kitle üretimine dayanan üretim modeline ne ad verilir?", o: ["Taylorizm", "Post-Fordizm", "Fordizm", "Toyotizm", "Esnek Üretim"], a: 2, exp: "Fordizm, Taylorist ilkelerin yürüyen bant teknolojisiyle birleştirilerek standart ürünlerin kitlesel olarak üretilmesidir." },
+        { q: "Aşağıdakilerden hangisi Fordizmin temel özelliklerinden biri DEĞİLDİR?", o: ["Kitle üretimi", "Standartlaşmış ürünler (Örn: Siyah T Modeli)", "Yürüyen bant sistemi", "Vasıfsız/Yarı vasıflı işgücü", "Kişiye özel, butik üretim"], a: 4, exp: "Fordizmde ürünler standarttır ve kitleler içindir; kişiye özel üretim Post-Fordizmin özelliğidir." },
+        { q: "Fordizmin sadece bir üretim biçimi değil, aynı zamanda bir tüketim biçimi olmasını sağlayan faktör nedir?", o: ["Düşük ücretler", "İşçilere yüksek ücret vererek (5 Dolar günü) onların da tüketici haline getirilmesi", "Sadece zenginlere üretim yapılması", "Reklamların yasaklanması", "İhracat odaklı olması"], a: 1, exp: "Henry Ford, işçilerine yüksek ücret vererek ürettikleri arabaları satın alabilmelerini sağlamış, böylece kitle tüketimini başlatmıştır." },
+        { q: "Fordist üretimde işçinin yaptığı işin niteliği nasıldır?", o: ["Yaratıcı ve değişkendir", "Basit, tekrar eden ve parçalanmış görevlerdir", "Yüksek beceri gerektirir", "İşçi tüm sürece hakimdir", "Esnektir"], a: 1, exp: "Yürüyen bantta işçi, sürekli aynı basit hareketi tekrarlar, bu da yabancılaşmaya yol açar." },
+        
+        // Fordizmin Krizi ve Post-Endüstriyel Çağ
+        { q: "1970'lerde yaşanan Petrol Krizi ve piyasaların doymasıyla birlikte Fordizmin tıkanmasına yol açan temel sorun neydi?", o: ["Üretimin çok yavaş olması", "Sistemin katı olması ve değişen tüketici taleplerine cevap verememesi", "İşçi bulamama sorunu", "Teknolojinin yetersizliği", "Hammadde bolluğu"], a: 1, exp: "Fordizmin standart ve stoklu üretimi, çeşitlenen ve hızla değişen taleplere (esneklik ihtiyacına) ayak uyduramamıştır." },
+        { q: "Sanayi toplumundan 'Post-Endüstriyel' (Sanayi Sonrası) topluma geçişte en belirgin değişim nedir?", o: ["Tarımın canlanması", "Hizmet sektörünün ve bilginin ekonomideki payının artması", "Fabrika sayısının artması", "Mavi yakalıların artması", "Köy nüfusunun artması"], a: 1, exp: "Daniel Bell'e göre post-endüstriyel toplumda imalat sanayinin yerini hizmetler sektörü (eğitim, sağlık, finans, bilişim) alır." },
+        
+        // Esnek Üretim ve Toyotizm
+        { q: "Fordizmin krizinden sonra ortaya çıkan, Japonya kökenli (Toyota) üretim modeline ne ad verilir?", o: ["Taylorizm", "Bilimsel Yönetim", "Esnek Üretim / Yalın Üretim (Toyotizm)", "Kitle Üretimi", "Ağır Sanayi"], a: 2, exp: "Toyotizm, stoksuz çalışma, tam zamanında üretim ve kalite çemberleri gibi ilkelerle esnek üretim modelini getirmiştir." },
+        { q: "'Tam Zamanında Üretim' (Just-in-Time / JIT) ne anlama gelir?", o: ["Stok yapmadan, sipariş geldiği anda ihtiyaç duyulan miktarda üretim yapmak", "Çok önceden üretip depolamak", "Sadece gece vardiyasında üretmek", "Hızlı üretim yapmak", "İşçileri tam zamanlı çalıştırmak"], a: 0, exp: "JIT, stok maliyetlerini sıfıra indirmeyi hedefler; parça fabrikaya geldiği an banda girer." },
+        { q: "Post-Fordist (Esnek) üretimde işçiden beklenen nitelik nedir?", o: ["Sadece tek bir işi yapması", "Çok becerili olması (Multi-skilling) ve takım çalışmasına yatkınlık", "Emirlere itaat etmesi", "Fiziksel güç", "Sessiz olması"], a: 1, exp: "Yeni sistemde işçiler rotasyonla farklı işleri yapabilirler ve karar süreçlerine (kalite kontrol vb.) katılırlar." },
+        { q: "Aşağıdakilerden hangisi 'Yalın Üretim'in özelliklerinden biridir?", o: ["Hiyerarşik katı yönetim", "Bol stoklu çalışma", "Hataların üretim sonunda kontrol edilmesi", "Sürekli iyileştirme (Kaizen) ve israfın önlenmesi", "Standart tek tip ürün"], a: 3, exp: "Kaizen felsefesi, üretimdeki her türlü israfı önleyerek süreci sürekli iyileştirmeyi hedefler." },
+        
+        // Post-Endüstriyel Çağda İş ve Örgütler
+        { q: "Post-endüstriyel çağda ortaya çıkan 'Prekarya' kavramı neyi ifade eder?", o: ["Zengin iş adamlarını", "Güvencesiz, esnek ve geçici işlerde çalışan, geleceği belirsiz kitleyi", "Kadrolu memurları", "Sendikalı işçileri", "Çiftçileri"], a: 1, exp: "Prekarya (Pretariat), 'precarious' (güvencesiz) ve 'proletariat' kelimelerinden türetilmiştir." },
+        { q: "Günümüzde iş örgütlenmesinde dikey hiyerarşinin yerini alan, daha yatay ve esnek yapıya ne denir?", o: ["Bürokrasi", "Ağ (Network) Tipi Örgütlenme", "Monarşi", "Merkeziyetçilik", "Klan Tipi"], a: 1, exp: "Kastells'in belirttiği gibi, bilgi çağında katı hiyerarşiler yerini esnek ağlara bırakmaktadır." },
+        { q: "George Ritzer'in 'McDonaldlaşma' kavramı iş süreçlerinde neyi eleştirir?", o: ["Hızlı yemek yemeyi", "Toplumun her alanının fast-food ilkelerine (verimlilik, hesaplanabilirlik, öngörülebilirlik, denetim) göre düzenlenmesini", "Amerikan kültürünü", "Sağlıksız beslenmeyi", "Yerel restoranların kapanmasını"], a: 1, exp: "McDonaldlaşma, rasyonelleşmenin uç noktasıdır ve insani değerleri mekanikleştirdiği için eleştirilir." },
+        
+        // Çalışmanın Geleceği
+        { q: "Otomasyon ve Yapay Zeka teknolojilerinin gelişmesiyle ilgili en büyük endişe nedir?", o: ["Üretimin azalması", "İşsizlik (Teknolojik İşsizlik) ve bazı mesleklerin yok olması", "Ürünlerin pahalanması", "İnsanların çok yorulması", "Fabrikaların kapanması"], a: 1, exp: "Rutin işlerin makineler tarafından yapılması, insan emeğine duyulan ihtiyacı azaltabilir." },
+        { q: "Gig Ekonomisi (Gig Economy) ne demektir?", o: ["Büyük şirket ekonomisi", "Tarım ekonomisi", "Kısa süreli, proje bazlı veya freelance (serbest) işlerin yaygın olduğu platform ekonomisi", "Devlet ekonomisi", "Sanayi ekonomisi"], a: 2, exp: "Uber, teslimat uygulamaları veya freelance siteleri gibi platformlar üzerinden parça başı iş yapmaya dayalı modeldir." },
+
+        // Pekiştirme ve Karşılaştırma Soruları
+        { q: "Taylorizm ile Fordizm arasındaki temel fark nedir?", o: ["Fark yoktur", "Taylorizm yönetim tekniğidir, Fordizm buna yürüyen bant teknolojisini eklemiştir", "Fordizm daha eskidir", "Taylorizm kitle üretimidir", "Fordizmde planlama yoktur"], a: 1, exp: "Fordizm, Taylorizmin ilkelerini makineleşmiş (montaj hattı) bir sistemle uygular." },
+        { q: "Mavi yakalı çalışanların yerini Beyaz yakalı (hizmet/bilgi) çalışanların alması hangi toplum tipinin özelliğidir?", o: ["Tarım Toplumu", "Sanayi Toplumu", "Sanayi Sonrası (Post-Endüstriyel) Toplum", "Feodal Toplum", "İlkel Toplum"], a: 2, exp: "Hizmet sektörünün büyümesiyle büro, yönetim ve teknik işlerde çalışan beyaz yakalılar çoğunluğa geçer." },
+        { q: "Marx'a göre işçinin kendi emeğine ve ürettiği ürüne yabancılaşmasının temel nedeni nedir?", o: ["Teknoloji", "Özel mülkiyet ve kapitalist üretim ilişkileri", "Dinin zayıflaması", "Şehir hayatı", "Eğitimsizlik"], a: 1, exp: "İşçi, üretim araçlarına sahip olmadığı için emeği üzerinde söz sahibi değildir, bu da yabancılaşmayı doğurur." },
+        { q: "Aşağıdakilerden hangisi 'Esnek Uzmanlaşma'nın (Flexible Specialization) özelliğidir?", o: ["Aynı üründen milyonlarca üretmek", "Piyasadaki değişimlere hızla uyum sağlayarak küçük partiler halinde çeşitli ürünler üretmek", "Büyük stoklar tutmak", "Tek tip makine kullanmak", "Vasıfsız işçi kullanmak"], a: 1, exp: "Post-Fordist dönemde, butik ve değişen taleplere cevap verebilen çok amaçlı makineler ve uzmanlaşmış işgücü kullanılır." },
+        { q: "Küreselleşme, ekonomik alanda neyi ifade eder?", o: ["Sadece yerel ticaret yapmayı", "Ulusal sınırların ekonomik anlamda önemini yitirmesi ve sermayenin/üretimin dünya çapında akışkan hale gelmesi", "Gümrük duvarlarının yükselmesini", "Devletin ekonomiye tam hakimiyetini", "İçe kapanmayı"], a: 1, exp: "Küreselleşme, çok uluslu şirketlerin üretimi maliyetlerin en düşük olduğu ülkelere kaydırmasıyla karakterizedir." },
+        
+        // Diğer Detaylar
+        { q: "Durkheim'a göre modern toplumlardaki işbölümü ne tür bir dayanışma yaratır?", o: ["Mekanik Dayanışma", "Organik Dayanışma", "Sınıf Dayanışması", "Dini Dayanışma", "Kabile Dayanışması"], a: 1, exp: "İşbölümü arttıkça bireyler birbirine (organların bedene olduğu gibi) daha bağımlı hale gelir; buna Organik Dayanışma denir." },
+        { q: "Adam Smith'in 'Ulusların Zenginliği' kitabında savunduğu, piyasanın kendi kendini düzenleyen görünmez bir eli olduğunu belirten görüş hangisidir?", o: ["Merkantilizm", "Liberalizm (Laissez-faire)", "Sosyalizm", "Komünizm", "Koruyuculuk"], a: 1, exp: "Smith, devletin ekonomiye müdahale etmemesi gerektiğini savunur." },
+        { q: "'Kitle Tüketimi' kavramı hangi üretim rejimiyle birlikte anılır?", o: ["Zanaat üretimi", "Atölye üretimi", "Fordizm", "Tarım üretimi", "Lonca sistemi"], a: 2, exp: "Kitle üretimi (Fordizm), üretilen devasa miktardaki malın tüketilmesi için kitle tüketimini zorunlu kılar." },
+        { q: "Post-Fordist dönemde sendikaların durumu nasıldır?", o: ["Çok güçlenmiştir", "Aynı kalmıştır", "Güç kaybetmiş ve üye sayıları azalmıştır", "Devlet tarafından yönetilmektedir", "Sadece memurları kapsamaktadır"], a: 2, exp: "Esnek çalışma, taşeronlaşma ve üretimin parçalanması sendikal örgütlenmeyi zorlaştırmıştır." },
+        { q: "Kadınların işgücüne katılımının artması ancak genellikle düşük ücretli ve güvencesiz işlerde yoğunlaşmasına ne ad verilir?", o: ["Cam Tavan", "Emeğin Feminizasyonu", "Pozitif Ayrımcılık", "Feminist Ekonomi", "Anaerkil Üretim"], a: 1, exp: "Bu kavram, hem kadınların çalışma hayatına girişini hem de işlerin niteliğinin düşmesini (daha 'kadınsı' ve ucuz görülmesini) ifade eder." },
+        { q: "Bir malın sadece kullanım değeri için değil, marka ve imajı (gösterge değeri) için tüketilmesi hangi toplumun özelliğidir?", o: ["Üretim Toplumu", "Tüketim Toplumu", "Tarım Toplumu", "Kıtlık Toplumu", "Sosyalist Toplum"], a: 1, exp: "Baudrillard'a göre günümüzde nesnelerden çok işaretleri ve statüyü tüketiyoruz." },
+        { q: "Aşağıdakilerden hangisi 'Enformel Ekonomi' (Kayıt Dışı) kapsamındadır?", o: ["Memur maaşları", "Borsadaki hisseler", "Seyyar satıcılık, ev hizmetleri veya sigortasız çalışma", "Fabrika üretimi", "Bankacılık işlemleri"], a: 2, exp: "Devletin denetimi ve vergilendirmesi dışında kalan ekonomik faaliyetlerdir." },
+        { q: "Fordizmde üretimin mekansal özelliği nedir?", o: ["Dağınık üretim", "Evde üretim", "Büyük fabrikalarda merkezi üretim", "Sanal üretim", "Gezici üretim"], a: 2, exp: "Fordizm, binlerce işçinin aynı çatı altında (dev fabrikalarda) toplandığı bir sistemdir." },
+        { q: "Post-Fordizmde üretimin mekansal özelliği nedir?", o: ["Tek bir merkezde toplanma", "Küresel ölçekte parçalanmış ve taşeronlaşmış üretim ağları", "Sadece şehir merkezinde üretim", "Devlet kontrolünde üretim", "Hiçbiri"], a: 1, exp: "Üretimin farklı aşamaları dünyanın farklı yerlerinde yapılabilir (Örn: Tasarım ABD, parça Çin, montaj Türkiye)." },
+        { q: "Bilginin, sanayi üretimindeki makine ve hammadde kadar önemli bir üretim faktörü haline geldiği ekonomiye ne denir?", o: ["Tarım Ekonomisi", "Bilgi Ekonomisi", "Ağır Sanayi", "Merkantilizm", "Kapalı Ekonomi"], a: 1, exp: "Bilgi ekonomisinde katma değer, fiziksel emekten ziyade bilgi ve inovasyondan sağlanır." },
+        { q: "Aşağıdakilerden hangisi 'Yabancılaşma'nın boyutlarından biri DEĞİLDİR?", o: ["Üretim sürecine yabancılaşma", "Ürüne yabancılaşma", "İnsan türüne yabancılaşma", "Diğer insanlara yabancılaşma", "Tüketime yabancılaşma"], a: 4, exp: "Marx, ilk dört boyutu sayar; tüketime yabancılaşma klasik teoride yer almaz." },
+        { q: "Weber'e göre bürokrasinin ekonomik hayattaki en önemli özelliği nedir?", o: ["Yavaşlık", "Rasyonellik ve öngörülebilirlik", "Duygusallık", "Keyfilik", "Yaratıcılık"], a: 1, exp: "Bürokrasi, işlerin kurallara göre, hızlı ve hatasız yapılmasını sağlayan en rasyonel örgütlenme biçimidir." },
+        { q: "Post-Fordist dönemde ortaya çıkan 'Niş Piyasa' ne demektir?", o: ["Herkesin aynı şeyi aldığı piyasa", "Belirli bir tüketici grubunun özel isteklerine yönelik daraltılmış piyasa", "Pazar yeri", "Borsa", "Devlet piyasası"], a: 1, exp: "Kitlesel pazarın doymasıyla şirketler, özel zevklere hitap eden niş (özel) pazarlara yönelmiştir." },
+        { q: "Aşağıdakilerden hangisi 'Kalite Çemberleri'nin amacıdır?", o: ["İşçileri gözetlemek", "İşçilerin üretimdeki sorunları tartışarak çözüm üretmelerini sağlamak", "Mola saatlerini azaltmak", "Sendikayı kapatmak", "Maaşları düşürmek"], a: 1, exp: "Toyotizmde işçiler, düzenli toplantılarla (kalite çemberleri) kaliteyi artırmak için fikir beyan ederler." },
+        { q: "Hizmet sektöründe çalışanların, müşteriye karşı sürekli gülümsemek ve nazik olmak zorunda hissetmeleri durumuna ne ad verilir?", o: ["Fiziksel Emek", "Duygusal Emek", "Zihinsel Emek", "Vasıfsız Emek", "Kölelik"], a: 1, exp: "Arlie Hochschild'in terimiyle, çalışanın kendi duygularını işin gerektirdiği şekilde yönetmesidir (Örn: Hostesler)." },
+        { q: "Küresel işbölümünde 'Kuzey' ülkeleri (Gelişmiş) genellikle neye odaklanır?", o: ["Hammadde üretimi", "Ucuz işgücü gerektiren montaj", "Tasarım, Ar-Ge, pazarlama ve finans", "Tarım", "Madencilik"], a: 2, exp: "Gelişmiş ülkeler katma değeri yüksek bilgi yoğun işleri yaparken, kirli ve ucuz üretim Güney'e kayar." },
+        { q: "Aşağıdakilerden hangisi Fordist dönemin 'Sosyal Sözleşmesi' olarak kabul edilir?", o: ["Düşük ücret - Düşük üretim", "Yüksek verimlilik karşılığında yüksek ücret ve sosyal haklar (Refah Devleti)", "İşten çıkarmaların yasaklanması", "Sendikaların kapatılması", "Sadece parça başı ödeme"], a: 1, exp: "İkinci Dünya Savaşı sonrası 'Altın Çağ'da, devlet, sendika ve işveren arasında bir uzlaşı vardı." },
+        { q: "E-ticaretin yaygınlaşması perakende sektörünü nasıl etkilemiştir?", o: ["Etkilememiştir", "Fiziksel mağazaların önemini azaltmış, lojistik ve veri yönetimini öne çıkarmıştır", "Fiziksel mağazaları artırmıştır", "Fiyatları artırmıştır", "Sadece kitap satışını etkilemiştir"], a: 1, exp: "Dijitalleşme, perakendeciliğin yapısını kökten değiştirmiştir." },
+        { q: "Sanayi Devrimi ilk olarak hangi sektörde başlamıştır?", o: ["Otomotiv", "Tekstil (Dokuma)", "Demir-Çelik", "Kimya", "Bilişim"], a: 1, exp: "Buhar gücünün dokuma tezgahlarında kullanılması sanayi devrimini başlatmıştır." },
+        { q: "Aşağıdakilerden hangisi 'Fason Üretim'in özelliğidir?", o: ["Ana firmanın markasıyla başka bir firmanın üretim yapması", "Markasız üretim", "Devlet üretimi", "El yapımı üretim", "Lüks üretim"], a: 0, exp: "Küresel markalar (Nike, Apple vb.) genellikle üretimlerini başka firmalara (fason) yaptırır." }
     ];
 
     let currentQuestion = 0;
@@ -223,7 +252,7 @@
         const explanationArea = document.getElementById('explanation-area');
         
         container.innerHTML = '';
-        explanationArea.style.display = 'none'; // Yeni soruda açıklamayı gizle
+        explanationArea.style.display = 'none';
 
         const q = questions[currentQuestion];
         
@@ -283,7 +312,6 @@
             document.getElementById(`opt-${userAnswers[currentQuestion]}`).classList.add('wrong-highlight');
         }
 
-        // Açıklamayı Göster
         explanationArea.innerHTML = `<strong>Açıklama:</strong> ${q.exp}`;
         explanationArea.style.display = 'block';
     }
@@ -343,13 +371,12 @@
         document.getElementById('quiz-screen').style.display = 'none';
         document.getElementById('result-screen').style.display = 'block';
 
-        // Puanlama: Her soru 2 puan (100/50)
         const score = Math.round((correctCount / questions.length) * 100);
         
         document.getElementById('score-circle').innerText = score;
         document.getElementById('score-details').innerHTML = `
-            <strong>Doğru:</strong> ${correctCount} | 
-            <strong>Yanlış:</strong> ${wrongCount} | 
+            <strong>Doğru:</strong> ${correctCount} &nbsp;|&nbsp; 
+            <strong>Yanlış:</strong> ${wrongCount} &nbsp;|&nbsp; 
             <strong>Boş:</strong> ${emptyCount}
         `;
         
