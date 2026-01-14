@@ -3,18 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sosyal Bilimlerde Temel Kavramlar - 5. Ünite</title>
+    <title>Sosyal Bilimlerde Temel Kavramlar - 5. Ünite: Siyaset</title>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #e8f5e9; color: #333; margin: 0; padding: 20px; }
-        .container { max-width: 900px; margin: 0 auto; background: #fff; padding: 40px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); position: relative; }
-        h1 { text-align: center; color: #2e7d32; border-bottom: 2px solid #43a047; padding-bottom: 10px; margin-bottom: 30px; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #ffebee; color: #b71c1c; margin: 0; padding: 20px; }
+        .container { max-width: 900px; margin: 0 auto; background: #fff; padding: 40px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); position: relative; }
+        h1 { text-align: center; color: #c62828; border-bottom: 2px solid #ef5350; padding-bottom: 15px; margin-bottom: 30px; font-size: 24px; }
         
         /* Home Button */
         .home-btn {
             position: absolute;
             top: 20px;
             left: 20px;
-            background-color: #66bb6a;
+            background-color: #d32f2f;
             color: white;
             border: none;
             padding: 8px 15px;
@@ -24,85 +24,95 @@
             font-size: 14px;
             transition: background 0.2s;
         }
-        .home-btn:hover { background-color: #2e7d32; }
+        .home-btn:hover { background-color: #b71c1c; }
 
         /* İlerleme Çubuğu */
-        .progress-container { background-color: #c8e6c9; border-radius: 10px; margin-bottom: 20px; height: 10px; overflow: hidden; }
-        .progress-bar { height: 100%; background-color: #2e7d32; width: 0%; transition: width 0.3s; }
-        .progress-text { text-align: right; font-size: 0.9em; color: #1b5e20; margin-bottom: 15px; }
+        .progress-container { background-color: #ffcdd2; border-radius: 10px; margin-bottom: 20px; height: 12px; overflow: hidden; }
+        .progress-bar { height: 100%; background-color: #d32f2f; width: 0%; transition: width 0.3s; }
+        .progress-text { text-align: right; font-size: 0.9em; color: #b71c1c; margin-bottom: 15px; font-weight: bold; }
 
         /* Soru Alanı */
-        .question-block { display: none; animation: fadeIn 0.5s; }
+        .question-block { display: none; animation: fadeIn 0.4s; }
         .question-block.active { display: block; }
-        .question-text { font-weight: 600; font-size: 1.25em; margin-bottom: 20px; color: #1b5e20; }
+        .question-text { font-weight: 700; font-size: 1.2em; margin-bottom: 25px; color: #8e0000; line-height: 1.4; }
         
         /* Seçenekler */
-        .options { display: flex; flex-direction: column; gap: 10px; }
+        .options { display: flex; flex-direction: column; gap: 12px; }
         .option-label { 
-            display: flex; align-items: center; padding: 12px 15px; border: 2px solid #e0e0e0; 
-            border-radius: 8px; cursor: pointer; transition: all 0.2s; background: #fff;
+            display: flex; align-items: center; padding: 15px 20px; border: 2px solid #ef9a9a; 
+            border-radius: 8px; cursor: pointer; transition: all 0.2s; background: #fff; font-size: 1em;
         }
-        .option-label:hover { background-color: #e8f5e9; border-color: #a5d6a7; }
-        .option-label.selected { border-color: #2e7d32; background-color: #c8e6c9; }
-        .option-label input { margin-right: 15px; transform: scale(1.2); }
+        .option-label:hover { background-color: #ffebee; border-color: #ef5350; }
+        .option-label.selected { border-color: #d32f2f; background-color: #ffcdd2; }
+        .option-label input { margin-right: 15px; transform: scale(1.2); cursor: pointer; }
         
         /* Cevap Göster Stilleri */
-        .option-label.correct-highlight { border-color: #27ae60; background-color: #d5f5e3; color: #1e8449; font-weight: bold; }
-        .option-label.wrong-highlight { border-color: #e74c3c; background-color: #fadbd8; }
+        .option-label.correct-highlight { border-color: #2e7d32; background-color: #c8e6c9; color: #1b5e20; font-weight: bold; }
+        .option-label.wrong-highlight { border-color: #c62828; background-color: #ffcdd2; color: #b71c1c; }
 
         /* Açıklama Kutusu */
         .explanation-box {
-            margin-top: 20px;
-            padding: 15px;
-            background-color: #e8f5e9;
-            border-left: 5px solid #43a047;
+            margin-top: 25px;
+            padding: 20px;
+            background-color: #ffebee;
+            border-left: 5px solid #d32f2f;
             border-radius: 4px;
-            color: #2e7d32;
+            color: #b71c1c;
             display: none;
             font-size: 0.95em;
-            line-height: 1.5;
+            line-height: 1.6;
         }
 
         /* Butonlar */
-        .controls { margin-top: 30px; display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
-        button { border: none; padding: 12px 24px; border-radius: 6px; cursor: pointer; font-size: 16px; font-weight: 600; transition: background 0.2s; }
-        .nav-btn { background-color: #2e7d32; color: white; }
-        .nav-btn:hover { background-color: #1b5e20; }
-        .nav-btn:disabled { background-color: #bdc3c7; cursor: not-allowed; }
+        .controls { margin-top: 35px; display: flex; justify-content: space-between; align-items: center; gap: 15px; flex-wrap: wrap; }
+        button { border: none; padding: 12px 28px; border-radius: 6px; cursor: pointer; font-size: 16px; font-weight: 600; transition: transform 0.1s, background 0.2s; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        button:active { transform: translateY(1px); }
         
-        .show-answer-btn { background-color: #43a047; color: white; }
-        .show-answer-btn:hover { background-color: #2e7d32; }
+        .nav-btn { background-color: #d32f2f; color: white; }
+        .nav-btn:hover { background-color: #b71c1c; }
+        .nav-btn:disabled { background-color: #ef9a9a; cursor: not-allowed; box-shadow: none; }
         
-        .finish-btn { background-color: #27ae60; color: white; display: none; }
-        .finish-btn:hover { background-color: #219150; }
+        .show-answer-btn { background-color: #f57f17; color: white; }
+        .show-answer-btn:hover { background-color: #e65100; }
+        
+        .finish-btn { background-color: #2e7d32; color: white; display: none; }
+        .finish-btn:hover { background-color: #1b5e20; }
 
         /* Sonuç Ekranı */
         #result-screen { display: none; }
-        .score-card { text-align: center; background: #f8f9fa; padding: 20px; border-radius: 10px; margin-bottom: 30px; }
+        .score-card { text-align: center; background: #fff3e0; padding: 30px; border-radius: 12px; margin-bottom: 30px; border: 1px solid #ffcc80; }
         .score-circle { 
-            width: 120px; height: 120px; border-radius: 50%; background: #2e7d32; color: white; 
-            display: flex; align-items: center; justify-content: center; font-size: 2em; font-weight: bold; 
-            margin: 0 auto 15px; 
+            width: 140px; height: 140px; border-radius: 50%; background: #d32f2f; color: white; 
+            display: flex; align-items: center; justify-content: center; font-size: 2.5em; font-weight: bold; 
+            margin: 0 auto 20px; box-shadow: 0 4px 10px rgba(211, 47, 47, 0.4);
         }
         
-        .review-table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 0.95em; }
-        .review-table th, .review-table td { padding: 12px; border: 1px solid #ddd; text-align: left; }
-        .review-table th { background-color: #1b5e20; color: white; }
-        .review-table tr:nth-child(even) { background-color: #f2f2f2; }
-        .status-correct { color: #27ae60; font-weight: bold; }
-        .status-wrong { color: #c0392b; font-weight: bold; }
-        .status-empty { color: #f39c12; font-weight: bold; }
+        .review-table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 0.9em; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        .review-table th, .review-table td { padding: 15px; border: 1px solid #ef9a9a; text-align: left; }
+        .review-table th { background-color: #b71c1c; color: white; font-weight: 600; }
+        .review-table tr:nth-child(even) { background-color: #ffebee; }
+        .review-table tr:hover { background-color: #ffcdd2; }
+        .status-correct { color: #2e7d32; font-weight: bold; }
+        .status-wrong { color: #c62828; font-weight: bold; }
+        .status-empty { color: #f57f17; font-weight: bold; }
 
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        /* Responsive adjustments */
+        @media (max-width: 600px) {
+            .container { padding: 20px; }
+            .option-label { padding: 10px 15px; }
+            .question-text { font-size: 1.1em; }
+        }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <a href="#" class="home-btn" onclick="alert('Anasayfaya yönlendiriliyorsunuz...'); location.reload();">⌂ Anasayfa</a>
+    <button class="home-btn" onclick="if(confirm('Testi yeniden başlatmak istediğinize emin misiniz?')) location.reload();">⌂ Testi Yenile</button>
     
     <div id="quiz-screen">
-        <h1>5. Ünite: Ekonomi</h1>
+        <h1>5. Ünite: Siyaset</h1>
         
         <div class="progress-text" id="progress-text">Soru 1 / 50</div>
         <div class="progress-container">
@@ -134,85 +144,102 @@
         <h1>Değerlendirme Sonucu</h1>
         <div class="score-card">
             <div class="score-circle" id="score-circle">0</div>
-            <h3>Toplam Puan</h3>
-            <p id="score-details"></p>
+            <h3>Başarı Puanı</h3>
+            <p id="score-details" style="font-size: 1.1em; color: #555;"></p>
         </div>
         
         <h3>Detaylı Soru Analizi</h3>
-        <table class="review-table">
-            <thead>
-                <tr>
-                    <th style="width: 5%">No</th>
-                    <th style="width: 45%">Soru</th>
-                    <th style="width: 20%">Senin Cevabın</th>
-                    <th style="width: 20%">Doğru Cevap</th>
-                    <th style="width: 10%">Durum</th>
-                </tr>
-            </thead>
-            <tbody id="review-body">
-                <!-- Sonuç satırları buraya gelecek -->
-            </tbody>
-        </table>
+        <div style="overflow-x: auto;">
+            <table class="review-table">
+                <thead>
+                    <tr>
+                        <th style="width: 5%">No</th>
+                        <th style="width: 45%">Soru</th>
+                        <th style="width: 20%">Senin Cevabın</th>
+                        <th style="width: 20%">Doğru Cevap</th>
+                        <th style="width: 10%">Durum</th>
+                    </tr>
+                </thead>
+                <tbody id="review-body">
+                    <!-- Sonuç satırları buraya gelecek -->
+                </tbody>
+            </table>
+        </div>
         <div style="text-align: center; margin-top: 30px;">
             <button class="nav-btn" onclick="location.reload()">Testi Tekrar Çöz</button>
-            <button class="home-btn" style="position: static; display: inline-block; margin-left: 10px;" onclick="location.reload()">Anasayfaya Dön</button>
         </div>
     </div>
 </div>
 
 <script>
-    // 5. Ünite Konuları: Ekonomi Tanımı, Kıtlık, Üretim Faktörleri, Arz-Talep, Piyasa Türleri, Ekonomik Sistemler, Enflasyon, İstihdam, Küreselleşme
+    // 50 Soruluk AÖF Tarzı Soru Havuzu - 5. Ünite: Siyaset
     const questions = [
-        { q: "Ekonominin (İktisat) temel inceleme konusu nedir?", o: ["Sadece paranın yönetimi", "Sınırsız insan ihtiyaçlarının sınırlı kaynaklarla nasıl karşılanacağı (Kıtlık sorunu)", "Devletlerin savaş stratejileri", "Borsa hareketleri", "Zenginlerin hayatı"], a: 1, exp: "Ekonomi, sonsuz istekler ile kıt kaynaklar arasındaki dengeyi inceleyen sosyal bilimdir." },
-        { q: "İnsan ihtiyaçlarının sonsuz, buna karşılık kaynakların sınırlı olması durumuna ne ad verilir?", o: ["Enflasyon", "Kıtlık", "Tasarruf", "Büyüme", "Verimlilik"], a: 1, exp: "Kıtlık, ekonominin temel problemidir; her isteği karşılayacak kadar kaynak (zaman, para, hammadde) yoktur." },
-        { q: "Bir malı veya hizmeti tercih ettiğimizde vazgeçtiğimiz en değerli alternatife ne denir?", o: ["Sabit Maliyet", "Fırsat Maliyeti (Alternatif Maliyet)", "Toplam Maliyet", "Marjinal Maliyet", "Üretim Maliyeti"], a: 1, exp: "Fırsat maliyeti, bir seçim yapıldığında vazgeçilen diğer en iyi seçeneğin değeridir." },
-        { q: "Aşağıdakilerden hangisi 'Üretim Faktörleri'nden biri değildir?", o: ["Emek (İşgücü)", "Sermaye", "Doğal Kaynaklar (Toprak)", "Girişimcilik", "Para"], a: 4, exp: "Para, ekonomik işlemlerde bir araçtır ancak üretim sürecinde fiziksel bir girdi olmadığı için doğrudan üretim faktörü sayılmaz (Sermaye, üretim araçlarını ifade eder)." },
-        { q: "Bireylerin ve firmaların ekonomik kararlarını inceleyen ekonominin alt dalı hangisidir?", o: ["Makroekonomi", "Mikroekonomi", "Uluslararası Ekonomi", "Kalkınma Ekonomisi", "Politik Ekonomi"], a: 1, exp: "Mikroekonomi, küçük birimlerin (tüketici, firma) davranışlarını inceler; Makroekonomi ise ekonominin genelini (enflasyon, işsizlik) inceler." },
-        { q: "Bir malın fiyatı arttığında, diğer şartlar sabitken, o mala olan talebin azalması ilkesine ne denir?", o: ["Arz Yasası", "Talep Yasası", "Azalan Verimler Yasası", "Fırsat Yasası", "Gresham Yasası"], a: 1, exp: "Talep yasasına göre fiyat ile talep edilen miktar arasında ters orantı vardır." },
-        { q: "Üreticilerin belirli bir fiyattan satmaya hazır oldukları mal veya hizmet miktarına ne denir?", o: ["Talep", "Arz", "Stok", "Tüketim", "İhtiyaç"], a: 1, exp: "Arz (Supply), piyasaya sunulan mal miktarıdır ve genellikle fiyat arttıkça artar." },
-        { q: "Arz ve talebin eşitlendiği, alıcı ve satıcının anlaştığı fiyat seviyesine ne denir?", o: ["Tavan Fiyat", "Denge Fiyatı (Piyasa Fiyatı)", "Taban Fiyat", "Maliyet Fiyatı", "Karaborsa Fiyatı"], a: 1, exp: "Denge fiyatı, piyasada ne mal fazlasının ne de mal kıtlığının olduğu noktadır." },
-        { q: "Bir mal veya hizmetin insan ihtiyaçlarını karşılama özelliğine/derecesine ne denir?", o: ["Fiyat", "Fayda", "Değer", "Maliyet", "Kâr"], a: 1, exp: "Fayda (Utility), tüketicinin bir malı tüketmekten elde ettiği tatmin düzeyidir." },
-        { q: "Üretim araçlarının özel mülkiyete ait olduğu ve piyasa mekanizmasının (kar amacı) işlediği ekonomik sistem hangisidir?", o: ["Sosyalizm", "Kapitalizm", "Komünizm", "Feodalizm", "Karma Ekonomi"], a: 1, exp: "Kapitalizm, serbest girişim, özel mülkiyet ve rekabet temeline dayalı sistemdir." },
-        { q: "Üretim araçlarının kamuya (devlete) ait olduğu ve merkezi planlamanın esas alındığı ekonomik sistem hangisidir?", o: ["Liberalizm", "Sosyalizm (Merkezi Planlı Ekonomi)", "Kapitalizm", "Piyasa Ekonomisi", "Merkantilizm"], a: 1, exp: "Sosyalizmde kar değil, toplumsal fayda ve eşitlik ön plandadır; kararlar devlet tarafından alınır." },
-        { q: "Hem özel sektörün hem de devletin ekonomide rol aldığı sisteme ne denir?", o: ["Tam Rekabet", "Karma Ekonomi", "Planlı Ekonomi", "Kapalı Ekonomi", "Geleneksel Ekonomi"], a: 1, exp: "Günümüzde çoğu ülke (Türkiye dahil), piyasa mekanizması ile devlet müdahalesini birleştiren karma ekonomi uygular." },
-        { q: "Adam Smith'in 'Ulusların Zenginliği' kitabında bahsettiği, bireysel çıkarların toplumsal faydayı da artırdığını savunan kavram nedir?", o: ["Demir Yumruk", "Görünmez El", "Sınıf Çatışması", "Artı Değer", "Laissez-faire"], a: 1, exp: "Görünmez El, piyasadaki rekabetin kaynakları en verimli şekilde dağıtacağını savunur." },
-        { q: "Piyasada tek bir satıcının bulunduğu ve fiyatı belirleme gücüne sahip olduğu duruma ne denir?", o: ["Oligopol", "Monopol (Tekel)", "Tam Rekabet", "Monopson", "Düopol"], a: 1, exp: "Monopolde rekabet yoktur, tek firma piyasaya hakimdir." },
-        { q: "Piyasada az sayıda büyük firmanın hakim olduğu duruma ne denir? (Örn: Otomotiv, GSM operatörleri)", o: ["Monopol", "Oligopol", "Tam Rekabet", "Serbest Piyasa", "Kartel"], a: 1, exp: "Oligopolde az sayıda firma birbirinin kararlarından etkilenir ve piyasayı yönlendirir." },
-        { q: "Fiyatlar genel düzeyinin sürekli ve hissedilir biçimde artmasına ne denir?", o: ["Devalüasyon", "Enflasyon", "Deflasyon", "Resesyon", "Stagflasyon"], a: 1, exp: "Enflasyon, paranın alım gücünün düşmesi ve yaşam maliyetinin artmasıdır." },
-        { q: "Ekonomide durgunluk (işsizlik) ile enflasyonun aynı anda yaşanması durumuna ne denir?", o: ["Büyüme", "Stagflasyon", "Deflasyon", "Devalüasyon", "Hiperenflasyon"], a: 1, exp: "Stagflasyon (Stagnation + Inflation), ekonominin hem büyümediği hem de fiyatların arttığı kriz durumudur." },
-        { q: "Bir ülkenin sınırları içinde belirli bir dönemde (genellikle bir yıl) üretilen nihai mal ve hizmetlerin parasal değerine ne denir?", o: ["Milli Gelir", "Gayrisafi Yurt İçi Hasıla (GSYİH)", "Gayrisafi Milli Hasıla (GSMH)", "Kişi Başına Gelir", "Bütçe"], a: 1, exp: "GSYİH (GDP), ülke içindeki toplam ekonomik faaliyeti ölçer." },
-        { q: "Vatandaşların ülke içinde ve dışında ürettikleri toplam değere ne denir?", o: ["GSYİH", "Gayrisafi Milli Hasıla (GSMH)", "İhracat", "İthalat", "Dış Ticaret Dengesi"], a: 1, exp: "GSMH (GNP), vatandaşlık esasına dayanır; yurt dışındaki vatandaşların gelirini de kapsar." },
-        { q: "İş aradığı halde iş bulamayan ve çalışmaya hazır olan nüfusun toplam işgücüne oranına ne denir?", o: ["İstihdam Oranı", "İşsizlik Oranı", "Enflasyon Oranı", "Büyüme Oranı", "Katılım Oranı"], a: 1, exp: "İşsiz sayılmak için kişinin aktif olarak iş arıyor olması gerekir." },
-        { q: "Ekonomideki dalgalanmalar sonucu, işlerin yavaşladığı dönemlerde ortaya çıkan işsizlik türü hangisidir?", o: ["Yapısal İşsizlik", "Konjonktürel İşsizlik", "Mevsimlik İşsizlik", "Gizli İşsizlik", "Friksiyonel İşsizlik"], a: 1, exp: "Konjonktürel işsizlik, ekonomik kriz veya durgunluk (resesyon) dönemlerinde talep yetersizliğinden kaynaklanır." },
-        { q: "Devletin vergi toplama ve harcama yapma yoluyla ekonomiyi yönlendirmesine ne denir?", o: ["Para Politikası", "Maliye Politikası", "Dış Ticaret Politikası", "Kur Politikası", "Sanayi Politikası"], a: 1, exp: "Maliye politikası hükümet tarafından bütçe (vergi ve harcama) araçlarıyla yürütülür." },
-        { q: "Merkez Bankası'nın faiz oranları ve para arzını kullanarak ekonomiyi yönlendirmesine ne denir?", o: ["Maliye Politikası", "Para Politikası", "Gümrük Politikası", "Gelir Politikası", "Yatırım Politikası"], a: 1, exp: "Para politikası, enflasyonu kontrol etmek ve fiyat istikrarını sağlamak için Merkez Bankası tarafından uygulanır." },
-        { q: "Devletin ekonomiye hiç müdahale etmemesi gerektiğini savunan görüşe ne denir?", o: ["Sosyalizm", "Laissez-faire (Bırakınız yapsınlar)", "Devletçilik", "Korumacılık", "Planlamacılık"], a: 1, exp: "Laissez-faire, klasik liberalizmin temel ilkesidir; piyasanın kendi kendini dengeleyeceğini savunur." },
-        { q: "Bir ülkenin diğer ülkelere sattığı mal ve hizmetlere ne denir?", o: ["İthalat", "İhracat", "Dış Borç", "Gümrük", "Döviz"], a: 1, exp: "İhracat (Export), dış satımdır ve ülkeye döviz kazandırır." },
-        { q: "Bir ülkenin ihracatının ithalatından fazla olması durumuna ne denir?", o: ["Dış Ticaret Açığı", "Dış Ticaret Fazlası", "Bütçe Açığı", "Enflasyon", "Devalüasyon"], a: 1, exp: "Dış ticaret fazlası, ülkenin sattığının aldığından fazla olmasıdır, ekonomiye olumlu katkı sağlar." },
-        { q: "Gelir dağılımındaki eşitsizliği ölçen katsayıya ne ad verilir?", o: ["Gini Katsayısı", "Engel Katsayısı", "Talep Katsayısı", "Vergi Katsayısı", "Faiz Oranı"], a: 0, exp: "Gini katsayısı 0 ile 1 arasındadır; 0 tam eşitliği, 1 tam eşitsizliği ifade eder." },
-        { q: "Lorenz Eğrisi neyi gösterir?", o: ["Enflasyonu", "Gelir Dağılımı Adaletsizliğini", "İşsizliği", "Büyümeyi", "Nüfusu"], a: 1, exp: "Lorenz eğrisi, mutlak eşitlik doğrusundan ne kadar uzaklaşırsa gelir dağılımı o kadar bozuktur." },
-        { q: "Kamu malları (Parklar, savunma, sokak lambaları) neden piyasa tarafından üretilmez?", o: ["Çok pahalı olduğu için", "Kâr getirmemesi ve tüketiminden kimsenin mahrum bırakılamaması (Dışlanamamazlık) nedeniyle", "Yasak olduğu için", "Devlet istemediği için", "Malzeme olmadığı için"], a: 1, exp: "Kamu malları, 'bedavacı sorunu' nedeniyle özel sektör tarafından kârlı bir şekilde sunulamaz, devlet tarafından sunulur." },
-        { q: "Ekonomik faaliyetlerin çevreye verdiği zarar (kirlilik) gibi, fiyatlara yansımayan üçüncü taraf etkilerine ne denir?", o: ["Fırsat Maliyeti", "Negatif Dışsallık", "Pozitif Dışsallık", "Vergi", "Sübvansiyon"], a: 1, exp: "Negatif dışsallık, bir ekonomik işlemin o işlemle ilgisi olmayan kişilere zarar vermesidir." },
-        { q: "John Maynard Keynes'in ekonomik görüşü neyi savunur?", o: ["Devletin asla müdahale etmemesini", "Ekonomik durgunluk dönemlerinde devletin harcamaları artırarak talebi canlandırması gerektiğini", "Sadece para politikasının yeterli olduğunu", "Altın standardını", "Sosyalizmi"], a: 1, exp: "Keynesyen ekonomi, piyasaların her zaman kendi kendine düzelmeyeceğini, devlet müdahalesinin (maliye politikası) gerekli olduğunu savunur." },
-        { q: "16. ve 18. yüzyıllarda yaygın olan, zenginliğin kaynağını altın ve gümüş birikiminde gören ekonomik görüş hangisidir?", o: ["Fizyokrasi", "Merkantilizm", "Liberalizm", "Marksizm", "Monetarizm"], a: 1, exp: "Merkantilizm, ihracatı artırıp ithalatı kısıtlayarak değerli maden stoklamayı hedefleyen devletçi bir görüştür." },
-        { q: "Fizyokratlara göre tek üretken sektör hangisidir?", o: ["Sanayi", "Ticaret", "Tarım", "Hizmet", "Bankacılık"], a: 2, exp: "Fizyokratlar (örn: Quesnay), 'Bırakınız yapsınlar' sözünün öncüleridir ve doğanın (toprağın) tek değer kaynağı olduğuna inanırlar." },
-        { q: "İnsanların ekonomik kararlar alırken rasyonel davrandığını, kendi çıkarını maksimize ettiğini varsayan kavrama ne denir?", o: ["Homo Sapiens", "Homo Economicus", "Homo Faber", "Sosyolojik İnsan", "Politik İnsan"], a: 1, exp: "Homo Economicus (Ekonomik İnsan), duygularıyla değil mantığıyla ve kar/fayda hesabıyla hareket eden varsayımsal bireydir." },
-        { q: "David Ricardo'nun 'Karşılaştırmalı Üstünlükler Teorisi' neyi savunur?", o: ["Her ülkenin her şeyi üretmesini", "Ülkelerin, diğerlerine göre daha düşük fırsat maliyetiyle (daha verimli) ürettikleri mallarda uzmanlaşarak ticaret yapmasını", "Ticaretin yasaklanmasını", "Gümrük duvarlarını", "Sadece tarım yapılmasını"], a: 1, exp: "Bu teori, uluslararası ticaretin neden her iki taraf için de kazançlı olduğunu açıklar." },
-        { q: "Bir ülkenin parasının yabancı paralar karşısında değer kaybetmesine (resmi olarak düşürülmesine) ne denir?", o: ["Revalüasyon", "Devalüasyon", "Enflasyon", "Deflasyon", "Kur Sabitleme"], a: 1, exp: "Devalüasyon, sabit kur sisteminde yerli paranın değerinin otoritelerce düşürülmesidir; ihracatı teşvik eder." },
-        { q: "Uluslararası Para Fonu (IMF) ve Dünya Bankası'nın temel kuruluş amacı nedir?", o: ["Savaş çıkarmak", "Küresel ekonomik istikrarı sağlamak ve kalkınmayı finanse etmek", "Sadece ABD'ye yardım etmek", "Ticaret yapmak", "Eğitim vermek"], a: 1, exp: "IMF ödemeler dengesi krizindeki ülkelere kredi verirken, Dünya Bankası uzun vadeli kalkınma projelerini fonlar." },
-        { q: "Büyüme ile Kalkınma arasındaki fark nedir?", o: ["Fark yoktur", "Büyüme sadece milli gelirin artışıdır (niceliksel); Kalkınma ise yaşam kalitesi, eğitim ve sağlığın da iyileşmesidir (niteliksel)", "Büyüme fakirler içindir", "Kalkınma sadece inşaat yapmaktır", "Büyüme nüfusla ilgilidir"], a: 1, exp: "Ekonomik büyüme sadece rakamların artmasıdır; kalkınma ise refahın toplumun geneline yayılmasıdır." },
-        { q: "Bireyin, temel ihtiyaçlarını (gıda, barınma) karşılayacak gelire sahip olmamasına ne denir?", o: ["Göreli Yoksulluk", "Mutlak Yoksulluk", "Subjektif Yoksulluk", "Gelir Eşitsizliği", "İşsizlik"], a: 1, exp: "Mutlak yoksulluk, biyolojik hayatta kalma sınırının altında yaşamaktır." },
-        { q: "Tüketim toplumunda bireylerin tüketim davranışını belirleyen temel faktör nedir?", o: ["Sadece ihtiyaçlar", "Statü, kimlik inşası ve sembolik anlamlar", "Sadece fiyat", "Devlet zorlaması", "Üretim miktarı"], a: 1, exp: "Modern toplumda tüketim, bir ihtiyaç gidermekten çok, 'kim olduğunu gösterme' aracıdır." },
-        { q: "Ekonomik faaliyetlerin döngüsel olarak genişlemesi ve daralmasına (canlanma, tepe, durgunluk, dip) ne denir?", o: ["Enflasyon", "Konjonktür Dalgaları (Business Cycle)", "Büyüme Trendi", "Kriz", "İstikrar"], a: 1, exp: "Ekonomiler düz bir çizgide büyümez; genişleme ve daralma dönemleri birbirini izler." },
-        { q: "İşbölümü ve uzmanlaşma neyi sağlar?", o: ["Verimliliğin artmasını", "Üretimin azalmasını", "Kalitenin düşmesini", "İşçilerin daha çok yorulmasını", "Maliyetin artmasını"], a: 1, exp: "İşbölümü (Adam Smith'in vurguladığı gibi), her işçinin tek bir işte uzmanlaşmasıyla üretimi hızlandırır." },
-        { q: "Karl Marx'a göre 'Artı Değer' nedir?", o: ["İşçinin ürettiği değer ile ona ödenen ücret arasındaki fark (Sermayedarın el koyduğu kısım)", "Devletin aldığı vergi", "Bankanın faizi", "Hammadde maliyeti", "İşçinin ikramiyesi"], a: 0, exp: "Marx'a göre kapitalist kârın kaynağı, işçinin emeğinin karşılığı ödenmeyen bu artı değerdir." },
-        { q: "Küreselleşme (Globalleşme) ekonomide ne anlama gelir?", o: ["Her ülkenin sınırlarını kapatması", "Sermaye, mal ve hizmetlerin ulusal sınırları aşarak dünya çapında serbestçe dolaşması", "Sadece internetin kullanılması", "Devletlerin güçlenmesi", "Yerel üretimin artması"], a: 1, exp: "Küreselleşme, dünya ekonomilerinin birbirine entegre olması ve karşılıklı bağımlılığın artmasıdır." },
-        { q: "Sürdürülebilir Kalkınma kavramı neyi ifade eder?", o: ["Sadece bugünü düşünmeyi", "Gelecek nesillerin ihtiyaçlarını karşılama yeteneğinden ödün vermeden bugünün ihtiyaçlarını karşılamayı (Çevreyi koruyarak büyüme)", "Hızlı sanayileşmeyi", "Doğayı tamamen kullanmayı", "Nüfusu azaltmayı"], a: 1, exp: "Sürdürülebilir kalkınma, ekonomik büyümeyi ekolojik dengeyle uyumlu hale getirmeyi hedefler." },
-        { q: "Bireylerin gelirlerinin bir kısmını harcamayıp gelecekte kullanmak üzere ayırmasına ne denir?", o: ["Yatırım", "Tasarruf", "Tüketim", "Borçlanma", "İsraf"], a: 1, exp: "Tasarruf, gelirin tüketilmeyen kısmıdır ve yatırımların finansman kaynağıdır." },
-        { q: "Verginin doğrudan gelirden veya servetten alınmasına ne denir?", o: ["Dolaylı Vergi (KDV gibi)", "Dolaysız (Doğrudan) Vergi (Gelir Vergisi gibi)", "Harç", "Resim", "Para cezası"], a: 1, exp: "Dolaysız vergiler (Gelir, Kurumlar vergisi) kazanç üzerinden alınır; dolaylı vergiler (KDV, ÖTV) harcama üzerinden alınır." },
-        { q: "Geleneksel ekonomik sistemlerde üretim neye göre belirlenir?", o: ["Piyasa fiyatlarına", "Devlet planına", "Töre, adet ve geleneklere (Genellikle geçimlik üretim)", "Borsa endeksine", "Teknolojiye"], a: 2, exp: "Geleneksel ekonomilerde 'ne üretilecek' sorusu, geçmişten gelen alışkanlıklara ve toplumun ihtiyaçlarına göre yanıtlanır." },
-        { q: "Friedrich Hayek ve Milton Friedman hangi ekonomik görüşün temsilcileridir?", o: ["Sosyalizm", "Keynesçilik", "Neoliberalizm / Monetarizm (Serbest Piyasa Savunucuları)", "Merkantilizm", "Marksizm"], a: 2, exp: "Bu iktisatçılar, devlet müdahalesine karşı çıkarak piyasanın özgürlüğünü ve para politikasının önemini savunmuşlardır." },
-        { q: "Bir malın fiyatı düştüğünde, tüketicinin o malı daha fazla satın alıp diğer malları daha az almasına ne denir?", o: ["Gelir Etkisi", "İkame Etkisi", "Züppe Etkisi", "Gösteriş Etkisi", "Marjinal Etki"], a: 1, exp: "İkame etkisi, ucuzlayan malın, pahalı kalan diğer malların yerine tercih edilmesidir." }
+        // Siyaset Nedir ve Temel Kavramlar
+        { q: "Siyaset (Politika) kelimesi köken olarak Eski Yunanca 'Polis' kavramından gelir. 'Polis' ne demektir?", o: ["Asker", "Şehir devleti", "Kral", "Halk", "Para"], a: 1, exp: "Antik Yunan'da siyaset, şehir devletinin (polis) yönetimiyle ilgili işler anlamına gelirdi." },
+        { q: "Aristoteles'e göre 'İnsan' nasıl bir varlıktır?", o: ["Düşünen bir hayvandır", "Zoon Politikon (Siyasal bir hayvandır)", "Ekonomik bir varlıktır", "Yalnız bir varlıktır", "Dini bir varlıktır"], a: 1, exp: "Aristoteles, insanın ancak bir siyasal topluluk içinde var olabileceğini ve potansiyelini gerçekleştirebileceğini savunur." },
+        { q: "Bir kişinin veya grubun, başkalarının davranışlarını kendi istekleri doğrultusunda yönlendirebilme yeteneğine ne ad verilir?", o: ["Otorite", "İktidar (Güç)", "Meşruiyet", "Devlet", "Egemenlik"], a: 1, exp: "İktidar (Power), dirençle karşılaşsa bile istendiğini yaptırabilme kapasitesidir." },
+        { q: "İktidarın, yönetilenler tarafından 'haklı' ve 'uyulması gereken' bir güç olarak kabul edilmesine ve rızaya dayanmasına ne denir?", o: ["Zorbalık", "Meşruiyet", "Manipülasyon", "Propaganda", "Baskı"], a: 1, exp: "Meşruiyet (Legitimacy), iktidarın sadece kaba güce değil, haklılığa ve rızaya dayanmasını sağlar; böylece iktidar 'otorite'ye dönüşür." },
+        { q: "Max Weber'e göre, 'geçmişten gelen adetlere ve kutsallığa' dayanan otorite tipi hangisidir?", o: ["Yasal-Rasyonel Otorite", "Karizmatik Otorite", "Geleneksel Otorite", "Demokratik Otorite", "Askeri Otorite"], a: 2, exp: "Krallıklar, sultanlıklar veya aşiret reisliği gibi yapılar geleneksel otoriteye örnektir." },
+        { q: "Weber'e göre modern devletlerde görülen, kurallara, yasalara ve bürokrasiye dayanan otorite tipi hangisidir?", o: ["Geleneksel Otorite", "Karizmatik Otorite", "Yasal-Rasyonel Otorite", "Dini Otorite", "Ataerkil Otorite"], a: 2, exp: "Bu otorite tipinde itaat kişiye değil, o kişinin temsil ettiği yasaya ve makama gösterilir." },
+        { q: "Devletin üç temel unsuru aşağıdakilerden hangisidir?", o: ["Para, Ordu, Polis", "Ülke (Toprak), Halk (İnsan), Egemenlik (İktidar)", "Başkan, Meclis, Mahkeme", "Din, Dil, Tarih", "Okul, Aile, Cami"], a: 1, exp: "Devlet, belirli bir toprak parçasında yaşayan insan topluluğu üzerindeki egemen iktidar örgütlenmesidir." },
+
+        // Siyasal İdeolojiler
+        { q: "'İdeoloji' kavramını 'fikirlerin bilimi' anlamında ilk kez kullanan Fransız düşünür kimdir?", o: ["Karl Marx", "Destutt de Tracy", "Napolyon", "Rousseau", "Voltaire"], a: 1, exp: "Tracy, ideolojiyi önyargılardan arınmış doğru düşünme bilimi olarak tasarlamıştı, ancak kavram sonradan siyasi anlam kazandı." },
+        { q: "Bireysel özgürlüğü, sınırlı devleti, serbest piyasayı ve hukukun üstünlüğünü savunan ideoloji hangisidir?", o: ["Sosyalizm", "Muhafazakarlık", "Liberalizm", "Faşizm", "Anarşizm"], a: 2, exp: "Liberalizm, bireyi merkeze alır ve devletin bireyin hayatına müdahalesini en aza indirmeyi amaçlar." },
+        { q: "Ekonomik eşitliği, üretim araçlarının ortak mülkiyetini ve sınıf farklarının ortadan kaldırılmasını savunan ideoloji hangisidir?", o: ["Liberalizm", "Sosyalizm", "Milliyetçilik", "Muhafazakarlık", "Feminizm"], a: 1, exp: "Sosyalizm, kapitalizmin yarattığı eşitsizlikleri gidermeyi ve toplumsal dayanışmayı hedefler." },
+        { q: "Edmund Burke ile özdeşleşen, ani ve köklü değişimlere (devrimlere) karşı çıkan, geleneği, aileyi ve dini değerleri savunan ideoloji hangisidir?", o: ["Liberalizm", "Sosyalizm", "Muhafazakârlık", "Anarşizm", "Faşizm"], a: 2, exp: "Muhafazakarlık, toplumu yaşayan bir organizma olarak görür ve tecrübeyle oluşmuş kurumlara (gelenek) saygı duyar." },
+        { q: "Dünyayı 'uluslar' temelinde gören ve her ulusun kendi kaderini tayin etme hakkını savunan ideoloji hangisidir?", o: ["Küreselleşme", "Milliyetçilik", "Liberalizm", "Sosyalizm", "Feminizm"], a: 1, exp: "Milliyetçilik, siyasal birimin (devlet) kültürel birimle (ulus) örtüşmesini hedefler." },
+        { q: "Kapitalist piyasa ekonomisi ile devletin sosyal adalet sağlamak için müdahalesini (Refah Devleti) birleştiren ılımlı sol ideoloji hangisidir?", o: ["Komünizm", "Sosyal Demokrasi", "Faşizm", "Anarşizm", "Liberalizm"], a: 1, exp: "Sosyal demokrasi, devrim yerine demokratik yollarla ve karma ekonomiyle sosyal adaleti sağlamayı amaçlar." },
+        { q: "Bireyi devletin içinde eriten, lidere mutlak itaat isteyen, aşırı milliyetçi ve anti-demokratik ideoloji hangisidir?", o: ["Liberalizm", "Muhafazakarlık", "Faşizm", "Sosyalizm", "Çevrecilik"], a: 2, exp: "Mussolini ve Hitler ile özdeşleşen faşizm, 'Her şey devlet içinde, hiçbir şey devlet dışında değildir' anlayışına dayanır." },
+        { q: "Kadınların maruz kaldığı eşitsizlikleri ve ataerkil yapıyı eleştiren, cinsiyet eşitliğini savunan ideoloji hangisidir?", o: ["Feminizm", "Sosyalizm", "Liberalizm", "Çevrecilik", "Milliyetçilik"], a: 0, exp: "Feminizm, kadınların siyasi, ekonomik ve sosyal haklarını savunur." },
+        { q: "İnsan merkezli (antroposentrik) bakış açısını eleştirerek doğayı ve ekosistemi merkeze alan ideoloji hangisidir?", o: ["Hümanizm", "Çevrecilik / Ekolojizm", "Liberalizm", "Sosyalizm", "Milliyetçilik"], a: 1, exp: "Ekolojizm, sürdürülebilirliği ve doğanın içsel değerini savunur." },
+        
+        // Demokratik Rejimlerde Siyasal Kurumlar
+        { q: "Demokrasi kelimesi (Demos + Kratos) köken olarak ne anlama gelir?", o: ["Kralın yönetimi", "Tanrı'nın yönetimi", "Halkın yönetimi / Halkın iktidarı", "Zenginlerin yönetimi", "Askerlerin yönetimi"], a: 2, exp: "Demokrasi, egemenliğin halka ait olduğu yönetim biçimidir." },
+        { q: "Halkın kararları doğrudan kendisinin aldığı (temsilci olmadan) demokrasi türüne ne denir?", o: ["Temsili Demokrasi", "Doğrudan Demokrasi", "Meşruti Monarşi", "Oligarşi", "Teokrasi"], a: 1, exp: "Antik Atina'da uygulanan, vatandaşların meydanda toplanıp el kaldırarak karar aldığı modeldir." },
+        { q: "Günümüzde uygulanan, halkın seçtiği temsilciler (milletvekilleri) aracılığıyla yönetime katıldığı demokrasi türü hangisidir?", o: ["Doğrudan Demokrasi", "Temsili Demokrasi", "Totaliter Demokrasi", "Halk Demokrasisi", "Doğrudan Monarşi"], a: 1, exp: "Nüfusun artmasıyla doğrudan demokrasi imkansızlaşmış, yerini temsili demokrasiye bırakmıştır." },
+        { q: "Montesquieu'nun geliştirdiği, devlet gücünün tek elde toplanmasını önleyerek özgürlükleri koruyan ilke hangisidir?", o: ["Güçler Birliği", "Güçler Ayrılığı (Kuvvetler Ayrılığı)", "Mutlakiyet", "Merkeziyetçilik", "Otoriterizm"], a: 1, exp: "Yasama, Yürütme ve Yargı güçlerinin farklı organlarda olması ve birbirini denetlemesi ilkesidir." },
+        
+        // Yasama, Yürütme, Yargı
+        { q: "Yasama organının (Parlamento/Meclis) temel görevi nedir?", o: ["Kanun yapmak ve hükümeti denetlemek", "Kanunları uygulamak", "Suçluları cezalandırmak", "Yol yapmak", "Savaş ilan etmek"], a: 0, exp: "Yasama organı, halk adına kuralları (yasaları) koyar." },
+        { q: "Kanunları uygulayan ve devletin günlük işlerini yürüten organ hangisidir?", o: ["Yasama", "Yargı", "Yürütme (Hükümet/Cumhurbaşkanı)", "Medya", "Ordu"], a: 2, exp: "Yürütme organı, yasaların çizdiği çerçevede devleti yönetir." },
+        { q: "Vatandaşlar arasındaki veya vatandaşla devlet arasındaki uyuşmazlıkları yasalara göre çözen bağımsız organ hangisidir?", o: ["Yasama", "Yürütme", "Yargı (Mahkemeler)", "Polis", "Belediye"], a: 2, exp: "Yargı, hukukun üstünlüğünü ve adaleti sağlar." },
+        
+        // Siyasi Partiler ve Parti Sistemleri
+        { q: "Siyasi partilerin temel amacı nedir?", o: ["Sadece dernek kurmak", "Seçimlere girerek siyasal iktidarı ele geçirmek veya ortağı olmak", "Ticaret yapmak", "Eğitim vermek", "Spor yapmak"], a: 1, exp: "Siyasi partiler, programlarını uygulamak için devleti yönetmeye talip olan örgütlerdir." },
+        { q: "Aşağıdakilerden hangisi siyasi partilerin işlevlerinden biri DEĞİLDİR?", o: ["Siyasal sosyalleşme (Vatandaşı eğitme)", "Çıkar birleştirme (Farklı talepleri programa dönüştürme)", "Siyasal personel seçme (Aday belirleme)", "Ticari kâr elde etme", "Hükümeti denetleme (Muhalefet)"], a: 3, exp: "Siyasi partiler kâr amacı güden şirketler değildir." },
+        { q: "Genellikle Anglo-Sakson ülkelerde (ABD, İngiltere) görülen, iktidarın iki büyük parti arasında el değiştirdiği sisteme ne denir?", o: ["Tek Parti Sistemi", "İki Parti Sistemi", "Çok Parti Sistemi", "Hakim Parti Sistemi", "Partisiz Sistem"], a: 1, exp: "Bu sistemde küçük partiler olsa da, seçim sisteminin etkisiyle (çoğunluk sistemi) iktidar şansı iki büyük partidedir." },
+        { q: "Seçimlerde birden fazla partinin meclise girdiği ve genellikle koalisyon hükümetlerinin kurulduğu sistem hangisidir?", o: ["İki Parti Sistemi", "Çok Parti Sistemi", "Tek Parti Sistemi", "Otoriter Sistem", "Monarşi"], a: 1, exp: "Nispi temsil seçim sisteminin uygulandığı Kıta Avrupası ülkelerinde yaygındır." },
+        
+        // Baskı Grupları, STK ve Medya
+        { q: "Siyasi partilerden farklı olarak, iktidarı ele geçirmeyi değil, iktidarı kendi çıkarları doğrultusunda 'etkilemeyi' amaçlayan gruplara ne denir?", o: ["Siyasi Parti", "Baskı Grupları / Çıkar Grupları", "Hükümet", "Bürokrasi", "Ordu"], a: 1, exp: "Sendikalar, işveren örgütleri veya çevreci dernekler, kararları etkilemek için lobi yaparlar ama aday göstermezler." },
+        { q: "Baskı gruplarının karar alıcıları (milletvekilleri vb.) etkilemek için kulislerde yürüttükleri faaliyete ne ad verilir?", o: ["Lobicilik", "Rüşvet", "Propaganda", "Seçim", "Darbe"], a: 0, exp: "Lobicilik, yasal ve demokratik bir etkileme yöntemidir." },
+        { q: "Devletin resmi kurumları dışında kalan, gönüllülük esasına dayalı, kâr amacı gütmeyen örgütlenmelere (Dernek, Vakıf vb.) ne denir?", o: ["Sivil Toplum Kuruluşları (STK)", "Kamu İktisadi Teşebbüsleri", "Özel Şirketler", "Siyasi Partiler", "Bürokrasi"], a: 0, exp: "Sivil toplum, devlet gücünü dengeleyen ve vatandaşın katılımını sağlayan alandır." },
+        { q: "Belli bir konuda toplumun genelinin benimsediği ortak kanaat ve düşüncelere ne denir?", o: ["İdeoloji", "Kamuoyu", "Önyargı", "Dedikodu", "Kültür"], a: 1, exp: "Demokrasilerde yöneticiler, kamuoyunun (halkın kanaatinin) sesine kulak vermek zorundadır." },
+        { q: "Yasama, Yürütme ve Yargı'dan sonra, kamuoyu oluşturma ve denetleme gücü nedeniyle 'Dördüncü Güç' olarak adlandırılan kurum hangisidir?", o: ["Ordu", "Medya / Basın", "Üniversiteler", "Sendikalar", "Bankalar"], a: 1, exp: "Medya, bilgi akışını sağlayarak ve gündem belirleyerek siyaseti denetler." },
+        
+        // Bürokrasi ve Yönetim
+        { q: "Max Weber'e göre bürokrasinin en belirgin özelliği nedir?", o: ["Keyfilik", "Hiyerarşi, uzmanlaşma, yazılı kurallar ve gayrişahsilik", "Yavaşlık", "Rüşvet", "Duygusallık"], a: 1, exp: "Bürokrasi, modern devletin işlerini rasyonel ve verimli yürütmek için tasarlanmış örgütlenmedir." },
+        { q: "Seçimle gelmeyen, atamayla göreve gelen, devletin sürekli ve uzman memurlarının oluşturduğu yapıya ne denir?", o: ["Hükümet", "Parlamento", "Bürokrasi", "Parti", "Sivil Toplum"], a: 2, exp: "Siyasetçiler gelip geçicidir, bürokratlar ise devletin devamlılığını sağlar." },
+        
+        // Karışık / Pekiştirme
+        { q: "Devletin tüm yetkilerinin tek bir merkezde toplandığı (yerel yönetimlerin yetkisinin az olduğu) devlet biçimi hangisidir?", o: ["Federal Devlet", "Üniter Devlet", "Konfederasyon", "Bölgesel Devlet", "Monarşi"], a: 1, exp: "Türkiye, Fransa gibi devletler üniterdir; tek anayasa ve tek hukuk sistemi vardır." },
+        { q: "Yetkilerin merkezi hükümet ile eyaletler arasında paylaşıldığı devlet biçimi hangisidir?", o: ["Üniter Devlet", "Federal Devlet", "Şehir Devleti", "İmparatorluk", "Krallık"], a: 1, exp: "ABD, Almanya gibi devletler federaldir; eyaletlerin kendi yasaları ve meclisleri olabilir." },
+        { q: "Yürütme organının (Hükümetin), yasama organının (Meclis) içinden çıktığı ve ona karşı sorumlu olduğu hükümet sistemi hangisidir?", o: ["Başkanlık Sistemi", "Yarı Başkanlık Sistemi", "Parlamenter Sistem", "Mutlakiyet", "Diktatörlük"], a: 2, exp: "Parlamenter sistemde başbakan ve bakanlar meclis üyesidir ve meclis güvenoyuna ihtiyaç duyarlar." },
+        { q: "Yürütme organının (Başkan) halk tarafından doğrudan seçildiği ve yasama organından kesin çizgilerle ayrıldığı (meclisi feshedemediği) sistem hangisidir?", o: ["Parlamenter Sistem", "Başkanlık Sistemi", "Meclis Hükümeti", "Monarşi", "Oligarşi"], a: 1, exp: "ABD tipi başkanlık sisteminde sert kuvvetler ayrılığı vardır." },
+        { q: "Hiçbir partinin tek başına çoğunluğu sağlayamadığı durumlarda, birden fazla partinin birleşerek kurduğu hükümete ne denir?", o: ["Azınlık Hükümeti", "Koalisyon Hükümeti", "Tek Parti Hükümeti", "Geçici Hükümet", "Ulusal Birlik Hükümeti"], a: 1, exp: "Koalisyonlar uzlaşma gerektirir ancak bazen istikrarsızlığa yol açabilir." },
+        { q: "Demokrasilerde muhalefetin temel görevi nedir?", o: ["İktidarı devirmek için isyan çıkarmak", "İktidarın icraatlarını denetlemek, eleştirmek ve alternatif politikalar sunmak", "Meclisi kapatmak", "Hiçbir şey yapmamak", "Yalan söylemek"], a: 1, exp: "Muhalefet, demokrasinin sigortasıdır; seçmenlere 'daha iyi yönetebilirim' mesajı verir." },
+        { q: "Sivil İtaatsizlik ne demektir?", o: ["Silahlı isyan", "Hukuka aykırı olduğu düşünülen bir yasaya karşı, şiddet içermeyen, kamuya açık ve ahlaki gerekçeli eylem", "Vergi kaçırmak", "Trafik kurallarına uymamak", "Hırsızlık yapmak"], a: 1, exp: "Gandhi veya Martin Luther King'in eylemleri sivil itaatsizliğe örnektir." },
+        { q: "Seçimlerde bir bölgeden en çok oyu alan adayın seçildiği, kaybedenin oyunun boşa gittiği sisteme ne denir?", o: ["Nispi Temsil Sistemi", "Çoğunluk Sistemi", "Karma Sistem", "Atama Sistemi", "Kura Sistemi"], a: 1, exp: "Bu sistem (Dar bölge vb.) temsilde adaleti azaltabilir ama yönetimde istikrarı artırabilir." },
+        { q: "Oyların partiler arasında aldıkları oy oranına göre paylaştırıldığı, temsilde adaleti sağlayan seçim sistemi hangisidir?", o: ["Çoğunluk Sistemi", "Nispi Temsil Sistemi", "Barajsız Sistem", "İki Turlu Sistem", "Başkanlık Sistemi"], a: 1, exp: "Bu sistemde küçük partilerin de meclise girme şansı artar." },
+        { q: "Vatandaşların siyasal sisteme yönelik inanç, tutum, değer ve davranışlarının bütününe ne denir?", o: ["Siyasal Parti", "Siyasal Kültür", "Siyasal Sistem", "Siyasal İktidar", "Siyasal Rejim"], a: 1, exp: "Katılımcı, tebaa veya yerel siyasal kültür gibi türleri vardır." },
+        { q: "Robert Michels'in 'Oligarşinin Tunç Kanunu' teorisi neyi iddia eder?", o: ["Her örgüt (demokratik olsa bile) zamanla küçük bir azınlığın (elitlerin) yönetimine girer", "Demokrasi her zaman kazanır", "Halk her zaman yönetir", "Liderler önemsizdir", "Partiler gereksizdir"], a: 0, exp: "Bürokrasi ve uzmanlaşma ihtiyacı, iktidarın örgüt tepesindeki bir grupta yoğunlaşmasına neden olur." },
+        { q: "Hukuk Devleti ilkesinin en temel gereği nedir?", o: ["Polisin güçlü olması", "Yönetenlerin de (devletin) hukuk kurallarıyla bağlı olması ve yargı denetimine açık olması", "Kanunların çok olması", "Cezaların ağır olması", "Vergilerin yüksek olması"], a: 1, exp: "Hukuk devletinde keyfi yönetim olmaz; herkes yasa önünde eşittir." },
+        { q: "Totalitarizm ile Otoritarizm arasındaki temel fark nedir?", o: ["Fark yoktur", "Totalitarizm toplumun her alanını (özel hayat dahil) kontrol etmeye çalışır ve bir ideolojiyi dayatır; Otoritarizm ise sadece siyasi iktidarı elinde tutmakla yetinir", "Otoritarizm daha kötüdür", "Totalitarizmde seçim vardır", "Otoritarizmde ideoloji yoktur"], a: 1, exp: "Totaliter rejimler (Nazi Almanyası, SSCB) bireyi dönüştürmeyi hedefler." },
+        { q: "Jean Bodin'in siyaset bilimine katkısı olan kavram hangisidir?", o: ["Demokrasi", "Egemenlik (Sovereignty)", "Bürokrasi", "Parti", "Meclis"], a: 1, exp: "Bodin, egemenliği devletin mutlak, bölünmez ve sürekli gücü olarak tanımlamıştır." },
+        { q: "Thomas Hobbes'a göre insanlar neden devleti (Leviathan) kurmuşlardır?", o: ["Allah istediği için", "Doğa durumundaki 'herkesin herkesle savaşı'ndan kurtulup güvenlik sağlamak için", "Zengin olmak için", "Özgür olmak için", "Eğlenmek için"], a: 1, exp: "Hobbes'a göre güvenlik ihtiyacı, mutlak iktidara boyun eğmeyi gerektirir." },
+        { q: "John Locke'a göre devletin varlık nedeni nedir?", o: ["İnsanları baskı altına almak", "Bireylerin doğal haklarını (Yaşam, Özgürlük, Mülkiyet) korumak", "Savaş çıkarmak", "Dini yaymak", "Vergi toplamak"], a: 1, exp: "Locke, liberalizmin babası olarak devleti sınırlı bir hak koruyucusu olarak görür." },
+        { q: "Rousseau'nun 'Genel İrade' (General Will) kavramı neyi ifade eder?", o: ["Kralın iradesini", "Toplumun ortak yararına olan, bireysel çıkarların ötesindeki kolektif iradeyi", "Çoğunluğun baskısını", "Azınlığın isteğini", "Tanrı'nın isteğini"], a: 1, exp: "Rousseau'ya göre meşru yasa, ancak genel iradeden kaynaklanabilir." }
     ];
 
     let currentQuestion = 0;
@@ -223,7 +250,7 @@
         const explanationArea = document.getElementById('explanation-area');
         
         container.innerHTML = '';
-        explanationArea.style.display = 'none'; // Yeni soruda açıklamayı gizle
+        explanationArea.style.display = 'none';
 
         const q = questions[currentQuestion];
         
@@ -283,7 +310,6 @@
             document.getElementById(`opt-${userAnswers[currentQuestion]}`).classList.add('wrong-highlight');
         }
 
-        // Açıklamayı Göster
         explanationArea.innerHTML = `<strong>Açıklama:</strong> ${q.exp}`;
         explanationArea.style.display = 'block';
     }
@@ -343,13 +369,12 @@
         document.getElementById('quiz-screen').style.display = 'none';
         document.getElementById('result-screen').style.display = 'block';
 
-        // Puanlama: Her soru 2 puan (100/50)
         const score = Math.round((correctCount / questions.length) * 100);
         
         document.getElementById('score-circle').innerText = score;
         document.getElementById('score-details').innerHTML = `
-            <strong>Doğru:</strong> ${correctCount} | 
-            <strong>Yanlış:</strong> ${wrongCount} | 
+            <strong>Doğru:</strong> ${correctCount} &nbsp;|&nbsp; 
+            <strong>Yanlış:</strong> ${wrongCount} &nbsp;|&nbsp; 
             <strong>Boş:</strong> ${emptyCount}
         `;
         
