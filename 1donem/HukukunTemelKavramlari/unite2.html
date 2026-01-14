@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hukuk 2. Ünite: Hukukun Kaynakları ve Uygulanması</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #e8eaf6; color: #1a237e; margin: 0; padding: 20px; }
+        .container { max-width: 900px; margin: 0 auto; background: #fff; padding: 40px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); position: relative; }
+        h1 { text-align: center; color: #283593; border-bottom: 2px solid #3949ab; padding-bottom: 15px; margin-bottom: 30px; font-size: 24px; }
+        
+        /* Home Button */
+        .home-btn {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background-color: #3949ab;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 14px;
+            transition: background 0.2s;
+        }
+        .home-btn:hover { background-color: #1a237e; }
+
+        /* İlerleme Çubuğu */
+        .progress-container { background-color: #c5cae9; border-radius: 10px; margin-bottom: 20px; height: 12px; overflow: hidden; }
+        .progress-bar { height: 100%; background-color: #283593; width: 0%; transition: width 0.3s; }
+        .progress-text { text-align: right; font-size: 0.9em; color: #1a237e; margin-bottom: 15px; font-weight: bold; }
+
+        /* Soru Alanı */
+        .question-block { display: none; animation: fadeIn 0.4s; }
+        .question-block.active { display: block; }
+        .question-text { font-weight: 700; font-size: 1.2em; margin-bottom: 25px; color: #0d47a1; line-height: 1.4; }
+        
+        /* Seçenekler */
+        .options { display: flex; flex-direction: column; gap: 12px; }
+        .option-label { 
+            display: flex; align-items: center; padding: 15px 20px; border: 2px solid #c5cae9; 
+            border-radius: 8px; cursor: pointer; transition: all 0.2s; background: #fff; font-size: 1em;
+        }
+        .option-label:hover { background-color: #e8eaf6; border-color: #7986cb; }
+        .option-label.selected { border-color: #283593; background-color: #c5cae9; }
+        .option-label input { margin-right: 15px; transform: scale(1.2); cursor: pointer; }
+        
+        /* Cevap Göster Stilleri */
+        .option-label.correct-highlight { border-color: #2e7d32; background-color: #c8e6c9; color: #1b5e20; font-weight: bold; }
+        .option-label.wrong-highlight { border-color: #c62828; background-color: #ffcdd2; color: #b71c1c; }
+
+        /* Açıklama Kutusu */
+        .explanation-box {
+            margin-top: 25px;
+            padding: 20px;
+            background-color: #e8eaf6;
+            border-left: 5px solid #283593;
+            border-radius: 4px;
+            color: #1a237e;
+            display: none;
+            font-size: 0.95em;
+            line-height: 1.6;
+        }
+
+        /* Butonlar */
+        .controls { margin-top: 35px; display: flex; justify-content: space-between; align-items: center; gap: 15px; flex-wrap: wrap; }
+        button { border: none; padding: 12px 28px; border-radius: 6px; cursor: pointer; font-size: 16px; font-weight: 600; transition: transform 0.1s, background 0.2s; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        button:active { transform: translateY(1px); }
+        
+        .nav-btn { background-color: #303f9f; color: white; }
+        .nav-btn:hover { background-color: #1a237e; }
+        .nav-btn:disabled { background-color: #9fa8da; cursor: not-allowed; box-shadow: none; }
+        
+        .show-answer-btn { background-color: #ffca28; color: #1a237e; }
+        .show-answer-btn:hover { background-color: #ffb300; }
+        
+        .finish-btn { background-color: #2e7d32; color: white; display: none; }
+        .finish-btn:hover { background-color: #1b5e20; }
+
+        /* Sonuç Ekranı */
+        #result-screen { display: none; }
+        .score-card { text-align: center; background: #e8eaf6; padding: 30px; border-radius: 12px; margin-bottom: 30px; border: 1px solid #9fa8da; }
+        .score-circle { 
+            width: 140px; height: 140px; border-radius: 50%; background: #283593; color: white; 
+            display: flex; align-items: center; justify-content: center; font-size: 2.5em; font-weight: bold; 
+            margin: 0 auto 20px; box-shadow: 0 4px 10px rgba(40, 53, 147, 0.4);
+        }
+        
+        .review-table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 0.9em; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        .review-table th, .review-table td { padding: 15px; border: 1px solid #c5cae9; text-align: left; }
+        .review-table th { background-color: #283593; color: white; font-weight: 600; }
+        .review-table tr:nth-child(even) { background-color: #f5f5f5; }
+        .review-table tr:hover { background-color: #e8eaf6; }
+        .status-correct { color: #2e7d32; font-weight: bold; }
+        .status-wrong { color: #c62828; font-weight: bold; }
+        .status-empty { color: #f9a825; font-weight: bold; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        /* Responsive adjustments */
+        @media (max-width: 600px) {
+            .container { padding: 20px; }
+            .option-label { padding: 10px 15px; }
+            .question-text { font-size: 1.1em; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <button class="home-btn" onclick="if(confirm('Testi yeniden başlatmak istediğinize emin misiniz?')) location.reload();">⌂ Testi Yenile</button>
+    
+    <div id="quiz-screen">
+        <h1>2. Ünite: Hukukun Kaynakları ve Uygulanması</h1>
+        
+        <div class="progress-text" id="progress-text">Soru 1 / 55</div>
+        <div class="progress-container">
+            <div class="progress-bar" id="progress-bar"></div>
+        </div>
+        
+        <div id="quiz-container">
+            <!-- Sorular buraya JS ile gelecek -->
+        </div>
+
+        <!-- Açıklama Alanı -->
+        <div id="explanation-area" class="explanation-box"></div>
+
+        <div class="controls">
+            <div>
+                <button class="nav-btn" id="prevBtn" onclick="prevQuestion()" disabled>&#8592; Önceki</button>
+            </div>
+            <div>
+                <button class="show-answer-btn" onclick="showCurrentAnswer()">👁️ Cevabı Göster</button>
+            </div>
+            <div>
+                <button class="nav-btn" id="nextBtn" onclick="nextQuestion()">Sonraki &#8594;</button>
+                <button class="finish-btn" id="finishBtn" onclick="finishQuiz()">Testi Bitir &#10004;</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="result-screen">
+        <h1>Değerlendirme Sonucu</h1>
+        <div class="score-card">
+            <div class="score-circle" id="score-circle">0</div>
+            <h3>Başarı Puanı</h3>
+            <p id="score-details" style="font-size: 1.1em; color: #555;"></p>
+        </div>
+        
+        <h3>Detaylı Soru Analizi</h3>
+        <div style="overflow-x: auto;">
+            <table class="review-table">
+                <thead>
+                    <tr>
+                        <th style="width: 5%">No</th>
+                        <th style="width: 45%">Soru</th>
+                        <th style="width: 20%">Senin Cevabın</th>
+                        <th style="width: 20%">Doğru Cevap</th>
+                        <th style="width: 10%">Durum</th>
+                    </tr>
+                </thead>
+                <tbody id="review-body">
+                    <!-- Sonuç satırları buraya gelecek -->
+                </tbody>
+            </table>
+        </div>
+        <div style="text-align: center; margin-top: 30px;">
+            <button class="nav-btn" onclick="location.reload()">Testi Tekrar Çöz</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // 55 Soruluk Hukuk 2. Ünite Testi (Hukukun Kaynakları ve Uygulanması)
+    const questions = [
+        // 1. Kaynak Kavramı ve Hukuk
+        { q: "Hukuk kurallarının kendisinden doğduğu, beslendiği ve geçerlilik kazandığı yere ne ad verilir?", o: ["Hukukun Amacı", "Hukukun Kaynağı", "Hukukun Yaptırımı", "Hukukun Konusu", "Hukukun Dalı"], a: 1, exp: "Hukukun kaynağı, hukuk kurallarını oluşturan iradeyi veya bu iradenin büründüğü şekli (Anayasa, Kanun vb.) ifade eder." },
+        { q: "Aşağıdakilerden hangisi hukukun 'Şekli Kaynaklarından' (Yürürlükteki Hukuk) biri DEĞİLDİR?", o: ["Kanun", "Anayasa", "Toplumsal İhtiyaçlar", "Yönetmelik", "Cumhurbaşkanlığı Kararnamesi"], a: 2, exp: "Toplumsal ihtiyaçlar hukukun 'maddi' kaynağıdır; şekli kaynaklar ise hukukun büründüğü resmi formlardır." },
+
+        // 2. Pozitif Hukukun Kaynakları (Yazılı Kaynaklar - Asli Kaynaklar)
+        { q: "Türk hukuk sisteminde 'Asli Kaynaklar' hangileridir?", o: ["Sadece Örf ve Adet Hukuku", "Yazılı Kaynaklar ve Örf-Adet Hukuku", "Sadece Bilimsel Görüşler", "Sadece Mahkeme Kararları", "Yabancı Kanunlar"], a: 1, exp: "Hakim uyuşmazlığı çözerken önce yazılı kaynaklara, yoksa örf ve adet hukukuna (ikincil asli kaynak) bakar." },
+        { q: "Normlar Hiyerarşisi (Hukuk Kuralları Kademelenmesi) neyi ifade eder?", o: ["Kuralların rastgele sıralanmasını", "Alt basamaktaki bir kuralın üst basamaktakine aykırı olamayacağını", "Her kuralın eşit olduğunu", "Kanunların anayasadan üstün olduğunu", "Yönetmeliklerin kanundan üstün olduğunu"], a: 1, exp: "Bu ilkeye göre; Yönetmelik Kanuna, Kanun Anayasaya aykırı olamaz." },
+        
+        // 3. Anayasa
+        { q: "Normlar hiyerarşisinin en tepesinde yer alan, devletin temel yapısını ve temel hakları düzenleyen hukuk kaynağı hangisidir?", o: ["Kanun", "Yönetmelik", "Anayasa", "Kararname", "Genelge"], a: 2, exp: "Anayasa, devletin temel kuruluş belgesidir ve bağlayıcılığı en yüksek normdur." },
+        { q: "Anayasa değişikliklerini yapmaya yetkili organ hangisidir?", o: ["Cumhurbaşkanı", "Anayasa Mahkemesi", "TBMM (Nitelikli Çoğunlukla)", "Yargıtay", "Bakanlar Kurulu"], a: 2, exp: "Anayasa değişiklikleri, TBMM üye tamsayısının en az üçte biri tarafından teklif edilir ve en az beşte üçü tarafından kabul edilir." },
+
+        // 4. Uluslararası Antlaşmalar
+        { q: "Usulüne göre yürürlüğe konulmuş Milletlerarası Antlaşmalar, Türk hukukunda hangi normla eşdeğer güçtedir?", o: ["Yönetmelik", "Genelge", "Kanun", "Anayasa'nın üstünde", "Geçersizdir"], a: 2, exp: "Anayasa m.90 gereği, uluslararası antlaşmalar kanun hükmündedir." },
+        { q: "Temel hak ve özgürlüklere ilişkin uluslararası antlaşmalarla kanunlar çatışırsa hangisi esas alınır?", o: ["Kanun", "Uluslararası Antlaşma", "Yönetmelik", "Örf ve Adet", "Hiçbiri"], a: 1, exp: "2004 değişikliğiyle, temel haklar konusundaki antlaşmaların kanunlara üstünlüğü kabul edilmiştir." },
+
+        // 5. Kanunlar
+        { q: "Kanun koyma yetkisi (Yasama Yetkisi) Türk hukukunda kime aittir?", o: ["Cumhurbaşkanı", "Anayasa Mahkemesi", "TBMM", "Yargıtay", "Valiler"], a: 2, exp: "Anayasa'ya göre yasama yetkisi Türk Milleti adına TBMM'nindir ve bu yetki devredilemez." },
+        { q: "Kanunların Resmi Gazete'de yayımlanma amacı nedir?", o: ["Arşivlemek", "Tarihe not düşmek", "Halkın bilgisine sunmak ve yürürlüğe girmesini sağlamak (Aleniyet)", "Matbaacılara iş vermek", "Sayfa doldurmak"], a: 2, exp: "Kanunlar yayımlandıkları gün (aksi belirtilmemişse) yürürlüğe girer." },
+        { q: "Bir kanunun Anayasa'ya aykırı olduğu iddiasıyla iptal davası nerede açılır?", o: ["Yargıtay", "Danıştay", "Anayasa Mahkemesi", "Sayıştay", "Yerel Mahkeme"], a: 2, exp: "Kanunların anayasaya uygunluk denetimini (soyut ve somut norm denetimi) Anayasa Mahkemesi yapar." },
+
+        // 6. Cumhurbaşkanlığı Kararnamesi
+        { q: "Yürütme yetkisine ilişkin konularda, Cumhurbaşkanı tarafından çıkarılan hukuk kurallarına ne denir?", o: ["Kanun", "Tüzük", "Cumhurbaşkanlığı Kararnamesi (CBK)", "Genelge", "Yasa"], a: 2, exp: "2017 değişikliğiyle Tüzük ve KHK kaldırılmış, yerine CBK gelmiştir." },
+        { q: "Olağan dönem Cumhurbaşkanlığı Kararnameleri ile düzenlenemeyen alan hangisidir?", o: ["Sosyal Haklar", "Ekonomik Haklar", "Kişi Hakları ve Siyasi Haklar (Çekirdek Haklar)", "İdarenin yapısı", "Üst kademe yöneticilerin atanması"], a: 2, exp: "Olağan CBK ile kişi hakları ve siyasi haklar düzenlenemez; bunlar sadece kanunla düzenlenir." },
+        { q: "Olağanüstü Hal (OHAL) Cumhurbaşkanlığı Kararnameleri, hangi konularda düzenleme yapabilir?", o: ["Sadece ekonomik konularda", "Anayasa'nın izin verdiği ölçüde, sert çekirdek haklar hariç her konuda (Temel haklar dahil)", "Sadece askeri konularda", "Sadece eğitim konusunda", "Hiçbir konuda"], a: 1, exp: "OHAL kararnameleriyle temel hak ve özgürlüklere sınırlama getirilebilir." },
+
+        // 7. Yönetmelikler
+        { q: "Kanunların ve Cumhurbaşkanlığı kararnamelerinin uygulanmasını sağlamak üzere çıkarılan, daha alt düzeydeki hukuk kurallarına ne denir?", o: ["Anayasa", "Kanun", "Yönetmelik", "Tüzük", "Genelge"], a: 2, exp: "Yönetmelikler; Cumhurbaşkanı, bakanlıklar ve kamu tüzel kişileri tarafından çıkarılır." },
+        { q: "Bir yönetmeliğin kanuna aykırı olup olmadığını denetleyen yargı mercii (ülke çapında uygulanıyorsa) hangisidir?", o: ["Yargıtay", "Danıştay", "Anayasa Mahkemesi", "Sulh Ceza Hakimliği", "Sayıştay"], a: 1, exp: "Genel düzenleyici işlemlerin (yönetmeliklerin) iptal davalarına Danıştay bakar." },
+
+        // 8. Gelenek Hukuku (Örf ve Adet) - Yazısız Kaynaklar
+        { q: "Toplumda uzun süre uygulanan (süreklilik), uyulması gerektiğine inanılan (genel inanç) ve devlet desteği (yaptırım) kazanan kurallara ne denir?", o: ["Yazılı Hukuk", "Örf ve Adet Hukuku", "İçtihat Hukuku", "Mevzu Hukuk", "Yönetmelik"], a: 1, exp: "Örf ve adet hukuku, hukukun yazısız ve tali (ikincil) kaynağıdır." },
+        { q: "Hakim, örf ve adet hukukuna ne zaman başvurur?", o: ["Her zaman", "Kanunda hüküm bulunmadığı zaman (Kanun boşluğu halinde)", "Yönetmelikte hüküm yoksa", "Canı isterse", "Taraflar isterse"], a: 1, exp: "Yazılı kaynaklarda hüküm varsa örf ve adete bakılmaz; sadece boşluk varsa başvurulur." },
+        { q: "Ceza hukukunda örf ve adet kurallarına dayanarak ceza verilebilir mi?", o: ["Evet, her zaman", "Hayır, 'Suçta ve Cezada Kanunilik' ilkesi gereği verilemez", "Bazen", "Hakim takdir ederse", "Yerel mahkemelerde evet"], a: 1, exp: "Ceza hukukunda kıyas ve örf adet uygulaması yasaktır; suç ve ceza sadece kanunla konulur." },
+
+        // 9. Yardımcı Kaynaklar (İçtihat ve Doktrin)
+        { q: "Mahkemelerin verdiği kararlardan oluşan hukuk kaynağına ne denir?", o: ["Mevzuat", "İçtihat (Yargısal Kararlar)", "Doktrin", "Örf", "Tüzük"], a: 1, exp: "İçtihatlar, benzer olaylarda hakimlere yol gösteren emsal kararlardır." },
+        { q: "Hukuk bilim adamlarının görüş ve düşüncelerine ne ad verilir?", o: ["İçtihat", "Doktrin (Öğreti / Bilimsel Görüşler)", "Kanun", "Yönetmelik", "Kararname"], a: 1, exp: "Doktrin, hakime yol gösteren yardımcı bir kaynaktır; bağlayıcı değildir." },
+        { q: "Normal şartlarda mahkeme kararları (içtihatlar) diğer hakimler için bağlayıcı mıdır?", o: ["Evet, her zaman", "Hayır, yardımcı kaynaktır; hakim uymak zorunda değildir", "Sadece Yargıtay kararları bağlayıcıdır", "Sadece Anayasa Mahkemesi bağlayıcı değildir", "Evet, kanun gibidir"], a: 1, exp: "İçtihatlar kural olarak bağlayıcı değildir (İçtihadı Birleştirme Kararları hariç)." },
+        { q: "Yargıtay'ın veya Danıştay'ın farklı daireleri arasındaki görüş ayrılıklarını gidermek için aldığı ve kanun gibi bağlayıcı olan kararlara ne denir?", o: ["Sıradan Karar", "İçtihadı Birleştirme Kararı", "Ara Karar", "Beraat Kararı", "Yönetmelik"], a: 1, exp: "İçtihadı birleştirme kararları, hukuki istikrarı sağlamak için tüm mahkemeleri bağlar." },
+
+        // 10. Hukuk Kurallarının Türleri
+        { q: "Tarafların kendi iradeleriyle değiştiremeyecekleri, uyulması zorunlu olan ve aksine işlem yapılamayan kurallara ne denir?", o: ["Tamamlayıcı Kurallar", "Emredici Kurallar", "Yorumlayıcı Kurallar", "Tanımlayıcı Kurallar", "Yedek Kurallar"], a: 1, exp: "Kamu düzeni, genel ahlak ve zayıfların korunması amacıyla konulan kurallar emredicidir." },
+        { q: "Taraflar aksini kararlaştırmadıkça uygulanan, ancak aksini kararlaştırırlarsa uygulanmayan kurallara ne denir?", o: ["Emredici Kurallar", "Tamamlayıcı (Yedek) Kurallar", "Tanımlayıcı Kurallar", "Yorumlayıcı Kurallar", "Zorunlu Kurallar"], a: 1, exp: "Örn: Sözleşmede faiz oranı belirlenmemişse yasal faiz oranı uygulanır; bu tamamlayıcı bir kuraldır." },
+        { q: "Tarafların iradelerinin veya kullandıkları beyanların ne anlama geldiğini açıklayan kurallara ne denir?", o: ["Emredici", "Yorumlayıcı Kurallar", "Tanımlayıcı", "Tamamlayıcı", "Yasaklayıcı"], a: 1, exp: "Örn: 'Ay başı' tabirinden ayın birinci gününün anlaşılması yorumlayıcı bir kuraldır." },
+        { q: "Bir hukuki kavramın ne anlama geldiğini belirten kurallara ne denir?", o: ["Tanımlayıcı Kurallar", "Emredici Kurallar", "Yorumlayıcı Kurallar", "Tamamlayıcı Kurallar", "Geçici Kurallar"], a: 0, exp: "Örn: TMK'nın 'Nişanlanma, evlenme vaadiyle olur' hükmü tanımlayıcıdır." },
+
+        // 11. Kanunların Zaman Bakımından Uygulanması
+        { q: "Bir kanunun ne zaman yürürlüğe gireceği metinde belirtilmemişse, Resmi Gazete'de yayımlandıktan ne kadar sonra yürürlüğe girer?", o: ["1 yıl sonra", "Yayımlandığı gün", "45 gün sonra", "1 ay sonra", "6 ay sonra"], a: 1, exp: "Eskiden 45 gündü, artık aksi belirtilmedikçe yayımlandığı gün yürürlüğe girer." },
+        { q: "Kanunların 'Geriye Yürümezliği' ilkesi neyi ifade eder?", o: ["Kanunların yürürlüğe girdiği tarihten önceki olaylara uygulanamaması", "Kanunların eski olaylara da uygulanması", "Kanunların hiç uygulanmaması", "Kanunların sadece geleceği tahmin etmesi", "Kanunların yürürlükten kalkması"], a: 0, exp: "Hukuk güvenliği için kanunlar kural olarak geçmişe etkili olmaz." },
+        { q: "Geriye yürümezlik ilkesinin Ceza Hukuku'ndaki en önemli istisnası nedir?", o: ["Aleyhe olan kanun geriye yürür", "Failin lehine olan kanun geçmişe etkili olarak uygulanır (Lehe Kanun Uygulaması)", "Kanunlar asla geriye yürümez", "Hakim isterse yürütür", "Sadece para cezaları geriye yürür"], a: 1, exp: "Suç işlendikten sonra çıkan yeni kanun, failin lehine ise (daha az ceza veriyorsa) o uygulanır." },
+
+        // 12. Kanunların Yer ve Kişi Bakımından Uygulanması
+        { q: "Kanunların 'Mülkilik' (Yersellik) ilkesi neyi ifade eder?", o: ["Kanunların sadece vatandaşlara uygulanması", "Bir devletin kanunlarının, o devletin sınırları (ülkesi) içindeki herkese (vatandaş veya yabancı) uygulanması", "Kanunların sadece mülk sahiplerine uygulanması", "Kanunların sadece şehirlerde uygulanması", "Kanunların uzayda uygulanması"], a: 1, exp: "Türkiye sınırları içinde işlenen bir suçta, fail turist olsa bile Türk kanunları uygulanır." },
+        { q: "Kanunların 'Şahsilik' ilkesi neyi ifade eder?", o: ["Kanunların sadece ülke içinde uygulanması", "Vatandaşın nerede olursa olsun (yurt dışında bile) kendi devletinin kanunlarına tabi olması", "Kanunların şahsa özel çıkması", "Kanunların kişiye göre değişmesi", "Kanunların sadece yetişkinlere uygulanması"], a: 1, exp: "Özellikle aile hukuku (evlenme, ehliyet vb.) konularında şahsilik ilkesi geçerlidir." },
+
+        // 13. Kanunların Anlam Bakımından Uygulanması (Yorum)
+        { q: "Kanunun sadece sözlerine (metnine) bakılarak yapılan yorum türü hangisidir?", o: ["Lafzi (Sözel) Yorum", "Gai (Amaçsal) Yorum", "Tarihi Yorum", "Sistematik Yorum", "Serbest Yorum"], a: 0, exp: "Lafzi yorum, kelime anlamına ve gramer yapısına sıkı sıkıya bağlılıktır." },
+        { q: "Kanunun konuluş amacını ve zamanın ihtiyaçlarını dikkate alan, günümüzde en çok tercih edilen yorum yöntemi hangisidir?", o: ["Lafzi Yorum", "Gai (Amaçsal) Yorum", "Tarihi Yorum", "Dar Yorum", "Deyimsel Yorum"], a: 1, exp: "Amaçsal yorum, kanunu donuk bir metin olmaktan çıkarıp yaşayan bir norma dönüştürür." },
+        { q: "Kanun koyucunun (TBMM) kanunu yaparkenki iradesini ve meclis tutanaklarını dikkate alan yorum türü hangisidir?", o: ["Tarihi Yorum", "Lafzi Yorum", "Sistematik Yorum", "Amaçsal Yorum", "Bilimsel Yorum"], a: 0, exp: "Tarihi yorum, kanunun çıktığı andaki gerekçelere bakar." },
+        { q: "Bir kanun hükmünün, bulunduğu yer, başlık ve diğer maddelerle ilişkisi içinde yorumlanmasına ne denir?", o: ["Lafzi Yorum", "Sistematik Yorum", "Tarihi Yorum", "Amaçsal Yorum", "Serbest Yorum"], a: 1, exp: "Kanun maddesi tek başına değil, kanunun bütünlüğü içinde anlam kazanır." },
+
+        // 14. Hakimin Takdir Yetkisi ve Hukuk Yaratması
+        { q: "Hakimin önüne gelen bir uyuşmazlıkta, uygulanacak yazılı ve yazısız hiçbir kural bulamaması durumuna ne denir?", o: ["Kural İçi Boşluk", "Hukuk Boşluğu", "Kanun Boşluğu", "Dava Şartı Eksikliği", "Yetkisizlik"], a: 1, exp: "Hukuk boşluğu, hem kanunda hem de örf adette çözüm olmamasıdır." },
+        { q: "Hukuk boşluğu durumunda hakim ne yapmalıdır?", o: ["Davayı reddetmelidir", "Karar vermekten kaçınmalıdır", "Kendisi kanun koyucu olsaydı nasıl bir kural koyacak idiyse ona göre kural yaratıp karar vermelidir (Hukuk Yaratma)", "Yazı tura atmalıdır", "Bilirkişiye devretmelidir"], a: 2, exp: "TMK m.1 gereği hakim, hukuk boşluğunu doldurmak için hukuk yaratır." },
+        { q: "Kanunda bilerek ve istenerek bırakılan, hakimin takdir yetkisine atıf yapılan boşluğa ne denir?", o: ["Hukuk Boşluğu", "Kural İçi Boşluk", "Açık Boşluk", "Örtülü Boşluk", "Gerçek Boşluk"], a: 1, exp: "Örn: 'Hakim, durumun gereklerine göre karar verir' veya 'haklı sebep varsa' gibi ifadeler kural içi boşluktur." },
+        { q: "Kanunda bir konunun hiç düzenlenmemiş olması (unutulması) durumuna ne denir?", o: ["Kural İçi Boşluk", "Açık (Gerçek) Kanun Boşluğu", "Örtülü Boşluk", "Hukuk Boşluğu", "Yorum Boşluğu"], a: 1, exp: "Açık boşlukta, somut olaya uygulanacak hiçbir hüküm yoktur; hakim kıyas yaparak doldurur." },
+        { q: "Kanunda bir hüküm bulunmasına rağmen, bu hükmün olaya uygulanmasının adaletsiz sonuçlar doğuracağı durumlarda (istisna getirilmesi gerekirken getirilmemişse) ortaya çıkan boşluğa ne denir?", o: ["Açık Boşluk", "Örtülü (Gerçek Olmayan) Boşluk", "Kural İçi Boşluk", "Hukuk Boşluğu", "Yasa Boşluğu"], a: 1, exp: "Bu durumda hakim, kanunun sözüne değil özüne (amacına) bakarak istisna yaratabilir." },
+        { q: "Kanun boşluğunu doldururken hakimin en sık kullandığı yöntem nedir?", o: ["Hukuk Yaratma", "Kıyas (Örnekseme)", "Kura", "İstihare", "Anket"], a: 1, exp: "Kıyas, benzer bir olay için konulmuş kuralı, hakkında kural olmayan olaya uygulamaktır." },
+        { q: "Ceza hukukunda 'Kıyas' yapılabilir mi?", o: ["Evet, her zaman", "Hayır, 'Kanunsuz Suç ve Ceza Olmaz' ilkesi gereği kıyas yasaktır", "Hakim takdir ederse", "Suçlu lehine ise yapılır", "Yargıtay izin verirse"], a: 1, exp: "Ceza hukukunda hakim, kanunda açıkça yazmayan bir fiili kıyas yoluyla suç sayamaz." },
+
+        // Karışık / Pekiştirme
+        { q: "Bir kanunun yürürlükten kalkmasına ne denir?", o: ["İptal", "İlga", "Fesih", "Butlan", "Yokluk"], a: 1, exp: "Kanunlar, yeni bir kanunla (açık veya örtülü olarak) ilga edilir." },
+        { q: "Yasama sorumsuzluğu ve yasama dokunulmazlığı kime tanınmıştır?", o: ["Valilere", "Milletvekillerine", "Hakimlere", "Memurlara", "Askerlere"], a: 1, exp: "Milletvekillerinin meclis çalışmalarındaki sözlerinden sorumlu olmaması sorumsuzluk, yargılanamaması dokunulmazlıktır." },
+        { q: "Milletlerarası antlaşmaları onaylama yetkisi kime aittir?", o: ["TBMM", "Cumhurbaşkanı", "Dışişleri Bakanı", "Anayasa Mahkemesi", "Başbakan"], a: 1, exp: "TBMM 'uygun bulma' kanunu çıkarır, Cumhurbaşkanı ise antlaşmayı 'onaylar' ve yayımlar." },
+        { q: "Yönetmelikler Resmi Gazete'de yayımlanmak zorunda mıdır?", o: ["Hepsi zorundadır", "Hiçbiri değildir", "Sadece kamuoyunu ilgilendirenler yayımlanır, kurum içi olanlar yayımlanmayabilir", "Sadece Bakanlık yönetmelikleri yayımlanır", "Sadece CB yönetmelikleri yayımlanır"], a: 2, exp: "Kamuyu ilgilendirmeyen iç yönetmelikler Resmi Gazete'de yayımlanmak zorunda değildir." },
+        { q: "Hakimin takdir yetkisini kullanırken dayanması gereken temel ilke nedir?", o: ["Keyfilik", "Hukuka ve Hakkaniyete uygunluk", "Kendi menfaati", "Kamuoyu baskısı", "Siyasi görüşü"], a: 1, exp: "Takdir yetkisi sınırsız değildir; adalet ve nasafet kurallarına uygun kullanılmalıdır." },
+        { q: "Hangi durumda hakim 'Hukuk Yaratma' yoluna gider?", o: ["Kanun Boşluğunda", "Hukuk Boşluğunda", "Kural İçi Boşlukta", "Örtülü Boşlukta", "Her zaman"], a: 1, exp: "Örf adet dahil hiçbir kural yoksa (Hukuk Boşluğu), hakim kanun koyucu gibi kural koyar." },
+        { q: "Bilimsel içtihatların (Doktrin) mahkemeler üzerindeki etkisi nasıldır?", o: ["Bağlayıcıdır", "Bağlayıcı değildir, yardımcı kaynaktır", "Kanun gibidir", "Yasaklanmıştır", "Sadece Yargıtay'ı bağlar"], a: 1, exp: "Hakimler doktrinden faydalanabilir ama uymak zorunda değildir." }
+    ];
+
+    let currentQuestion = 0;
+    let userAnswers = new Array(questions.length).fill(null);
+
+    function loadQuestion() {
+        const container = document.getElementById('quiz-container');
+        const explanationArea = document.getElementById('explanation-area');
+        
+        container.innerHTML = '';
+        explanationArea.style.display = 'none';
+
+        const q = questions[currentQuestion];
+        
+        let html = `
+            <div class="question-block active">
+                <div class="question-text">${currentQuestion + 1}. ${q.q}</div>
+                <div class="options">
+        `;
+
+        q.o.forEach((opt, index) => {
+            const isSelected = userAnswers[currentQuestion] === index ? 'selected' : '';
+            const isChecked = userAnswers[currentQuestion] === index ? 'checked' : '';
+            html += `
+                <label class="option-label ${isSelected}" id="opt-${index}">
+                    <input type="radio" name="q${currentQuestion}" value="${index}" onclick="selectAnswer(${index})" ${isChecked}>
+                    ${String.fromCharCode(65 + index)}) ${opt}
+                </label>
+            `;
+        });
+
+        html += `</div></div>`;
+        container.innerHTML = html;
+
+        // Progress Bar
+        const progressPercent = ((currentQuestion + 1) / questions.length) * 100;
+        document.getElementById('progress-bar').style.width = progressPercent + '%';
+        document.getElementById('progress-text').innerText = `Soru ${currentQuestion + 1} / ${questions.length}`;
+        
+        // Buton Yönetimi
+        document.getElementById('prevBtn').disabled = currentQuestion === 0;
+        
+        if (currentQuestion === questions.length - 1) {
+            document.getElementById('nextBtn').style.display = 'none';
+            document.getElementById('finishBtn').style.display = 'inline-block';
+        } else {
+            document.getElementById('nextBtn').style.display = 'inline-block';
+            document.getElementById('finishBtn').style.display = 'none';
+        }
+    }
+
+    function selectAnswer(index) {
+        userAnswers[currentQuestion] = index;
+        const labels = document.querySelectorAll('.option-label');
+        labels.forEach(label => label.classList.remove('selected'));
+        document.getElementById(`opt-${index}`).classList.add('selected');
+    }
+
+    function showCurrentAnswer() {
+        const q = questions[currentQuestion];
+        const correctIndex = q.a;
+        const correctLabel = document.getElementById(`opt-${correctIndex}`);
+        const explanationArea = document.getElementById('explanation-area');
+
+        if(correctLabel) correctLabel.classList.add('correct-highlight');
+        
+        if (userAnswers[currentQuestion] !== null && userAnswers[currentQuestion] !== correctIndex) {
+            document.getElementById(`opt-${userAnswers[currentQuestion]}`).classList.add('wrong-highlight');
+        }
+
+        explanationArea.innerHTML = `<strong>Açıklama:</strong> ${q.exp}`;
+        explanationArea.style.display = 'block';
+    }
+
+    function nextQuestion() {
+        if (currentQuestion < questions.length - 1) {
+            currentQuestion++;
+            loadQuestion();
+        }
+    }
+
+    function prevQuestion() {
+        if (currentQuestion > 0) {
+            currentQuestion--;
+            loadQuestion();
+        }
+    }
+
+    function finishQuiz() {
+        let correctCount = 0;
+        let wrongCount = 0;
+        let emptyCount = 0;
+        let reviewHtml = '';
+
+        questions.forEach((q, index) => {
+            const userAnswer = userAnswers[index];
+            const isCorrect = userAnswer === q.a;
+            
+            let statusText = '';
+            let statusClass = '';
+
+            if (userAnswer === null) {
+                emptyCount++;
+                statusText = 'Boş';
+                statusClass = 'status-empty';
+            } else if (isCorrect) {
+                correctCount++;
+                statusText = 'Doğru';
+                statusClass = 'status-correct';
+            } else {
+                wrongCount++;
+                statusText = 'Yanlış';
+                statusClass = 'status-wrong';
+            }
+
+            reviewHtml += `
+                <tr>
+                    <td>${index + 1}</td>
+                    <td>${q.q}</td>
+                    <td>${userAnswer !== null ? String.fromCharCode(65 + userAnswer) + ') ' + q.o[userAnswer] : '-'}</td>
+                    <td>${String.fromCharCode(65 + q.a)}) ${q.o[q.a]}</td>
+                    <td class="${statusClass}">${statusText}</td>
+                </tr>
+            `;
+        });
+
+        document.getElementById('quiz-screen').style.display = 'none';
+        document.getElementById('result-screen').style.display = 'block';
+
+        const score = Math.round((correctCount / questions.length) * 100);
+        
+        document.getElementById('score-circle').innerText = score;
+        document.getElementById('score-details').innerHTML = `
+            <strong>Doğru:</strong> ${correctCount} &nbsp;|&nbsp; 
+            <strong>Yanlış:</strong> ${wrongCount} &nbsp;|&nbsp; 
+            <strong>Boş:</strong> ${emptyCount}
+        `;
+        
+        document.getElementById('review-body').innerHTML = reviewHtml;
+    }
+
+    // Uygulamayı başlat
+    loadQuestion();
+</script>
+
+</body>
+</html>
