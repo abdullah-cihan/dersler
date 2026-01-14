@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hukuk 1. Ünite: Sosyal Düzen Kuralları ve Hukuk</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #eceff1; color: #263238; margin: 0; padding: 20px; }
+        .container { max-width: 900px; margin: 0 auto; background: #fff; padding: 40px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); position: relative; }
+        h1 { text-align: center; color: #37474f; border-bottom: 2px solid #546e7a; padding-bottom: 15px; margin-bottom: 30px; font-size: 24px; }
+        
+        /* Home Button */
+        .home-btn {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background-color: #546e7a;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 14px;
+            transition: background 0.2s;
+        }
+        .home-btn:hover { background-color: #263238; }
+
+        /* İlerleme Çubuğu */
+        .progress-container { background-color: #cfd8dc; border-radius: 10px; margin-bottom: 20px; height: 12px; overflow: hidden; }
+        .progress-bar { height: 100%; background-color: #455a64; width: 0%; transition: width 0.3s; }
+        .progress-text { text-align: right; font-size: 0.9em; color: #455a64; margin-bottom: 15px; font-weight: bold; }
+
+        /* Soru Alanı */
+        .question-block { display: none; animation: fadeIn 0.4s; }
+        .question-block.active { display: block; }
+        .question-text { font-weight: 700; font-size: 1.2em; margin-bottom: 25px; color: #212121; line-height: 1.4; }
+        
+        /* Seçenekler */
+        .options { display: flex; flex-direction: column; gap: 12px; }
+        .option-label { 
+            display: flex; align-items: center; padding: 15px 20px; border: 2px solid #cfd8dc; 
+            border-radius: 8px; cursor: pointer; transition: all 0.2s; background: #fff; font-size: 1em;
+        }
+        .option-label:hover { background-color: #eceff1; border-color: #90a4ae; }
+        .option-label.selected { border-color: #455a64; background-color: #cfd8dc; }
+        .option-label input { margin-right: 15px; transform: scale(1.2); cursor: pointer; }
+        
+        /* Cevap Göster Stilleri */
+        .option-label.correct-highlight { border-color: #2e7d32; background-color: #c8e6c9; color: #1b5e20; font-weight: bold; }
+        .option-label.wrong-highlight { border-color: #c62828; background-color: #ffcdd2; color: #b71c1c; }
+
+        /* Açıklama Kutusu */
+        .explanation-box {
+            margin-top: 25px;
+            padding: 20px;
+            background-color: #eceff1;
+            border-left: 5px solid #455a64;
+            border-radius: 4px;
+            color: #263238;
+            display: none;
+            font-size: 0.95em;
+            line-height: 1.6;
+        }
+
+        /* Butonlar */
+        .controls { margin-top: 35px; display: flex; justify-content: space-between; align-items: center; gap: 15px; flex-wrap: wrap; }
+        button { border: none; padding: 12px 28px; border-radius: 6px; cursor: pointer; font-size: 16px; font-weight: 600; transition: transform 0.1s, background 0.2s; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        button:active { transform: translateY(1px); }
+        
+        .nav-btn { background-color: #607d8b; color: white; }
+        .nav-btn:hover { background-color: #37474f; }
+        .nav-btn:disabled { background-color: #b0bec5; cursor: not-allowed; box-shadow: none; }
+        
+        .show-answer-btn { background-color: #f9a825; color: #263238; }
+        .show-answer-btn:hover { background-color: #f57f17; }
+        
+        .finish-btn { background-color: #2e7d32; color: white; display: none; }
+        .finish-btn:hover { background-color: #1b5e20; }
+
+        /* Sonuç Ekranı */
+        #result-screen { display: none; }
+        .score-card { text-align: center; background: #eceff1; padding: 30px; border-radius: 12px; margin-bottom: 30px; border: 1px solid #b0bec5; }
+        .score-circle { 
+            width: 140px; height: 140px; border-radius: 50%; background: #455a64; color: white; 
+            display: flex; align-items: center; justify-content: center; font-size: 2.5em; font-weight: bold; 
+            margin: 0 auto 20px; box-shadow: 0 4px 10px rgba(69, 90, 100, 0.4);
+        }
+        
+        .review-table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 0.9em; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        .review-table th, .review-table td { padding: 15px; border: 1px solid #cfd8dc; text-align: left; }
+        .review-table th { background-color: #455a64; color: white; font-weight: 600; }
+        .review-table tr:nth-child(even) { background-color: #f5f5f5; }
+        .review-table tr:hover { background-color: #eceff1; }
+        .status-correct { color: #2e7d32; font-weight: bold; }
+        .status-wrong { color: #c62828; font-weight: bold; }
+        .status-empty { color: #f9a825; font-weight: bold; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        /* Responsive adjustments */
+        @media (max-width: 600px) {
+            .container { padding: 20px; }
+            .option-label { padding: 10px 15px; }
+            .question-text { font-size: 1.1em; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <button class="home-btn" onclick="if(confirm('Testi yeniden başlatmak istediğinize emin misiniz?')) location.reload();">⌂ Testi Yenile</button>
+    
+    <div id="quiz-screen">
+        <h1>1. Ünite: Sosyal Düzen Kuralları ve Hukuk</h1>
+        
+        <div class="progress-text" id="progress-text">Soru 1 / 50</div>
+        <div class="progress-container">
+            <div class="progress-bar" id="progress-bar"></div>
+        </div>
+        
+        <div id="quiz-container">
+            <!-- Sorular buraya JS ile gelecek -->
+        </div>
+
+        <!-- Açıklama Alanı -->
+        <div id="explanation-area" class="explanation-box"></div>
+
+        <div class="controls">
+            <div>
+                <button class="nav-btn" id="prevBtn" onclick="prevQuestion()" disabled>&#8592; Önceki</button>
+            </div>
+            <div>
+                <button class="show-answer-btn" onclick="showCurrentAnswer()">👁️ Cevabı Göster</button>
+            </div>
+            <div>
+                <button class="nav-btn" id="nextBtn" onclick="nextQuestion()">Sonraki &#8594;</button>
+                <button class="finish-btn" id="finishBtn" onclick="finishQuiz()">Testi Bitir &#10004;</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="result-screen">
+        <h1>Değerlendirme Sonucu</h1>
+        <div class="score-card">
+            <div class="score-circle" id="score-circle">0</div>
+            <h3>Başarı Puanı</h3>
+            <p id="score-details" style="font-size: 1.1em; color: #555;"></p>
+        </div>
+        
+        <h3>Detaylı Soru Analizi</h3>
+        <div style="overflow-x: auto;">
+            <table class="review-table">
+                <thead>
+                    <tr>
+                        <th style="width: 5%">No</th>
+                        <th style="width: 45%">Soru</th>
+                        <th style="width: 20%">Senin Cevabın</th>
+                        <th style="width: 20%">Doğru Cevap</th>
+                        <th style="width: 10%">Durum</th>
+                    </tr>
+                </thead>
+                <tbody id="review-body">
+                    <!-- Sonuç satırları buraya gelecek -->
+                </tbody>
+            </table>
+        </div>
+        <div style="text-align: center; margin-top: 30px;">
+            <button class="nav-btn" onclick="location.reload()">Testi Tekrar Çöz</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // 50 Soruluk Hukuk 1. Ünite Testi
+    const questions = [
+        // Giriş ve Sosyal Düzen
+        { q: "Toplumsal yaşamın kargaşadan uzak, barış ve güven içinde sürdürülebilmesi için uyulması gereken kurallar bütününe ne ad verilir?", o: ["Ekonomik Kurallar", "Fizik Kuralları", "Sosyal Düzen Kuralları", "Biyolojik Kurallar", "Mantık Kuralları"], a: 2, exp: "Sosyal düzen kuralları, toplum halinde yaşayan insanların davranışlarını düzenleyerek huzuru sağlar." },
+        { q: "Aşağıdakilerden hangisi sosyal düzen kurallarının temel amaçlarından biri DEĞİLDİR?", o: ["Toplumsal barışı sağlamak", "Bireylerin güvenliğini korumak", "Toplumsal ihtiyaçları karşılamak", "Adaleti gerçekleştirmek", "Bireyleri tamamen yalnızlaştırmak"], a: 4, exp: "Sosyal düzen kuralları bireyleri yalnızlaştırmayı değil, tam tersine toplum içinde uyumlu yaşamayı hedefler." },
+        
+        // Sosyal Düzen Kurallarının Türleri (Din, Ahlak, Görgü)
+        { q: "Tanrı tarafından konulduğuna inanılan ve peygamberler aracılığıyla insanlara bildirilen emir ve yasaklara ne denir?", o: ["Hukuk Kuralları", "Görgü Kuralları", "Din Kuralları", "Ahlak Kuralları", "Fizik Kuralları"], a: 2, exp: "Din kuralları ilahi kaynaklıdır ve uhrevi (öbür dünya) sonuçları da kapsar." },
+        { q: "Din kurallarına uymamanın yaptırımı (müeyyidesi) nedir?", o: ["Hapis cezası", "Para cezası", "Günahkar sayılma ve manevi huzursuzluk", "Tazminat", "İdari para cezası"], a: 2, exp: "Din kurallarının yaptırımı manevidir; devlet gücüyle zorla yerine getirilmez." },
+        { q: "Kişinin kendi vicdanına karşı sorumlu olduğu, iyi ve kötü davranışları belirleyen ahlak kurallarına ne denir?", o: ["Objektif Ahlak", "Subjektif (Öznel) Ahlak", "Görgü", "Hukuk", "Din"], a: 1, exp: "Subjektif ahlak, bireyin kendi iç dünyasındaki (nefsine karşı) ödevleridir." },
+        { q: "Kişinin diğer bireylere karşı olan ödevlerini düzenleyen ve toplumun genelince kabul gören ahlak kurallarına ne denir?", o: ["Subjektif Ahlak", "Objektif (Nesnel) Ahlak", "Din Kuralları", "Estetik Kurallar", "Teknik Kurallar"], a: 1, exp: "Objektif ahlak, toplumsal bir nitelik taşır; 'yalan söyleme', 'yardım et' gibi kuralları içerir." },
+        { q: "Ahlak kurallarına uymamanın toplumsal yaptırımı genellikle nedir?", o: ["Hapis", "Ayıplama, kınama ve dışlanma", "İdam", "Müsadere", "Sürgün"], a: 1, exp: "Ahlaka aykırı davranan kişi vicdan azabı çeker veya toplum tarafından ayıplanır." },
+        { q: "Bir toplumda aynı çevrede yaşayan insanların günlük ilişkilerinde uymaları gereken nezaket ve davranış kalıplarına ne denir?", o: ["Hukuk Kuralları", "Görgü (Adab-ı Muaşeret) Kuralları", "Din Kuralları", "Teknik Kurallar", "Anayasa"], a: 1, exp: "Yemek yeme, selamlaşma, giyinme gibi konulardaki kurallar görgü kurallarıdır." },
+        { q: "Görgü kurallarına uymayan bir kişiye karşı gösterilen tepki hangisidir?", o: ["Hapis cezası", "Para cezası", "Kaba, saygısız veya görgüsüz olarak nitelendirilme", "Tazminat", "Polis zoru"], a: 2, exp: "Görgü kurallarının ihlali 'görgüsüzlük' olarak nitelenir ve manevi bir yaptırımı vardır." },
+
+        // Hukuk Kuralları ve Özellikleri
+        { q: "Hukuk kurallarını diğer sosyal düzen kurallarından ayıran en temel ve belirleyici özellik nedir?", o: ["Yazılı olması", "Eski olması", "Devlet gücüne dayalı maddi yaptırıma sahip olması", "Evrensel olması", "Dini kaynaklı olması"], a: 2, exp: "Diğer kuralların yaptırımı manevidir; hukukun yaptırımı ise devlet zoruyla (cebir) uygulanan maddedir." },
+        { q: "Hukuk kurallarının 'Genel' olması ne anlama gelir?", o: ["Herkesin kanunu bilmesi", "Belli bir kişiye değil, aynı durumda bulunan herkese uygulanması", "Basit yazılması", "Kısa olması", "Sadece yöneticileri bağlaması"], a: 1, exp: "Hukuk kuralları soyuttur; 'Ali'ye' değil, 'Kim hırsızlık yaparsa' ona uygulanır." },
+        { q: "Hukuk kurallarının 'Süreklilik' özelliği neyi ifade eder?", o: ["Sonsuza kadar değişmemesi", "Yürürlükte kaldığı sürece, şartlar oluştuğunda her zaman uygulanması", "Sadece bir kere uygulanması", "Sadece gündüzleri uygulanması", "Hiç uygulanmaması"], a: 1, exp: "Hukuk kuralı, o olay her gerçekleştiğinde tekrar tekrar uygulanır." },
+        { q: "Hukuk kurallarının 'Kişilik Dışı' (Gayri Şahsi) olması ne demektir?", o: ["İnsanlara uygulanmaması", "Kuralın kişisel özelliklerden bağımsız, soyut bir emir içermesi", "Robotlara uygulanması", "Sadece tüzel kişilere uygulanması", "Duygusallık içermesi"], a: 1, exp: "Kural 'Şu kişi' demez, 'Şöyle davranan kişi' diyerek nesnel bir tanım yapar." },
+
+        // Hukuk ve Diğer Kuralların İlişkisi
+        { q: "Hem ahlaken yanlış (ayıp) hem de hukuken yasak (suç) olan bir davranışa örnek hangisidir?", o: ["Yalan söylemek (her durumda)", "Hırsızlık yapmak", "Dedikodu yapmak", "Selam vermemek", "Yemeği elle yemek"], a: 1, exp: "Hırsızlık hem ahlaken ayıplanır hem de hukuk tarafından suç sayılarak cezalandırılır." },
+        { q: "Bir kuralın sadece görgü kuralı olup hukuk kuralı olmamasının sonucu nedir?", o: ["Devlet zoruyla uygulanamaz", "Cezası çok ağırdır", "Hapis cezası verilir", "Tazminat ödenir", "Polis müdahale eder"], a: 0, exp: "Örneğin davete icabet etmemek görgüsüzlüktür ama devlet zorla davete götüremez." },
+        
+        // Hukuk ve Adalet
+        { q: "Hukukun ulaşmak istediği en üstün ve ideal amaç nedir?", o: ["Zenginlik", "Adalet", "Güç", "Korku", "Otorite"], a: 1, exp: "Hukukun nihai gayesi adaleti sağlamaktır." },
+        { q: "Aristo'ya göre, herkesin kişisel durumuna ve liyakatine bakılmaksızın 'eşit muamele' görmesini öngören adalet türü hangisidir?", o: ["Dağıtıcı Adalet", "Denkleştirici (Düzeltici) Adalet", "Sosyal Adalet", "İlahi Adalet", "Hakkaniyet"], a: 1, exp: "Denkleştirici adalet, alışverişte veya suç-ceza dengesinde tarafları mutlak eşit sayar." },
+        { q: "Kişilerin yeteneklerine, statülerine ve ihtiyaçlarına göre farklı muamele görmesini (Örn: Zenginden çok vergi alınması) öngören adalet türü hangisidir?", o: ["Denkleştirici Adalet", "Dağıtıcı Adalet", "Şekli Adalet", "Mutlak Adalet", "Cezai Adalet"], a: 1, exp: "Dağıtıcı adalet, 'eşitlere eşit, eşit olmayanlara farklı' muameleyi savunur." },
+        { q: "Somut bir olayda, kanunun katı uygulanmasının adaletsizlik yaratacağı durumlarda hakimin 'nasafet' (insaf) kurallarına göre karar vermesine ne denir?", o: ["Hakkaniyet", "Keyfilik", "Yasadışılık", "Suç", "İhmal"], a: 0, exp: "Hakkaniyet, adaletin somut olaya en uygun şekilde, insaf ölçüleri içinde uygulanmasıdır." },
+
+        // Hukukta Yaptırım (Müeyyide)
+        { q: "Hukuk kurallarına uyulmasını sağlamak için devlet gücüyle uygulanan zorlayıcı tepkiye ne denir?", o: ["Ödül", "Yaptırım (Müeyyide)", "İkna", "Eğitim", "Propaganda"], a: 1, exp: "Müeyyide, 'uymamanın karşılığı'dır." },
+        { q: "Aşağıdakilerden hangisi hukuk kurallarının yaptırım türlerinden biri DEĞİLDİR?", o: ["Ceza", "Cebri İcra", "Tazminat", "Hükümsüzlük", "Ayıplama"], a: 4, exp: "Ayıplama ahlak ve görgü kurallarının yaptırımıdır; hukukunki maddedir." },
+        
+        // Yaptırım Türleri: Ceza
+        { q: "Kanunun suç saydığı fiilleri işleyenlere uygulanan, kişinin özgürlüğünü veya malvarlığını hedef alan en ağır yaptırım türü hangisidir?", o: ["Tazminat", "Ceza", "İptal", "Yokluk", "Kınama"], a: 1, exp: "Ceza (hapis, adli para cezası), toplumsal düzeni bozan suçlara verilir." },
+        { q: "Türk Ceza Kanunu'nda yer alan temel ceza türleri hangileridir?", o: ["İdam ve Hapis", "Hapis ve Adli Para Cezası", "Sürgün ve Hapis", "Dayak ve Para", "Müsadere ve İdam"], a: 1, exp: "Modern Türk hukukunda idam veya genel müsadere yoktur; hapis ve adli para cezası asıldır." },
+        { q: "Devlet memurlarına, mesleki kurallara uymadıkları takdirde verilen (uyarma, kınama, ihraç gibi) cezalara ne denir?", o: ["Adli Ceza", "Disiplin Cezası", "Tazminat", "Hapis", "İcra"], a: 1, exp: "Disiplin cezaları, belli bir kurum içindeki düzeni sağlamak içindir." },
+
+        // Yaptırım Türleri: Cebri İcra
+        { q: "Borcunu ödemeyen borçlunun veya mahkeme kararını yerine getirmeyen kişinin, devlet gücüyle zorlanmasına ne denir?", o: ["Ceza", "Cebri İcra", "Tazminat", "İptal", "Yokluk"], a: 1, exp: "Cebri icra, hakkın zorla alınarak sahibine verilmesidir (Örn: Haciz)." },
+        { q: "Borcunu ödemeyen bir kimseye 'hapis cezası' verilebilir mi?", o: ["Evet, her zaman", "Hayır, anayasaya göre sözleşmeden doğan borç için hapis verilemez (Ekonomik suça ekonomik yaptırım)", "Evet, dolandırıcı sayılır", "Sadece faiz öder", "Evet, sürgün edilir"], a: 1, exp: "Anayasa m.38: 'Hiç kimse yalnızca sözleşmeden doğan bir yükümlülüğü yerine getirememesinden dolayı özgürlüğünden alıkonulamaz.'" },
+
+        // Yaptırım Türleri: Tazminat
+        { q: "Hukuka aykırı bir fiille başkasına zarar veren kişinin, bu zararı ödemekle yükümlü tutulmasına ne denir?", o: ["Ceza", "Tazminat", "Cebri İcra", "Vergi", "Harç"], a: 1, exp: "Tazminat, oluşan zararın (maddi veya manevi) giderilmesidir." },
+        { q: "Kişinin malvarlığında meydana gelen eksilmenin (örn: arabanın ezilmesi) giderilmesi için ödenen tazminata ne denir?", o: ["Manevi Tazminat", "Maddi Tazminat", "Ceza Tazminatı", "Destekten Yoksun Kalma", "İdari Tazminat"], a: 1, exp: "Maddi tazminat, somut ekonomik kaybı karşılar." },
+        { q: "Kişinin kişilik haklarına saldırı (hakaret, iftira, üzüntü) nedeniyle duyduğu acı ve elemin giderilmesi için ödenen paraya ne denir?", o: ["Maddi Tazminat", "Manevi Tazminat", "Ceza", "Nafaka", "Diyet"], a: 1, exp: "Manevi tazminat, ruhsal bütünlüğün tatminini amaçlar." },
+
+        // Yaptırım Türleri: Hükümsüzlük (Yokluk, Butlan)
+        { q: "Bir hukuki işlemin, kanunun öngördüğü 'kurucu unsurlardan' yoksun olması nedeniyle hukuk aleminde hiç doğmamış sayılmasına ne denir?", o: ["Mutlak Butlan", "Yokluk", "Nisbi Butlan", "İptal", "Askıda Hükümsüzlük"], a: 1, exp: "Örnek: Resmi memur önünde yapılmayan evlilik (İmam nikahı) 'yok' hükmündedir." },
+        { q: "Yokluk yaptırımına tabi bir işlemin hukuksal sonucu nedir?", o: ["Geçerli hale getirilebilir", "Baştan itibaren geçersizdir ve hiç doğmamıştır", "Sadece cezası vardır", "Tazminat gerekir", "Zamanla geçerli olur"], a: 1, exp: "Yoklukta işlem hiç var olmamıştır, düzeltilemez." },
+        { q: "Kurucu unsurları tamam olan bir işlemin, kanunun emredici hükümlerine, ahlaka veya kamu düzenine aykırı olması nedeniyle geçersiz sayılmasına ne denir?", o: ["Yokluk", "Mutlak Butlan", "Nisbi Butlan (İptal Edilebilirlik)", "Tazminat", "Ceza"], a: 1, exp: "Örnek: Ayırt etme gücü olmayanın evliliği veya amca-yeğen evliliği mutlak butlanla batıldır." },
+        { q: "Mutlak butlanla sakat bir işlem kendiliğinden düzelir mi?", o: ["Evet, zamanla düzelir", "Hayır, baştan itibaren geçersizdir ve sonradan geçerli hale gelmez", "Hakim takdir eder", "Taraflar anlaşırsa düzelir", "Cezası ödenirse düzelir"], a: 1, exp: "Mutlak butlan, kamu düzenini ilgilendirdiği için hakim tarafından resen (kendiliğinden) dikkate alınır." },
+        { q: "Bir hukuki işlemin, irade sakatlığı (hata, hile, korkutma) nedeniyle, sadece zarar gören tarafça iptal edilebilmesine ne denir?", o: ["Mutlak Butlan", "Nisbi Butlan (İptal Edilebilirlik)", "Yokluk", "Ceza", "İcra"], a: 1, exp: "Nisbi butlanda işlem, iptal edilene kadar geçerli bir işlem gibi hüküm doğurur." },
+        { q: "Sarhoşken (geçici şuur kaybı) yapılan bir sözleşme hangi yaptırıma tabidir?", o: ["Yokluk", "Nisbi Butlan", "Mutlak Butlan", "Geçerlidir", "Tazminat"], a: 1, exp: "Ayırt etme gücünün geçici kaybı durumunda işlem nisbi butlanla sakattır, iptal edilebilir." },
+
+        // Yaptırım Türleri: İptal
+        { q: "İdari makamlarca yapılan hukuka aykırı bir işlemin (örn: haksız atama, ruhsat iptali) yargı organınca ortadan kaldırılmasına ne denir?", o: ["Yokluk", "İptal", "Ceza", "Tazminat", "Fesih"], a: 1, exp: "İdari yargıda (İdare Mahkemeleri), hukuka aykırı idari işlemler 'iptal' kararıyla geçmişe etkili olarak silinir." },
+
+        // Karışık ve Pekiştirme Soruları
+        { q: "Hukuk kurallarının diğer kurallardan (din, ahlak) etkilenmesi mümkün müdür?", o: ["Hayır, hukuk tamamen bağımsızdır", "Evet, hukuk kuralları genellikle toplumun ahlak ve din anlayışından beslenir ve onları yansıtır", "Hukuk dine karşıdır", "Ahlak hukuka karşıdır", "İlişki yoktur"], a: 1, exp: "Hukuk, toplumsal değerlerden bağımsız değildir; 'hırsızlık yapma' hem dini, hem ahlaki hem hukuki bir kuraldır." },
+        { q: "Bir kimsenin, kendisine veya başkasına yönelen haksız bir saldırıyı defetmek için, saldırgana karşı orantılı güç kullanmasına ne denir?", o: ["Meşru Müdafaa (Nefsi Müdafaa)", "Zaruret Hali", "İhkak-ı Hak", "Kısas", "Suç"], a: 0, exp: "Meşru müdafaa, hukuka uygunluk nedenidir; kişi ceza almaz ve tazminat ödemez." },
+        { q: "Tehlikeden kurtulmak için, tehlikeyle ilgisi olmayan üçüncü bir kişinin malına zarar verilmesine ne denir? (Örn: Ayıdan kaçarken başkasının kulübesini kırmak)", o: ["Meşru Müdafaa", "Zaruret Hali (Iztırar Hali)", "Hırsızlık", "Gasp", "Mala Zarar"], a: 1, exp: "Zaruret halinde ceza verilmez ancak verilen maddi zarar (tazminat) ödenmelidir." },
+        { q: "Hukuk kurallarının 'Müeyyide' (Yaptırım) unsuru kime aittir?", o: ["Bireye", "Topluma", "Devlet Gücüne (Kamu Gücü)", "Aileye", "Derneklere"], a: 2, exp: "Hukuku hukuk yapan, arkasındaki organize devlet gücüdür." },
+        { q: "Resmi evlendirme memuru önünde yapılmayan evliliğin yaptırımı nedir?", o: ["Mutlak Butlan", "Yokluk", "Nisbi Butlan", "İptal", "Ceza"], a: 1, exp: "Kurucu unsur (resmi memur) eksik olduğu için evlilik hiç oluşmamıştır (Yokluk)." },
+        { q: "Akıl hastası birinin yaptığı evliliğin yaptırımı nedir?", o: ["Yokluk", "Mutlak Butlan", "Nisbi Butlan", "Geçerli", "Tazminat"], a: 1, exp: "İşlem vardır (memur önünde yapılmıştır) ama kanunun emredici kuralına (ayırt etme gücü) aykırıdır; bu yüzden batıldır." },
+        { q: "Zorla (tehdit edilerek) senet imzalayan bir kişinin durumu hangi yaptırımla ilgilidir?", o: ["Yokluk", "Mutlak Butlan", "Nisbi Butlan (İptal Edilebilirlik)", "Ceza", "Geçerli"], a: 2, exp: "İrade sakatlığı (korkutma) vardır; mağdur isterse işlemi iptal edebilir." },
+        { q: "Müsadere (Zoralım) ne demektir?", o: ["Hapis", "Devletin, suçla ilgili eşyaya veya kazanca el koyması", "Sürgün", "Para cezası", "Vergi"], a: 1, exp: "Müsadere, suçta kullanılan silahın veya suçtan elde edilen paranın mülkiyetinin devlete geçmesidir." },
+        { q: "Hukuk devleti ilkesinin bir gereği olarak, idarenin eylemlerinin yargısal denetime tabi olması hangi yaptırım türünü doğurur?", o: ["Ceza", "İptal", "Hapis", "Sürgün", "Kınama"], a: 1, exp: "Hukuka aykırı idari işlem, mahkemece iptal edilir." },
+        { q: "Kısas (Göze göz, dişe diş) modern hukukta bir yaptırım türü müdür?", o: ["Evet", "Hayır, modern hukukta devlet cezalandırır ve kısas (aynen iade) yoktur", "Bazen", "Sadece adam öldürmede", "Sadece yaralamada"], a: 1, exp: "Modern ceza hukuku, suçluya acı çektirmeyi değil, ıslahı ve caydırıcılığı amaçlar; kısas ilkel bir yöntemdir." },
+        { q: "Aşağıdakilerden hangisi 'Manevi Yaptırım' örneğidir?", o: ["Hapis", "Para Cezası", "Ayıplama / Kınama", "Tazminat", "İcra"], a: 2, exp: "Ayıplama, ahlak ve görgü kurallarının toplumsal baskı aracıdır." },
+        { q: "Hukukun 'Normatif' olması ne demektir?", o: ["Normal olması", "Kural koyucu olması (Emir ve yasak içermesi)", "Bilimsel olması", "Eski olması", "Yazılı olması"], a: 1, exp: "Hukuk, 'olanı' değil 'olması gerekeni' (normları) belirtir." },
+        { q: "Yaptırımın amacı nedir?", o: ["İntikam almak", "Kuralı ihlal edeni pişman etmek ve hukuk düzenini korumak (Caydırıcılık)", "Para kazanmak", "Eğlendirmek", "Haber olmak"], a: 1, exp: "Yaptırım, hukuk düzeninin bozulmasını önlemek ve bozulan düzeni onarmak içindir." },
+        { q: "Bir sözleşmenin geçersiz sayılması hangi hukuk dalının konusudur?", o: ["Ceza Hukuku", "Özel Hukuk (Borçlar/Medeni)", "İdare Hukuku", "Vergi Hukuku", "Anayasa Hukuku"], a: 1, exp: "Sözleşmeler özel hukuk alanına girer; geçersizlik (butlan) özel hukuk yaptırımıdır." },
+        { q: "Hukukun toplumsal işlevlerinden biri olan 'Hukuki Güvenlik' neyi ifade eder?", o: ["Polisin koruması", "Bireylerin, hukuk kurallarının uygulanacağını ve haklarının korunacağını önceden bilmesi (Belirlilik)", "Sigorta yaptırmak", "Kamera sistemi", "Hapis cezası"], a: 1, exp: "Hukuki güvenlik, keyfiliği önler ve vatandaşın devlete güven duymasını sağlar." }
+    ];
+
+    let currentQuestion = 0;
+    let userAnswers = new Array(questions.length).fill(null);
+
+    function loadQuestion() {
+        const container = document.getElementById('quiz-container');
+        const explanationArea = document.getElementById('explanation-area');
+        
+        container.innerHTML = '';
+        explanationArea.style.display = 'none';
+
+        const q = questions[currentQuestion];
+        
+        let html = `
+            <div class="question-block active">
+                <div class="question-text">${currentQuestion + 1}. ${q.q}</div>
+                <div class="options">
+        `;
+
+        q.o.forEach((opt, index) => {
+            const isSelected = userAnswers[currentQuestion] === index ? 'selected' : '';
+            const isChecked = userAnswers[currentQuestion] === index ? 'checked' : '';
+            html += `
+                <label class="option-label ${isSelected}" id="opt-${index}">
+                    <input type="radio" name="q${currentQuestion}" value="${index}" onclick="selectAnswer(${index})" ${isChecked}>
+                    ${String.fromCharCode(65 + index)}) ${opt}
+                </label>
+            `;
+        });
+
+        html += `</div></div>`;
+        container.innerHTML = html;
+
+        // Progress Bar
+        const progressPercent = ((currentQuestion + 1) / questions.length) * 100;
+        document.getElementById('progress-bar').style.width = progressPercent + '%';
+        document.getElementById('progress-text').innerText = `Soru ${currentQuestion + 1} / ${questions.length}`;
+        
+        // Buton Yönetimi
+        document.getElementById('prevBtn').disabled = currentQuestion === 0;
+        
+        if (currentQuestion === questions.length - 1) {
+            document.getElementById('nextBtn').style.display = 'none';
+            document.getElementById('finishBtn').style.display = 'inline-block';
+        } else {
+            document.getElementById('nextBtn').style.display = 'inline-block';
+            document.getElementById('finishBtn').style.display = 'none';
+        }
+    }
+
+    function selectAnswer(index) {
+        userAnswers[currentQuestion] = index;
+        const labels = document.querySelectorAll('.option-label');
+        labels.forEach(label => label.classList.remove('selected'));
+        document.getElementById(`opt-${index}`).classList.add('selected');
+    }
+
+    function showCurrentAnswer() {
+        const q = questions[currentQuestion];
+        const correctIndex = q.a;
+        const correctLabel = document.getElementById(`opt-${correctIndex}`);
+        const explanationArea = document.getElementById('explanation-area');
+
+        if(correctLabel) correctLabel.classList.add('correct-highlight');
+        
+        if (userAnswers[currentQuestion] !== null && userAnswers[currentQuestion] !== correctIndex) {
+            document.getElementById(`opt-${userAnswers[currentQuestion]}`).classList.add('wrong-highlight');
+        }
+
+        explanationArea.innerHTML = `<strong>Açıklama:</strong> ${q.exp}`;
+        explanationArea.style.display = 'block';
+    }
+
+    function nextQuestion() {
+        if (currentQuestion < questions.length - 1) {
+            currentQuestion++;
+            loadQuestion();
+        }
+    }
+
+    function prevQuestion() {
+        if (currentQuestion > 0) {
+            currentQuestion--;
+            loadQuestion();
+        }
+    }
+
+    function finishQuiz() {
+        let correctCount = 0;
+        let wrongCount = 0;
+        let emptyCount = 0;
+        let reviewHtml = '';
+
+        questions.forEach((q, index) => {
+            const userAnswer = userAnswers[index];
+            const isCorrect = userAnswer === q.a;
+            
+            let statusText = '';
+            let statusClass = '';
+
+            if (userAnswer === null) {
+                emptyCount++;
+                statusText = 'Boş';
+                statusClass = 'status-empty';
+            } else if (isCorrect) {
+                correctCount++;
+                statusText = 'Doğru';
+                statusClass = 'status-correct';
+            } else {
+                wrongCount++;
+                statusText = 'Yanlış';
+                statusClass = 'status-wrong';
+            }
+
+            reviewHtml += `
+                <tr>
+                    <td>${index + 1}</td>
+                    <td>${q.q}</td>
+                    <td>${userAnswer !== null ? String.fromCharCode(65 + userAnswer) + ') ' + q.o[userAnswer] : '-'}</td>
+                    <td>${String.fromCharCode(65 + q.a)}) ${q.o[q.a]}</td>
+                    <td class="${statusClass}">${statusText}</td>
+                </tr>
+            `;
+        });
+
+        document.getElementById('quiz-screen').style.display = 'none';
+        document.getElementById('result-screen').style.display = 'block';
+
+        const score = Math.round((correctCount / questions.length) * 100);
+        
+        document.getElementById('score-circle').innerText = score;
+        document.getElementById('score-details').innerHTML = `
+            <strong>Doğru:</strong> ${correctCount} &nbsp;|&nbsp; 
+            <strong>Yanlış:</strong> ${wrongCount} &nbsp;|&nbsp; 
+            <strong>Boş:</strong> ${emptyCount}
+        `;
+        
+        document.getElementById('review-body').innerHTML = reviewHtml;
+    }
+
+    // Uygulamayı başlat
+    loadQuestion();
+</script>
+
+</body>
+</html>
