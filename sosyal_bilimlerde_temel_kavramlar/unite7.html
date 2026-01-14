@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sosyal Bilimlerde Temel Kavramlar - 6. Ünite: Hukuk</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #e8eaf6; color: #333; margin: 0; padding: 20px; }
+        .container { max-width: 900px; margin: 0 auto; background: #fff; padding: 40px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); position: relative; }
+        h1 { text-align: center; color: #1a237e; border-bottom: 2px solid #283593; padding-bottom: 10px; margin-bottom: 30px; }
+        
+        /* Home Button */
+        .home-btn {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background-color: #3949ab;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 14px;
+            transition: background 0.2s;
+        }
+        .home-btn:hover { background-color: #1a237e; }
+
+        /* İlerleme Çubuğu */
+        .progress-container { background-color: #c5cae9; border-radius: 10px; margin-bottom: 20px; height: 10px; overflow: hidden; }
+        .progress-bar { height: 100%; background-color: #1a237e; width: 0%; transition: width 0.3s; }
+        .progress-text { text-align: right; font-size: 0.9em; color: #283593; margin-bottom: 15px; }
+
+        /* Soru Alanı */
+        .question-block { display: none; animation: fadeIn 0.5s; }
+        .question-block.active { display: block; }
+        .question-text { font-weight: 600; font-size: 1.25em; margin-bottom: 20px; color: #1a237e; }
+        
+        /* Seçenekler */
+        .options { display: flex; flex-direction: column; gap: 10px; }
+        .option-label { 
+            display: flex; align-items: center; padding: 12px 15px; border: 2px solid #e0e0e0; 
+            border-radius: 8px; cursor: pointer; transition: all 0.2s; background: #fff;
+        }
+        .option-label:hover { background-color: #e8eaf6; border-color: #9fa8da; }
+        .option-label.selected { border-color: #1a237e; background-color: #c5cae9; }
+        .option-label input { margin-right: 15px; transform: scale(1.2); }
+        
+        /* Cevap Göster Stilleri */
+        .option-label.correct-highlight { border-color: #27ae60; background-color: #d5f5e3; color: #1e8449; font-weight: bold; }
+        .option-label.wrong-highlight { border-color: #e74c3c; background-color: #fadbd8; }
+
+        /* Açıklama Kutusu */
+        .explanation-box {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #e8eaf6;
+            border-left: 5px solid #3949ab;
+            border-radius: 4px;
+            color: #1a237e;
+            display: none;
+            font-size: 0.95em;
+            line-height: 1.5;
+        }
+
+        /* Butonlar */
+        .controls { margin-top: 30px; display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
+        button { border: none; padding: 12px 24px; border-radius: 6px; cursor: pointer; font-size: 16px; font-weight: 600; transition: background 0.2s; }
+        .nav-btn { background-color: #1a237e; color: white; }
+        .nav-btn:hover { background-color: #0d47a1; }
+        .nav-btn:disabled { background-color: #bdc3c7; cursor: not-allowed; }
+        
+        .show-answer-btn { background-color: #3949ab; color: white; }
+        .show-answer-btn:hover { background-color: #283593; }
+        
+        .finish-btn { background-color: #27ae60; color: white; display: none; }
+        .finish-btn:hover { background-color: #219150; }
+
+        /* Sonuç Ekranı */
+        #result-screen { display: none; }
+        .score-card { text-align: center; background: #f8f9fa; padding: 20px; border-radius: 10px; margin-bottom: 30px; }
+        .score-circle { 
+            width: 120px; height: 120px; border-radius: 50%; background: #1a237e; color: white; 
+            display: flex; align-items: center; justify-content: center; font-size: 2em; font-weight: bold; 
+            margin: 0 auto 15px; 
+        }
+        
+        .review-table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 0.95em; }
+        .review-table th, .review-table td { padding: 12px; border: 1px solid #ddd; text-align: left; }
+        .review-table th { background-color: #283593; color: white; }
+        .review-table tr:nth-child(even) { background-color: #f2f2f2; }
+        .status-correct { color: #27ae60; font-weight: bold; }
+        .status-wrong { color: #c0392b; font-weight: bold; }
+        .status-empty { color: #f39c12; font-weight: bold; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <a href="#" class="home-btn" onclick="alert('Anasayfaya yönlendiriliyorsunuz...'); location.reload();">⌂ Anasayfa</a>
+    
+    <div id="quiz-screen">
+        <h1>6. Ünite: Hukuk</h1>
+        
+        <div class="progress-text" id="progress-text">Soru 1 / 50</div>
+        <div class="progress-container">
+            <div class="progress-bar" id="progress-bar"></div>
+        </div>
+        
+        <div id="quiz-container">
+            <!-- Sorular buraya JS ile gelecek -->
+        </div>
+
+        <!-- Açıklama Alanı -->
+        <div id="explanation-area" class="explanation-box"></div>
+
+        <div class="controls">
+            <div>
+                <button class="nav-btn" id="prevBtn" onclick="prevQuestion()" disabled>&#8592; Önceki</button>
+            </div>
+            <div>
+                <button class="show-answer-btn" onclick="showCurrentAnswer()">👁️ Cevabı Göster</button>
+            </div>
+            <div>
+                <button class="nav-btn" id="nextBtn" onclick="nextQuestion()">Sonraki &#8594;</button>
+                <button class="finish-btn" id="finishBtn" onclick="finishQuiz()">Testi Bitir &#10004;</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="result-screen">
+        <h1>Değerlendirme Sonucu</h1>
+        <div class="score-card">
+            <div class="score-circle" id="score-circle">0</div>
+            <h3>Toplam Puan</h3>
+            <p id="score-details"></p>
+        </div>
+        
+        <h3>Detaylı Soru Analizi</h3>
+        <table class="review-table">
+            <thead>
+                <tr>
+                    <th style="width: 5%">No</th>
+                    <th style="width: 45%">Soru</th>
+                    <th style="width: 20%">Senin Cevabın</th>
+                    <th style="width: 20%">Doğru Cevap</th>
+                    <th style="width: 10%">Durum</th>
+                </tr>
+            </thead>
+            <tbody id="review-body">
+                <!-- Sonuç satırları buraya gelecek -->
+            </tbody>
+        </table>
+        <div style="text-align: center; margin-top: 30px;">
+            <button class="nav-btn" onclick="location.reload()">Testi Tekrar Çöz</button>
+            <button class="home-btn" style="position: static; display: inline-block; margin-left: 10px;" onclick="location.reload()">Anasayfaya Dön</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // 6. Ünite Konuları: Hukukun Tanımı, Sosyal Düzen Kuralları, Yaptırımlar, Kamu-Özel Hukuk Ayrımı, Hukukun Dalları, Hukukun Kaynakları, Adalet, Hukuk Devleti
+    const questions = [
+        { q: "Toplum hayatını düzenleyen, devlet gücüyle desteklenen ve uyulması zorunlu olan kurallar bütününe ne denir?", o: ["Ahlak", "Görgü", "Din", "Hukuk", "Örf"], a: 3, exp: "Hukuk, diğer sosyal düzen kurallarından farklı olarak devletin maddi yaptırım gücüne (ceza, icra vb.) sahiptir." },
+        { q: "Aşağıdakilerden hangisi toplumsal düzen kurallarından biri değildir?", o: ["Din Kuralları", "Ahlak Kuralları", "Görgü Kuralları", "Hukuk Kuralları", "Fizik Kuralları"], a: 4, exp: "Fizik kuralları doğa olaylarını açıklar; toplumsal düzen kuralları ise insan davranışlarını düzenleyen normlardır." },
+        { q: "Hukuk kurallarını diğer toplumsal düzen kurallarından ayıran en temel özellik nedir?", o: ["Yazılı olması", "Eski olması", "Devlet gücüne dayalı maddi yaptırımının olması", "Dini kaynaklı olması", "Herkesin sevmesi"], a: 2, exp: "Diğer kuralların yaptırımı manevidir (ayıplama, günahkar sayılma), hukukunki ise maddidir (hapis, para cezası)." },
+        { q: "Bir hukuk kuralına uyulmadığı takdirde devlet tarafından uygulanan zorlayıcı tepkiye ne ad verilir?", o: ["Ödül", "Yaptırım (Müeyyide)", "Teşvik", "Kınama", "Eleştiri"], a: 1, exp: "Yaptırım, kural ihlalinin sonucudur; ceza, cebri icra, tazminat gibi türleri vardır." },
+        { q: "Hukuka aykırı bir işlem veya eylem sonucunda başkasına verilen zararın ödetilmesi şeklindeki yaptırıma ne denir?", o: ["Ceza", "Tazminat", "İptal", "Cebri İcra", "Müsadere"], a: 1, exp: "Tazminat, maddi veya manevi zararın giderilmesi amacıyla ödenen bedeldir." },
+        { q: "Borcunu ödemeyen bir kişinin borcunun, devlet gücüyle zorla alınıp alacaklıya verilmesi işlemine ne denir?", o: ["Ceza", "Cebri İcra", "Hükümsüzlük", "İptal", "El koyma"], a: 1, exp: "Cebri icra, yükümlülüklerini yerine getirmeyenlerin devlet zoruyla bunları yerine getirmesinin sağlanmasıdır." },
+        { q: "Hukukun, kişiler ile devlet arasındaki veya devlet kurumlarının kendi aralarındaki ilişkileri düzenleyen dalına ne denir?", o: ["Özel Hukuk", "Kamu Hukuku", "Karma Hukuk", "Medeni Hukuk", "Ticaret Hukuku"], a: 1, exp: "Kamu hukuku (Anayasa, İdare, Ceza vb.), devletin egemenlik gücünü kullandığı ve üstün konumda olduğu ilişkileri düzenler." },
+        { q: "Kişilerin birbirleriyle olan eşit statüdeki ilişkilerini düzenleyen hukuk dalına ne denir?", o: ["Kamu Hukuku", "Özel Hukuk", "İdare Hukuku", "Ceza Hukuku", "Vergi Hukuku"], a: 1, exp: "Özel hukuk (Medeni, Borçlar, Ticaret vb.), eşitler arası ilişkileri ve özel çıkarları konu alır." },
+        { q: "Aşağıdakilerden hangisi Kamu Hukuku dallarından biridir?", o: ["Medeni Hukuk", "Ticaret Hukuku", "Ceza Hukuku", "Borçlar Hukuku", "Miras Hukuku"], a: 2, exp: "Ceza hukuku, suçları ve cezaları düzenleyen, devletin cezalandırma yetkisini kullandığı bir kamu hukuku dalıdır." },
+        { q: "Aşağıdakilerden hangisi Özel Hukuk dallarından biridir?", o: ["Anayasa Hukuku", "İdare Hukuku", "Medeni Hukuk", "Vergi Hukuku", "Devletler Umumi Hukuku"], a: 2, exp: "Medeni hukuk; kişiler, aile, miras ve eşya hukuku gibi bireyler arası ilişkileri düzenleyen en temel özel hukuk dalıdır." },
+        { q: "Devletin temel niteliklerini, yasama, yürütme ve yargı organlarını ve vatandaşların temel haklarını düzenleyen hukuk dalı hangisidir?", o: ["İdare Hukuku", "Anayasa Hukuku", "Ceza Hukuku", "Medeni Hukuk", "Ticaret Hukuku"], a: 1, exp: "Anayasa hukuku, devletin örgütlenişini ve bireylerin temel hak ve özgürlüklerini belirleyen en üst hukuk normudur." },
+        { q: "İdarenin (devlet yönetiminin) kuruluşunu, işleyişini ve bireylerle olan ilişkilerini düzenleyen hukuk dalı hangisidir?", o: ["Anayasa Hukuku", "İdare Hukuku", "Ceza Hukuku", "Borçlar Hukuku", "İcra Hukuku"], a: 1, exp: "İdare hukuku, kamu hizmetlerinin yürütülmesi ve idari teşkilatın yapısıyla ilgilenir." },
+        { q: "Toplum düzenini bozan ve suç sayılan eylemler ile bunlara uygulanacak yaptırımları belirleyen hukuk dalı hangisidir?", o: ["Ceza Hukuku", "Medeni Hukuk", "Ticaret Hukuku", "İş Hukuku", "İcra Hukuku"], a: 0, exp: "Ceza hukuku, 'suç' ve 'ceza' kavramlarını inceleyen kamu hukuku dalıdır." },
+        { q: "Doğumdan ölüme kadar kişinin ehliyeti, ikametgahı, hısımlığı gibi durumları düzenleyen Medeni Hukuk alt dalı hangisidir?", o: ["Aile Hukuku", "Kişiler Hukuku", "Miras Hukuku", "Eşya Hukuku", "Borçlar Hukuku"], a: 1, exp: "Kişiler hukuku, hak ehliyeti, fiil ehliyeti, kişilik hakları gibi konuları kapsar." },
+        { q: "Nişanlanma, evlenme, boşanma, velayet gibi konuları düzenleyen Medeni Hukuk alt dalı hangisidir?", o: ["Kişiler Hukuku", "Aile Hukuku", "Miras Hukuku", "Eşya Hukuku", "Ticaret Hukuku"], a: 1, exp: "Aile hukuku, aile birliğinin kurulması, işleyişi ve sona ermesiyle ilgili kuralları içerir." },
+        { q: "Bir ülkenin yetkili makamları tarafından konulmuş, yürürlükte olan yazılı hukuk kurallarının tamamına ne denir?", o: ["Mevzu Hukuk (Mevzuat)", "Doğal Hukuk", "Örf ve Adet Hukuku", "İdeal Hukuk", "Tarihi Hukuk"], a: 0, exp: "Mevzu hukuk; Anayasa, kanunlar, yönetmelikler gibi yazılı kuralların tümünü ifade eder." },
+        { q: "Yürürlükte olan (yazılı ve yazısız) hukuk kurallarının tamamına ne denir?", o: ["Mevzu Hukuk", "Pozitif Hukuk (Müspet Hukuk)", "Doğal Hukuk", "İdeal Hukuk", "Evrensel Hukuk"], a: 1, exp: "Pozitif hukuk, belirli bir zamanda ve ülkede fiilen uygulanan (yazılı + yazısız) hukukun tamamıdır." },
+        { q: "Olması gereken, adalete en uygun ve akla dayalı ideal hukuk anlayışına ne denir?", o: ["Pozitif Hukuk", "Doğal (Tabii) Hukuk / İdeal Hukuk", "Mevzu Hukuk", "Tarihi Hukuk", "Örf Hukuku"], a: 1, exp: "Doğal hukuk, insan aklından ve doğasından kaynaklanan, zaman ve mekandan bağımsız üstün hukuk kurallarıdır." },
+        { q: "Türk hukuk sisteminde 'Normlar Hiyerarşisi'ne göre en üstte yer alan norm hangisidir?", o: ["Kanun", "Yönetmelik", "Anayasa", "Cumhurbaşkanlığı Kararnamesi", "Genelge"], a: 2, exp: "Anayasa, devletin temel kanunudur ve diğer tüm kanunlar Anayasa'ya uygun olmak zorundadır (Anayasanın üstünlüğü)." },
+        { q: "Hukuk kurallarının geçmişten gelen alışkanlıklara ve toplumsal kabullere dayanan yazısız kaynağına ne denir?", o: ["Kanun", "Örf ve Adet Hukuku", "İçtihat", "Doktrin", "Yönetmelik"], a: 1, exp: "Örf ve adet hukuku, toplumda uzun süre uygulanan ve uyulması zorunlu hissedilen yazısız kurallardır." },
+        { q: "Mahkemelerin verdiği kararlardan oluşan ve emsal teşkil edebilen yardımcı hukuk kaynağına ne denir?", o: ["Doktrin", "İçtihat (Yargısal Kararlar)", "Mevzuat", "Örf", "Yasa"], a: 1, exp: "İçtihatlar, benzer davalarda hakimlere yol gösteren yüksek mahkeme kararlarıdır." },
+        { q: "Hukuk bilimcilerinin (profesörlerin) görüş ve düşüncelerinden oluşan yardımcı kaynağa ne denir?", o: ["İçtihat", "Doktrin (Bilimsel Görüşler)", "Kanun", "Anayasa", "Örf"], a: 1, exp: "Doktrin, hukuk kurallarının yorumlanmasında ve geliştirilmesinde etkili olan bilimsel çalışmalardır." },
+        { q: "Hukuk tarafından korunan menfaate ne denir?", o: ["Ödev", "Hak", "Yetki", "Sorumluluk", "İmtiyaz"], a: 1, exp: "Hak, hukuk düzeninin kişilere tanıdığı ve koruduğu yetki ve menfaatlerdir." },
+        { q: "Kişinin haklara sahip olabilme yeteneğine 'hak ehliyeti', haklarını bizzat kullanabilme ve borç altına girebilme yeteneğine ne denir?", o: ["Fiil Ehliyeti", "Hukuki Ehliyet", "Ceza Ehliyeti", "Siyasal Ehliyet", "Mesleki Ehliyet"], a: 0, exp: "Fiil ehliyeti; ayırt etme gücüne sahip olma, ergin olma ve kısıtlı olmama şartlarına bağlıdır." },
+        { q: "Tam ve sağ doğmak koşuluyla, hak ehliyeti ne zaman başlar?", o: ["18 yaşında", "Doğumla", "Ana rahmine düşüldüğü andan itibaren", "Okula başlayınca", "Evlenince"], a: 2, exp: "Türk Medeni Kanunu'na göre hak ehliyeti, sağ doğmak koşuluyla ana rahmine düşüldüğü an başlar." },
+        { q: "Hukukta 'Gerçek Kişi' kime denir?", o: ["Şirketlere", "İnsanlara", "Derneklere", "Devlete", "Vakıflara"], a: 1, exp: "Gerçek kişi, biyolojik insan varlığıdır; Tüzel kişi ise hukuk düzeninin kişi saydığı topluluklardır." },
+        { q: "Belli bir amacı gerçekleştirmek üzere örgütlenmiş kişi veya mal topluluklarına hukukta ne ad verilir?", o: ["Gerçek Kişi", "Tüzel Kişi", "Vatandaş", "Yurttaş", "Birey"], a: 1, exp: "Tüzel kişiler (örn: şirketler, dernekler, vakıflar), hukuk açısından hak ve borç sahibi olabilen varlıklardır." },
+        { q: "Hukuk kurallarına ve adalete saygılı, vatandaşların hukuki güvenliğinin sağlandığı devlete ne denir?", o: ["Polis Devleti", "Hukuk Devleti", "Kanun Devleti", "Mutlak Devlet", "Teokratik Devlet"], a: 1, exp: "Hukuk devleti, devletin eylem ve işlemlerinin hukuka uygun olduğu ve yargı denetimine tabi olduğu sistemdir." },
+        { q: "Suçun ve cezasının kanunda açıkça yazılı olması ilkesine ne denir?", o: ["Masumiyet Karinesi", "Kanunilik İlkesi (Suçta ve Cezada Kanunilik)", "Eşitlik İlkesi", "Kusur İlkesi", "Şahsilik İlkesi"], a: 1, exp: "Kanunsuz suç ve ceza olmaz ilkesi, keyfi cezalandırmayı önleyen temel bir ceza hukuku prensibidir." },
+        { q: "Bir kişinin suçu mahkeme kararıyla sabit oluncaya kadar suçsuz sayılmasına ne denir?", o: ["Kanunilik", "Masumiyet Karinesi", "İyi Niyet", "Dürüstlük", "Dokunulmazlık"], a: 1, exp: "Masumiyet karinesi, 'şüpheden sanık yararlanır' ilkesine dayanan evrensel bir hukuk kuralıdır." },
+        { q: "Yasama, yürütme ve yargı erklerinin birbirinden bağımsız organlarca kullanılmasına ne denir?", o: ["Güçler Birliği", "Kuvvetler (Güçler) Ayrılığı", "Merkeziyetçilik", "Otoriterlik", "Monarşi"], a: 1, exp: "Kuvvetler ayrılığı, demokratik hukuk devletinin temelidir ve iktidarın dengelenmesini sağlar." },
+        { q: "Adalet kavramının, herkesin durumuna ve ihtiyacına göre (eşit olmayana farklı) davranmayı gerektiren türü hangisidir?", o: ["Denkleştirici Adalet", "Dağıtıcı Adalet", "Mutlak Adalet", "İlahi Adalet", "Doğal Adalet"], a: 1, exp: "Dağıtıcı adalet, nimet ve külfetlerin liyakat, ihtiyaç veya yeteneğe göre orantılı dağıtılmasını öngörür." },
+        { q: "Herkesin yasalar önünde aynı işleme tabi tutulmasını öngören adalet türü hangisidir?", o: ["Dağıtıcı Adalet", "Denkleştirici (Düzeltici) Adalet", "Sosyal Adalet", "Ekonomik Adalet", "İdari Adalet"], a: 1, exp: "Denkleştirici adalet, kişiler arası ilişkilerde mutlak eşitliği (örneğin alışverişte değer eşitliği) esas alır." },
+        { q: "Bir kimsenin hakkını kullanırken veya borcunu öderken dürüst davranması gerektiğini belirten ilke nedir?", o: ["İyi Niyet", "Dürüstlük Kuralı (Objektif İyi Niyet)", "Kusur", "İhmal", "Zaruret"], a: 1, exp: "Dürüstlük kuralı (MK md. 2), hakların kullanımında makul, dürüst ve güvenilir davranmayı emreder." },
+        { q: "Bir hakkın kazanılmasında, kişinin bilmemesi gereken bir durumu bilmemesi (mazur görülebilir bilgisizlik) haline ne denir?", o: ["Dürüstlük", "İyi Niyet (Subjektif İyi Niyet)", "Kasıt", "İhmal", "Hata"], a: 1, exp: "İyi niyet (MK md. 3), bir hakkın doğumuna engel olan bir durumun bilinmemesidir (örn: çalıntı malı bilmeden satın almak)." },
+        { q: "Hukuka aykırı bir fiille başkasına zarar veren kişinin bu zararı giderme yükümlülüğüne ne denir?", o: ["Ceza Sorumluluğu", "Haksız Fiil Sorumluluğu (Tazminat)", "Sözleşme Sorumluluğu", "İdari Sorumluluk", "Ahlaki Sorumluluk"], a: 1, exp: "Haksız fiil, borçlar hukukunun temel kaynaklarından biridir ve kusurlu davranışla verilen zararın tazminini gerektirir." },
+        { q: "Kişinin malvarlığı veya şahıs varlığı değerlerinde iradesi dışında meydana gelen eksilmeye ne denir?", o: ["Kusur", "Zarar", "İlliyet Bağı", "Hukuka Aykırılık", "Ceza"], a: 1, exp: "Zarar, haksız fiilin unsurlarından biridir; maddi (mal kaybı) veya manevi (acı, elem) olabilir." },
+        { q: "Ceza hukukunda 'cezaların şahsiliği' ilkesi ne anlama gelir?", o: ["Herkesin cezalandırılabilmesi", "Bir kişinin işlediği suçtan dolayı sadece kendisinin cezalandırılması, başkasının sorumlu tutulamaması", "Cezaların paraya çevrilmesi", "Devletin ceza vermesi", "Cezaların hafifletilmesi"], a: 1, exp: "Kimse başkasının fiilinden dolayı cezalandırılamaz; ceza sorumluluğu kişiseldir." },
+        { q: "Bir sözleşmenin geçerli olabilmesi için tarafların karşılıklı ve birbirine uygun ...... beyan etmeleri gerekir.", o: ["Para", "İrade", "Senet", "Yemin", "Şahit"], a: 1, exp: "Sözleşme, tarafların iradelerinin uyuşmasıyla (icap ve kabul) kurulan hukuki işlemdir." },
+        { q: "Mülkiyet hakkı ne tür bir haktır?", o: ["Kişilik Hakkı", "Ayni Hak (Eşya üzerindeki mutlak hak)", "Alacak Hakkı", "Fikri Hak", "Siyasi Hak"], a: 1, exp: "Ayni haklar, sahibine eşya üzerinde doğrudan hakimiyet sağlayan ve herkese karşı ileri sürülebilen haklardır." },
+        { q: "Seçme, seçilme ve siyasi faaliyette bulunma hakları ne tür haklardır?", o: ["Kişisel Haklar", "Sosyal ve Ekonomik Haklar", "Siyasi Haklar (Katılma Hakları)", "Özel Haklar", "Devredilebilir Haklar"], a: 2, exp: "Siyasi haklar, vatandaşların devlet yönetimine katılmasına olanak tanıyan haklardır." },
+        { q: "Çalışma, sağlık, eğitim gibi devletten istenebilecek haklara ne denir?", o: ["Negatif Statü Hakları", "Pozitif Statü (Sosyal ve Ekonomik) Hakları / İsteme Hakları", "Aktif Statü Hakları", "Mutlak Haklar", "Kişilik Hakları"], a: 1, exp: "Sosyal devlet ilkesinin gereği olan bu haklar, devletin vatandaşa hizmet sunmasını gerektirir." },
+        { q: "Konut dokunulmazlığı, kişi güvenliği gibi devletin müdahale etmemesi gereken haklara ne denir?", o: ["Pozitif Statü Hakları", "Negatif Statü (Kişisel) Hakları / Koruyucu Haklar", "Aktif Statü Hakları", "Siyasi Haklar", "Alacak Hakları"], a: 1, exp: "Negatif statü hakları, bireyi devlete ve topluma karşı koruyan, dokunulmaması gereken özel alanı ifade eder." },
+        { q: "Türkiye'de kanunları yapma, değiştirme ve kaldırma yetkisi (Yasama Yetkisi) kime aittir?", o: ["Cumhurbaşkanı", "Türkiye Büyük Millet Meclisi (TBMM)", "Anayasa Mahkemesi", "Bakanlıklar", "Halk"], a: 1, exp: "Anayasa'ya göre yasama yetkisi Türk Milleti adına TBMM'nindir." },
+        { q: "Türkiye'de kanunların Anayasa'ya uygunluğunu denetleyen yüksek mahkeme hangisidir?", o: ["Yargıtay", "Danıştay", "Anayasa Mahkemesi", "Sayıştay", "Uyuşmazlık Mahkemesi"], a: 2, exp: "Anayasa Mahkemesi, yasama organının işlemlerini hukuki denetimden geçirerek anayasal düzeni korur." },
+        { q: "Adli yargı kolunda (ceza ve hukuk mahkemeleri) son inceleme mercii olan yüksek mahkeme hangisidir?", o: ["Danıştay", "Yargıtay", "Anayasa Mahkemesi", "Sayıştay", "Bölge Adliye Mahkemesi"], a: 1, exp: "Yargıtay, adli mahkemelerce verilen kararların son inceleme (temyiz) merciidir." },
+        { q: "İdari yargı kolunda (devletle vatandaş arasındaki davalar) en yüksek mahkeme hangisidir?", o: ["Yargıtay", "Danıştay", "Sayıştay", "Anayasa Mahkemesi", "Vergi Mahkemesi"], a: 1, exp: "Danıştay, idari davaların temyiz merciidir ve aynı zamanda idari konularda danışma organıdır." },
+        { q: "Bir kişinin ölümünden sonra malvarlığının kimlere ve nasıl geçeceğini düzenleyen hukuk dalı hangisidir?", o: ["Aile Hukuku", "Eşya Hukuku", "Miras Hukuku", "Borçlar Hukuku", "Ticaret Hukuku"], a: 2, exp: "Miras hukuku, ölen kişinin (muris) terekesinin yasal ve atanmış mirasçılar arasında paylaşımını düzenler." },
+        { q: "Uluslararası antlaşmalar, usulüne göre yürürlüğe konulduğunda ne hükmündedir?", o: ["Yönetmelik", "Genelge", "Kanun", "Tavsiye", "Geçersiz"], a: 2, exp: "Anayasa'nın 90. maddesine göre, usulüne uygun yürürlüğe konulmuş milletlerarası antlaşmalar kanun hükmündedir." },
+        { q: "Hukuk kurallarının zamanla değişen ihtiyaçlara cevap verebilmesi, hukukun hangi özelliğini gösterir?", o: ["Statik", "Dinamik (Değişken)", "Evrensel", "Soyut", "Genel"], a: 1, exp: "Hukuk donuk değildir; toplumsal, ekonomik ve teknolojik gelişmelere paralel olarak sürekli değişir ve gelişir." }
+    ];
+
+    let currentQuestion = 0;
+    let userAnswers = new Array(questions.length).fill(null);
+
+    function loadQuestion() {
+        const container = document.getElementById('quiz-container');
+        const explanationArea = document.getElementById('explanation-area');
+        
+        container.innerHTML = '';
+        explanationArea.style.display = 'none'; // Yeni soruda açıklamayı gizle
+
+        const q = questions[currentQuestion];
+        
+        let html = `
+            <div class="question-block active">
+                <div class="question-text">${currentQuestion + 1}. ${q.q}</div>
+                <div class="options">
+        `;
+
+        q.o.forEach((opt, index) => {
+            const isSelected = userAnswers[currentQuestion] === index ? 'selected' : '';
+            const isChecked = userAnswers[currentQuestion] === index ? 'checked' : '';
+            html += `
+                <label class="option-label ${isSelected}" id="opt-${index}">
+                    <input type="radio" name="q${currentQuestion}" value="${index}" onclick="selectAnswer(${index})" ${isChecked}>
+                    ${String.fromCharCode(65 + index)}) ${opt}
+                </label>
+            `;
+        });
+
+        html += `</div></div>`;
+        container.innerHTML = html;
+
+        // Progress Bar
+        const progressPercent = ((currentQuestion + 1) / questions.length) * 100;
+        document.getElementById('progress-bar').style.width = progressPercent + '%';
+        document.getElementById('progress-text').innerText = `Soru ${currentQuestion + 1} / ${questions.length}`;
+        
+        // Buton Yönetimi
+        document.getElementById('prevBtn').disabled = currentQuestion === 0;
+        
+        if (currentQuestion === questions.length - 1) {
+            document.getElementById('nextBtn').style.display = 'none';
+            document.getElementById('finishBtn').style.display = 'inline-block';
+        } else {
+            document.getElementById('nextBtn').style.display = 'inline-block';
+            document.getElementById('finishBtn').style.display = 'none';
+        }
+    }
+
+    function selectAnswer(index) {
+        userAnswers[currentQuestion] = index;
+        const labels = document.querySelectorAll('.option-label');
+        labels.forEach(label => label.classList.remove('selected'));
+        document.getElementById(`opt-${index}`).classList.add('selected');
+    }
+
+    function showCurrentAnswer() {
+        const q = questions[currentQuestion];
+        const correctIndex = q.a;
+        const correctLabel = document.getElementById(`opt-${correctIndex}`);
+        const explanationArea = document.getElementById('explanation-area');
+
+        if(correctLabel) correctLabel.classList.add('correct-highlight');
+        
+        if (userAnswers[currentQuestion] !== null && userAnswers[currentQuestion] !== correctIndex) {
+            document.getElementById(`opt-${userAnswers[currentQuestion]}`).classList.add('wrong-highlight');
+        }
+
+        // Açıklamayı Göster
+        explanationArea.innerHTML = `<strong>Açıklama:</strong> ${q.exp}`;
+        explanationArea.style.display = 'block';
+    }
+
+    function nextQuestion() {
+        if (currentQuestion < questions.length - 1) {
+            currentQuestion++;
+            loadQuestion();
+        }
+    }
+
+    function prevQuestion() {
+        if (currentQuestion > 0) {
+            currentQuestion--;
+            loadQuestion();
+        }
+    }
+
+    function finishQuiz() {
+        let correctCount = 0;
+        let wrongCount = 0;
+        let emptyCount = 0;
+        let reviewHtml = '';
+
+        questions.forEach((q, index) => {
+            const userAnswer = userAnswers[index];
+            const isCorrect = userAnswer === q.a;
+            
+            let statusText = '';
+            let statusClass = '';
+
+            if (userAnswer === null) {
+                emptyCount++;
+                statusText = 'Boş';
+                statusClass = 'status-empty';
+            } else if (isCorrect) {
+                correctCount++;
+                statusText = 'Doğru';
+                statusClass = 'status-correct';
+            } else {
+                wrongCount++;
+                statusText = 'Yanlış';
+                statusClass = 'status-wrong';
+            }
+
+            reviewHtml += `
+                <tr>
+                    <td>${index + 1}</td>
+                    <td>${q.q}</td>
+                    <td>${userAnswer !== null ? String.fromCharCode(65 + userAnswer) + ') ' + q.o[userAnswer] : '-'}</td>
+                    <td>${String.fromCharCode(65 + q.a)}) ${q.o[q.a]}</td>
+                    <td class="${statusClass}">${statusText}</td>
+                </tr>
+            `;
+        });
+
+        document.getElementById('quiz-screen').style.display = 'none';
+        document.getElementById('result-screen').style.display = 'block';
+
+        // Puanlama: Her soru 2 puan (100/50)
+        const score = Math.round((correctCount / questions.length) * 100);
+        
+        document.getElementById('score-circle').innerText = score;
+        document.getElementById('score-details').innerHTML = `
+            <strong>Doğru:</strong> ${correctCount} | 
+            <strong>Yanlış:</strong> ${wrongCount} | 
+            <strong>Boş:</strong> ${emptyCount}
+        `;
+        
+        document.getElementById('review-body').innerHTML = reviewHtml;
+    }
+
+    // Uygulamayı başlat
+    loadQuestion();
+</script>
+
+</body>
+</html>
