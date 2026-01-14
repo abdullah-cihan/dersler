@@ -3,405 +3,337 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AÖF Ders Notları ve Testler</title>
+    <meta name="description" content="AÖF Ders Notları, Çıkmış Sorular ve Ünite Testleri. Felsefe, Sosyoloji ve diğer bölümler için kapsamlı çalışma kaynağı.">
+    <meta name="keywords" content="AÖF, Açıköğretim, Ders Notları, Test Çöz, Felsefe, Sosyoloji, AÖF Soru Bankası">
+    <title>AÖF Ders Notları ve Test Platformu</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        :root {
-            --primary-color: #2c3e50; /* Koyu Lacivert */
-            --accent-color: #3498db;  /* Açık Mavi */
-            --bg-color: #f4f7f6;
-            --card-bg: #ffffff;
-            --hover-bg: #e8f4fc;
-        }
+        /* Google Font */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg-color);
-            margin: 0;
-            padding: 20px;
-            color: #333;
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
         }
 
-        header {
-            text-align: center;
-            padding: 40px 0;
-            background: linear-gradient(135deg, #2c3e50, #34495e);
-            color: white;
-            border-radius: 10px;
-            margin-bottom: 30px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        /* Animasyonlar */
+        .fade-in { animation: fadeIn 0.3s ease-in-out; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
-        h1 { margin: 0; font-size: 2.2rem; }
-        p.subtitle { opacity: 0.8; margin-top: 10px; }
-
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-        }
-
-        /* AKORDEON STİLLERİ */
-        .course-wrapper {
-            margin-bottom: 15px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-            border-radius: 8px;
-            overflow: hidden;
-        }
-
-        .accordion {
-            background-color: var(--card-bg);
-            color: var(--primary-color);
-            cursor: pointer;
-            padding: 20px;
-            width: 100%;
-            border: none;
-            text-align: left;
-            outline: none;
-            font-size: 1.2rem;
-            font-weight: bold;
-            transition: 0.3s;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-left: 5px solid var(--accent-color);
-        }
-
-        .accordion:hover {
-            background-color: #f1f1f1;
-        }
-
-        .accordion:after {
-            content: '\002B'; /* Artı işareti */
-            color: #777;
-            font-weight: bold;
-            float: right;
-            margin-left: 5px;
-            font-size: 1.5rem;
-        }
-
-        .active:after {
-            content: "\2212"; /* Eksi işareti */
-        }
-
-        /* Gizli Panel */
-        .panel {
-            padding: 0;
-            background-color: white;
+        /* Akordeon */
+        .accordion-content {
+            transition: max-height 0.3s ease-out, opacity 0.3s ease-out;
             max-height: 0;
+            opacity: 0;
             overflow: hidden;
-            transition: max-height 0.2s ease-out;
-            border-top: 1px solid #eee;
         }
+        .accordion-content.active { opacity: 1; }
 
-        .topic-list {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-
-        .topic-link {
-            display: block;
-            text-decoration: none;
-            color: #555;
-            padding: 15px 25px;
-            border-bottom: 1px solid #f1f1f1;
-            transition: background 0.2s, color 0.2s;
-            display: flex;
-            align-items: center;
-        }
-
-        .topic-link:last-child {
-            border-bottom: none;
-        }
-
-        .topic-link:hover {
-            background-color: var(--hover-bg);
-            color: var(--accent-color);
-            padding-left: 35px; /* Hover efekti ile sağa kayma */
-        }
-
-        .topic-icon {
-            margin-right: 10px;
-            font-size: 1.2em;
-        }
-
-        footer {
-            text-align: center;
-            margin-top: 50px;
-            color: #888;
-            font-size: 0.9em;
-        }
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
     </style>
 </head>
-<body>
+<body class="flex flex-col min-h-screen text-slate-800">
 
-    <header>
-        <h1>Ders Notları & Test Arşivi</h1>
-        <p class="subtitle">Kişisel Çalışma Platformum</p>
+    <!-- HEADER -->
+    <header class="bg-gradient-to-r from-slate-800 to-slate-900 text-white shadow-lg">
+        <div class="container mx-auto px-4 py-6">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="text-center md:text-left mb-4 md:mb-0 cursor-pointer" onclick="goHome()">
+                    <h1 class="text-2xl font-bold tracking-wide"><i class="fa-solid fa-book-open mr-2"></i>AÖF Not & Test</h1>
+                    <p class="text-slate-400 text-sm mt-1">Akademik Başarı Platformu</p>
+                </div>
+                <nav id="breadcrumb-nav" class="hidden md:block text-sm text-slate-300">
+                    <span class="cursor-pointer hover:text-white" onclick="goHome()">Ana Sayfa</span>
+                    <span id="bc-dept-separator" class="hidden"> <i class="fa-solid fa-chevron-right mx-2 text-xs"></i> </span>
+                    <span id="bc-dept" class="font-semibold text-white hidden"></span>
+                    <span id="bc-sem-separator" class="hidden"> <i class="fa-solid fa-chevron-right mx-2 text-xs"></i> </span>
+                    <span id="bc-sem" class="font-semibold text-white hidden"></span>
+                </nav>
+            </div>
+        </div>
     </header>
 
-    <div class="container">
-
-        <div class="course-wrapper">
-            <button class="accordion">📘 Sosyal Politika</button>
-            <div class="panel">
-                <ul class="topic-list">
-                    <li>
-                        <a href="/dersler/unite4_test.html" class="topic-link">
-                            <span class="topic-icon">📝</span> 1. Ünite 4 (Test & Not)
-                        </a>
-                        <a href="/dersler/SosyalPolitika/SosyalGuvenlikKavrami.html" class="topic-link">
-                            <span class="topic-icon">📝</span> 1. Ünite 5 (Test & Not)
-                        </a>
-                    </li>
-                       <li>
-                        <a href="/dersler/SosyalPolitika/5konuSosyalSigortalar.html" class="topic-link">
-                            <span class="topic-icon">📝</span> 2. Sosyal Sigortalar Kavramı (Test & Not)
-                        </a>
-                    </li>
-                    <li>
-                        <a href="/dersler/SosyalPolitika/unite6_test.html" class="topic-link">
-                            <span class="topic-icon">📝</span> Ünite 6 (Test & Not)
-                        </a>
-                    </li>
-                    <li>
-                        <a href="/dersler/SosyalPolitika/unite7_test.html" class="topic-link">
-                            <span class="topic-icon">📝</span> Ünite 7 (Test & Not)
-                        </a>
-                    </li>
-                    <li>
-                        <a href="/dersler/SosyalPolitika/unite8_test.html" class="topic-link">
-                            <span class="topic-icon">📝</span> Ünite 8 (Test & Not)
-                        </a>
-                    </li>
-                    </ul>
-            </div>
+    <!-- ANA İÇERİK -->
+    <main class="container mx-auto px-4 py-8 flex-grow">
+        
+        <!-- Reklam Alanı -->
+        <div class="w-full h-24 bg-gray-200 rounded-lg flex items-center justify-center mb-8 border border-gray-300 text-gray-500 text-sm">
+            Google Reklam Alanı (Responsive)
         </div>
 
-        <div class="course-wrapper">
-            <button class="accordion">İlk Çağ Felsefesi</button>
-            <div class="panel">
-                <ul class="topic-list">
-                    <li>
-                        <a href="/dersler/IlkCagFel/unite1_test.html" class="topic-link">
-                            <span class="topic-icon">📝</span>Ünite 1 (Test & Not)
-                        </a>
-                    </li>
-                    <li>
-                        <a href="/dersler/IlkCagFel/unite2_test.html" class="topic-link">
-                            <span class="topic-icon">📝</span>Ünite 2 (Test & Not)
-                        </a>
-                    </li>
-                    <li>
-                        <a href="/dersler/IlkCagFel/unite3_test.html" class="topic-link">
-                            <span class="topic-icon">📝</span>Ünite 3 (Test & Not)
-                        </a>
-                    </li>
-                    <li>
-                        <a href="/dersler/IlkCagFel/unite4_test.html" class="topic-link">
-                            <span class="topic-icon">📝</span>Ünite 4 (Test & Not)
-                        </a>
-                    </li>
-                    <li>
-                        <a href="/dersler/IlkCagFel/unite5_test.html" class="topic-link">
-                            <span class="topic-icon">📝</span>Ünite 5 (Test & Not)
-                        </a>
-                    </li>
-                    <li>
-                        <a href="/dersler/IlkCagFel/unite6_test.html" class="topic-link">
-                            <span class="topic-icon">📝</span>Ünite 6 (Test & Not)
-                        </a>
-                    </li>
-                    <li>
-                        <a href="/dersler/IlkCagFel/unite7_test.html" class="topic-link">
-                            <span class="topic-icon">📝</span>Ünite 7 (Test & Not)
-                        </a>
-                    </li>
-                    <li>
-                        <a href="/dersler/IlkCagFel/unite8_test.html" class="topic-link">
-                            <span class="topic-icon">📝</span>Ünite 8 (Test & Not)
-                        </a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-                <div class="course-wrapper">
-            <button class="accordion">Sosyolojiye Giriş</button>
-            <div class="panel">
-                <ul class="topic-list">
-                    <li>
-                        <a href="/dersler/sosyoloji/unite1.html" class="topic-link">
-                            <span class="topic-icon">📝</span>Ünite 1 (Test & Not)
-                        </a>
-                    </li>
-                    <li>
-                        <a href="/dersler/sosyoloji/unite2.html" class="topic-link">
-                            <span class="topic-icon">📝</span>Ünite 2 (Test & Not)
-                        </a>
-                    </li>
-                    <li>
-                        <a href="/dersler/sosyoloji/unite3.html" class="topic-link">
-                            <span class="topic-icon">📝</span>Ünite 3 (Test & Not)
-                        </a>
-                    </li>
-                    <li>
-                        <a href="/dersler/sosyoloji/unite4.html" class="topic-link">
-                            <span class="topic-icon">📝</span>Ünite 4 (Test & Not)
-                        </a>
-                    </li>
-                    <li>
-                        <a href="/dersler/sosyoloji/unite5.html" class="topic-link">
-                            <span class="topic-icon">📝</span>Ünite 5 (Test & Not)
-                        </a>
-                    </li>
-                    <li>
-                        <a href="/dersler/sosyoloji/unite6.html" class="topic-link">
-                            <span class="topic-icon">📝</span>Ünite 6 (Test & Not)
-                        </a>
-                    </li>
-                    <li>
-                        <a href="/dersler/sosyoloji/unite7.html" class="topic-link">
-                            <span class="topic-icon">📝</span>Ünite 7 (Test & Not)
-                        </a>
-                    </li>
-                    <li>
-                        <a href="/dersler/sosyoloji/unite8.html" class="topic-link">
-                            <span class="topic-icon">📝</span>Ünite 8 (Test & Not)
-                        </a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-        <div class="course-wrapper">
-            <button class="accordion">Psikoloji</button>
-            <div class="panel">
-                <ul class="topic-list">
-                    <li>
-                        <a href="/dersler/psikoloji/unite1.html" class="topic-link">
-                            <span class="topic-icon">📝</span>Ünite 1 (Test & Not)
-                        </a>
-                    </li>
-                    <li>
-                        <a href="/dersler/psikoloji/unite2.html" class="topic-link">
-                            <span class="topic-icon">📝</span>Ünite 2 (Test & Not)
-                        </a>
-                    </li>
-                    <li>
-                        <a href="/dersler/psikoloji/unite3.html" class="topic-link">
-                            <span class="topic-icon">📝</span>Ünite 3 (Test & Not)
-                        </a>
-                    </li>
-                    <li>
-                        <a href="/dersler/psikoloji/unite4.html" class="topic-link">
-                            <span class="topic-icon">📝</span>Ünite 4 (Test & Not)
-                        </a>
-                    </li>
-                    <li>
-                        <a href="/dersler/psikoloji/unite5.html" class="topic-link">
-                            <span class="topic-icon">📝</span>Ünite 5 (Test & Not)
-                        </a>
-                    </li>
-                    <li>
-                        <a href="/dersler/psikoloji/unite6.html" class="topic-link">
-                            <span class="topic-icon">📝</span>Ünite 6 (Test & Not)
-                        </a>
-                    </li>
-                    <li>
-                        <a href="/dersler/psikoloji/unite7.html" class="topic-link">
-                            <span class="topic-icon">📝</span>Ünite 7 (Test & Not)
-                        </a>
-                    </li>
-                    <li>
-                        <a href="/dersler/psikoloji/unite8.html" class="topic-link">
-                            <span class="topic-icon">📝</span>Ünite 8 (Test & Not)
-                        </a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-        <div class="course-wrapper">
-            <button class="accordion">⚖️ Hukuka Giriş</button>
-            <div class="panel">
-                <ul class="topic-list">
-                    <li>
-                        <a href="#" onclick="alert('Henüz bu ders yüklenmedi.')" class="topic-link">
-                            <span class="topic-icon">⏳</span> Hukukun Temel Kavramları (Hazırlanıyor)
-                        </a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-                <div class="course-wrapper">
-            <button class="accordion">Sosyal Bilimlerde Temel Kavramlar </button>
-            <div class="panel">
-                <ul class="topic-list">
-                    <li>
-                        <a href="/dersler/sosyal_bilimlerde_temel_kavramlar/unite1.html" class="topic-link">
-                            <span class="topic-icon">📝</span>Ünite 1 (Test & Not)
-                        </a>
-                    </li>
-                    <li>
-                        <a href="/dersler/sosyal_bilimlerde_temel_kavramlar/unite2.html" class="topic-link">
-                            <span class="topic-icon">📝</span>Ünite 2 (Test & Not)
-                        </a>
-                    </li>
-                                        <li>
-                        <a href="/dersler/sosyal_bilimlerde_temel_kavramlar/unite3.html" class="topic-link">
-                            <span class="topic-icon">📝</span>Ünite 3 (Test & Not)
-                        </a>
-                    </li>
-                                        <li>
-                        <a href="/dersler/sosyal_bilimlerde_temel_kavramlar/unite4.html" class="topic-link">
-                            <span class="topic-icon">📝</span>Ünite 4 (Test & Not)
-                        </a>
-                    </li>
-                                        <li>
-                        <a href="/dersler/sosyal_bilimlerde_temel_kavramlar/unite5.html" class="topic-link">
-                            <span class="topic-icon">📝</span>Ünite 5 (Test & Not)
-                        </a>
-                    </li>
-                                        <li>
-                        <a href="/dersler/sosyal_bilimlerde_temel_kavramlar/unite6.html" class="topic-link">
-                            <span class="topic-icon">📝</span>Ünite 6 (Test & Not)
-                        </a>
-                    </li>
-                                        <li>
-                        <a href="/dersler/sosyal_bilimlerde_temel_kavramlar/unite7.html" class="topic-link">
-                            <span class="topic-icon">📝</span>Ünite 7 (Test & Not)
-                        </a>
-                    </li>
-                                        <li>
-                        <a href="/dersler/sosyal_bilimlerde_temel_kavramlar/unite8.html" class="topic-link">
-                            <span class="topic-icon">📝</span>Ünite 8 (Test & Not)
-                        </a>
-                    </li>
-                </ul>
-            </div>
+        <!-- 1. BÖLÜM SEÇİMİ -->
+        <div id="step-departments" class="fade-in">
+            <h2 class="text-xl font-bold mb-6 text-slate-700 border-l-4 border-blue-500 pl-3">Bölüm Seçiniz</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6" id="department-grid"></div>
         </div>
 
+        <!-- 2. YARIYIL SEÇİMİ -->
+        <div id="step-semesters" class="hidden fade-in">
+            <button onclick="goHome()" class="mb-4 text-blue-600 hover:text-blue-800 flex items-center gap-2">
+                <i class="fa-solid fa-arrow-left"></i> Bölümlere Dön
+            </button>
+            <h2 class="text-xl font-bold mb-6 text-slate-700 border-l-4 border-green-500 pl-3">
+                <span id="selected-dept-name"></span> - Dönem Seçimi
+            </h2>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4" id="semester-grid"></div>
+        </div>
 
-    </div>
+        <!-- 3. DERSLER -->
+        <div id="step-courses" class="hidden fade-in">
+            <button onclick="goBackToSemesters()" class="mb-4 text-blue-600 hover:text-blue-800 flex items-center gap-2">
+                <i class="fa-solid fa-arrow-left"></i> Dönemlere Dön
+            </button>
+            <h2 class="text-xl font-bold mb-6 text-slate-700 border-l-4 border-purple-500 pl-3">
+                <span id="course-header-text"></span> Dersleri
+            </h2>
+            <div id="courses-container" class="space-y-4"></div>
+        </div>
 
-    <footer>
-        <p>&copy; 2025 -  Ders Notları</p>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-slate-800 text-slate-400 py-8 mt-8">
+        <div class="container mx-auto px-4 text-center">
+            <p>&copy; 2025 AÖF Ders Notları. Tüm hakları saklıdır.</p>
+        </div>
     </footer>
 
+    <!-- JAVASCRIPT -->
     <script>
-        // Akordeon Menü Çalışma Mantığı
-        var acc = document.getElementsByClassName("accordion");
-        var i;
+        // --- VERİ TABANI ---
+        const curriculum = {
+            "felsefe": {
+                title: "Felsefe",
+                icon: "fa-solid fa-landmark",
+                description: "Varlık, bilgi ve değer kavramlarını inceleyen disiplin.",
+                color: "bg-blue-50",
+                borderColor: "border-blue-500",
+                semesters: {
+                    1: [
+                        { 
+                            id: "ilk_cag_felsefesi", 
+                            name: "İlk Çağ Felsefesi", 
+                            folder: "IlkCagFel", 
+                            units: 8,
+                            fileSuffix: "_test" // uniteX_test.html formatı için
+                        },
+                        { 
+                            id: "psikoloji", 
+                            name: "Psikoloji", 
+                            folder: "psikoloji", 
+                            units: 8
+                        },
+                        { 
+                            id: "sosyolojiye_giris", 
+                            name: "Sosyolojiye Giriş", 
+                            folder: "sosyoloji", 
+                            units: 8 
+                        },
+                        { 
+                            id: "hukukun_temel_kavramlari", 
+                            name: "Hukukun Temel Kavramları", 
+                            folder: "hukuk", 
+                            units: 8 
+                        },
+                        { 
+                            id: "sosyal_bilimlerde_temel", 
+                            name: "Sosyal Bilimlerde Temel Kavramlar", 
+                            folder: "sosyal_bilimlerde_temel_kavramlar", 
+                            units: 8 
+                        }
+                    ],
+                    2: [], 3: [], 4: [], 5: [], 6: [], 7: [], 8: []
+                }
+            },
+            "sosyoloji": {
+                title: "Sosyoloji",
+                icon: "fa-solid fa-users",
+                description: "Toplum bilimi.",
+                color: "bg-green-50",
+                borderColor: "border-green-500",
+                semesters: { 1: [] }
+            },
+            "tarih": {
+                title: "Tarih",
+                icon: "fa-solid fa-scroll",
+                description: "Geçmiş bilimi.",
+                color: "bg-orange-50",
+                borderColor: "border-orange-500",
+                semesters: { 1: [] }
+            }
+        };
 
-        for (i = 0; i < acc.length; i++) {
-            acc[i].addEventListener("click", function() {
-                this.classList.toggle("active");
-                var panel = this.nextElementSibling;
-                if (panel.style.maxHeight) {
-                    panel.style.maxHeight = null;
+        let currentDeptId = null;
+        let currentSemester = null;
+
+        document.addEventListener('DOMContentLoaded', () => { renderDepartments(); });
+
+        function renderDepartments() {
+            const grid = document.getElementById('department-grid');
+            grid.innerHTML = '';
+            for (const [key, dept] of Object.entries(curriculum)) {
+                const card = document.createElement('div');
+                card.className = `${dept.color} p-6 rounded-xl shadow-sm hover:shadow-md transition cursor-pointer border-t-4 ${dept.borderColor} flex flex-col items-center text-center group`;
+                card.onclick = () => selectDepartment(key);
+                card.innerHTML = `
+                    <div class="w-16 h-16 bg-white rounded-full flex items-center justify-center mb-4 shadow-sm group-hover:scale-110 transition">
+                        <i class="${dept.icon} text-2xl text-slate-700"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-800 mb-2">${dept.title}</h3>
+                    <p class="text-sm text-slate-500 line-clamp-2">${dept.description}</p>
+                    <span class="mt-4 text-xs font-semibold uppercase tracking-wider text-slate-400 group-hover:text-slate-600">İncele &rarr;</span>
+                `;
+                grid.appendChild(card);
+            }
+        }
+
+        function selectDepartment(deptId) {
+            currentDeptId = deptId;
+            const dept = curriculum[deptId];
+            document.getElementById('step-departments').classList.add('hidden');
+            document.getElementById('step-semesters').classList.remove('hidden');
+            document.getElementById('selected-dept-name').innerText = dept.title;
+            updateBreadcrumb();
+
+            const grid = document.getElementById('semester-grid');
+            grid.innerHTML = '';
+            for (let i = 1; i <= 8; i++) {
+                const hasCourses = dept.semesters[i] && dept.semesters[i].length > 0;
+                const btn = document.createElement('div');
+                let styleClasses = "p-6 rounded-lg shadow-sm text-center transition border font-bold text-lg ";
+                if (hasCourses) {
+                    styleClasses += "bg-white hover:bg-blue-50 cursor-pointer border-gray-200 hover:border-blue-300 text-slate-700";
+                    btn.onclick = () => selectSemester(i);
                 } else {
-                    panel.style.maxHeight = panel.scrollHeight + "px";
-                } 
+                    styleClasses += "bg-gray-100 text-gray-400 cursor-not-allowed border-transparent";
+                    btn.onclick = () => alert("Bu dönem henüz eklenmedi.");
+                }
+                btn.className = styleClasses;
+                btn.innerHTML = `<div class="text-3xl mb-2 opacity-80">${i}</div><div class="text-sm font-normal">. Yarıyıl</div>`;
+                grid.appendChild(btn);
+            }
+        }
+
+        function selectSemester(semesterNum) {
+            currentSemester = semesterNum;
+            const courses = curriculum[currentDeptId].semesters[semesterNum];
+            document.getElementById('step-semesters').classList.add('hidden');
+            document.getElementById('step-courses').classList.remove('hidden');
+            document.getElementById('course-header-text').innerText = `${curriculum[currentDeptId].title} ${semesterNum}. Yarıyıl`;
+            updateBreadcrumb();
+
+            const container = document.getElementById('courses-container');
+            container.innerHTML = '';
+            
+            if (courses.length === 0) {
+                container.innerHTML = '<div class="text-center p-8 text-gray-500">Ders bulunamadı.</div>';
+                return;
+            }
+
+            courses.forEach(course => {
+                const courseEl = document.createElement('div');
+                courseEl.className = "bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden";
+                
+                let unitsHtml = '';
+                const suffix = course.fileSuffix || ""; 
+
+                for(let u = 1; u <= course.units; u++) {
+                    // LINK GÜNCELLEMESİ YAPILDI
+                    // Örnek: /1donem/dersler/IlkCagFel/unite1_test.html
+                    const linkPath = `/${currentSemester}donem/dersler/${course.folder}/unite${u}${suffix}.html`;
+                    
+                    unitsHtml += `
+                        <a href="${linkPath}" class="block p-3 hover:bg-slate-50 border-b last:border-0 border-slate-100 flex items-center group transition">
+                            <span class="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center mr-3 text-sm font-bold group-hover:bg-blue-600 group-hover:text-white transition">
+                                ${u}
+                            </span>
+                            <span class="text-slate-600 group-hover:text-blue-700 group-hover:translate-x-1 transition-transform duration-200">
+                                ${u}. Ünite (Test & Not)
+                            </span>
+                            <i class="fa-solid fa-chevron-right ml-auto text-slate-300 group-hover:text-blue-400 text-xs"></i>
+                        </a>
+                    `;
+                }
+
+                courseEl.innerHTML = `
+                    <button class="accordion-header w-full text-left p-5 bg-white hover:bg-gray-50 flex justify-between items-center outline-none" onclick="toggleAccordion(this)">
+                        <div class="flex items-center gap-3">
+                            <i class="fa-solid fa-book text-blue-500"></i>
+                            <span class="font-bold text-slate-700 text-lg">${course.name}</span>
+                        </div>
+                        <i class="fa-solid fa-plus text-slate-400 transition-transform duration-300"></i>
+                    </button>
+                    <div class="accordion-content bg-slate-50/50">
+                        <div class="p-2">${unitsHtml}</div>
+                    </div>
+                `;
+                container.appendChild(courseEl);
             });
         }
-    </script>
 
+        function toggleAccordion(button) {
+            const content = button.nextElementSibling;
+            const icon = button.querySelector('.fa-plus') || button.querySelector('.fa-minus');
+            if (content.style.maxHeight) {
+                content.style.maxHeight = null;
+                content.classList.remove('active');
+                icon.className = "fa-solid fa-plus text-slate-400 transition-transform duration-300";
+            } else {
+                content.style.maxHeight = content.scrollHeight + "px";
+                content.classList.add('active');
+                icon.className = "fa-solid fa-minus text-slate-400 transition-transform duration-300";
+                icon.style.transform = "rotate(180deg)";
+            }
+        }
+
+        function goHome() {
+            currentDeptId = null; currentSemester = null;
+            document.getElementById('step-courses').classList.add('hidden');
+            document.getElementById('step-semesters').classList.add('hidden');
+            document.getElementById('step-departments').classList.remove('hidden');
+            updateBreadcrumb();
+        }
+
+        function goBackToSemesters() {
+            currentSemester = null;
+            document.getElementById('step-courses').classList.add('hidden');
+            document.getElementById('step-semesters').classList.remove('hidden');
+            updateBreadcrumb();
+        }
+
+        function updateBreadcrumb() {
+            const deptText = document.getElementById('bc-dept');
+            const semText = document.getElementById('bc-sem');
+            
+            if (currentDeptId) {
+                document.getElementById('bc-dept-separator').classList.remove('hidden');
+                deptText.classList.remove('hidden');
+                deptText.innerText = curriculum[currentDeptId].title;
+                deptText.onclick = goBackToSemesters;
+            } else {
+                document.getElementById('bc-dept-separator').classList.add('hidden');
+                deptText.classList.add('hidden');
+            }
+
+            if (currentSemester) {
+                document.getElementById('bc-sem-separator').classList.remove('hidden');
+                semText.classList.remove('hidden');
+                semText.innerText = currentSemester + ". Yarıyıl";
+            } else {
+                document.getElementById('bc-sem-separator').classList.add('hidden');
+                semText.classList.add('hidden');
+            }
+        }
+    </script>
 </body>
 </html>
